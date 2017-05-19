@@ -55,8 +55,6 @@ if (args[2] && args[2] == 3000){
 }
 console.log(hostURL + " args[0]=" + args[0] + " args[1]=" + args[1] + " args[2]=" + args[2]);
 
-const PARAM_DIR = './param/';
-
 tl = require('./tools.js');
 const Mailer = require('./mailer.js');
 //const Mailer = new Mail;
