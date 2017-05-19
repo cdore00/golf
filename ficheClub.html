@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type" />
+<meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
+<meta name="format-detection" content="telephone=yes" />
+<link rel="SHORTCUT ICON" href="favicon.ico">
+<link href="favicon.ico" rel="apple-touch-icon" />
+<link href="favicon.ico" rel="apple-touch-startup-image" />
+<link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
+
+<title>Clubs de golf au Québec</title>
+<meta content="Golf, Québec, Canada, Golf du Québec, Clubs de golf au Québec, Québec golf" name="keywords" />
+<meta content="Répertoire des clubs de golf du Québec." name="description" />
+<meta content="Golf, Québec, Canada, Golf du Québec, Clubs de golf au Québec, Québec golf" name="keywords" />
+<meta content="Répertoire des clubs de golf du Québec." name="description" />
+
+<script type="text/javascript" src="misc/util.js"></script>
+<script type="text/javascript" language="Javascript">
+<!--
+
+var favChange = false;
+
+if (document.images)
+{
+ favOn= new Image(30,30);
+ favOn.src="misc/favoris.png";  
+
+ favOff= new Image(30,30);
+ favOff.src="misc/favorisOff.png";
+}
+
+function changeFav(objImg){
+
+if (favChange)
+	favChange = false;
+else
+	favChange = true;
+
+if (objImg.src.indexOf("Off") !=  -1)
+	objImg.src = favOn.src;
+else
+	objImg.src = favOff.src;
+}
+
+
+function majFav(){
+var xmlhttp;
+var clubID = "...............À compléter"
+var userId = GetCookie("userName");
+var action;
+var imgStat = document.getElementById('favIcon');
+
+if (favChange){
+	if (imgStat.src.indexOf("Off") !=  -1)
+		action=0;  //deleteAction
+	else
+		action=1;  //addAction
+
+	xmlhttp=new XMLHttpRequest();
+
+	//alert("changeFav.asp?userID=" + userId + "&clubID=" + clubID + "&action=" + action);
+	xmlhttp.open("GET","changeFav.asp?userID=" + userId + "&clubID=" + clubID + "&action=" + action,false);
+	xmlhttp.send();
+	}
+   //alert(imgStat.src);
+}
+
+function initPage(){
+var urlInfo = document.location.href;
+
+if (urlInfo.indexOf("data=") == -1){
+	var url = window.location.href
+	var arr = url.split("/");
+	var URLresult = arr[0] + "//" + arr[2] + "/";
+	//document.location.href = URLresult;
+}else{
+	var clubID = (urlInfo.substring(urlInfo.indexOf("data=") + 5));
+}
+
+userId = GetCookie("userName");
+
+getInfo("getClubParc?", showClub);
+
+}
+
+function getInfo(path, callback){
+
+var xhr=new XMLHttpRequest();
+
+  xhr.onloadend = function() {
+    var text = xhr.responseText;
+	var x=JSON.parse(text);
+	if (callback)
+		callback(x);
+  };
+xhr.open("GET","http://127.0.0.1:3000/" + path ,true);
+xhr.send();
+
+var x;
+}
+
+function showClub(oClubParc){
+var clubInfo = document.getElementById('clubInfo');
+var clubDetail = document.getElementById('clubDetail');
+var trackList = "";
+var clubTrack = (oClubParc[0].parc);
+for (var i = 0; i < clubTrack.length; i++) {
+	trackList += clubTrack[i]._id + "$";
+}
+trackList = trackList.substring(0, trackList.indexOf('$') );
+getInfo("getBloc?data=" + trackList, showBlock);
+
+var cInfo = 'Club:&nbsp;';
+if (oClubParc[0].url_golf)
+	cInfo += '<a target="_blank" href=' + oClubParc[0].url_golf + '">' + oClubParc[0].nom + '</a>&nbsp;';
+else
+	cInfo += oClubParc[0].nom + '&nbsp;';
+if (oClubParc[0].prive)
+	cInfo += oClubParc[0].prive;
+cInfo += '<img id="favIcon" onclick="changeFav(this)" alt="Favoris" width="30" height="30" src="misc/favoris.png" />&nbsp;';
+//if (blnProx = "O")
+cInfo += '&nbsp;<a class="itin" target="_blank" href="ClubTrajet.asp?Lat=">Trajet</a>';
+
+clubInfo.innerHTML = cInfo;
+
+var cInfo = oClubParc[0].adresse + ',&nbsp;';
+if (oClubParc[0].url_ville)
+	cInfo += '<a target="_blank" href=' + oClubParc[0].url_ville + '">' + oClubParc[0].municipal + '</a>,&nbsp;';
+else
+	cInfo += oClubParc[0].municipal + ',&nbsp;';
+cInfo += oClubParc[0].codepostal2 + '&nbsp;&nbsp;';
+cInfo += oClubParc[0].telephone + '&nbsp;';
+if (oClubParc[0].telephone2)
+	cInfo += ", " + oClubParc[0].telephone2;
+if (oClubParc[0].telephone3)
+	cInfo += ", " + oClubParc[0].telephone3;
+	
+clubDetail.innerHTML = cInfo;
+}
+
+function showBlock(oBlock){
+var bloc = oBlock;
+
+}
+
+// -->
+</script>
+</head>
+
+<body onload="initPage()"><a name="haut"></a>
+
+<div id="topbar" class="vert">
+<button type="button" id="rightnav" title="Taille de police" onclick="changeTaille();"><img id="imgTaille" alt="Taille de police" height="20" width="45" src="images/taille.png" /></button>
+</div>
+<div id="duobutton">
+<a href="#"  onclick="window.close(); return false;">Fermer</a>
+<a id="mapLink" href="ClubMap.asp?">Carte</a></div>
+
+
+<div id="content">
+
+<ul class="pageitem">
+			<li class="listitem">			
+			<div id="clubInfo" class="itemdesc">
+			</div>
+			<div id="clubDetail" class="itemdetail">
+			</div>
+			</li>	
+			
+
+			<li class="listitem">
+			<% if trim(orecParcours("Points")) = "E" then%>
+			Exécutif,&nbsp;
+			<%end if%>			
+			<%=orecParcours("Parcours")%>,
+			<% if trim(orecParcours("Depuis")) <> 0 then%>
+			&nbsp;depuis&nbsp;<%=orecParcours("Depuis")%>,
+			<%end if%>
+			&nbsp;<%=orecParcours("Trous")%>&nbsp;trous&nbsp;à normale <%=orecParcours("Normale")%>&nbsp;de <%=orecParcours("Verges")%>&nbsp;verges
+			<%if not orecTrou.EOF then
+				if isBloc(orecParcours("id")) then
+			%>
+				<a class="itin" target="_blank" href="golfGPS.asp?club=<%=orecordset("Nom")%>&parcours=<%=orecParcours("id")%>">Jouer</a>
+			<%  end if
+			 end if%>			
+			</li>
+
+
+</ul>
+
+</div>
+
+<div id="bottombar" class="vert">
+<div id="rightbutton"> <a href="#haut"><img alt="Haut de page" src="images/haut.png" /></a> </div>
+
+</div>
+
+<!-- #include file = "pied_page.asp" -->
+</body>
+
+</html>
