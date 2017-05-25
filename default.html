@@ -11,9 +11,9 @@
 <link href="favicon.ico" rel="apple-touch-startup-image" />
 <link href="misc/init.css" rel="stylesheet" media="screen" type="text/css" />
 <link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
-<title>Clubs de golf au Québec</title>
-<meta content="Golf, Québec, Canada, Golf du Québec, Clubs de golf au Québec, Québec golf" name="keywords" />
-<meta content="Répertoire des clubs de golf du Québec." name="description" />
+<title>Clubs de golf au QuÃ©bec</title>
+<meta content="Golf, QuÃ©bec, Canada, Golf du QuÃ©bec, Clubs de golf au QuÃ©bec, QuÃ©bec golf" name="keywords" />
+<meta content="RÃ©pertoire des clubs de golf du QuÃ©bec." name="description" />
 
 <script type="text/javascript" src="misc/googGeo.js"></script>
 <script type="text/javascript" src="misc/util.js"></script> 
@@ -32,7 +32,7 @@ var watchId = null;
 var locTimer;
 var resultLocalisation = 1000;
 var affL, LocT;
-var HOSTserv = "http://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
+var HOSTserv = "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
 // "http://127.0.0.1:3000/";
 // "http://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
 
@@ -211,10 +211,10 @@ xmlhttp.onreadystatechange=function(){
     res=unescape(xmlhttp.responseText);
 	
 	//alert(res.indexOf("Vous &ecirc;tes"));
-	if (res.indexOf("Vous êtes identifi") ==  0 ){
+	if (res.indexOf("Vous Ãªtes identifi") ==  0 ){
 		SetCook("userName",userCour);
 		closePref();}
-//alert(escape('èêà'));
+//alert(escape('Ã¨ÃªÃ '));
 	alert(res);
     }
   }
@@ -247,7 +247,7 @@ xmlhttp.onreadystatechange=function(){
 		closePref();
 	}else
 	alert(res);
-//alert(escape('èêà'));
+//alert(escape('Ã¨ÃªÃ '));
     }
   }
   
@@ -276,7 +276,7 @@ if (checkCookie()){
 	modLayer.style.visibility="visible";
 	prefLayer.style.visibility="visible";
 }else
-alert("Vous devez permettre l'utilisation des Cookies pour configurer vos préférences.");
+alert("Vous devez permettre l'utilisation des Cookies pour configurer vos prÃ©fÃ©rences.");
 //prefLayer.appendChild(ifObj);
 //alert(navigator.userAgent);
 //alert(navigator.vendor);
@@ -382,9 +382,9 @@ navigator.geolocation.clearWatch(watchId);
 		var donn = "";
 		for (var i=0;i<locColl.coord.length;i++)
 		{
-		donn = donn + "\nCoord" + i + ": " + locColl.coord[i].lat + ", " + locColl.coord[i].lng + ", Préc:" + locColl.coord[i].acc;
+		donn = donn + "\nCoord" + i + ": " + locColl.coord[i].lat + ", " + locColl.coord[i].lng + ", PrÃ©c:" + locColl.coord[i].acc;
 		}
-			alert(locColl.coord.length + "\nRésult:" + resultLocalisation + donn);
+			alert(locColl.coord.length + "\nRÃ©sult:" + resultLocalisation + donn);
 	}
 }
 
@@ -625,8 +625,8 @@ document.location.href = URLresult;
 
 <div id="topbar" class="vert">
 <div id="logoHome"><img alt="home" width="25" height="25" src="images/golf.png" /></div>
-<div id="titre">Golfs du Québec</div>
-<div id="rightnav"> <a title="Réinitialiser la recherche" href="default.asp?indNew=O"><img alt="home" height="25" width="25" src="images/home25.png" /></a> </div>
+<div id="titre">Golfs du QuÃ©bec</div>
+<div id="rightnav"> <a title="RÃ©initialiser la recherche" href="default.asp?indNew=O"><img alt="home" height="25" width="25" src="images/home25.png" /></a> </div>
 </div>
 
 <form id="critere" name="critere" action="#" method="get">
@@ -640,20 +640,20 @@ document.location.href = URLresult;
 		
 			  <div class="formrow1" >
 				<div id="formradio" class="divChxChamp"><input type="radio" checked name="champRecherche" value="Nom"> Nom du club&nbsp;&nbsp;<input type="radio" name="champRecherche" value="Ville"> Ville</div>
-			    <div id="divMot"><label for="Mots">Mot clé </label></div>
+			    <div id="divMot"><label for="Mots">Mot clÃ© </label></div>
 			    <div id="inputtextmot"><input id="Mots" class="inputtext" name="Mots" oninput="showLocalisation()"; type="text" size="17" maxlength="50" value=""/></div>
 			  </div>
 			  <div class="formrow1">
-			    <div id="divReg"><label for="IdRegion">Région </label></div>
+			    <div id="divReg"><label for="IdRegion">RÃ©gion </label></div>
 			    <div id="inputselectreg">
 			    <SELECT id="IdRegion" class="inputselect" name="IdRegion" onChange="showLocalisation()";>
-					<OPTION value="0">Toutes les régions</OPTION>
+					<OPTION value="0">Toutes les rÃ©gions</OPTION>
 
 			      </SELECT></div></div>
 
 			  <div class="formrow1">
 			  
-			    <div id="divCod"><label for="codePostal">Proximité</label></div>
+			    <div id="divCod"><label for="codePostal">ProximitÃ©</label></div>
 			    <div id="inputtextcod">
 			    
 				</div>
@@ -690,7 +690,7 @@ document.location.href = URLresult;
 <div id="bottombar" class="vert">
 <!--<div id="message"></div>  // -->
 <div id="leftbutton"> <a title="Favoris" href="javascript:getInfo('getFav', listFav);"><img alt="Favoris" width="30" height="30" src="images/favorisOff.png" /></a> </div>
-<div id="rightbutton"> <a title="Préférences" href="javascript:setPref();"><img alt="Réglages" width="32" height="32" src="images/reglages.png" /></a> </div>
+<div id="rightbutton"> <a title="PrÃ©fÃ©rences" href="javascript:setPref();"><img alt="RÃ©glages" width="32" height="32" src="images/reglages.png" /></a> </div>
 </div>
 
 <!-- #include file = "pied_page.asp" -->
