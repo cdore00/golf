@@ -25,19 +25,16 @@
     </script> 
 
 <script type="text/javascript" language="Javascript">
-<!--
-
-var	strMots = "";
-var	strIdRegion = "0";
-var	strCodeP = "";
-var	intKilom = "5";
+<!-- 
 
 var userId = null;
 var watchId = null;
 var locTimer;
 var resultLocalisation = 1000;
 var affL, LocT;
-
+var HOSTserv = "http://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
+// "http://127.0.0.1:3000/";
+// "http://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
 
 // the locColl object
 var locColl = {
@@ -72,7 +69,7 @@ xhr=new XMLHttpRequest();
 	if (callback)
 		callback(x);
   };
-xhr.open("GET","http://127.0.0.1:3000/" + path + "?",true);
+xhr.open("GET", HOSTserv + path + "?",true);
 xhr.send();
 
 var x;
@@ -93,7 +90,7 @@ if (!favGolfList){
 	for (var i = 0; i < clubList.length; i++) {
 		var liElem = document.createElement("li");
 		liElem.setAttribute('class', 'listitem');
-		liElem.innerHTML = '<a class="itemdesc" href="ficheClub.asp?IdClub=' + clubList[i]._id + '">' + clubList[i].nom + '</a></li>';
+		liElem.innerHTML = '<a class="itemdesc" href="ficheClub.html?data=' + clubList[i]._id + '">' + clubList[i].nom + '</a></li>';
 		ulElem.appendChild(liElem);
 	}
 	var butElem = document.createElement("button");
@@ -136,15 +133,15 @@ if (affL == null || affL == 0)
 	affL = false;
 
 LocT = GetCookie("LocTime");
-if (LocT == null){ 
+if (LocT == null || LocT == 0){ 
 	LocT = 5;
 	SetCook("LocTime",LocT);}
 LocT = LocT * 1000;
 
 if (LocT == 0)
-locButton.style.visibility="hidden";
+	locButton.style.visibility="hidden";
 else
-locButton.style.visibility="visible";
+	locButton.style.visibility="visible";
 
 setFontSize();
 showLocalisation();
@@ -319,7 +316,7 @@ resultLocalisation = result;
 }
 
 function criteres(){
-	if (document.critere.Mots.value.length == 0 && document.critere.codePostal.value.length == 0 && document.critere.IdRegion.value == 0){
+	if (document.critere.Mots.value.length == 0 && document.critere.IdRegion.value == 0){
 		return false;
 	} else {
 		return true;
@@ -362,18 +359,17 @@ oDivlocaliser.style.visibility="hidden";
 oDivLocalise.style.visibility="visible";
 oBody.style.cursor="wait";
 
-	document.critere.Mots.value = "";
-	document.critere.codePostal.value = "";
-	document.critere.IdRegion.value = 0;
-
 	locTimer = setTimeout("clearGeo(false);", LocT);
 	getLocalisationErr();
 }
 
 
 function clearGeo(interrupt){
-			var oBody = document.getElementById('content');
-			oBody.style.cursor="default";
+var oBody = document.getElementById('content');
+var localisation = document.getElementById('localisation');
+var localiser = document.getElementById('localiser');
+
+oBody.style.cursor="default";
 clearTimeout(locTimer);
 navigator.geolocation.clearWatch(watchId);
 
@@ -551,6 +547,8 @@ function checkCookie(){
 function initPage(){
 userId = GetCookie("userName");
 
+localStorage.setItem('HOSTserv', HOSTserv);
+
 //if (userId){
 	var leftbutton = document.getElementById('leftbutton');
 	leftbutton.style.visibility="visible";
@@ -561,6 +559,7 @@ getInfo("getRegions", listRegions);
 }
 
 function listRegions(oRegion){
+var formCrit = document.getElementById('critere');
 var IdRegion = document.getElementById('IdRegion');
 
 for (var i = 0; i < oRegion.length; i++) {
@@ -569,8 +568,47 @@ for (var i = 0; i < oRegion.length; i++) {
 	optElem.innerHTML = oRegion[i].Nom;
 	IdRegion.appendChild(optElem);
 }
+
+if (localStorage.getItem("motsCleContext"))
+	formCrit.Mots.value = localStorage.getItem("motsCleContext");
+
+if (localStorage.getItem("regionIdContext"))
+	formCrit.IdRegion.selectedIndex = localStorage.getItem("regionIdContext");
 }
 
+function rechercheClub(){
+var formCrit = document.getElementById('critere');
+var url = window.location.href
+var arr = url.split("/");
+//var URLresult = arr[0] + "//" + arr[2] + "/listeResult.html/data=" + formCrit.IdRegion.value;
+var URLresult = "listeResult.html?data=";
+//alert(formCrit.IdRegion.value);
+
+localStorage.removeItem('idList');
+
+
+
+if (formCrit.Mots.value != ""){
+	URLresult += "1$" + encodeURI(formCrit.Mots.value);
+	localStorage.setItem('motsCleContext', formCrit.Mots.value);
+}else{
+	localStorage.removeItem('motsCleContext');
+	if (formCrit.IdRegion.value != 0){
+		localStorage.setItem('regionIdContext', formCrit.IdRegion.selectedIndex);
+		localStorage.setItem('regionContext', formCrit.IdRegion.options[formCrit.IdRegion.selectedIndex].innerHTML);
+		URLresult += "2$" + formCrit.IdRegion.value;
+	}else{
+		localStorage.removeItem('regionContext');
+		localStorage.removeItem('regionIdContext');
+		if (formCrit.kiloM.value != 0){
+			URLresult += "3$" + formCrit.longitude.value + "$" + formCrit.latitude.value + "$" + (formCrit.kiloM.value * 1000);
+		}
+	}
+}
+
+document.location.href = URLresult;
+
+}
 
 // -->
 </script>
@@ -586,12 +624,12 @@ for (var i = 0; i < oRegion.length; i++) {
 </script>
 
 <div id="topbar" class="vert">
-<div id="logoHome"><img alt="home" width="25" height="25" src="misc/golf.png" /></div>
+<div id="logoHome"><img alt="home" width="25" height="25" src="images/golf.png" /></div>
 <div id="titre">Golfs du Québec</div>
 <div id="rightnav"> <a title="Réinitialiser la recherche" href="default.asp?indNew=O"><img alt="home" height="25" width="25" src="images/home25.png" /></a> </div>
 </div>
 
-<form id="critere" name="critere" action="listeResult.asp" method="get">
+<form id="critere" name="critere" action="#" method="get">
 <input id="latitude" name="latitude" type="hidden" value="0"/>
 <input id="longitude" name="longitude" type="hidden" value="0"/>
 <input id="Prox" name="Prox" type="hidden" value="N"/>
@@ -602,7 +640,7 @@ for (var i = 0; i < oRegion.length; i++) {
 		
 			  <div class="formrow1" >
 				<div id="formradio" class="divChxChamp"><input type="radio" checked name="champRecherche" value="Nom"> Nom du club&nbsp;&nbsp;<input type="radio" name="champRecherche" value="Ville"> Ville</div>
-			    <div id="divMot"><label for="Mots">Mot(s) clé(s) </label></div>
+			    <div id="divMot"><label for="Mots">Mot clé </label></div>
 			    <div id="inputtextmot"><input id="Mots" class="inputtext" name="Mots" oninput="showLocalisation()"; type="text" size="17" maxlength="50" value=""/></div>
 			  </div>
 			  <div class="formrow1">
@@ -614,13 +652,14 @@ for (var i = 0; i < oRegion.length; i++) {
 			      </SELECT></div></div>
 
 			  <div class="formrow1">
-			  <div id="formradio" class="divChxChamp">&nbsp;&nbsp;<label for="kiloM">Proximité</label></div>
-			    <div id="divCod"><label for="codePostal">Code postal </label></div>
+			  
+			    <div id="divCod"><label for="codePostal">Proximité</label></div>
 			    <div id="inputtextcod">
-			    <input id="codePostal" class="inputtext" name="codePostal"  oninput="showLocalisation()"; type="text" size="8" maxlength="7" value=""/>
+			    
 				</div>
 			    <div id="inputselectdis">
 				<SELECT id="kiloM" class="inputselect" name="KiloM">
+					<OPTION value="0">Choisir</OPTION>
 			        <OPTION value="5">5 km</OPTION>
 			        <OPTION value="10">10 km</OPTION>
 			        <OPTION value="25">25 km</OPTION>
@@ -642,7 +681,7 @@ for (var i = 0; i < oRegion.length; i++) {
 					<img alt="localise"  height="16" width="16" src="images/localise.gif" />
 				</span>
 				</div>
-				<button class="bouton" id="Rechercher" type="submit" value="Rechercher" />Rechercher</button>
+				<button class="bouton" id="Rechercher" type="button" onclick="rechercheClub()" value="Rechercher" />Rechercher</button>
 		    </div>
 		</ul>
 	</div>
@@ -650,8 +689,8 @@ for (var i = 0; i < oRegion.length; i++) {
 
 <div id="bottombar" class="vert">
 <!--<div id="message"></div>  // -->
-<div id="leftbutton"> <a title="Favoris" href="javascript:getInfo('getFav', listFav);"><img alt="Favoris" width="30" height="30" src="misc/favorisOff.png" /></a> </div>
-<div id="rightbutton"> <a title="Préférences" href="javascript:setPref();"><img alt="Réglages" width="32" height="32" src="misc/reglages.png" /></a> </div>
+<div id="leftbutton"> <a title="Favoris" href="javascript:getInfo('getFav', listFav);"><img alt="Favoris" width="30" height="30" src="images/favorisOff.png" /></a> </div>
+<div id="rightbutton"> <a title="Préférences" href="javascript:setPref();"><img alt="Réglages" width="32" height="32" src="images/reglages.png" /></a> </div>
 </div>
 
 <!-- #include file = "pied_page.asp" -->
