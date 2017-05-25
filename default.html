@@ -11,7 +11,7 @@
 <link href="favicon.ico" rel="apple-touch-startup-image" />
 <link href="misc/init.css" rel="stylesheet" media="screen" type="text/css" />
 <link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
-<title>Clubs de golf au Québec</title>
+<title>Clubs de golf au Qu&eacute;bec</title>
 <meta content="Golf, Québec, Canada, Golf du Québec, Clubs de golf au Québec, Québec golf" name="keywords" />
 <meta content="Répertoire des clubs de golf du Québec." name="description" />
 
@@ -276,7 +276,7 @@ if (checkCookie()){
 	modLayer.style.visibility="visible";
 	prefLayer.style.visibility="visible";
 }else
-alert("Vous devez permettre l'utilisation des Cookies pour configurer vos préférences.");
+alert("Vous devez permettre l'utilisation des Cookies pour configurer vos pr&eacute;f&eacute;rences.");
 //prefLayer.appendChild(ifObj);
 //alert(navigator.userAgent);
 //alert(navigator.vendor);
@@ -382,9 +382,9 @@ navigator.geolocation.clearWatch(watchId);
 		var donn = "";
 		for (var i=0;i<locColl.coord.length;i++)
 		{
-		donn = donn + "\nCoord" + i + ": " + locColl.coord[i].lat + ", " + locColl.coord[i].lng + ", Préc:" + locColl.coord[i].acc;
+		donn = donn + "\nCoord" + i + ": " + locColl.coord[i].lat + ", " + locColl.coord[i].lng + ", Pr&eacute;c:" + locColl.coord[i].acc;
 		}
-			alert(locColl.coord.length + "\nRésult:" + resultLocalisation + donn);
+			alert(locColl.coord.length + "\nR&eacute;sult:" + resultLocalisation + donn);
 	}
 }
 
@@ -623,7 +623,7 @@ geocoder = new google.maps.Geocoder();
     if (status == google.maps.GeocoderStatus.OK) {
 		URLresult += "3$" + results[0].geometry.location.lng() + "$" + results[0].geometry.location.lat() + "$" + distance;
     } else {
-		alert('Code postal non retrouvé : ' + status);
+		alert('Code postal non retrouv&eacute; : ' + status);
     }
   });
 }
@@ -647,8 +647,8 @@ geocoder = new google.maps.Geocoder();
 
 <div id="topbar" class="vert">
 <div id="logoHome"><img alt="home" width="25" height="25" src="images/golf.png" /></div>
-<div id="titre">Golfs du Québec</div>
-<div id="rightnav"> <a title="Réinitialiser la recherche" href="default.asp?indNew=O"><img alt="home" height="25" width="25" src="images/home25.png" /></a> </div>
+<div id="titre">Golfs du Qu&eacute;bec</div>
+<div id="rightnav"> <a title="R&eacute;initialiser la recherche" href="default.asp?indNew=O"><img alt="home" height="25" width="25" src="images/home25.png" /></a> </div>
 </div>
 
 <form id="critere" name="critere" action="#" method="get">
@@ -662,19 +662,19 @@ geocoder = new google.maps.Geocoder();
 		
 			  <div class="formrow1" >
 				<div id="formradio" class="divChxChamp"><input type="radio" checked name="champRecherche" value="Nom"> Nom du club&nbsp;&nbsp;<input type="radio" name="champRecherche" value="Ville"> Ville</div>
-			    <div id="divMot"><label for="Mots">Mot clé </label></div>
+			    <div id="divMot"><label for="Mots">Mot cl&eacute; </label></div>
 			    <div id="inputtextmot"><input id="Mots" class="inputtext" name="Mots" oninput="showLocalisation()"; type="text" size="17" maxlength="50" value=""/></div>
 			  </div>
 			  <div class="formrow1">
-			    <div id="divReg"><label for="IdRegion">Région </label></div>
+			    <div id="divReg"><label for="IdRegion">R&eacute;gion </label></div>
 			    <div id="inputselectreg">
 			    <SELECT id="IdRegion" class="inputselect" name="IdRegion" onChange="showLocalisation()";>
-					<OPTION value="0">Toutes les régions</OPTION>
+					<OPTION value="0">Toutes les r&eacute;gions</OPTION>
 
 			      </SELECT></div></div>
 
 			  <div class="formrow1">
-			  <div id="formradio" class="divChxChamp">&nbsp;&nbsp;<label for="kiloM">Proximité</label></div>
+			  <div id="formradio" class="divChxChamp">&nbsp;&nbsp;<label for="kiloM">Proximit&eacute;</label></div>
 			    <div id="divCod"><label for="codePostal">Code postal </label></div>
 			    <div id="inputtextcod">
 			    <input id="codePostal" class="inputtext" name="codePostal"  oninput="showLocalisation()"; type="text" size="8" maxlength="7" value=""/>
@@ -712,7 +712,7 @@ geocoder = new google.maps.Geocoder();
 <div id="bottombar" class="vert">
 <!--<div id="message"></div>  // -->
 <div id="leftbutton"> <a title="Favoris" href="javascript:getInfo('getFav', listFav);"><img alt="Favoris" width="30" height="30" src="images/favorisOff.png" /></a> </div>
-<div id="rightbutton"> <a title="Préférences" href="javascript:setPref();"><img alt="Réglages" width="32" height="32" src="images/reglages.png" /></a> </div>
+<div id="rightbutton"> <a title="Pr&eacute;f&eacute;rences" href="javascript:setPref();"><img alt="R&eacute;glages" width="32" height="32" src="images/reglages.png" /></a> </div>
 </div>
 
 <!-- #include file = "pied_page.asp" -->
