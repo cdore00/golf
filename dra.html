@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <script type="text/javascript" 
+      src="http://maps.googleapis.com/maps/api/js?key=AIzaSyA15nyiYmWG_0IkG9H5r4Qc8KhZxwRw_xA&sensor=false"> 
+    </script> 
+
+<script>
+ 
+var result;
+
+function init() {
+
+codeAddress();
+
+//results[0].geometry.location.lat()
+//results[0].geometry.location.lng()
+//46.80344179999999
+//-71.23022000000003
+}
+
+function initialize() {
+  geocoder = new google.maps.Geocoder();
+  var latlng = new google.maps.LatLng(-34.397, 150.644);
+  var mapOptions = {
+    zoom: 8,
+    center: latlng,
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  }
+  map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+  codeAddress();
+}
+
+function codeAddress() {
+texte = document.getElementById('textInput');
+
+locCode(texte.value);
+
+}
+
+function locCode(codLoc){
+geocoder = new google.maps.Geocoder();
+  var address = codLoc;
+  geocoder.geocode( { 'address': address}, function(results, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+      //map.setCenter(results[0].geometry.location);
+	  alert(results[0].geometry.location);
+x=1;
+    } else {
+      alert('Geocode was not successful for the following reason: ' + status);
+    }
+  });
+}
+//results[0].geometry.location.lat()
+//results[0].geometry.location.lng()
+</script>
+</head>
+<body>
+
+<input id="textInput"/>
+
+<button onclick="codeAddress()">Geo</button>
+  
+</div>
+</body>
+</html>
