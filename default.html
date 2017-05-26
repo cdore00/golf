@@ -12,8 +12,8 @@
 <link href="misc/init.css" rel="stylesheet" media="screen" type="text/css" />
 <link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
 <title>Clubs de golf au Qu&eacute;bec</title>
-<meta content="Golf, Québec, Canada, Golf du Québec, Clubs de golf au Québec, Québec golf" name="keywords" />
-<meta content="Répertoire des clubs de golf du Québec." name="description" />
+<meta content="Golf, QuÃ©bec, Canada, Golf du QuÃ©bec, Clubs de golf au QuÃ©bec, QuÃ©bec golf" name="keywords" />
+<meta content="RÃ©pertoire des clubs de golf du QuÃ©bec." name="description" />
 
 <script type="text/javascript" src="misc/googGeo.js"></script>
 <script type="text/javascript" src="misc/util.js"></script> 
@@ -211,10 +211,10 @@ xmlhttp.onreadystatechange=function(){
     res=unescape(xmlhttp.responseText);
 	
 	//alert(res.indexOf("Vous &ecirc;tes"));
-	if (res.indexOf("Vous êtes identifi") ==  0 ){
+	if (res.indexOf("Vous Ãªtes identifi") ==  0 ){
 		SetCook("userName",userCour);
 		closePref();}
-//alert(escape('èêà'));
+//alert(escape('Ã¨ÃªÃ '));
 	alert(res);
     }
   }
@@ -247,7 +247,7 @@ xmlhttp.onreadystatechange=function(){
 		closePref();
 	}else
 	alert(res);
-//alert(escape('èêà'));
+//alert(escape('Ã¨ÃªÃ '));
     }
   }
   
@@ -618,12 +618,12 @@ if (distance == 0){
 	return false;
 	}
 geocoder = new google.maps.Geocoder();
-  //var address = postCode;
-  geocoder.geocode( { 'address':postCode}, function(results, status) {
+  var address = postCode;
+  geocoder.geocode( { 'address': address}, function(results, status) {
     if (status == google.maps.GeocoderStatus.OK) {
-		URLresult += "3$" + results[0].geometry.location.lng() + "$" + results[0].geometry.location.lat() + "$" + distance;
+	  alert(results[0].geometry.location);
     } else {
-		alert('Code postal non retrouv&eacute; : ' + status);
+      alert('Geocode was not successful for the following reason: ' + status);
     }
   });
 }
