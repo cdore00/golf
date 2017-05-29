@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type" />
+<meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
+<meta name="format-detection" content="telephone=no" />
+<link rel="SHORTCUT ICON" href="favicon.ico">
+<link href="favicon.ico" rel="icon" />
+<link href="favicon.ico" rel="shortcut icon" />
+<link href="favicon.ico" rel="apple-touch-icon" />
+<link href="favicon.ico" rel="apple-touch-startup-image" />
+<link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
+<title>Clubs de golf au Québec</title>
+<meta content="Golf, Québec, Canada, Golf du Québec, Clubs de golf au Québec, Québec golf" name="keywords" />
+<meta content="Répertoire des clubs de golf du Québec." name="description" />
+
+<script type="misc/javascript" src="js/util.js"></script>
+
+<script type="text/javascript" language="Javascript">
+<!--
+
+var HOSTserv = localStorage.getItem("HOSTserv");
+var clubPos = null;
+
+function ficheClub (IdClub) {
+var url = 'ficheClub.html?data=' + IdClub;
+document.location.href = url;
+localStorage.setItem('clubPos', IdClub);
+}
+
+function getInfo(path, callback){
+
+var xhr=new XMLHttpRequest();
+
+  xhr.onloadend = function() {
+    var text = xhr.responseText;
+	var x=JSON.parse(text);
+	if (callback)
+		callback(x);
+  };
+xhr.open("GET", HOSTserv + path ,true);
+xhr.send();
+
+var x;
+}
+
+function initPage(){
+var urlInfo = document.location.href;
+
+if (urlInfo.indexOf("data=") == -1){
+	var data = localStorage.getItem("idList");
+	var request = encodeURI(data);
+	getInfo("getClubList?data=" + request, showResult);
+	clubPos = '#pos' + localStorage.getItem("clubPos");
+}else{
+	var data = (urlInfo.substring(urlInfo.indexOf("data=") + 5));
+	var request = encodeURI(data);
+	getInfo("searchResult?data=" + request, showResult);
+}
+}
+
+function showResult(result){
+var clubList = document.getElementById('clubList');
+var message = document.getElementById('message');
+
+var regionLabel = "";
+if (localStorage.getItem("regionContext"))
+	regionLabel = localStorage.getItem("regionContext");
+
+message.innerHTML = result.length + localStorage.getItem("message");
+
+var cntItem = 0;
+var idList = "";
+for (var i = 0; i < result.length; i++) {
+	idList += result[i]._id + ",";
+	var liElem = document.createElement("li");
+	liElem.setAttribute('class', 'listitem');
+	var aElem = document.createElement("a");
+	aElem.setAttribute('id', 'pos' + result[i]._id);
+	liElem.appendChild(aElem);
+	var aElem = document.createElement("a");
+	aElem.setAttribute('href', 'javascript:ficheClub("' + result[i]._id + '")');
+	aElem.setAttribute('class', 'itemdesc');
+	var clubCourse = "&nbsp;&nbsp;" + result[i].courses.length + "&nbsp;parcours&nbsp;";
+	var nT = 0;
+	for (var t = 0; t < result[i].courses.length; t++) {
+		nT += result[i].courses[t].TROUS;
+	}
+	clubCourse += "&nbsp;" + nT + "&nbsp;trous&nbsp;"
+	aElem.innerHTML = result[i].nom + clubCourse;
+	liElem.appendChild(aElem);
+	cntItem += 1;
+	var nextClass = "itemdetail";
+	if (cntItem > 4){
+		nextClass = "itemdetail90";
+		var divElem = document.createElement("div");
+		divElem.setAttribute('id', 'rightbuttonItem');
+		divElem.innerHTML = '<a href="#haut"><img alt="Haut de page" src="images/hautB.png" height="13" width="20"></a>';
+		liElem.appendChild(divElem);
+		cntItem = 0;
+	}
+	var spanElem = document.createElement("span");
+	spanElem.setAttribute('class', nextClass);
+	if (regionLabel != "") 
+		spanElem.innerHTML = result[i].adresse + ", " + result[i].municipal + ", " + regionLabel;
+	else
+		spanElem.innerHTML = result[i].adresse + ", " + result[i].municipal;
+	liElem.appendChild(spanElem);
+	clubList.appendChild(liElem);
+	var spanElem = document.createElement("span");
+	spanElem.setAttribute('class', 'itemdetail');
+	var tel = result[i].telephone
+	if (result[i].telephone2)
+		tel += result[i].telephone2
+	spanElem.innerHTML = tel;
+	liElem.appendChild(spanElem);
+	clubList.appendChild(liElem);
+}
+localStorage.setItem('idList', idList.substring(0, idList.length - 1 ));
+var chargement = document.getElementById('chargement');
+chargement.style.display = "none";
+if (clubPos)
+	document.location = clubPos;
+}
+
+// -->
+</script>
+</head>
+
+<body onload="initPage();"><a name="haut"></a>
+
+<div id="topbar" class="vert">
+<div id="leftnav"><a title="Formulaire de recherche" href="default.html"><img alt="Formulaire de recherche" height="22" width="25" src="images/home22.png" /></a></div>
+<div id="chargement" class="textBlink">Chargement...</div>
+<button type="button" id="rightnav" title="Taille de police" onclick="changeTaille();"><img id="imgTaille" alt="Taille de police" height="20" width="45" src="images/taille.png" /></button>
+</div><div id="duobutton"><a id="pressed" href="#">Liste</a>
+
+<a href="#" onclick="document.ListID.submit(); return false;">Carte</a>
+
+</div>
+
+
+<div id="content">
+
+<ul id="clubList" class="pageitem">
+
+</ul>
+
+</div>
+
+<div id="bottombar" class="vert">
+	<div id="rightbutton"> <a href="#haut"><img height="13" width="20" alt="Haut de page" src="images/hautB.png" /></a> </div>
+	<div id="message"></div>
+</div>
+
+<!-- #include file = "pied_page.asp" -->
+</div>
+<script type="text/javascript" language="Javascript">
+<!--
+//document.location = '#pos';
+
+// -->
+</script>
+
+
+</body>
+
+</html>

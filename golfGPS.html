@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta name="mobile-web-app-capable" content="yes">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type" />
+<meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
+<meta name="format-detection" content="telephone=no" />
+<link rel="SHORTCUT ICON" href="favicon.ico">
+<link href="favicon.ico" rel="apple-touch-icon" />
+<link href="favicon.ico" rel="apple-touch-startup-image" />
+<link href="misc/reset.css" rel="stylesheet" media="screen" type="text/css" />
+<link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
+<link href="misc/golfGPS.css" rel="stylesheet" media="screen" type="text/css" />
+
+<title id="titClub"></title>
+<meta content="Golf, Québec, Canada, Golf du Québec, Clubs de golf au Québec, Québec golf" name="keywords" />
+<meta content="Répertoire des clubs de golf du Québec." name="description" />
+
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" /> 
+
+    <script type="text/javascript" 
+      src="http://maps.googleapis.com/maps/api/js?key=AIzaSyA15nyiYmWG_0IkG9H5r4Qc8KhZxwRw_xA&sensor=false"> 
+    </script> 
+
+	<script type="text/javascript" src="misc/util.js"></script>
+	<script type="text/javascript" src="misc/geoLocal.js"></script>
+
+    <script type="text/javascript"> 
+	<!--
+	
+	
+var PositionFlag = 0;
+var pos_x;
+var pos_y;
+var diff_x;
+var diff_y;
+var move_x;
+var move_y;
+var once = 0;
+var HOSTserv = localStorage.getItem("HOSTserv");
+	
+window.addEventListener('DOMActivate', function() {
+    setTimeout(scrollTo, 0, 0, 1);
+}, true);
+
+
+var map;
+var posMarker;
+var holeMarker;
+var piquetMarker;
+var holeDist;
+var watchId = null;
+var locTimer = null;
+var watchLoc = 0;
+var trou = 1;
+var blocID = 0;
+var polyLine;
+var clicListener;
+var chxDistPiq = 0;
+var touchin = false;
+// Pour la voix
+if ('speechSynthesis' in window){
+var msg = new SpeechSynthesisUtterance();
+//var laVoix = function () {};
+var lastDist = 0;
+var actDist = 0;
+var lastTime = 0;
+}
+  if (document.images)
+   {
+     iciOn= new Image(14,14);
+     iciOn.src="images/ici.png";  
+
+     iciOff= new Image(14,14);
+     iciOff.src="images/iciX.png";
+   }
+
+var trouCoord =  new Array();	
+
+var trouPar =  new Array();	
+
+google.maps.visualRefresh = true;
+
+function initialize() { 
+
+var myOptions = { 
+  center: trouCoord[0], 
+  zoom: 18,
+  panControl: false,    
+  zoomControl: false, 
+  scaleControl: false,
+  streetViewControl: false,
+  mapTypeControl: false,    
+  mapTypeId: google.maps.MapTypeId.SATELLITE
+//heading: 180,
+//tilt: 45
+}; 
+map = new google.maps.Map(document.getElementById("map_canvas"), myOptions); 
+
+//setFontSizeGolfGPS();
+var bodyobj = document.getElementsByTagName('body')[0];
+bodyobj.style.fontSize = '2.5em';
+adjustScreen(0);
+setMyPosition(map, trouCoord[0]);
+setHole(map, trouCoord[0]);
+setpiquetMarker(map, trouCoord[0]);
+
+var polyOptions = {
+strokeColor: '#ffffff',
+clickable: false,
+strokeOpacity: 1.0,
+strokeWeight: 2
+}
+polyLine = new google.maps.Polyline(polyOptions);
+polyLine.setMap(map);	
+
+changeBloc(blocID);
+goTract(0);
+
+document.getElementById('holeDist').addEventListener('touchmove', function(event) {
+event.preventDefault();
+}, false);
+document.getElementById('changeScore').addEventListener('touchmove', function(event) {
+event.preventDefault();
+}, false);
+document.getElementById('holePlay').addEventListener('touchstart', function(event) {
+event.preventDefault();
+}, false);
+document.getElementById('holePlay').addEventListener('touchend', function(event) {
+event.preventDefault();
+}, false);
+
+holeMarker.position_changed = holePosChange;
+
+}
+
+
+function setMyPosition(map, lat, lng) {
+  var image = {
+    url: iciOn.src,
+    size: new google.maps.Size(14, 14),
+    origin: new google.maps.Point(0,0),
+    anchor: new google.maps.Point(0, 0)
+  };	  
+  var shape = {
+      coord: [1, 1, 14, 14],
+      type: 'rect'
+  };
+    var myLatLng = new google.maps.LatLng(lat, lng);
+    posMarker = new google.maps.Marker({
+        position: myLatLng,
+        map: map,
+        icon: image,
+		draggable: true,	
+		shape: shape,
+        title: "Ma localisation",
+        zIndex: 1
+		});
+	//posMarker.position_changed = calcPosDist;
+}	
+
+function setpiquetMarker(map, location) {
+  var image = {url:'images/piquet.png',
+  			size: new google.maps.Size(50, 50),
+			origin: new google.maps.Point(0,0),
+			anchor: new google.maps.Point(0, 10)};
+  var shape = {
+      coord: [1, 1, 50, 50],
+      type: 'rect'
+  };
+
+  piquetMarker = new google.maps.Marker({
+    position: location,
+	icon: image,
+	visible: false,
+	draggable: true,
+    map: map
+  });
+  piquetMarker.position_changed = stopPiquetDrag;
+}
+
+function changeBloc(B_id){
+var blockName;
+var blocForm = document.getElementById('blocForm');
+
+blocForm.style.visibility="hidden";
+blocID = B_id;
+blockName = 'B' + trouPar[blocID][0]
+document.getElementById("holeBloc").className = blockName;
+afficheTrou(trou, true);
+}
+
+function showBlocs(){
+
+var blocForm = document.getElementById('blocForm');
+
+blocForm.style.visibility="visible";
+
+}
+
+function calcPosDist(myLatLng, precision){
+var distance = calculDistance( posMarker.getPosition(), holeMarker.getPosition());
+
+	holeDist.innerHTML = distance + '<p id="accu">' + precision + '&apos;</p>';
+//alert(watchLoc);
+	if (distance.indexOf('M') != -1)
+		map.setCenter(myLatLng);
+		
+	if (piquetMarker.getVisible())
+		traceLine(piquetMarker.getPosition());
+		
+	if (watchLoc == 3 ){
+		parler(distance);
+		}
+}
+
+function holePosChange(){
+
+	if (piquetMarker.getVisible())
+		traceLine(piquetMarker.getPosition());
+
+}
+
+function localiser(chx){
+
+if (watchLoc == 0){
+	clearGeo();
+	getLocalisationErr();  //utils.js
+  }else
+	getLocalisation();
+}
+
+function clearGeo(){
+//alert(watchId);
+clearTimeout(locTimer);
+navigator.geolocation.clearWatch(watchId);
+lastDist = 1;
+if ('speechSynthesis' in window)
+	window.speechSynthesis.cancel();
+}
+
+function onLocSuccess(position) {
+var myLatLng = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+var precision = Math.round(position.coords.accuracy * 3.280839895013123);
+var boutonLoc = document.getElementById('boutonLoc');
+
+posMarker.setPosition(myLatLng);
+boutonLoc.className='itin';
+
+if (watchLoc == 2)
+	locTimer = setTimeout("getLocalisation();", 1000);
+
+calcPosDist(myLatLng, precision);
+
+}
+
+function getLocalisation(){
+	if (navigator.geolocation) {
+			//var options = { enableHighAccuracy:true, maximumAge:10000, timeout:10000, frequency: 2000 };
+		var options = { enableHighAccuracy:true, maximumAge:1000};
+		
+		navigator.geolocation.getCurrentPosition(onLocSuccess, onLocAffError, options);
+	}
+}
+
+function trouSuivant(p_m){
+
+trou = trou + p_m;
+
+if (trou > trouCoord.length)
+	trou = 1;
+if (trou == 0)
+	trou = trouCoord.length;
+	
+afficheTrou(trou);
+
+}
+
+function afficheTrou(noTrou, keepPosition){
+var holePar = document.getElementById("holePar");
+var holePlay = document.getElementById("holePlay");
+var layerHoles = document.getElementById('listeTrous');
+
+layerHoles.style.visibility="hidden";
+holeMarker.position_changed = null;
+
+if (!keepPosition)
+	map.setCenter(trouCoord[noTrou-1]);
+
+holeMarker.setPosition(trouCoord[noTrou-1]);
+
+holePar.innerHTML = trouPar[blocID][noTrou];
+holePlay.innerHTML = noTrou;
+trou = noTrou;
+
+holeMarker.position_changed = holePosChange;
+//holeDist.innerHTML = ' ';
+//var hea =google.maps.geometry.spherical.computeHeading( posMarker.getPosition(), holeMarker.getPosition());
+//alert(hea);
+//map.setHeading( hea );
+//map.setTilt(45);
+//alert(google.maps.geometry.spherical.computeHeading(posMarker.getPosition(),holeMarker.getPosition()));
+}
+
+function getPiquet(){
+var path = polyLine.getPath();
+var imgPiquet = document.getElementById('imgPiquet');
+var piquetDist = document.getElementById('piquetDist');
+var chxPiquetDist = document.getElementById('chxPiqDist');
+
+
+//alert(clicListener);
+  if (clicListener){
+	google.maps.event.removeListener(clicListener);
+	clicListener = null;
+	piquetDist.style.visibility="hidden";
+	chxPiquetDist.style.visibility="hidden";
+	path.clear();
+    piquetMarker.setVisible(false);
+	imgPiquet.width="3";
+  }else{
+	imgPiquet.width="16";
+	piquetDist.innerHTML = '';
+	piquetDist.style.visibility="visible";
+	clicListener = google.maps.event.addListener(map, 'click', addLatLng);
+  }
+}
+
+function addLatLng(event) {
+	movePiquet(event.latLng);
+}
+
+function movePiquet(latLng){
+	piquetMarker.setPosition(latLng);
+	piquetMarker.setVisible(true);
+}
+
+function traceLine(piquetLatLng){
+var path = polyLine.getPath();
+var piquetDist = document.getElementById('piquetDist');
+
+  path.clear();
+  path.push(piquetLatLng);
+  
+  if (chxDistPiq == 0){
+	path.push(posMarker.getPosition());
+	piquetDist.innerHTML = calculDistance(piquetLatLng, posMarker.getPosition());
+  }else{
+	path.push(holeMarker.getPosition());
+	piquetDist.innerHTML = calculDistance(piquetLatLng, holeMarker.getPosition());
+  }
+}
+
+function stopPiquetDrag(){
+
+traceLine(piquetMarker.getPosition());
+//alert("Move");
+}
+
+function calculDistance(pt1, pt2){
+var lat1 = pt1.lat();
+var lat2 = pt2.lat();
+var lon1 = pt1.lng();
+var lon2 = pt2.lng();
+var R = 6967410.324; // Rayon moyen en verge
+var rLat1 = lat1 * (Math.PI / 180);
+var rLat2 = lat2 * (Math.PI / 180);
+var dLat = (lat2-lat1) * (Math.PI / 180);
+var dLon = (lon2-lon1) * (Math.PI / 180);
+
+var a = Math.sin(rLat1) * Math.sin(rLat2) + Math.cos(rLat1) * Math.cos(rLat2) * Math.cos(dLon);
+    a = Math.acos(a);
+
+var d = R * a ;
+
+	d = Math.round(d);
+	if ( d > 1760){
+	  d = d / 1760;
+	  d = Math.round(d * 100) / 100;
+	  d = d + 'M';
+	  }
+	return d + '';
+
+}
+
+function getLoc(){
+var locForm = document.getElementById('locForm');
+var imgLoc = document.getElementById('imgLoc');
+var image = new google.maps.MarkerImage(iciOff.src);
+var boutonLoc = document.getElementById('boutonLoc');
+
+boutonLoc.className='itin';
+posMarker.setIcon(image);
+
+	clearGeo();
+	if ( locForm.style.visibility == "visible"){
+		locForm.style.visibility="hidden";
+	}else{
+		locForm.style.visibility="visible";
+	}
+imgLoc.src=iciOff.src;
+
+var sh = posMarker.getIcon();
+posMarker.setIcon(sh);
+//alert(sh);
+}
+
+function goTract(chx){
+var boutonLoc = document.getElementById('boutonLoc');
+var locForm = document.getElementById('locForm');
+var imgLoc = document.getElementById('imgLoc');
+var image = new google.maps.MarkerImage(iciOn.src);
+
+watchLoc = chx;
+if (watchLoc == 3 )
+	initVoice();
+
+posMarker.setIcon(image);
+
+boutonLoc.className='itinS';
+
+locForm.style.visibility="hidden";
+imgLoc.src=iciOn.src;
+localiser(watchLoc);
+
+}
+
+
+function chxPiqDist(){
+var chxPiqD = document.getElementById('chxPiqDist');
+
+chxPiqD.style.visibility="visible";
+
+}
+
+function setChxPiqDist(chx){
+var chxPiqD = document.getElementById('chxPiqDist');
+
+chxDistPiq = chx;
+chxPiqD.style.visibility="hidden";
+if (piquetMarker.getVisible())
+	traceLine(piquetMarker.getPosition());
+}
+
+function UpdateXY(divName) {
+var layerDiv = document.getElementById(divName);
+box_x = layerDiv.offsetLeft;
+box_y = layerDiv.offsetTop;
+
+move_x = event.touches[0].pageX;
+move_y = event.touches[0].pageY;
+
+if (move_x > box_x-225 && move_x < box_x+225 && move_y > box_y-225 && move_y < box_y+225) {
+PositionFlag = 1;
+}
+else {
+PositionFlag = 0;
+}
+
+if (once == 0) {
+diff_x = move_x - box_x;
+diff_y = move_y - box_y;
+}
+
+if (PositionFlag == 1) {
+xx = move_x - diff_x-30;
+yy = move_y - diff_y;
+xx = xx + 'px';
+yy = yy + 'px';
+layerDiv.style.left = xx;
+layerDiv.style.top = yy;
+once = 1;
+}
+//alert(yy);
+//alert(layerDiv.style.top);
+}
+
+function showScoreFrame(strParc){
+var layerScore = document.getElementById('showScore');
+var xmlhttp;
+
+if (document.getElementById('setScore'))
+layerScore.removeChild(document.getElementById('setScore'));
+
+layerScore.style.visibility="visible";
+
+if (window.XMLHttpRequest)
+  {// code for IE7+, Firefox, Chrome, Opera, Safari
+  xmlhttp=new XMLHttpRequest();
+  }
+
+xmlhttp.onreadystatechange=function()
+  {
+  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+    {
+    layerScore.innerHTML=xmlhttp.responseText;
+	setScore.nbrCoups.focus();
+	setScore.nbrCoups.click();
+    }
+  }
+xmlhttp.open("GET","scoreGet.asp?parcours="+ strParc + "&trou=" + document.getElementById("holePlay").innerHTML,true);
+//alert("scoreGet.asp?joueur=cdore00&parcours="+ <%=strParc%> + "&trou=" + document.getElementById("holePlay").innerHTML);
+xmlhttp.send();
+}
+
+function closeScore(){
+var layerScore = document.getElementById('showScore');
+
+//alert(setScore.nbrCoups[setScore.nbrCoups.selectedIndex].value);
+layerScore.style.visibility="hidden";
+}
+
+function saveScore(formRef){
+var myScore = document.getElementById('myScore');
+var xmlhttp;
+var score = formRef.nbrCoups[formRef.nbrCoups.selectedIndex].value;
+var putt = formRef.nbrPutts[formRef.nbrPutts.selectedIndex].value;
+var penal = formRef.nbrPen[formRef.nbrPen.selectedIndex].value;
+//alert(formRef);
+
+xmlhttp=new XMLHttpRequest(strParc);
+
+xmlhttp.onreadystatechange=function()
+  {
+  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+    {
+    myScore.innerHTML=xmlhttp.responseText;
+	//alert(xmlhttp.responseText);
+    }
+  }
+
+xmlhttp.open("GET","scoreSave.asp?parcours="+ strParc + "&trou=" + document.getElementById("holePlay").innerHTML + "&score=" + score + "&putt=" + putt + "&penal=" + penal,true);
+xmlhttp.send();
+//alert("scoreSave.asp?joueur=cdore00&parcours="+ <%=strParc%> + "&trou=" + document.getElementById("holePlay").innerHTML + "&score=" + score + "&putt=" + putt + "&penal=" + penal);
+
+closeScore();
+}
+
+function tableauScore(formRef){
+saveScore(formRef);
+var localWindow = window.open('scoreTab.asp?parcours=' + strParc);
+localWindow.document.close();
+closeScore();
+}
+
+function detectLong(idName){
+locTimer = setTimeout("showDiv('" + idName + "');", 900);
+touchin = true;
+}
+
+function showDiv(idName){
+
+if (touchin == true){
+	var divElement = document.getElementById(idName);
+	divElement.style.visibility = "visible";
+	touchin = false;
+}
+
+}
+
+function initVoice(){
+
+if ('speechSynthesis' in window) {
+//	msg.voice = speechSynthesis.getVoices().filter(function(voice) { return voice.name == 'Google français'; })[0];
+	msg.default= false;
+	msg.localService=false;
+	msg.lang= "fr-FR";
+	msg.name= "Google Français";
+	msg.voiceURI= "Google Français";
+}else{
+	alert('Synthèse vocale non supportée par le fureteur.');
+	watchLoc = 0;}
+}
+
+function parler(laDistance){
+var time1 = new Date();
+var actTime = time1.getTime(time1);
+
+//alert(Math.abs(lastDist - laDistance) + '  Time=' + (actTime-lastTime) + ' lastTime= ' + lastTime + ' lastDist= ' + lastDist);
+
+if ( laDistance > 30 && Math.abs(laDistance - lastDist) > 10 && (actTime - lastTime > 30000 || lastTime == 1 ) ){
+	//alert(trouPar[0][trou]);
+	msg.text = laDistance + ' verges, trou ' + trou 
+	//+ ' Dernière distance ' + actDist ;
+	window.speechSynthesis.speak(msg);
+	lastDist = laDistance;
+	//lastTime = actTime;
+}
+
+if (lastDist != 1)  // géolocalisation arrêté clearGeo() = 1 
+	getLocalisation();
+if (Math.abs(laDistance - actDist) > 15){
+	actDist = laDistance;
+	lastTime = actTime;
+	}
+}
+
+function getInfo(path, callback){
+
+var xhr=new XMLHttpRequest();
+
+  xhr.onloadend = function() {
+    var text = xhr.responseText;
+	var x=JSON.parse(text);
+	if (callback)
+		callback(x);
+  };
+xhr.open("GET", HOSTserv + path ,true);
+xhr.send();
+
+var x;
+}
+
+function initPage(){
+var titClub = document.getElementById('titClub'); 
+var changeScore = document.getElementById('changeScore'); 
+var urlInfo = document.location.href;
+
+userId = GetCookie("userID");
+if (!userId)
+	changeScore.style.visibility = "hidden";
+
+if (urlInfo.indexOf("data=") == -1){
+	var url = window.location.href
+	var arr = url.split("/");
+	var URLresult = arr[0] + "//" + arr[2] + "/";
+	//document.location.href = URLresult;
+}else{
+	var data = (urlInfo.substring(urlInfo.indexOf("data=") + 5));
+}
+data = data.split("&");
+var courseID = data[0];
+titClub.innerHTML = decodeURI(data[1]);
+//userId = GetCookie("userName");
+
+getInfo("getGolfGPS?data=" + courseID, showCourse);
+
+}
+
+
+function showCourse(oGps){
+var bloc = oGps[0].parc;
+var blocForm = document.getElementById('blocForm'); 
+var holeList = document.getElementById('holeList'); 
+//<tr>
+//<td><a href="#"; onclick="afficheTrou(1)">1</a></td>
+
+
+for (var i= 0; i < oGps.length; i++){
+	trouCoord[i] = new google.maps.LatLng(oGps[i].latitude, oGps[i].longitude);
+}
+
+var nt = 19;
+if(bloc[0].T14 == null || bloc[0].T14 == 0)
+	nt = 10;
+	
+if (nt == 19){
+var trElem = document.createElement("tr");
+for (var i= 10; i < nt ; i++){
+		var tdElem = document.createElement("td");
+		tdElem.innerHTML = '<a href="#"; onclick="afficheTrou(' + i + ')">' + i +'</a>';
+		trElem.appendChild(tdElem);
+	}
+	holeList.appendChild(trElem);
+}
+
+var noB = 0;
+for (var i= 0; i < bloc.length; i++){
+	if (bloc[i].Bloc != "Normale" && bloc[i].Bloc != "Hdcp" && bloc[i].Bloc !=  "" ){
+		trouPar[noB] = arrB(bloc[i], nt);
+		var divElem = document.createElement("div");
+		divElem.setAttribute('onclick', 'changeBloc(' + noB + ')');
+		divElem.setAttribute('class', 'B' + bloc[i].Bloc);
+		divElem.innerHTML = bloc[i].Bloc;
+		blocForm.appendChild(divElem);
+		noB += 1;
+		}
+}
+
+	function arrB(b, n){
+		var a = b.Bloc;
+		for (var j = 1; j < n; j++) {
+			var x = "b.T" + j;
+				a += ',' + eval(x);
+		}
+	return a.split(",");;
+	}
+
+initialize();
+
+}
+
+
+// -->
+</script> 
+</head>
+  
+<body onload='initPage()' onUnload='clearGeo()' > 
+
+<div id="menuGPS" class="unselectable">
+<button class="bouton-prec-suiv" onclick="trouSuivant(-1)"><img  height="18" width="13" alt="Trou précédent" src="images/prec.png" /></button>
+<img id="imgFlag" onclick="trouSuivant(-1)" height="25" width="16" src="images/flag.png" />
+<div id="holePlay" onclick="trouSuivant(1)" ontouchstart="detectLong('listeTrous');" ontouchend="touchin = false;" onmouseover="detectLong('listeTrous');" onmouseout="touchin = false;"></div>
+<button class="bouton-prec-suiv" onclick="trouSuivant(1)"><img height="18" width="13" alt="Trou suivant" src="images/suiv.png" /></button>
+
+<div id="hole" onclick="showBlocs();" ><div id="holePar"></div><div id="holeBloc" ></div></div>
+<button id="boutonPiquet" class="itin" title="Placer un piquet" onclick="getPiquet(); return false;"><img id="imgPiquet" height="18" width="3" src="images/piquet.png" /></button>
+<button id="boutonLoc" class="itin" title="Localiser" onclick="getLoc(); return false;"><img id="imgLoc" height="18" width="18" alt="Localiser" src="images/ici.png" /></button>
+<!--
+<div id="boutonTaille"><button type="button" id="rightnav" title="Taille de police" onclick="changeTaille()"><img id="imgTaille" alt="Taille de police" height="20" width="45" src="images/taille.png" /></button></div>
+</div>
+// -->
+<div id="mapZoom" class="unselectable">
+<button class="boutonZoom" title="Zoom in" onclick="zoomMap(1); return false;">+</button>
+<button class="boutonZoom" title="Zoom out" onclick="zoomMap(-1); return false;">-</button>
+</div>
+
+<div id="blocForm">
+
+</div>
+
+<div id="holeDist" class="unselectable" ontouchmove="UpdateXY('holeDist');" onmousedown="PositionFlag=1;" onmouseup="PositionFlag=0;once=0;"></div>
+
+<div id="changeScore" class="unselectable" ontouchmove="UpdateXY('changeScore');" onmousedown="PositionFlag=1;" onmouseup="PositionFlag=0;once=0;"><img onclick="showScoreFrame()" alt="Réglages" src="images/reglages.png" /><div id="myScore"></div></div>
+
+<div id="piquetDist" onclick="chxPiqDist()"></div>
+<div id="locForm">
+<table id="typeLocList">
+<tr><td><a href="#"; onclick="goTract(0)">Suivre</a></td></tr>
+<tr><td><a href="#"; onclick="goTract(1)">Repérer</a></td></tr>
+<tr><td><a href="#"; onclick="goTract(2)">Continue</a></td></tr>
+<tr><td><a id="chxParler" href="#"; onclick="goTract(3)">Parler</a></td></tr>
+</table>
+</div>
+<div id="chxPiqDist"><a href="#" onclick="setChxPiqDist(0)"><img id="imgLoc" height="16" width="16" alt="Distance de ma position" src="images/ici.png" /></a><a href="#" onclick="setChxPiqDist(1)"><img id="imgLoc" height="25" width="16" alt="Distance du drapeau" src="images/flag.png" /></a></div>
+
+<div id="listeTrous">
+<table>
+<tbody id="holeList">
+<tr>
+<td><a href="#"; onclick="afficheTrou(1)">1</a></td>
+<td><a href="#"; onclick="afficheTrou(2)">2</a></td>
+<td><a href="#"; onclick="afficheTrou(3)">3</a></td>
+<td><a href="#"; onclick="afficheTrou(4)">4</a></td>
+<td><a href="#"; onclick="afficheTrou(5)">5</a></td>
+<td><a href="#"; onclick="afficheTrou(6)">6</a></td>
+<td><a href="#"; onclick="afficheTrou(7)">7</a></td>
+<td><a href="#"; onclick="afficheTrou(8)">8</a></td>
+<td><a href="#"; onclick="afficheTrou(9)">9</a></td>
+</tr>
+<tbody>
+</table>
+</div>
+
+<div  id="map_canvas"></div >
+
+<div id="showScore"></div>
+
+<script type="text/javascript" language="Javascript">
+<!--
+//alert("ok22");
+holeDist = document.getElementById("holeDist");
+
+if ('speechSynthesis' in window) {
+ var elementP  =  document.getElementById('chxParler');
+    elementP.addEventListener('click', function () {
+	window.speechSynthesis.cancel();
+    var msg1 = new SpeechSynthesisUtterance('');
+    window.speechSynthesis.speak(msg1);
+	lastTime = 1; // Parler maintenant
+	lastDist = 0;
+    })
+}
+// -->
+</script>
+
+  </body> 
+</html>

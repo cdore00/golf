@@ -12,8 +12,8 @@
 <link href="misc/init.css" rel="stylesheet" media="screen" type="text/css" />
 <link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
 <title>Clubs de golf au Qu&eacute;bec</title>
-<meta content="Golf, QuÃ©bec, Canada, Golf du QuÃ©bec, Clubs de golf au QuÃ©bec, QuÃ©bec golf" name="keywords" />
-<meta content="RÃ©pertoire des clubs de golf du QuÃ©bec." name="description" />
+<meta content="Golf, Québec, Canada, Golf du Québec, Clubs de golf au Québec, Québec golf" name="keywords" />
+<meta content="Répertoire des clubs de golf du Québec." name="description" />
 
 <script type="text/javascript" src="misc/googGeo.js"></script>
 <script type="text/javascript" src="misc/util.js"></script> 
@@ -28,11 +28,12 @@
 <!-- 
 
 var userId = null;
+var userName = null;
 var watchId = null;
 var locTimer;
 var resultLocalisation = 1000;
 var affL, LocT;
-var HOSTserv = "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
+var HOSTserv = "http://127.0.0.1:3000/";
 // "http://127.0.0.1:3000/";
 // "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
 
@@ -69,7 +70,7 @@ xhr=new XMLHttpRequest();
 	if (callback)
 		callback(x);
   };
-xhr.open("GET", HOSTserv + path + "?",true);
+xhr.open("GET", HOSTserv + path ,true);
 xhr.send();
 
 var x;
@@ -175,7 +176,19 @@ adjustPol(formPref.polSize[formPref.polSize.selectedIndex]);
 
 }
 
+function adjustPol(selOption){
+var span1 = document.getElementById('lbl1');
+var span2 = document.getElementById('lbl2');
+var span3 = document.getElementById('lbl3');
+
+	span1.style.fontSize = selOption.value;
+	span2.style.fontSize = selOption.value;
+	span3.style.fontSize = selOption.value;	
+	setFontSize(selOption.value);
+}
+
 function setIdent(){
+var formAuth = document.getElementById('formAuth');
 var prefLayer = document.getElementById('prefLayer');
 var identLayer = document.getElementById('identLayer');
 
@@ -211,10 +224,10 @@ xmlhttp.onreadystatechange=function(){
     res=unescape(xmlhttp.responseText);
 	
 	//alert(res.indexOf("Vous &ecirc;tes"));
-	if (res.indexOf("Vous Ãªtes identifi") ==  0 ){
+	if (res.indexOf("Vous êtes identifi") ==  0 ){
 		SetCook("userName",userCour);
 		closePref();}
-//alert(escape('Ã¨ÃªÃ '));
+//alert(escape('èêà'));
 	alert(res);
     }
   }
@@ -226,34 +239,31 @@ xmlhttp.send();
 }
 
 function authentif(){
-//var myScore = document.getElementById('myScore');
-var res;
-var xmlhttp;
+var formAuth = document.getElementById('formAuth');
 var userCour = formAuth.nameUser.value;
 var userPass = formAuth.passwordUser.value;
-
 //alert(score);
+getInfo("identUser?data=" + userCour + "$pass$" + userPass, validUser);
+}
 
-xmlhttp=new XMLHttpRequest();
-
-xmlhttp.onreadystatechange=function(){
-  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-    {
-    res=unescape(xmlhttp.responseText);
-	
-	//alert(res.indexOf("Vous &ecirc;tes"));
-	if (res == 0 ){
-		SetCook("userName",userCour);
-		closePref();
-	}else
-	alert(res);
-//alert(escape('Ã¨ÃªÃ '));
-    }
-  }
-  
-xmlhttp.open("GET","userAuth.asp?userCour=" + userCour + "&userPass=" + userPass,true);
-xmlhttp.send();
-
+function validUser(rep){
+var formAuth = document.getElementById('formAuth');
+var userCour = formAuth.nameUser.value;
+if (rep[0].result){
+	var modalDiv = document.getElementById('modalDiv');
+	var identLayer = document.getElementById('identLayer');
+	var leftbutton = document.getElementById('leftbutton');
+	leftbutton.style.visibility="visible";
+	modalDiv.style.visibility="hidden";
+	identLayer.style.visibility="hidden";
+	SetCook("userName",userCour);
+	SetCook("userID",rep[0].result + "");
+	userId = rep[0].result;
+	userName = userCour;
+}else{
+	DelCookie("userID");
+	alert("Utilisateur ou mot de passe non valide.");
+}
 }
 
 function showPref(){
@@ -382,9 +392,9 @@ navigator.geolocation.clearWatch(watchId);
 		var donn = "";
 		for (var i=0;i<locColl.coord.length;i++)
 		{
-		donn = donn + "\nCoord" + i + ": " + locColl.coord[i].lat + ", " + locColl.coord[i].lng + ", Pr&eacute;c:" + locColl.coord[i].acc;
+		donn = donn + "\nCoord " + i + ": " + locColl.coord[i].lat + ", " + locColl.coord[i].lng + ", Prec: " + locColl.coord[i].acc;
 		}
-			alert(locColl.coord.length + "\nR&eacute;sult:" + resultLocalisation + donn);
+			alert(locColl.coord.length + "\nResult:" + resultLocalisation + donn);
 	}
 }
 
@@ -545,16 +555,17 @@ function checkCookie(){
 }
 
 function initPage(){
-userId = GetCookie("userName");
+userId = GetCookie("userID");
+//userName = GetCookie("userName");
 
 localStorage.setItem('HOSTserv', HOSTserv);
 
-//if (userId){
+if (userId){
 	var leftbutton = document.getElementById('leftbutton');
 	leftbutton.style.visibility="visible";
-//}
+}
 
-getInfo("getRegions", listRegions);
+getInfo("getRegions?", listRegions);
 
 }
 
@@ -587,32 +598,57 @@ var URLresult = "listeResult.html?data=";
 localStorage.removeItem('idList');
 
 if (formCrit.Mots.value != ""){
-	URLresult += "1$" + encodeURI(formCrit.Mots.value);
+	var mess = "&nbsp;clubs&nbsp;o&#249; &#171;" + formCrit.Mots.value + "&#187; est contenu dans le ";
+	URLresult += "1$";
+	if (formCrit.checkNom.checked){
+		URLresult += encodeURI(formCrit.Mots.value) + "$";
+		localStorage.setItem('checkNom', true);
+		mess += " nom du club de golf";
+		if (formCrit.checkVille.checked)
+			mess += "&nbsp;o&#249; le nom de la ville du club.";
+		else
+			mess += ".";
+	}else{
+		URLresult += "xxxxx$";
+		localStorage.setItem('checkNom', false);
+	}	
+	if (formCrit.checkVille.checked){
+		URLresult += encodeURI(formCrit.Mots.value);
+		localStorage.setItem('checkVille', true);
+		if (!formCrit.checkNom.checked)
+			mess += "&nbsp;le nom de la ville du club.";
+	}else{
+		URLresult += "xxxxx";
+		localStorage.setItem('checkVille', false);
+	}	
 	localStorage.setItem('motsCleContext', formCrit.Mots.value);
+	localStorage.setItem('message', mess);
 }else{
 	localStorage.removeItem('motsCleContext');
 	if (formCrit.IdRegion.value != 0){
 		localStorage.setItem('regionIdContext', formCrit.IdRegion.selectedIndex);
-		localStorage.setItem('regionContext', formCrit.IdRegion.options[formCrit.IdRegion.selectedIndex].innerHTML);
+		//localStorage.setItem('message', formCrit.IdRegion.selectedIndex);
+		localStorage.setItem('message', "&nbsp;clubs dans la r&#233;gion &#171;" + formCrit.IdRegion.options[formCrit.IdRegion.selectedIndex].innerHTML + "&#187;.");
 		URLresult += "2$" + formCrit.IdRegion.value;
 	}else{
-		localStorage.removeItem('regionContext');
+		//localStorage.removeItem('regionContext');
 		localStorage.removeItem('regionIdContext');
 		if (formCrit.kiloM.value != 0){
 			if (formCrit.codePostal.value != ""){
-				codeAddress(formCrit.codePostal.value , formCrit.kiloM.value * 1000);
+				  localStorage.setItem('message', "&nbsp;clubs&nbsp;&#224; moins de " + formCrit.kiloM.value + "&nbsp;kilom&#232;tre du code postal &#171;" + formCrit.codePostal.value + "&nbsp;&#187;.");
+				codeAddress(formCrit.codePostal.value , formCrit.kiloM.value * 1000, URLresult );
 				return false;
-			}else
+			}else{
 				URLresult += "3$" + formCrit.longitude.value + "$" + formCrit.latitude.value + "$" + (formCrit.kiloM.value * 1000);
+				localStorage.setItem('message', "&nbsp;clubs&nbsp;&#224; moins de " + formCrit.kiloM.value + "&nbsp;kilom&#232;tre d'o&#249; vous &#234;tes.");
+			}
 		}
 	}
 }
-
 document.location.href = URLresult;
 }
 
-
-function codeAddress(postCode, distance) {
+function codeAddress(postCode, distance, URLresult) {
 if (distance == 0){
 	alert("Choisir une distance pour le code postal");
 	return false;
@@ -621,16 +657,19 @@ geocoder = new google.maps.Geocoder();
   var address = postCode;
   geocoder.geocode( { 'address': address}, function(results, status) {
     if (status == google.maps.GeocoderStatus.OK) {
-	  alert(results[0].geometry.location);
+	  //alert(results[0].geometry.location);
+	  var lng = results[0].geometry.location.lng();
+	  var lat = results[0].geometry.location.lat();
+	  URLresult += "3$" + lng + "$" + lat + "$" + distance;
+	  document.location.href = URLresult;
     } else {
-      alert('Geocode was not successful for the following reason: ' + status);
+      alert('Code postal non retrouvé : ' + status);
     }
   });
 }
 
-
-
-
+//URLresult += "3$" + results[0].geometry.location.lng() + "$" + results[0].geometry.location.lat() + "$" + distance;
+//alert('Code postal non retrouvé : ' + status);
 
 // -->
 </script>
@@ -648,7 +687,7 @@ geocoder = new google.maps.Geocoder();
 <div id="topbar" class="vert">
 <div id="logoHome"><img alt="home" width="25" height="25" src="images/golf.png" /></div>
 <div id="titre">Golfs du Qu&eacute;bec</div>
-<div id="rightnav"> <a title="R&eacute;initialiser la recherche" href="default.asp?indNew=O"><img alt="home" height="25" width="25" src="images/home25.png" /></a> </div>
+<div id="rightnav"> <a title="R&eacute;initialiser la recherche" href="default.html"><img alt="home" height="25" width="25" src="images/home25.png" /></a> </div>
 </div>
 
 <form id="critere" name="critere" action="#" method="get">
@@ -661,7 +700,7 @@ geocoder = new google.maps.Geocoder();
 		<ul class="pageitem">
 		
 			  <div class="formrow1" >
-				<div id="formradio" class="divChxChamp"><input type="radio" checked name="champRecherche" value="Nom"> Nom du club&nbsp;&nbsp;<input type="radio" name="champRecherche" value="Ville"> Ville</div>
+				<div id="formradio" class="divChxChamp"><input id="checkNom" type="checkbox" checked value="Nom"><label for="checkNom">&nbsp;Nom du club</label>&nbsp;&nbsp;<input id="checkVille" type="checkbox" checked value="Ville"><label for="checkVille">&nbsp;Ville</label></div>
 			    <div id="divMot"><label for="Mots">Mot cl&eacute; </label></div>
 			    <div id="inputtextmot"><input id="Mots" class="inputtext" name="Mots" oninput="showLocalisation()"; type="text" size="17" maxlength="50" value=""/></div>
 			  </div>
@@ -674,8 +713,8 @@ geocoder = new google.maps.Geocoder();
 			      </SELECT></div></div>
 
 			  <div class="formrow1">
-			  <div id="formradio" class="divChxChamp">&nbsp;&nbsp;<label for="kiloM">Proximit&eacute;</label></div>
-			    <div id="divCod"><label for="codePostal">Code postal </label></div>
+			  <div id="formradio" class="divChxChamp">&nbsp;&nbsp;<label for="codePostal">Code postal</label></div>
+			    <div id="divCod"><label for="kiloM">Proximit&eacute;</label></div>
 			    <div id="inputtextcod">
 			    <input id="codePostal" class="inputtext" name="codePostal"  oninput="showLocalisation()"; type="text" size="8" maxlength="7" value=""/>
 				</div>
@@ -711,15 +750,91 @@ geocoder = new google.maps.Geocoder();
 
 <div id="bottombar" class="vert">
 <!--<div id="message"></div>  // -->
-<div id="leftbutton"> <a title="Favoris" href="javascript:getInfo('getFav', listFav);"><img alt="Favoris" width="30" height="30" src="images/favorisOff.png" /></a> </div>
+<div id="leftbutton"> <a title="Favoris" href="javascript:getInfo('getFav?', listFav);"><img alt="Favoris" width="30" height="30" src="images/favorisOff.png" /></a> </div>
 <div id="rightbutton"> <a title="Pr&eacute;f&eacute;rences" href="javascript:setPref();"><img alt="R&eacute;glages" width="32" height="32" src="images/reglages.png" /></a> </div>
 </div>
 
-<!-- #include file = "pied_page.asp" -->
+<div id="copyright">
+<a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2017</a>
+</div>
 
 <div id="modalDiv"><div class="loading"></div></div>
-<div id="prefLayer"><!-- #include file = "prefer.asp" --></div>
-<div id="identLayer"><!-- #include file = "authentifier.asp" --></div>
+<div id="prefLayer">
+
+<div id="menu">
+  <ul id="onglets">
+    <li class="active"><a href="" onClick="return false;"> Pr&#233;f&#233;rences </a></li>
+    <li><a href="" onClick="setIdent(); return false;"> Identification </a></li>
+  </ul>
+</div>
+<!-- <div id="titrePref">Préférences</div> // -->
+
+<form id="formPref">
+<div id="prefOptions">
+
+<div class="prefList">
+<label for="polSize" id="lbl1" class="prefLbl">Taille de police</label><div class="prefVal"><select id="polSize" onchange="adjustPol(this);">
+ <option value="0.9em">Petite</option>
+ <option value="1em" >Moyenne</option>
+ <option value="1.1em" >Grande</option>
+</select></div></div>
+
+<div class="prefList">
+<label for="locTime" id="lbl3" class="prefLbl">D&#233;lai de localisation</label><div class="prefVal">
+<select id="locTime">
+ <option value="0">Non</option>
+ <option value="1">1 s.</option>
+ <option value="3">3 s.</option>
+ <option value="5">5 s.</option> 
+ <option value="10">10 s.</option>
+ <option value="20">20 s.</option>
+</select></div></div>
+
+<div class="prefList"><label for="locDisplay" id="lbl2" class="prefLbl">Afficher localisations</label><div class="prefVal"><input id="locDisplay" type="checkbox" value=""/></div></div>
+
+</div>
+
+<div>
+<input id="okPref" class="bouton" type="submit" onClick="savePref(this.parentNode.parentNode); return false;" value="      Ok      " /><input id="annulePref" class="bouton" type="button" onClick="closePref(); return false;" value="  Annuler  " />
+</div>
+</form>
+
+</div>
+<div id="identLayer">
+<div id="menu">
+  <ul id="onglets">
+    <li><a href="" onClick="showPref(); return false;"> Pr&#233;f&#233;rences </a></li>
+    <li class="active"><a href="" onClick="return false;"> Identification </a></li>
+  </ul>
+</div>
+<!-- <div id="titrePref">Préférences</div> // -->
+
+<form id="formAuth">
+<div id="identOptions">
+
+<div class="prefList">
+<label for="nameUser" id="lbl1" class="identLbl">Courriel</label><div class="prefVal">
+<input id="nameUser" type="text" size="15" maxlength="50">
+</div></div>
+
+<div class="prefList">
+<label for="passwordUser" id="lbl1" class="identLbl">Mot de passe</label><div class="prefVal">
+<input id="passwordUser" type="password" size="15" maxlength="50">
+</div></div>
+
+<div class="prefList">
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="" id="newIdent" onclick="newIdent(); return false;">Nouvelle identification</a>
+</br></br>&nbsp;&nbsp;&nbsp;&nbsp;<a id="butGame" class="itin" target="_blank" href="score_liste.asp">Parties jou&#233;es</a>
+</div>
+
+</div>
+
+<div>
+<input id="okPref" class="bouton" type="submit" onClick="authentif(); return false;" value="      Ok      " /><input id="annulePref" class="bouton" type="button" onClick="closePref(); return false;" value="  Annuler  " />
+</div>
+</form>
+</div>
+
 <div id="authLayer"></div>
 
 </div>
