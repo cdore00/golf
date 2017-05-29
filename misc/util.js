@@ -9,6 +9,10 @@ if (document.images) {
 	img2.src = "images/taille2.png";
 	img3.src = "images/taille3.png";
 }
+
+function DelCookie(name) {
+    document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
 	
 function getCookieVal(offset){
 var endstr = document.cookie.indexOf(";", offset)

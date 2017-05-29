@@ -1,0 +1,258 @@
+body {
+-webkit-user-select: none;
+}
+
+
+button{
+font-size:0;
+/* margin:-5px; */
+}
+
+
+#menuGPS{
+font-size:1em;
+position:absolute;
+background-color:#eee;
+display:inline;
+top:0px;
+left:0px;
+width:100%;
+margin:0;
+/*padding:1px 0px 2px 0px;*/
+z-index: 1001;
+-webkit-user-select: none;
+}
+
+#piquetDist, #holeDist, #locForm, #blocForm, #chxPiqDist, #changeScore, #listeTrous{
+position:absolute;
+background-color:#fff;
+font-weight:bold;
+top:1.5em;
+margin:0;
+margin-left:40px;
+padding:0;
+visibility:hidden;
+
+}
+
+#piquetDist, #holeDist, #chxPiqDist, #changeScore{
+background-color:transparent;
+color: #ffffff;
+min-width:2em;
+text-align:center;
+min-height:1.2em
+}
+
+#holeDist, #changeScore{
+/*font-size:1em;*/
+top:2em;
+visibility:visible;
+}
+
+#holeDist{
+left:0.8em;
+z-index: 1004;
+}
+
+#changeScore{
+font-size:1em;
+top:2.5em;
+left:4em;
+z-index: 1007;
+}
+
+#piquetDist{
+background-color:#fff;
+left:3.7em;
+z-index: 1005;
+color:#000;
+text-decoration:underline;
+cursor: pointer;
+border-bottom-left-radius: 0.5em;
+border-bottom-right-radius: 0.5em;
+}
+
+#chxPiqDist{
+background-color:#fff;
+left:3.5em;
+z-index: 1010;
+cursor: pointer;
+border:2px solid #000;
+}
+
+#chxPiqDist a{
+padding: 5px;
+}
+
+#locForm, #blocForm{
+left:3.3em;
+width:auto;
+text-align:center;
+z-index: 1008;
+overflow:hidden;
+}
+
+#blocForm{
+left:2em;
+top:1.5em;
+}
+
+#listeTrous{
+margin-left:1px;
+top:1.5em;
+z-index: 1119;
+}
+
+#blocForm div{
+display:block;
+border:2px solid #aaa;;
+}
+
+#holeBloc{
+border:1px solid #000;
+height:3px;
+width:1.6em;
+}  
+
+#hole{
+display:inline-block;
+margin-bottom:2px;
+}
+
+#holePlay, #holePar{
+position:relative;
+margin:0;
+padding:0;
+font-weight:bold;
+top:0px;
+display:inline-block;
+text-align:center;
+}
+
+#holePlay{
+width:0.9em;
+text-align:right;
+margin-left: -10px;
+}
+
+#holePar{
+width:1.5em;
+}
+
+#boutonPiquet, #boutonLoc{
+margin-top:2px;
+background-color:#eee;
+font-size:1em;
+display:inline;
+width:1.4em;
+height: 1.4em;
+margin-left:0em;
+text-align:center;
+cursor: pointer;
+}
+
+#boutonPiquet img, #boutonLoc img{
+padding-top:2px;
+}
+
+#rightnav{position:absolute;font-size:0px;padding-right:10px;right:0px;background:transparent;border:0px;cursor:pointer;z-index: 1000;}
+
+#typeLocList, #holeList{
+border-spacing: 0em;
+border:2px solid #aaa;
+}
+
+#typeLocList td, #holeList td{
+font-size:0.8em;
+font-weight:bold;
+background-color: #eee;
+border:1px solid #aaa;
+margin:0;
+padding:0;
+margin-left:2px;
+text-align:left;
+text-decoration:none;
+}
+
+#typeLocList a, #holeList a{
+display:inline-block;
+font-size: 1em;
+font-weight:bold;
+color: #000;
+text-decoration:none;
+width:4.3em;
+height: 1.4em;
+}
+
+#holeList a{
+width:1em;
+text-align:center;
+}
+
+#typeLocList a:hover, #typeLocList a:focus{
+color: #FF3333;
+background:-moz-linear-gradient(top,#ddd,#ddd);
+}
+
+.bouton-prec-suiv{
+background-color:#eee;
+padding-top:0.2em;
+width:15px;
+border:0;
+margin:0;
+padding:0;
+text-align:center;
+cursor: pointer;
+}
+
+.itin {
+
+}
+
+	.itinS{
+		padding-left:5px;padding-right:5px;
+border:1px solid #999;
+border-radius:7px;
+box-shadow: 1px 1px 1px #ccccdd, 2px 2px 2px #aaaaaa inset;
+   -o-box-shadow: 2px 2px 2px rgba(200,0,0,0.5),
+   inset 2px 2px 2px rgba(255,255,255,0.75);
+   -webkit-box-shadow: 1px 1px 1px rgba(204,204,221,0.5),
+   inset 2px 2px 2px rgba(170,170,170,0.75);
+   -moz-box-shadow: 2px 2px 2px rgba(0,0,0,0.5),
+   inset 2px 2px 2px rgba(255,255,255,0.75);
+		-webkit-animation: color .5s infinite;
+		   -moz-animation: color .5s infinite;
+	}
+
+#accu{
+position:absolute;
+top:1.6em;
+font-size:0.6em;
+}
+
+#showScore{
+position:absolute;
+background-color:#eee;
+font-size:0.9em;
+font-weight:bold;
+text-align:center;
+top:0px;
+left:0;
+width:100%;
+height:100%;
+visibility:hidden;
+z-index: 1100;
+}
+
+select,input{font-size:1em;padding:0;text-align:center;}
+
+table.cartePts{width:100%}
+table.cartePts th,td{width:1.2em;font-size:0.8em;border-bottom: 1px solid #FFFFFF;border-right: 1px solid #FFFFFF;text-align: center;}
+
+#changeTaille{
+float: right;
+background-color:transparent;
+border:0;
+margin:3px
+}
+
