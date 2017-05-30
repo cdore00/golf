@@ -22,6 +22,7 @@
 
 var HOSTserv = localStorage.getItem("HOSTserv");
 var clubPos = null;
+var progressBar;
 
 function ficheClub (IdClub) {
 var url = 'ficheClub.html?data=' + IdClub;
@@ -33,9 +34,19 @@ function getInfo(path, callback){
 
 var xhr=new XMLHttpRequest();
 
-  xhr.onloadend = function() {
+  xhr.onprogress = function(pe) {
+	if(pe.lengthComputable) {
+	  //progressBar.max = pe.total;
+	  progressBar.value = pe.loaded / pe.total;
+	}
+  }
+  xhr.onloadstart= function(pe) {
+	//progressBar.value = pe.loaded;
+  }
+  xhr.onloadend = function(pe) {
     var text = xhr.responseText;
 	var x=JSON.parse(text);
+	progressBar.value = 1;
 	if (callback)
 		callback(x);
   };
@@ -47,6 +58,7 @@ var x;
 
 function initPage(){
 var urlInfo = document.location.href;
+progressBar = document.getElementById('progress');
 
 if (urlInfo.indexOf("data=") == -1){
 	var data = localStorage.getItem("idList");
@@ -132,7 +144,8 @@ if (clubPos)
 
 <div id="topbar" class="vert">
 <div id="leftnav"><a title="Formulaire de recherche" href="default.html"><img alt="Formulaire de recherche" height="22" width="25" src="images/home22.png" /></a></div>
-<div id="chargement" class="textBlink">Chargement...</div>
+<div id="chargement"><progress id="progress" value="0">0</progress></div>
+<button type="button" id="rightnav" title="Taille de police" onclick="changeTaille();"><img id="imgTaille" alt="Taille de police" height="20" width="45" src="images/taille.png" /></button>
 <button type="button" id="rightnav" title="Taille de police" onclick="changeTaille();"><img id="imgTaille" alt="Taille de police" height="20" width="45" src="images/taille.png" /></button>
 </div><div id="duobutton"><a id="pressed" href="#">Liste</a>
 
@@ -163,7 +176,9 @@ if (clubPos)
 // -->
 </script>
 
-
+<div id="copyright">
+<a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2017</a>
+</div>
 </body>
 
 </html>
