@@ -54,6 +54,17 @@ color: white !important;
 #titrePref,#titre{font-size:22px;font-weight:bold;color:#ccf;padding-top:10px}
 #titrePref{color:#446;}
 
+
+progress {
+  font-size: 1em;
+
+  border: 1px solid #0063a6;
+  background: #fff;
+}
+
+progress::-webkit-progress-value { background: #00A4AC; }  
+progress::-webkit-progress-bar { background: #fff; }  
+
 /* vert gazon; 3A9D23*/
 #topbar{height:34px; text-align:center;}
 #bottombar{display:block;height: auto; min-height:32px}
