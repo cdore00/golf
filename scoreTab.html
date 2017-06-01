@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type" />
+<meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
+<meta name="format-detection" content="telephone=no" />
+<link rel="SHORTCUT ICON" href="favicon.ico">
+<link href="favicon.ico" rel="apple-touch-icon" />
+<link href="favicon.ico" rel="apple-touch-startup-image" />
+<link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
+<link href="misc/golfGPS.css" rel="stylesheet" media="screen" type="text/css" />
+<link href="misc/tabScore.css" rel="stylesheet" media="screen" type="text/css" />
+
+<title>Clubs de golf au Québec</title>
+<meta content="Golf, Québec, Canada, Golf du Québec, Clubs de golf au Québec, Québec golf" name="keywords" />
+<meta content="Répertoire des clubs de golf du Québec." name="description" />
+
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" /> 
+<script type="text/javascript" src="js/util.js"></script>
+<script type="text/javascript" src="js/utilGolfGPS.js"></script>
+<script type="text/javascript" src="js/geoLocal.js"></script>
+
+
+<script type="text/javascript"> 
+<!--
+
+function askSaveGame(askSave){
+var conf;
+if (askSave)
+	conf = confirm("Voulez-vous terminer cette partie?");
+else
+	conf = confirm("Voulez-vous supprimer cette partie?");
+
+if (conf){
+	document.location = "gameSaveDel.asp?joueur=<%=userName%>&parcours=<%=strParc%>&action=" + askSave;
+	}
+}
+
+// -->
+</script> 
+</head>
+<body onload="setFontSizeGolfGPS();">
+<div id="duobutton"><a href="#"  onclick="window.close(); return false;">Fermer</a>
+<button type="button" id="changeTaille" title="Taille de police" onclick="changeTaille()"><img id="imgTaille" alt="Taille de police" height="20" width="45" src="images/taille.png" /></button>
+</div>
+
+
+<form id="setScore">
+<ul class="pageitem">
+<li class="listitem">
+<%=orecordset("score_date")%>&nbsp;<%=orecNom("nom")%>
+</li>
+
+<li class="listitem">
+<div id="p1" name="p1" class="cartePts">
+	<table class="cartePts">
+	
+	</table>
+</div>
+</li>
+</ul>
+<%if score_id = "" then%>
+<div>
+<center><input id="saveGame" class="bouton" type="button" onClick="askSaveGame(1); return false;" value=" Terminer la partie " />
+<input id="delGame" class="bouton" type="button" onClick="askSaveGame(0); return false;" value="Supprimer la partie" /></center>
+</div>
+<%end if%>
+</form>
+</body>

@@ -29,7 +29,7 @@
     <script type="text/javascript"> 
 	<!--
 	
-	
+var userId = null;
 var PositionFlag = 0;
 var pos_x;
 var pos_y;
@@ -44,7 +44,8 @@ window.addEventListener('DOMActivate', function() {
     setTimeout(scrollTo, 0, 0, 1);
 }, true);
 
-
+var userId = null;
+var courseID = null;
 var map;
 var posMarker;
 var holeMarker;
@@ -77,8 +78,8 @@ var lastTime = 0;
    }
 
 var trouCoord =  new Array();	
-
 var trouPar =  new Array();	
+var trouNormale = false;
 
 google.maps.visualRefresh = true;
 
@@ -478,30 +479,32 @@ once = 1;
 
 function showScoreFrame(strParc){
 var layerScore = document.getElementById('showScore');
-var xmlhttp;
+var setScore = document.getElementById('setScore');
+var scoreHole = document.getElementById('scoreHole');
 
-if (document.getElementById('setScore'))
-layerScore.removeChild(document.getElementById('setScore'));
+scoreHole.innerHTML = "Trou " + trou + " par " + eval("trouNormale.T" + trou);
+
+getInfo("getGame?data=" + userId + "$" + courseID, setHoleScore);
 
 layerScore.style.visibility="visible";
-
-if (window.XMLHttpRequest)
-  {// code for IE7+, Firefox, Chrome, Opera, Safari
-  xmlhttp=new XMLHttpRequest();
-  }
-
-xmlhttp.onreadystatechange=function()
-  {
-  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-    {
-    layerScore.innerHTML=xmlhttp.responseText;
 	setScore.nbrCoups.focus();
 	setScore.nbrCoups.click();
-    }
-  }
-xmlhttp.open("GET","scoreGet.asp?parcours="+ strParc + "&trou=" + document.getElementById("holePlay").innerHTML,true);
-//alert("scoreGet.asp?joueur=cdore00&parcours="+ <%=strParc%> + "&trou=" + document.getElementById("holePlay").innerHTML);
-xmlhttp.send();
+	
+}
+
+function setHoleScore(gData){
+var setScore = document.getElementById('setScore');
+
+var vc = eval("gData[0].T" + trou);
+var vp = eval("gData[0].P" + trou);
+var vl = eval("gData[0].L" + trou);
+
+setScore.nbrCoups.selectedIndex = (vc - 1);
+setScore.nbrPutts.selectedIndex = (vp );
+setScore.nbrPen.selectedIndex = (vl );
+
+getInfo("getGame?data=" + userId + "$" + courseID);
+
 }
 
 function closeScore(){
@@ -512,34 +515,50 @@ layerScore.style.visibility="hidden";
 }
 
 function saveScore(formRef){
-var myScore = document.getElementById('myScore');
-var xmlhttp;
 var score = formRef.nbrCoups[formRef.nbrCoups.selectedIndex].value;
 var putt = formRef.nbrPutts[formRef.nbrPutts.selectedIndex].value;
 var penal = formRef.nbrPen[formRef.nbrPen.selectedIndex].value;
 //alert(formRef);
+var strData = userId + "$" + courseID + "$" + trou + "$" + score + "$" + putt + "$" + penal;
 
-xmlhttp=new XMLHttpRequest(strParc);
-
-xmlhttp.onreadystatechange=function()
-  {
-  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-    {
-    myScore.innerHTML=xmlhttp.responseText;
-	//alert(xmlhttp.responseText);
-    }
-  }
-
-xmlhttp.open("GET","scoreSave.asp?parcours="+ strParc + "&trou=" + document.getElementById("holePlay").innerHTML + "&score=" + score + "&putt=" + putt + "&penal=" + penal,true);
-xmlhttp.send();
-//alert("scoreSave.asp?joueur=cdore00&parcours="+ <%=strParc%> + "&trou=" + document.getElementById("holePlay").innerHTML + "&score=" + score + "&putt=" + putt + "&penal=" + penal);
+getInfo("updateGame?data=" + strData, callMyScore);
 
 closeScore();
 }
 
+function callMyScore(){
+	getInfo("getGame?data=" + userId + "$" + courseID, setMyScore);
+}
+
+function setMyScore(gData){
+var myScore = document.getElementById('myScore');
+var tot = 0;
+var laN = 0;
+var score, pref, ts;
+
+for (var i= 1; i < 19 ; i++){
+	ts = eval("gData[0].T" + i);
+	if (ts > 0){
+		tot += ts;
+		laN += eval("trouNormale.T" + i);
+	}
+}
+score = tot - laN;
+if (score == 0){
+	pref = "&nbsp;E";
+}else{
+	if (score > 0)
+		pref = "&nbsp;+" + (tot - laN);
+	else
+		pref = "&nbsp;" + (tot - laN);
+}
+
+myScore.innerHTML = tot + pref;
+}
+
 function tableauScore(formRef){
 saveScore(formRef);
-var localWindow = window.open('scoreTab.asp?parcours=' + strParc);
+var localWindow = window.open('scoreTab.html');
 localWindow.document.close();
 closeScore();
 }
@@ -630,7 +649,7 @@ if (urlInfo.indexOf("data=") == -1){
 	var data = (urlInfo.substring(urlInfo.indexOf("data=") + 5));
 }
 data = data.split("&");
-var courseID = data[0];
+courseID = data[0];
 titClub.innerHTML = decodeURI(data[1]);
 //userId = GetCookie("userName");
 
@@ -667,6 +686,8 @@ for (var i= 10; i < nt ; i++){
 
 var noB = 0;
 for (var i= 0; i < bloc.length; i++){
+	if (!trouNormale && bloc[i].Bloc == "Normale")
+		trouNormale = bloc[i];
 	if (bloc[i].Bloc != "Normale" && bloc[i].Bloc != "Hdcp" && bloc[i].Bloc !=  "" ){
 		trouPar[noB] = arrB(bloc[i], nt);
 		var divElem = document.createElement("div");
@@ -755,7 +776,76 @@ initialize();
 
 <div  id="map_canvas"></div >
 
-<div id="showScore"></div>
+<div id="showScore">
+<div id="scoreHole">Trou par </div>
+
+<form id="setScore">
+<div id="prefOptions">
+	<table>
+	<tr>
+	<th>Coups</th><th>Putts</th><th>P&eacute;nal.</th>
+	</tr>
+	<tr>
+	<td>
+	<select id="nbrCoups">
+	 <option value="1">1</option>
+	 <option value="2">2</option> 
+	 <option value="3">3</option>
+	 <option value="4">4</option> 
+	 <option value="5">5</option>
+	 <option value="6">6</option>
+	 <option value="7">7</option> 
+	 <option value="8">8</option>
+	 <option value="9">9</option> 
+	 <option value="10">10</option>
+	 <option value="11">11</option>
+	 <option value="12">12</option>
+	 <option value="13">13</option>
+	 <option value="14">14</option>
+	 <option value="15">15</option>
+	</select>
+	</td>
+	<td>
+	<select id="nbrPutts">
+	 <option value="0">-</option>
+	 <option value="1">1</option>
+	 <option value="2">2</option> 
+	 <option value="3">3</option>
+	 <option value="4">4</option> 
+	 <option value="5">5</option>
+	 <option value="6">6</option>
+	 <option value="7">7</option> 
+	 <option value="8">8</option>
+	 <option value="9">9</option> 
+	 <option value="10">10</option>
+	 </select>
+	</td>
+	<td>
+	<select id="nbrPen">
+	 <option value="0">-</option>
+	 <option value="1">1</option>
+	 <option value="2">2</option> 
+	 <option value="3">3</option>
+	 <option value="4">4</option> 
+	 <option value="5">5</option>
+	 <option value="6">6</option>
+	 <option value="7">7</option> 
+	 <option value="8">8</option>
+	 <option value="9">9</option> 
+	 <option value="10">10</option>
+	 </select>
+	</td>
+	</tr>
+	</table>
+</div>
+
+<div>
+<input id="okPref" class="bouton" type="button" onClick="saveScore(this.form); return false;" value="      Ok      " /><input id="annulePref" class="bouton" type="button" onClick="closeScore(); return false;" value="  Annuler  " />
+</br>
+<input id="tabScore" class="bouton" type="button" onClick="tableauScore(this.form); return false;" value="  Carte de pointage  " />
+</div>
+</form>
+</div>
 
 <script type="text/javascript" language="Javascript">
 <!--
@@ -775,5 +865,5 @@ if ('speechSynthesis' in window) {
 // -->
 </script>
 
-  </body> 
+</body> 
 </html>

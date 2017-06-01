@@ -156,7 +156,7 @@ for (var p = 0; p < clubCourse.length; p++) {
 	htmlCode += clubCourse[p].PARCOURS;
 	if (clubCourse[p].DEPUIS)	
 		htmlCode += "&nbsp;depuis&nbsp;" + clubCourse[p].DEPUIS + ",";
-	htmlCode += "&nbsp;" + clubCourse[p].TROUS + "&nbsp;trous&nbsp;à normale&nbsp;" + clubCourse[p].NORMALE + "&nbsp;de&nbsp;" + clubCourse[p].VERGES + "&nbsp;verges&nbsp;&nbsp;";
+	htmlCode += "&nbsp;" + clubCourse[p].TROUS + "&nbsp;trous&nbsp;&#224; normale&nbsp;" + clubCourse[p].NORMALE + "&nbsp;de&nbsp;" + clubCourse[p].VERGES + "&nbsp;verges&nbsp;&nbsp;";
 	if (clubCourse[p].golfGPS)
 		htmlCode += '<a class="itin" target="_blank" href="golfGPS.html?data=' + clubCourse[p]._id + '&' + clubName + '">Jouer</a>';
 
@@ -217,7 +217,7 @@ for (var p = 0; p < clubCourse.length; p++) {
 	} while ( bloc[b] && bloc[b].PARCOURS_ID == courseID);
 
 	if(nbrTrou == 18){
-		htmlCode += '<tr class="entete"><th>Trou</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th><th>16</th><th>17</th><th>18</th><th>Retour</th><th>Total</th><th>Éval.</th><th>Slope</th></tr>';
+		htmlCode += '<tr class="entete"><th>Trou</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th><th>16</th><th>17</th><th>18</th><th>Retour</th><th>Total</th><th>Eval.</th><th>Slope</th></tr>';
 		var b = nextCourse;
 		do{
 			var cName = 'B' + bloc[b].Bloc;
@@ -274,7 +274,9 @@ chargement.style.display = "none";
 	<div id="message"></div>
 </div>
 
-<!-- #include file = "pied_page.asp" -->
+<div id="copyright">
+<a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2017</a>
+</div>
 </body>
 
 </html>
