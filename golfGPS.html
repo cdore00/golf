@@ -536,6 +536,8 @@ var tot = 0;
 var laN = 0;
 var score, pref, ts;
 
+localStorage.setItem('gameScore', gData[0]._id);
+
 for (var i= 1; i < 19 ; i++){
 	ts = eval("gData[0].T" + i);
 	if (ts > 0){

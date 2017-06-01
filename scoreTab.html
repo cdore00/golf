@@ -17,13 +17,17 @@
 <meta content="Répertoire des clubs de golf du Québec." name="description" />
 
 <meta name="viewport" content="initial-scale=1.0, user-scalable=no" /> 
-<script type="text/javascript" src="js/util.js"></script>
-<script type="text/javascript" src="js/utilGolfGPS.js"></script>
-<script type="text/javascript" src="js/geoLocal.js"></script>
+<script type="text/javascript" src="misc/util.js"></script>
+<script type="text/javascript" src="misc/utilGolfGPS.js"></script>
+<script type="text/javascript" src="misc/geoLocal.js"></script>
 
 
 <script type="text/javascript"> 
 <!--
+
+var gameID;
+var userId;
+
 
 function askSaveGame(askSave){
 var conf;
@@ -37,10 +41,109 @@ if (conf){
 	}
 }
 
+function getInfo(path, callback){
+
+var xhr=new XMLHttpRequest();
+
+  xhr.onloadend = function() {
+    var text = xhr.responseText;
+	var x=JSON.parse(text);
+	if (callback)
+		callback(x);
+  };
+xhr.open("GET", HOSTserv + path ,true);
+xhr.send();
+
+var x;
+}
+
+function initPage(){
+userId = GetCookie("userID");
+gameID = localStorage.getItem('gameScore');
+
+setFontSizeGolfGPS();
+
+getInfo("getGameTab?data=" + gameID, showGame)
+
+x=1;
+}
+
+function showGame(gData){
+var gameData = gData[0];
+var par = gameData.par;
+var tb = document.getElementById('gameCard'); 
+
+var nt = 19;
+if(par.T14 == null || par.T14 == 0)
+	nt = 10;
+	
+var trElem = document.createElement("tr");
+//trElem.setAttribute('class', 'listitem');
+var tdH = '<th></th>';
+for (var i= 1; i < 10; i++){
+	tdH += '<th>' + i + '</th>';
+}
+if (nt == 19){
+tdH += '<th>Out</th>';
+for (var i= 10; i < nt; i++){
+	tdH += '<th>' + i + '</th>';
+}
+tdH += '<th>In</th>';
+}
+tdH += '<th>Total</th>';
+trElem.innerHTML = tdH;
+tb.appendChild(trElem);
+
+var po = 0, pi = 0;
+var trElem = document.createElement("tr");
+//trElem.setAttribute('class', 'listitem');
+var tdH = '<th>Par</th>';
+for (var i= 1; i < 10; i++){
+	tdH += '<td>' + eval("par.T" + i) + '</td>';
+	po += eval("par.T" + i);
+}
+if (nt == 19){
+tdH += '<td>' + po + '</td>';
+for (var i= 10; i < nt; i++){
+	tdH += '<td>' + eval("par.T" + i) + '</td>';
+	pi += eval("par.T" + i);
+}
+tdH += '<td>' + pi + '</td>';
+}
+tdH += '<td>' + (po + pi) + '</td>';
+trElem.innerHTML = tdH;
+tb.appendChild(trElem);
+
+var po = 0, pi = 0;
+var trElem = document.createElement("tr");
+trElem.setAttribute('rowspan', '2');
+var tdH = '<th></th>';
+for (var i= 1; i < 10; i++){
+	var s = (eval("gameData.T" + i));
+	if ( !isNaN(s) ){
+		tdH += '<td>' + s + '</td>';
+		po += s;
+	}
+}
+if (nt == 19){
+tdH += '<td>' + po + '</td>';
+for (var i= 10; i < nt; i++){
+	tdH += '<td>' + eval("gameData.T" + i) + '</td>';
+	pi += eval("gameData.T" + i);
+}
+tdH += '<td>' + pi + '</td>';
+}
+tdH += '<td>' + (po + pi) + '</td>';
+trElem.innerHTML = tdH;
+tb.appendChild(trElem);
+
+x=1;
+}
+
 // -->
 </script> 
 </head>
-<body onload="setFontSizeGolfGPS();">
+<body onload="initPage()">
 <div id="duobutton"><a href="#"  onclick="window.close(); return false;">Fermer</a>
 <button type="button" id="changeTaille" title="Taille de police" onclick="changeTaille()"><img id="imgTaille" alt="Taille de police" height="20" width="45" src="images/taille.png" /></button>
 </div>
@@ -55,7 +158,8 @@ if (conf){
 <li class="listitem">
 <div id="p1" name="p1" class="cartePts">
 	<table class="cartePts">
-	
+	<tbody id="gameCard">
+	</tbody>
 	</table>
 </div>
 </li>
