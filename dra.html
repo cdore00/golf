@@ -3,41 +3,35 @@
 <head>
 
     <script type="text/javascript" 
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA15nyiYmWG_0IkG9H5r4Qc8KhZxwRw_xA&sensor=false"> 
+      src="http://maps.googleapis.com/maps/api/js?key=AIzaSyA15nyiYmWG_0IkG9H5r4Qc8KhZxwRw_xA&sensor=false"> 
     </script> 
 
 <script>
- 
-var result;
 
-function init() {
-
-codeAddress();
-
-//results[0].geometry.location.lat()
-//results[0].geometry.location.lng()
-//46.80344179999999
-//-71.23022000000003
-}
+var HOSTserv = ""
 
 function initialize() {
-  geocoder = new google.maps.Geocoder();
-  var latlng = new google.maps.LatLng(-34.397, 150.644);
-  var mapOptions = {
-    zoom: 8,
-    center: latlng,
-    mapTypeId: google.maps.MapTypeId.ROADMAP
-  }
-  map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-  codeAddress();
+if (!HOSTserv || HOSTserv == null || HOSTserv == "")
+	getInfo("serv.json", initHOST);
 }
 
-function codeAddress() {
-texte = document.getElementById('textInput');
-
-locCode(texte.value);
-
+function initHOST(oURL){
+HOSTserv = oURL.servURL
+x=5;
 }
+
+function getInfo(path, callback){
+var xhr=new XMLHttpRequest();
+  xhr.onloadend = function() {
+    var text = xhr.responseText;
+	var data=JSON.parse(text);
+	if (callback)
+		callback(data);
+  };
+xhr.open("GET", HOSTserv + path ,true);
+xhr.send();
+}
+
 
 function locCode(codLoc){
 geocoder = new google.maps.Geocoder();
@@ -60,7 +54,7 @@ x=1;
 
 <input id="textInput"/>
 
-<button onclick="codeAddress()">Geo</button>
+<button onclick="initialize()">Geo</button>
   
 </div>
 </body>
