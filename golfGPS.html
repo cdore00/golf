@@ -31,14 +31,15 @@
 	
 var userId = null;
 var PositionFlag = 0;
-var pos_x;
-var pos_y;
+
+
+//var pos_x;
+//var pos_y;
 var diff_x;
 var diff_y;
 var move_x;
 var move_y;
 var once = 0;
-var HOSTserv = localStorage.getItem("HOSTserv");
 	
 window.addEventListener('DOMActivate', function() {
     setTimeout(scrollTo, 0, 0, 1);
@@ -46,6 +47,8 @@ window.addEventListener('DOMActivate', function() {
 
 var userId = null;
 var courseID = null;
+var currentGameID = null;
+var clubName = "";
 var map;
 var posMarker;
 var holeMarker;
@@ -536,7 +539,7 @@ var tot = 0;
 var laN = 0;
 var score, pref, ts;
 
-localStorage.setItem('gameScore', gData[0]._id);
+currentGameID = gData[0]._id
 
 for (var i= 1; i < 19 ; i++){
 	ts = eval("gData[0].T" + i);
@@ -560,7 +563,7 @@ myScore.innerHTML = tot + pref;
 
 function tableauScore(formRef){
 saveScore(formRef);
-var localWindow = window.open('scoreTab.html');
+var localWindow = window.open('scoreTab.html?data=' + currentGameID + "$" + clubName);
 localWindow.document.close();
 closeScore();
 }
@@ -652,7 +655,8 @@ if (urlInfo.indexOf("data=") == -1){
 }
 data = data.split("&");
 courseID = data[0];
-titClub.innerHTML = decodeURI(data[1]);
+clubName = decodeURI(data[1]);
+titClub.innerHTML = clubName;
 //userId = GetCookie("userName");
 
 getInfo("getGolfGPS?data=" + courseID, showCourse);

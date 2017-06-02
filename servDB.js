@@ -174,12 +174,14 @@ var request = (decodeURI(param.data));
 var data = request.split("$");
 var gID = (data[0]);
 //var parc = parseInt(data[1]);
-     
-var o_id = new ObjectId(gID);
-
+if (parseInt(gID) < 200)
+	var o_id = parseInt(gID);
+else	
+	var o_id = new ObjectId(gID);
+	debugger;
 var coll = dBase.collection('score');
 coll.find({_id:o_id}).toArray(function(err, doc) {
-	
+
 getBloc(res, doc)
   });
 }
@@ -280,6 +282,18 @@ switch (hole) {
 	break;
 	
 //dBase.score.update({ USER_ID: "cdore00@yahoo.ca", PARCOURS_ID: 407, score_date: new Date("2016/05/10") }, { $set: {T1: 8} }, { upsert : true } );
+}
+
+// callResult  NON UTILISÉ
+function callResult(err, docr){
+	//debugger;
+	console.log("Return result");
+if (docr.result.upserted){
+	var id = docr.result.upserted[0]._id.toString();
+		returnRes(res, [{"result":id}]);
+	}else{
+		returnRes(res, [{"result":true}]);
+	}
 }
 returnRes(res, [{"result":true}]);
 }

@@ -27,7 +27,7 @@
 
 var gameID;
 var userId;
-
+var clubName = "";
 
 function askSaveGame(askSave){
 var conf;
@@ -41,29 +41,32 @@ if (conf){
 	}
 }
 
-function getInfo(path, callback){
-
-var xhr=new XMLHttpRequest();
-
-  xhr.onloadend = function() {
-    var text = xhr.responseText;
-	var x=JSON.parse(text);
-	if (callback)
-		callback(x);
-  };
-xhr.open("GET", HOSTserv + path ,true);
-xhr.send();
-
-var x;
+var options = { year: "numeric", month: "2-digit", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit"};
+var dt =  new Intl.DateTimeFormat("fr-CA", options);
+function getDateTime(dateTime){
+	var intlDateTime ;
+	if (dateTime)
+		intlDateTime = dateTime;
+	else
+		intlDateTime = new Date();
+	
+	intlDateTime.setUTCHours(intlDateTime.getUTCHours());
+	intlDateTime = dt.format(intlDateTime);
+	return intlDateTime.toLocaleString();
 }
 
 function initPage(){
 userId = GetCookie("userID");
-gameID = localStorage.getItem('gameScore');
+
+var data = getURLdata();
+data = data.split("$");
+gameID = (data[0]);
+clubName = (data[1]);
+//gameID = localStorage.getItem('gameScore');
 
 setFontSizeGolfGPS();
 
-getInfo("getGameTab?data=" + gameID, showGame)
+getInfo("getGameTab?data=" + gameID, showGame);
 
 x=1;
 }
@@ -72,6 +75,15 @@ function showGame(gData){
 var gameData = gData[0];
 var par = gameData.par;
 var tb = document.getElementById('gameCard'); 
+var gameBut = document.getElementById('gameBut');
+var tabTitle = document.getElementById('tabTitle');
+
+if (gameData.score_date != null){
+	gameBut.style.visibility = "hidden";
+	tabTitle.innerHTML = getDateTime() + "&nbsp;-&nbsp;" +  clubName;
+}else{
+	tabTitle.innerHTML = gameData.score_date + "&nbsp;-&nbsp;" +  clubName;
+}
 
 var nt = 19;
 if(par.T14 == null || par.T14 == 0)
@@ -114,22 +126,31 @@ tdH += '<td>' + (po + pi) + '</td>';
 trElem.innerHTML = tdH;
 tb.appendChild(trElem);
 
-var po = 0, pi = 0;
+
 var trElem = document.createElement("tr");
-trElem.setAttribute('rowspan', '2');
-var tdH = '<th></th>';
+//trElem.setAttribute('rowspan', '2');
+
+var po = 0, pi = 0;   /// Les coups
+var tdH = '<th rowspan="2"></th>';
 for (var i= 1; i < 10; i++){
 	var s = (eval("gameData.T" + i));
-	if ( !isNaN(s) ){
+	if ( typeof s == "number" ){
 		tdH += '<td>' + s + '</td>';
 		po += s;
+	}else{
+		tdH += '<td></td>';
 	}
 }
 if (nt == 19){
-tdH += '<td>' + po + '</td>';
+	tdH += '<td>' + po + '</td>';
 for (var i= 10; i < nt; i++){
-	tdH += '<td>' + eval("gameData.T" + i) + '</td>';
-	pi += eval("gameData.T" + i);
+	var s = (eval("gameData.T" + i));
+	if ( typeof s == "number" ){
+		tdH += '<td>' + s + '</td>';
+		pi += s;
+	}else{
+		tdH += '<td></td>';
+	}
 }
 tdH += '<td>' + pi + '</td>';
 }
@@ -137,6 +158,115 @@ tdH += '<td>' + (po + pi) + '</td>';
 trElem.innerHTML = tdH;
 tb.appendChild(trElem);
 
+var trElem = document.createElement("tr");
+var po = 0, pi = 0;   /// Le différentiel
+var tdH = "";
+for (var i= 1; i < 10; i++){
+	var s = eval("gameData.T" + i);
+	var p = eval("par.T" + i);
+	if ( typeof s == "number" ){
+		var d = s - p;	
+		var className = "par";
+		if (d < 0)
+			className = "bird";
+		if (d > 0)
+			className = "bog";
+		if (d > 1)
+			className = "dbog";
+		if (d > 2)
+			className = "tbog";
+		tdH += '<td class="' + className + '">' + d + '</td>';
+		po += d;
+	}else{
+		tdH += '<td></td>';
+	}
+}
+if (nt == 19){
+	tdH += '<td>' + po + '</td>';
+for (var i= 10; i < nt; i++){
+	var s = eval("gameData.T" + i);
+	var p = eval("par.T" + i);
+	if ( typeof s == "number" ){
+		var d = s - p;	
+		var className = "par";
+		if (d < 0)
+			className = "bird";
+		if (d > 0)
+			className = "bog";
+		if (d > 1)
+			className = "dbog";
+		if (d > 2)
+			className = "tbog";
+		var d = s - p;
+		tdH += '<td class="' + className + '">' + d + '</td>';
+		po += d;
+	}else{
+		tdH += '<td></td>';
+	}
+}
+tdH += '<td>' + pi + '</td>';
+}
+tdH += '<td>' + (po + pi) + '</td>';
+trElem.innerHTML = tdH;
+tb.appendChild(trElem);
+
+var trElem = document.createElement("tr");
+var po = 0, pi = 0;   /// Les puts
+var tdH = '<th>Putts</th>';
+for (var i= 1; i < 10; i++){
+	var s = (eval("gameData.P" + i));
+	if ( typeof s == "number" ){
+		tdH += '<td>' + s + '</td>';
+		po += s;
+	}else{
+		tdH += '<td></td>';
+	}
+}
+if (nt == 19){
+	tdH += '<td>' + po + '</td>';
+for (var i= 10; i < nt; i++){
+	var s = (eval("gameData.P" + i));
+	if ( typeof s == "number" ){
+		tdH += '<td>' + s + '</td>';
+		pi += s;
+	}else{
+		tdH += '<td></td>';
+	}
+}
+tdH += '<td>' + pi + '</td>';
+}
+tdH += '<td>' + (po + pi) + '</td>';
+trElem.innerHTML = tdH;
+tb.appendChild(trElem);
+
+var trElem = document.createElement("tr");
+var po = 0, pi = 0;   /// Les pénalités
+var tdH = '<th>Pénal.</th>';
+for (var i= 1; i < 10; i++){
+	var s = (eval("gameData.L" + i));
+	if ( typeof s == "number" ){
+		tdH += '<td>' + s + '</td>';
+		po += s;
+	}else{
+		tdH += '<td></td>';
+	}
+}
+if (nt == 19){
+	tdH += '<td>' + po + '</td>';
+for (var i= 10; i < nt; i++){
+	var s = (eval("gameData.L" + i));
+	if ( typeof s == "number" ){
+		tdH += '<td>' + s + '</td>';
+		pi += s;
+	}else{
+		tdH += '<td></td>';
+	}
+}
+tdH += '<td>' + pi + '</td>';
+}
+tdH += '<td>' + (po + pi) + '</td>';
+trElem.innerHTML = tdH;
+tb.appendChild(trElem);
 x=1;
 }
 
@@ -151,8 +281,8 @@ x=1;
 
 <form id="setScore">
 <ul class="pageitem">
-<li class="listitem">
-<%=orecordset("score_date")%>&nbsp;<%=orecNom("nom")%>
+<li id="tabTitle" class="listitem">
+
 </li>
 
 <li class="listitem">
@@ -164,11 +294,10 @@ x=1;
 </div>
 </li>
 </ul>
-<%if score_id = "" then%>
-<div>
+<div id="gameBut">
 <center><input id="saveGame" class="bouton" type="button" onClick="askSaveGame(1); return false;" value=" Terminer la partie " />
 <input id="delGame" class="bouton" type="button" onClick="askSaveGame(0); return false;" value="Supprimer la partie" /></center>
 </div>
-<%end if%>
+
 </form>
 </body>
