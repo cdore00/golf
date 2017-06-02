@@ -12,8 +12,8 @@
 <link href="misc/init.css" rel="stylesheet" media="screen" type="text/css" />
 <link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
 <title>Clubs de golf au Qu&eacute;bec</title>
-<meta content="Golf, QuÃ©bec, Canada, Golf du QuÃ©bec, Clubs de golf au QuÃ©bec, QuÃ©bec golf" name="keywords" />
-<meta content="RÃ©pertoire des clubs de golf du QuÃ©bec." name="description" />
+<meta content="Golf, Québec, Canada, Golf du Québec, Clubs de golf au Québec, Québec golf" name="keywords" />
+<meta content="Répertoire des clubs de golf du Québec." name="description" />
 
 <script type="text/javascript" src="misc/googGeo.js"></script>
 <script type="text/javascript" src="misc/util.js"></script> 
@@ -33,7 +33,7 @@ var watchId = null;
 var locTimer;
 var resultLocalisation = 1000;
 var affL, LocT;
-var HOSTserv = "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
+//var HOSTserv = "http://127.0.0.1:3000/";
 // "http://127.0.0.1:3000/";
 // "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
 
@@ -224,10 +224,10 @@ xmlhttp.onreadystatechange=function(){
     res=unescape(xmlhttp.responseText);
 	
 	//alert(res.indexOf("Vous &ecirc;tes"));
-	if (res.indexOf("Vous Ãªtes identifi") ==  0 ){
+	if (res.indexOf("Vous êtes identifi") ==  0 ){
 		SetCook("userName",userCour);
 		closePref();}
-//alert(escape('Ã¨ÃªÃ '));
+//alert(escape('èêà'));
 	alert(res);
     }
   }
@@ -673,13 +673,13 @@ geocoder = new google.maps.Geocoder();
 	  URLresult += "3$" + lng + "$" + lat + "$" + distance;
 	  document.location.href = URLresult;
     } else {
-      alert('Code postal non retrouvÃ© : ' + status);
+      alert('Code postal non retrouvé : ' + status);
     }
   });
 }
 
 //URLresult += "3$" + results[0].geometry.location.lng() + "$" + results[0].geometry.location.lat() + "$" + distance;
-//alert('Code postal non retrouvÃ© : ' + status);
+//alert('Code postal non retrouvé : ' + status);
 
 // -->
 </script>
@@ -730,9 +730,8 @@ geocoder = new google.maps.Geocoder();
 				</div>
 			    <div id="inputselectdis">
 				<SELECT id="kiloM" class="inputselect" name="KiloM">
-					<OPTION value="0">Choisir</OPTION>
 			        <OPTION value="5">5 km</OPTION>
-			        <OPTION value="10">10 km</OPTION>
+			        <OPTION value="10" selected>10 km</OPTION>
 			        <OPTION value="25">25 km</OPTION>
 			        <OPTION value="50">50 km</OPTION>
 			        <OPTION value="100">100 km</OPTION>
@@ -777,7 +776,7 @@ geocoder = new google.maps.Geocoder();
     <li><a href="" onClick="setIdent(); return false;"> Identification </a></li>
   </ul>
 </div>
-<!-- <div id="titrePref">PrÃ©fÃ©rences</div> // -->
+<!-- <div id="titrePref">Préférences</div> // -->
 
 <form id="formPref">
 <div id="prefOptions">
@@ -817,7 +816,7 @@ geocoder = new google.maps.Geocoder();
     <li class="active"><a href="" onClick="return false;"> Identification </a></li>
   </ul>
 </div>
-<!-- <div id="titrePref">PrÃ©fÃ©rences</div> // -->
+<!-- <div id="titrePref">Préférences</div> // -->
 
 <form id="formAuth">
 <div id="identOptions">
