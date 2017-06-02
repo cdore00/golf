@@ -1,5 +1,32 @@
 <!--
 
+var HOSTserv = "";
+//localStorage.getItem("HOSTserv");
+
+if (!HOSTserv || HOSTserv == null || HOSTserv == "")
+	getInfo("serv.json", initHOST);
+
+function initHOST(oURL){
+	HOSTserv = oURL.servURL
+}
+
+function getInfo(path, callback){
+var xhr=new XMLHttpRequest();
+  xhr.onloadend = function() {
+    var text = xhr.responseText;
+	var data=JSON.parse(text);
+	if (callback)
+		callback(data);
+  };
+xhr.open("GET", HOSTserv + path ,true);
+xhr.send();
+}
+
+function getURLdata(){
+var urlInfo = document.location.href;
+return decodeURI(urlInfo.substring(urlInfo.indexOf("data=") + 5));
+}
+
 if (document.images) {
 	img1 = new Image();
 	img2 = new Image();

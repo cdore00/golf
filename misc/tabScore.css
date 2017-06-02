@@ -1,0 +1,12 @@
+
+.pageitem, .listitem{
+border: 0;
+margin: 0
+}
+
+
+.par{background-color:  #fff }
+.bird{background-color: blue}
+.bog{background-color: gold}
+.dbog{background-color: #b87333}
+.tbog{background-color: #A67D3D}
