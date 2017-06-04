@@ -522,17 +522,17 @@ var score = formRef.nbrCoups[formRef.nbrCoups.selectedIndex].value;
 var putt = formRef.nbrPutts[formRef.nbrPutts.selectedIndex].value;
 var penal = formRef.nbrPen[formRef.nbrPen.selectedIndex].value;
 //alert(formRef);
-var strData = userId + "$" + courseID + "$" + trou + "$" + score + "$" + putt + "$" + penal + "$" + clubName;
+var strData = userId + "$" + courseID + "$" + trou + "$" + score + "$" + putt + "$" + penal;
 
 if (!callback)
-	callback = setMyScore;
+	callback = callMyScore;
 	
 getInfo("updateGame?data=" + strData, callback);
 
 closeScore();
 }
 
-function callMyScore(){  // non utilisé
+function callMyScore(){
 	getInfo("getGame?data=" + userId + "$" + courseID, setMyScore);
 }
 
@@ -564,16 +564,22 @@ if (score == 0){
 myScore.innerHTML = tot + pref;
 }
 
-
 function tableauScore(formRef){
+if (!currentGameID)
 	saveScore(formRef, calltableauScore);
+else{
+	saveScore(formRef);
+	var localWindow = window.open('scoreTab.html?data=' + currentGameID + "$" + clubName);
+	localWindow.document.close();
+	closeScore();
+}
 }
 
 function calltableauScore(gData){
 currentGameID = gData[0]._id
 var localWindow = window.open('scoreTab.html?data=' + currentGameID + "$" + clubName);
 localWindow.document.close();
-//closeScore();
+closeScore();
 }
 
 function detectLong(idName){

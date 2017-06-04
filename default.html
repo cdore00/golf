@@ -119,7 +119,7 @@ xmlhttp.onreadystatechange=function(){
     }
   }
   
-xmlhttp.open("GET","identifier.asp",false);
+xmlhttp.open("GET","identifier.html",false);
 xmlhttp.send();
 
 modLayer.style.visibility="visible";
@@ -212,30 +212,15 @@ var xmlhttp;
 var userName = formIdent.nomUser.value;
 var userCour = formIdent.courUser.value;
 var userPass = formIdent.passUser.value;
-var userConfPass = formIdent.confPassUser.value;
+var userConfPass = formIdent.confPassUser.value
 
-//alert(score);
+var info = userName + "$" + userCour + "$" + userPass;
 
-xmlhttp=new XMLHttpRequest();
-
-xmlhttp.onreadystatechange=function(){
-  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-    {
-    res=unescape(xmlhttp.responseText);
-	
-	//alert(res.indexOf("Vous &ecirc;tes"));
-	if (res.indexOf("Vous кtes identifi") ==  0 ){
-		SetCook("userName",userCour);
-		closePref();}
-//alert(escape('ика'));
-	alert(res);
-    }
-  }
-  
-//alert("userIdent.asp?userName=" + userName + "&userCour=" + userCour + "&userPass=" + userPass + "&userConfPass=" + userConfPass);
-xmlhttp.open("GET","userIdent.asp?userName=" + userName + "&userCour=" + userCour + "&userPass=" + userPass + "&userConfPass=" + userConfPass,true);
-xmlhttp.send();
-
+	if (userPass != userConfPass){
+		alert("La confirmation du mot de passe n'est pas valide.");
+	}else{
+		getInfo("userIdent?data=" + info);
+	}
 }
 
 function authentif(){
@@ -287,10 +272,7 @@ if (checkCookie()){
 	prefLayer.style.visibility="visible";
 }else
 alert("Vous devez permettre l'utilisation des Cookies pour configurer vos pr&eacute;f&eacute;rences.");
-//prefLayer.appendChild(ifObj);
-//alert(navigator.userAgent);
-//alert(navigator.vendor);
-//alert(navigator.platform);
+
 }
 
 function closePref(){
@@ -833,7 +815,7 @@ geocoder = new google.maps.Geocoder();
 
 <div class="prefList">
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="" id="newIdent" onclick="newIdent(); return false;">Nouvelle identification</a>
-</br></br>&nbsp;&nbsp;&nbsp;&nbsp;<a id="butGame" class="itin" target="_blank" href="score_liste.asp">Parties jou&#233;es</a>
+</br></br>&nbsp;&nbsp;&nbsp;&nbsp;<a id="butGame" class="itin" target="_blank" href="score_liste.html">Parties jou&#233;es</a>
 </div>
 
 </div>

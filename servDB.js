@@ -2,14 +2,9 @@
 // Google API server for Sheets (V4) and Gmail (V2)
 const http = require('http');
 const fs = require('fs'); 
-//const util = require('util');
+const url = require('url');
 
 var ip;
-var url = require('url');
-var port = 3000;
-
-var hostname = '';
-var hostURL = '';
 
 var MongoClient = require('mongodb').MongoClient
   , assert = require('assert');
@@ -17,7 +12,7 @@ var ObjectId = require('mongodb').ObjectId;
 
 // Connection URL
 //var urlDB = 'mongodb://localhost:27017/golfDB';
-var urlDB = 'mongodb://localhost:27017/test2';
+var urlDB = 'mongodb://localhost:27017/golf';
 var dBase;
 
 // Use connect method to connect to the server
@@ -122,7 +117,15 @@ console.log(url_parts.pathname);
 			  case "updateGame":
 				updateGame(req, res, url_parts.query);
 				break;
-			
+			  case "endDelGame":
+				endDelGame(req, res, url_parts.query);
+				break;	
+			  case "userIdent":
+				userIdent(req, res, url_parts.query);
+				break;	
+			  case "getGameList":
+				getGameList(req, res, url_parts.query);
+				break;				
 			  default:
 				var param = url_parts.query;
 				if (param.code)  // New code received to obtain Token
@@ -138,9 +141,8 @@ console.log(url_parts.pathname);
 	
 	
 	
-	
 // Start server listening request
-	server.listen(port, hostname, () => {
+	server.listen(port, ip, () => {
 		console.log('Server started on port ' + port);
 		tl.logFile('Server started on port ' + port);
 	});
@@ -167,6 +169,75 @@ function returnRes(res, docs){
 	// to the API (e.g. in case you use sessions)
 	//	res.setHeader('Access-Control-Allow-Credentials', true);
     res.end(JSON.stringify(docs));
+}
+
+function logErreur(mess){
+	tl.logFile(mess);
+}
+
+function userIdent(req, res, param){
+	
+	returnRes(res, doc);
+}
+
+function getGameList(req, res, param){
+var request = (decodeURI(param.data));
+var data = request.split("$");
+var user = parseInt(data[0]);
+var skip = parseInt(data[1]);
+var limit = parseInt(data[2]);
+
+skip=5;
+
+var cur =new Array();
+
+var coll = dBase.collection('score'); 
+function addName(cur, coll){
+	coll.find({USER_ID: user }).sort({score_date:-1}).skip(skip).limit(5).forEach(function(doc){ 
+		addCur(doc);
+	//returnRes(res, doc);	
+	});
+ 
+};  
+
+function addCur(doc){
+	cur[cur.length]=doc;
+	if (cur.length == skip)
+		returnRes(res, cur);
+}
+
+addName(cur, coll);
+
+
+
+}
+
+function endDelGame(req, res, param){
+var request = (decodeURI(param.data));
+var data = request.split("$");
+var gID = (data[0]);	
+var o_id = new ObjectId(gID);
+var action = (data[1]);
+
+var coll = dBase.collection('score');
+if (action == 0){
+   coll.remove({_id:o_id}, function(err, docr) {
+		if (err) {
+			logErreur('Erreur remove score _id : ');
+		}
+		returnRes(res, docr);
+	});
+}
+if (action == 1){
+	var dateTime = Date.now();
+	coll.update({_id:o_id}, { $set: { score_date: dateTime} }, function(err, docr) {
+		if (err) {
+			logErreur('Erreur end score _id : ');
+		}
+		returnRes(res, docr);
+	  });
+}
+
 }
 
 function getGameTab(req, res, param){
@@ -213,6 +284,14 @@ coll.find({ USER_ID: user, PARCOURS_ID: parc, score_date: null }).toArray(functi
   });
 }
 
+function getGame2(res, user, parc){
+
+var coll = dBase.collection('score');
+coll.find({ USER_ID: user, PARCOURS_ID: parc, score_date: null }).toArray(function(err, docs) {
+	returnRes(res, docs);
+  });
+}
+
 function updateGame(req, res, param){
 var request = (decodeURI(param.data));
 var data = request.split("$");
@@ -222,21 +301,22 @@ var hole = parseInt(data[2]);
 var stroke = parseInt(data[3]);
 var put = parseInt(data[4]);
 var lost = parseInt(data[5]);
+var name = (data[6]);
 
 var coll = dBase.collection('score');
 
 switch (hole) {
   case 1:
-	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T1: stroke, P1: put, L1: lost} }, { upsert : true } );
+	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T1: stroke, P1: put, L1: lost, name: name} }, { upsert : true }, callResult );
 	break;
   case 2:
-	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T2: stroke, P2: put, L2: lost} }, { upsert : true } );
+	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T2: stroke, P2: put, L2: lost} }, { upsert : true }, callResult );
 	break;
   case 3:
-	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T3: stroke, P3: put, L3: lost} }, { upsert : true } );
+	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T3: stroke, P3: put, L3: lost} }, { upsert : true }, callResult );
 	break;
   case 4:
-	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T4: stroke, P4: put, L4: lost} }, { upsert : true } );
+	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T4: stroke, P4: put, L4: lost} }, { upsert : true }, callResult );
 	break;
   case 5:
 	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T5: stroke, P5: put, L5: lost} }, { upsert : true } );
@@ -287,15 +367,18 @@ switch (hole) {
 // callResult  NON UTILISÉ
 function callResult(err, docr){
 	//debugger;
+	getGame2(res, user, parc);
 	console.log("Return result");
 if (docr.result.upserted){
-	var id = docr.result.upserted[0]._id.toString();
-		returnRes(res, [{"result":id}]);
+	//var id = docr.result.upserted[0]._id.toString();
+		//returnRes(res, [{"result":id}]);
+		//getGame2(res, user, parc);
 	}else{
-		returnRes(res, [{"result":true}]);
+		//returnRes(res, [{"result":true}]);
 	}
 }
-returnRes(res, [{"result":true}]);
+//returnRes(res, [{"result":true}]);
+
 }
 
 function authUser(req, res, param){
@@ -469,7 +552,7 @@ function listByName(qNom, qVille){
 console.log(qNom + qVille);
 //.collation( { locale: "fr" } ) avant .toArry
 coll.find({ $or:[ {nom: {'$regex': new RegExp(qNom, "ig")} }, {municipal: {'$regex': new RegExp(qVille, "ig")} } ]}, {"sort": "nom"}).toArray(function(err, docs) {
-    console.log("Found the following search clubs");
+   // console.log("Found the following search clubs");
    // console.log(docs)
 returnRes(res, docs);
   });
@@ -481,7 +564,7 @@ debugger;
 ids = ids.map(function(id) { return parseInt(id); });
 
 coll.find({region: {$in: ids }}, {"sort": "nom"}).toArray(function(err, docs) {
-    console.log("Found the following search clubs");
+    //console.log("Found the following search clubs");
    // console.log(docs)
 returnRes(res, docs);
   });
@@ -491,7 +574,7 @@ function listByDistance(lng, lat, dist){
 console.log("lng=" + lng + "  lat=" + lat + "  dist=" + dist);
 //			{ "loc": {  "$near": {"$geometry": {"type": "Point", "coordinates": [ 121.001, 31.001 ] }  }, "$maxDistance": 2000 }}
 coll.find({ "location": { "$near" : {"$geometry": { "type": "Point",  "coordinates": [ lng , lat ] }, "$maxDistance": dist }}}, {"sort": "nom"}).toArray(function(err, docs) {
-    console.log("Found the following near clubs");
+    //console.log("Found the following near clubs");
 	if (err){
 		console.log(err.message);
 	}
@@ -702,6 +785,9 @@ switch (procName) {
   case "addToParc":
 	addFieldParc(res);
 	break;
+  case "convTime":
+	convTime(res);
+	break;
 
 }
 	
@@ -798,6 +884,18 @@ for (var p = 0; p < arrG.length; p++) {
 return false;
 }
 
+function convTime(res){
+// Add Geo lat, lng
+var coll = dBase.collection('score');
+    coll.find().forEach(function(doc){
+			tmpD= new Date(doc.score_date);
+			time = tmpD.getTime();
+         coll.update({_id:doc._id}, {$set:{"score_date": time }});
+    });
+	res.end();
+	console.log("Time created");
+}
+
 
 function deleteColl(req, res, param){
 var tableName = (decodeURI(param.data));
@@ -826,6 +924,7 @@ collClub.createIndex( { "Parcours_id" : 1 } );
 
 var collClub = dBase.collection('score');
 collClub.createIndex( { "joueur_id" : 1, "PARCOURS_ID" : 1, "score_date" : 1 } );
+collClub.createIndex( { "joueur_id" : 1, "score_date" : -1 } );
 
 console.log("Index Created");
 res.end();

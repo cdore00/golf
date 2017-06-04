@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type" />
+<meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
+<meta name="format-detection" content="telephone=no" />
+<link rel="SHORTCUT ICON" href="favicon.ico">
+<link href="favicon.ico" rel="apple-touch-icon" />
+<link href="favicon.ico" rel="apple-touch-startup-image" />
+<link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
+<link href="misc/golfGPS.css" rel="stylesheet" media="screen" type="text/css" />
+
+<title>Clubs de golf au Québec</title>
+<meta content="Golf, Québec, Canada, Golf du Québec, Clubs de golf au Québec, Québec golf" name="keywords" />
+<meta content="Répertoire des clubs de golf du Québec." name="description" />
+
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" /> 
+
+<style>
+table.cartePts tr:focus, tr:active{color: #FF3333}
+</style>
+
+<script type="text/javascript" src="misc/util.js"></script>
+<script type="text/javascript" src="misc/utilGolfGPS.js"></script>
+<script type="text/javascript" src="misc/geoLocal.js"></script>
+
+<script type="text/javascript"> 
+<!--
+
+	document.getElementById('p1').addEventListener('touchstart', function(event) {
+	event.preventDefault();
+	}, false);
+	document.getElementById('p1').addEventListener('touchend', function(event) {
+	event.preventDefault();
+	}, false);
+
+var userId;
+var skip = 0;
+var limit= 0;
+
+var localWindow=null;
+
+function show_score(gameID, clubName){
+//alert('liste');
+localWindow=null;
+localWindow = window.open('scoreTab.html?data=' + gameID + "$" + clubName);
+localWindow.document.close();
+}
+
+
+function initPage(){
+userId = GetCookie("userID");
+
+var data = getURLdata();
+
+skip = 1;
+limit= 5;
+
+setFontSizeGolfGPS();
+
+getInfo("getGameList?data=" + userId, showGameList);
+
+}
+
+
+//var dt =  new Intl.DateTimeFormat("fr-CA", { year: "numeric", month: "2-digit", day: "numeric", hour: "2-digit", minute: "2-digit"});
+function getDateTime(dateTime){
+	var intlDateTime ;
+	if (dateTime)
+		intlDateTime = new Date(dateTime);  //dateTime = Date.now() type
+	else
+		intlDateTime = new Date();
+	
+	intlDateTime.setUTCHours(intlDateTime.getUTCHours());
+	intlDateTime = intlDateTime.toLocaleString();
+	intlDateTime = intlDateTime.substring(0, 10);
+	return intlDateTime.toLocaleString();
+}
+
+function calcScore(oScore){
+var tot = 0;
+for (var i = 1; i < 19; i++) {
+	tot += (eval("oScore.T" + i));
+}
+
+return tot;
+}
+
+
+function showGameList(scoreData){
+var gameList = document.getElementById('gameList');
+var listTot = 0;
+//coupTot = coupTot + orecordset("score")
+
+var Tcode = '<tr><th>Date</th><th>Club</th><th>Score</th></tr>';
+
+for (var i = 0; i < scoreData.length; i++) {
+Tcode += '<tr class="norm" ontouchstart="this.className=\'rowOver\'" ontouchend="this.className=\'rowNorm\'" onmouseover="this.className=\'rowOver\'" onmouseout="this.className=\'rowNorm\'" onclick="show_score();">';
+//'<td><%=orecordset("Sdate")%></td><td><%=orecordset("nom")%></td><td><%=orecordset("score")%></td></tr>';
+var gt = calcScore(scoreData[i]);
+listTot += gt;
+Tcode += '<td>' + getDateTime(scoreData[i].score_date) + '</td><td>' + scoreData[i].name + '</td><td>' + gt + '</td></tr>';
+//'<td><%=orecordset("Sdate")%></td><td><%=orecordset("nom")%></td><td><%=orecordset("score")%></td></tr>';
+}
+
+Tcode += '<tr><td><strong>Moyenne</strong></td><td><strong>&nbsp;parties</strong></td><td><strong>' + (listTot/limit)  + '</strong></td></tr>';
+
+//'<tr><td><strong>Moyenne</strong></td><td><strong><%=i%>&nbsp;parties</strong></td><td><strong><%=round(coupTot/i,1)%></strong></td></tr>';
+
+gameList.innerHTML = Tcode;
+
+x=5;
+}
+
+
+// -->
+</script> 
+</head>
+<body onload="initPage()">
+<div id="duobutton"><a href="#"  onclick="window.close(); return false;">Fermer</a>
+<button type="button" id="changeTaille" title="Taille de police" onclick="changeTaille()"><img id="imgTaille" alt="Taille de police" height="20" width="45" src="images/taille.png" /></button>
+</div>
+
+<form id="formPref" action="score_liste.asp">
+
+<div class="prefPart">
+<select name="prefTrous" onchange="this.form.submit();">
+ <option value="18" selected>18 trous</option>
+ <option value="9" >9 trous</option>
+ <option value="T" >Tous</option>
+</select>
+<select name="prefNbr" onchange="this.form.submit();">
+ <option value="5" >5 parties</option>
+ <option value="10" selected>10 parties</option>
+ <option value="20" >20 parties</option>
+ <option value="50" >50 parties</option>
+  <option value="100" >100 parties</option>
+</select>
+</div>
+
+
+</head>
+<body>
+
+<div id="p1" name="p1" class="unselectable">
+	<table class="cartePts">
+	<tbody id="gameList">
+
+	</tbody>
+	</table>
+</div>
+
+<div class="space10">
+<input name="date_deb" type="hidden" value="<%=date_deb%>">
+&nbsp;<input name="nextGame" class="itin" type="submit" value="Parties suivantes">
+</div>
+</form>
+&nbsp;
+</body>
