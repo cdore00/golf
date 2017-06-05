@@ -1,5 +1,15 @@
 <!--
 
+if (document.images) {
+	img1 = new Image();
+	img2 = new Image();
+	img3 = new Image();
+
+	img1.src = "images/taille.png";
+	img2.src = "images/taille2.png";
+	img3.src = "images/taille3.png";
+}
+
 var HOSTserv = "";
 //localStorage.getItem("HOSTserv");
 
@@ -27,14 +37,18 @@ var urlInfo = document.location.href;
 return decodeURI(urlInfo.substring(urlInfo.indexOf("data=") + 5));
 }
 
-if (document.images) {
-	img1 = new Image();
-	img2 = new Image();
-	img3 = new Image();
-
-	img1.src = "images/taille.png";
-	img2.src = "images/taille2.png";
-	img3.src = "images/taille3.png";
+var dt =  new Intl.DateTimeFormat("fr-CA", { year: "numeric", month: "2-digit", day: "numeric", hour: "2-digit", minute: "2-digit"});
+function getDateTime(dateTime){
+	var intlDateTime ;
+	if (dateTime)
+		intlDateTime = new Date(dateTime);  //dateTime = Date.now() type
+	else
+		intlDateTime = new Date();
+	
+	intlDateTime.setUTCHours(intlDateTime.getUTCHours());
+	intlDateTime = intlDateTime.toLocaleString();
+	intlDateTime = intlDateTime.substring(0, 10);
+	return intlDateTime;
 }
 
 function DelCookie(name) {
