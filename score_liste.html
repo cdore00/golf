@@ -27,7 +27,7 @@ table.cartePts tr:focus, tr:active{color: #FF3333}
 
 <script type="text/javascript"> 
 <!--
-
+//onclick="show_score(412,269)
 	document.getElementById('p1').addEventListener('touchstart', function(event) {
 	event.preventDefault();
 	}, false);
@@ -37,8 +37,8 @@ table.cartePts tr:focus, tr:active{color: #FF3333}
 
 var userId;
 var skip = 0;
+var gameCount = 0;
 var limit= 0;
-
 var localWindow=null;
 
 function show_score(gameID, clubName){
@@ -50,33 +50,47 @@ localWindow.document.close();
 
 
 function initPage(){
+
 userId = GetCookie("userID");
 
 var data = getURLdata();
 
-skip = 1;
-limit= 5;
-
 setFontSizeGolfGPS();
 
-getInfo("getGameList?data=" + userId, showGameList);
+initCount();
+}
 
+function initCount(){
+var formPref = document.getElementById('formPref');
+var nbrTrous = parseInt(formPref.prefTrous.value);
+
+getInfo("countUserGame?data=" + userId + "$" + nbrTrous, getGameList);
 }
 
 
-//var dt =  new Intl.DateTimeFormat("fr-CA", { year: "numeric", month: "2-digit", day: "numeric", hour: "2-digit", minute: "2-digit"});
-function getDateTime(dateTime){
-	var intlDateTime ;
-	if (dateTime)
-		intlDateTime = new Date(dateTime);  //dateTime = Date.now() type
-	else
-		intlDateTime = new Date();
-	
-	intlDateTime.setUTCHours(intlDateTime.getUTCHours());
-	intlDateTime = intlDateTime.toLocaleString();
-	intlDateTime = intlDateTime.substring(0, 10);
-	return intlDateTime.toLocaleString();
+function getGameList(oCount){
+var formPref = document.getElementById('formPref');
+
+localStorage.setItem('gameListPrefTrous', formPref.prefTrous.selectedIndex);
+localStorage.setItem('gameListPrefNbr', formPref.prefNbr.selectedIndex);
+
+var nbrTrous = parseInt(formPref.prefTrous.value);
+limit= parseInt(formPref.prefNbr.value);
+
+if (oCount){
+	gameCount = oCount;
+	skip = 0;
+}else{
+	skip += limit ;
 }
+if (skip >= gameCount)
+	skip = 0;
+if (skip + limit > gameCount)
+	limit = gameCount - skip ;
+
+getInfo("getGameList?data=" + userId + "$" + skip + "$" + limit + "$" + nbrTrous, showGameList);
+}
+
 
 function calcScore(oScore){
 var tot = 0;
@@ -90,27 +104,47 @@ return tot;
 
 function showGameList(scoreData){
 var gameList = document.getElementById('gameList');
-var listTot = 0;
+var listTot = 0, nbrGame = 0;
 //coupTot = coupTot + orecordset("score")
 
 var Tcode = '<tr><th>Date</th><th>Club</th><th>Score</th></tr>';
+var arrHDP = new Array();
 
 for (var i = 0; i < scoreData.length; i++) {
-Tcode += '<tr class="norm" ontouchstart="this.className=\'rowOver\'" ontouchend="this.className=\'rowNorm\'" onmouseover="this.className=\'rowOver\'" onmouseout="this.className=\'rowNorm\'" onclick="show_score();">';
-//'<td><%=orecordset("Sdate")%></td><td><%=orecordset("nom")%></td><td><%=orecordset("score")%></td></tr>';
-var gt = calcScore(scoreData[i]);
-listTot += gt;
-Tcode += '<td>' + getDateTime(scoreData[i].score_date) + '</td><td>' + scoreData[i].name + '</td><td>' + gt + '</td></tr>';
+	var scoreID = scoreData[i]._id;
+	var courseName = scoreData[i].name;
+	Tcode += '<tr class="norm" ontouchstart="this.className=\'rowOver\'" ontouchend="this.className=\'rowNorm\'" onmouseover="this.className=\'rowOver\'" onmouseout="this.className=\'rowNorm\'" onclick="show_score(\'' + scoreID + '\',' + '\'' + courseName + '\');">';
+	//'<td><%=orecordset("Sdate")%></td><td><%=orecordset("nom")%></td><td><%=orecordset("score")%></td></tr>';
+	var gt = calcScore(scoreData[i]);
+	arrHDP[arrHDP.length] = gt;
+	listTot += gt;
+	nbrGame += 1;
+	Tcode += '<td>' + getDateTime(scoreData[i].score_date) + '</td><td>' + scoreData[i].name + '</td><td>' + gt + '</td></tr>';
 //'<td><%=orecordset("Sdate")%></td><td><%=orecordset("nom")%></td><td><%=orecordset("score")%></td></tr>';
 }
 
-Tcode += '<tr><td><strong>Moyenne</strong></td><td><strong>&nbsp;parties</strong></td><td><strong>' + (listTot/limit)  + '</strong></td></tr>';
+if (i >= 20)
+	var hdp = "Hand.: " + calcHDP(arrHDP);
+else
+	var hdp = "";
+
+Tcode += '<tr><td><strong>' + hdp + '</strong></td><td><strong>' + nbrGame + '&nbsp;parties</strong></td><td><strong>Moy.: ' + (Math.round(listTot/limit*10) /10 ) + '</strong></td></tr>';
 
 //'<tr><td><strong>Moyenne</strong></td><td><strong><%=i%>&nbsp;parties</strong></td><td><strong><%=round(coupTot/i,1)%></strong></td></tr>';
 
 gameList.innerHTML = Tcode;
 
 x=5;
+}
+
+function calcHDP(arrHDP){
+var hdp = 0;
+arrHDP.sort(function(a, b){return a-b});
+
+for (var i = 0; i < 10; i++) {
+	hdp += arrHDP[i];
+}
+return (hdp / 10);
 }
 
 
@@ -122,15 +156,15 @@ x=5;
 <button type="button" id="changeTaille" title="Taille de police" onclick="changeTaille()"><img id="imgTaille" alt="Taille de police" height="20" width="45" src="images/taille.png" /></button>
 </div>
 
-<form id="formPref" action="score_liste.asp">
+<form id="formPref" action="#">
 
 <div class="prefPart">
-<select name="prefTrous" onchange="this.form.submit();">
+<select id="prefTrous" onchange="initCount()">
  <option value="18" selected>18 trous</option>
  <option value="9" >9 trous</option>
  <option value="T" >Tous</option>
 </select>
-<select name="prefNbr" onchange="this.form.submit();">
+<select id="prefNbr">
  <option value="5" >5 parties</option>
  <option value="10" selected>10 parties</option>
  <option value="20" >20 parties</option>
@@ -153,7 +187,7 @@ x=5;
 
 <div class="space10">
 <input name="date_deb" type="hidden" value="<%=date_deb%>">
-&nbsp;<input name="nextGame" class="itin" type="submit" value="Parties suivantes">
+&nbsp;<input name="nextGame" class="itin" type="button" onclick="getGameList()" value="Parties suivantes">
 </div>
 </form>
 &nbsp;

@@ -125,7 +125,11 @@ console.log(url_parts.pathname);
 				break;	
 			  case "getGameList":
 				getGameList(req, res, url_parts.query);
-				break;				
+				break;		
+			  case "countUserGame":
+				countUserGame(req, res, url_parts.query);
+				break;
+				
 			  default:
 				var param = url_parts.query;
 				if (param.code)  // New code received to obtain Token
@@ -180,33 +184,63 @@ function userIdent(req, res, param){
 	returnRes(res, doc);
 }
 
+function countUserGame(req, res, param){
+var request = (decodeURI(param.data));
+var data = request.split("$");
+var user = parseInt(data[0]);
+var is18 = parseInt(data[1]);
+
+var coll = dBase.collection('score'); 
+var tot = coll.find({USER_ID: user}).count();
+debugger;
+
+if (is18 == 18){
+	coll.find({USER_ID: user, T18: { $exists: true, $nin: [ 0 ] }}).count( function(err, count){ 
+
+		returnRes(res, count);	
+	});
+}else{
+	//coll.find({USER_ID: user, T18: { $exists: false, $nin: [ 0 ] }, {$or:[{T18:0}]} }).count( function(err, count){ 
+	 coll.find({USER_ID: user, $or:[{T18:0},{T18:null}]  } ).count(function(err, count){ 
+		returnRes(res, count);	
+	});
+}
+};
+
 function getGameList(req, res, param){
 var request = (decodeURI(param.data));
 var data = request.split("$");
 var user = parseInt(data[0]);
 var skip = parseInt(data[1]);
 var limit = parseInt(data[2]);
-
-skip=5;
+var is18 = parseInt(data[3]);
 
 var cur =new Array();
 
 var coll = dBase.collection('score'); 
-function addName(cur, coll){
-	coll.find({USER_ID: user }).sort({score_date:-1}).skip(skip).limit(5).forEach(function(doc){ 
+function addName(cur, coll, is18){
+	debugger;
+if (is18 == 18){
+	coll.find({USER_ID: user, T18: { $exists: true, $nin: [ 0 ] } }).sort({score_date:-1}).skip(skip).limit(limit).forEach(function(doc){ 
 		addCur(doc);
 	//returnRes(res, doc);	
 	});
- 
+}else{
+	//coll.find({USER_ID: user, T18: { $exists: true, $nin: [ 0 ] } }).sort({score_date:-1}).skip(skip).limit(limit).forEach(function(doc){
+	coll.find({USER_ID: user, $or:[{T18:0},{T18:null}]  } ).sort({score_date:-1}).skip(skip).limit(limit).forEach(function(doc){
+		addCur(doc);
+	//returnRes(res, doc);	
+	});
+}
 };  
 
 function addCur(doc){
 	cur[cur.length]=doc;
-	if (cur.length == skip)
+	if (cur.length == limit)
 		returnRes(res, cur);
 }
 
-addName(cur, coll);
+addName(cur, coll, is18);
 
 
 
@@ -245,11 +279,11 @@ var request = (decodeURI(param.data));
 var data = request.split("$");
 var gID = (data[0]);
 //var parc = parseInt(data[1]);
-if (parseInt(gID) < 200)
+if (parseInt(gID) < 500)
 	var o_id = parseInt(gID);
 else	
 	var o_id = new ObjectId(gID);
-	debugger;
+
 var coll = dBase.collection('score');
 coll.find({_id:o_id}).toArray(function(err, doc) {
 
@@ -319,63 +353,55 @@ switch (hole) {
 	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T4: stroke, P4: put, L4: lost} }, { upsert : true }, callResult );
 	break;
   case 5:
-	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T5: stroke, P5: put, L5: lost} }, { upsert : true } );
+	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T5: stroke, P5: put, L5: lost} }, { upsert : true }, callResult );
 	break;
   case 6:
-	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T6: stroke, P6: put, L6: lost} }, { upsert : true } );
+	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T6: stroke, P6: put, L6: lost} }, { upsert : true }, callResult );
 	break;
   case 7:
-	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T7: stroke, P7: put, L7: lost} }, { upsert : true } );
+	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T7: stroke, P7: put, L7: lost} }, { upsert : true }, callResult );
 	break;
   case 8:
-	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T8: stroke, P8: put, L8: lost} }, { upsert : true } );
+	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T8: stroke, P8: put, L8: lost} }, { upsert : true }, callResult );
 	break;
   case 9:
-	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T9: stroke, P9: put, L9: lost} }, { upsert : true } );
+	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T9: stroke, P9: put, L9: lost} }, { upsert : true }, callResult );
 	break;
   case 10:
-	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T10: stroke, P10: put, L10: lost} }, { upsert : true } );
+	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T10: stroke, P10: put, L10: lost} }, { upsert : true }, callResult );
 	break;
   case 11:
-	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T11: stroke, P11: put, L11: lost} }, { upsert : true } );
+	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T11: stroke, P11: put, L11: lost} }, { upsert : true }, callResult );
 	break;
   case 12:
-	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T12: stroke, P5: put, L12: lost} }, { upsert : true } );
+	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T12: stroke, P5: put, L12: lost} }, { upsert : true }, callResult );
 	break;
   case 13:
-	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T13: stroke, P3: put, L13: lost} }, { upsert : true } );
+	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T13: stroke, P3: put, L13: lost} }, { upsert : true }, callResult );
 	break;
   case 14:
-	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T14: stroke, P14: put, L14: lost} }, { upsert : true } );
+	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T14: stroke, P14: put, L14: lost} }, { upsert : true }, callResult );
 	break;
   case 15:
-	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T15: stroke, P15: put, L15: lost} }, { upsert : true } );
+	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T15: stroke, P15: put, L15: lost} }, { upsert : true }, callResult );
 	break;
   case 16:
-	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T16: stroke, P16: put, L16: lost} }, { upsert : true } );
+	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T16: stroke, P16: put, L16: lost} }, { upsert : true }, callResult );
 	break;
   case 17:
-	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T17: stroke, P17: put, L17: lost} }, { upsert : true } );
+	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T17: stroke, P17: put, L17: lost} }, { upsert : true }, callResult );
 	break;
   case 18:
-	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T18: stroke, P18: put, L18: lost} }, { upsert : true } );
+	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T18: stroke, P18: put, L18: lost} }, { upsert : true }, callResult );
 	break;
 	
 //dBase.score.update({ USER_ID: "cdore00@yahoo.ca", PARCOURS_ID: 407, score_date: new Date("2016/05/10") }, { $set: {T1: 8} }, { upsert : true } );
 }
 
-// callResult  NON UTILISÉ
 function callResult(err, docr){
 	//debugger;
 	getGame2(res, user, parc);
 	console.log("Return result");
-if (docr.result.upserted){
-	//var id = docr.result.upserted[0]._id.toString();
-		//returnRes(res, [{"result":id}]);
-		//getGame2(res, user, parc);
-	}else{
-		//returnRes(res, [{"result":true}]);
-	}
 }
 //returnRes(res, [{"result":true}]);
 
@@ -747,7 +773,7 @@ function  insertParc(coll, data, res){
 
 function insertClub(coll, data, res){
 
-	coll.insertOne( {"_id": eval(data._id), "nom": data.nom, "prive": eval(data.prive), "depuis": data.depuis, "municipal": data.municipal, "url_ville": data.url_ville, "telephone": data.telephone, "telephone2": data.telephone2, "telephone3": data.telephone3, "adresse": data.adresse, "codepostal2": data.codepostal2, "region": eval(data.region), "codepostal": data.codepostal, "longitude": eval(data.longitude), "latitude": eval(data.latitude)}, function(err, result) {
+	coll.insertOne( {"_id": eval(data._id), "nom": data.nom, "url_club": data.url_golf, "prive": eval(data.prive), "depuis": data.depuis, "municipal": data.municipal, "url_ville": data.url_ville, "telephone": data.telephone, "telephone2": data.telephone2, "telephone3": data.telephone3, "adresse": data.adresse, "codepostal2": data.codepostal2, "region": eval(data.region), "codepostal": data.codepostal, "longitude": eval(data.longitude), "latitude": eval(data.latitude)}, function(err, result) {
 		 if(err) { 
 			console.log("Insert erreur:" + err.message);
 			throw err; 

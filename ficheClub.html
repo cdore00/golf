@@ -116,8 +116,8 @@ getInfo("getBloc?data=" + CourseList, showBlock);
 
 clubName = oClubParc[0].nom;
 var cInfo = 'Club:&nbsp;';
-if (oClubParc[0].url_golf)
-	cInfo += '<a target="_blank" href=' + oClubParc[0].url_golf + '>' + oClubParc[0].nom + '</a>&nbsp;';
+if (oClubParc[0].url_club)
+	cInfo += '<a target="_blank" href=' + oClubParc[0].url_club + '>' + oClubParc[0].nom + '</a>&nbsp;';
 else
 	cInfo += oClubParc[0].nom + '&nbsp;';
 if (oClubParc[0].prive)
@@ -149,16 +149,20 @@ if (oClubParc[0].telephone3)
 clubDetail.innerHTML = cInfo;
 
 var listParc = document.getElementById('listParc');
+
 for (var p = 0; p < clubCourse.length; p++) {
 	var htmlCode = "";
+	var parcoursName = "";
 	if (clubCourse[p].POINTS == "E")
 		htmlCode += "Exécutif,&nbsp;";
 	htmlCode += clubCourse[p].PARCOURS;
 	if (clubCourse[p].DEPUIS)	
 		htmlCode += "&nbsp;depuis&nbsp;" + clubCourse[p].DEPUIS + ",";
 	htmlCode += "&nbsp;" + clubCourse[p].TROUS + "&nbsp;trous&nbsp;&#224; normale&nbsp;" + clubCourse[p].NORMALE + "&nbsp;de&nbsp;" + clubCourse[p].VERGES + "&nbsp;verges&nbsp;&nbsp;";
+	if (clubCourse[p].PARCOURS != "")
+		parcoursName += " - " + clubCourse[p].PARCOURS;
 	if (clubCourse[p].golfGPS)
-		htmlCode += '<a class="itin" target="_blank" href="golfGPS.html?data=' + clubCourse[p]._id + '&' + clubName + '">Jouer</a>';
+		htmlCode += '<a class="itin" target="_blank" href="golfGPS.html?data=' + clubCourse[p]._id + '&' + clubName + parcoursName + '">Jouer</a>';
 
 	var liElem = document.createElement("li");
 	liElem.setAttribute('class', 'listitem');

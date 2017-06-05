@@ -77,16 +77,24 @@ doc.name = cName[0].nom;
 cur[cur.length]=doc; });  
 }; 
 
+	coll.count({USER_ID: user}, function(doc){ 
+	cur[cur.length] = doc;	
+
 function addName(){ 
 db.score.find({}).forEach(function(doc){ 
 var cName = db.club.find({"courses._id": doc.PARCOURS_ID}).toArray();  
-var name = cName[0].nom;  
+var name = cName[0].nom; 
+for (var p = 0; p < cName[0].courses.length; p++) {
+	if (cName[0].courses[p]._id == doc.PARCOURS_ID){
+		if (cName[0].courses[p].PARCOURS != "")
+			name += " - " +  cName[0].courses[p].PARCOURS;
+	}
+}
 db.score.update({_id:doc._id}, {$set:{"name": name }});  
 }); 
 }
 
-// UPDATE
-db.parcours.update(    { _id: 2 },     { $set: {TROUS: 18} } )
+db.score.find({USER_ID: 80, $or:[{T18:0},{T18:null}]  } ).sort({score_date:-1}).skip(0)
 
 
 db.club.find({ location: { $near : {$geometry: { type: "Point",  coordinates: [ -71.2293677, 46.803678 ] }, $minDistance: 0, $maxDistance: 5000 } } })
