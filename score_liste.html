@@ -27,14 +27,16 @@ table.cartePts tr:focus, tr:active{color: #FF3333}
 
 <script type="text/javascript"> 
 <!--
-//onclick="show_score(412,269)
+if (isTouchDevice){
 	document.getElementById('p1').addEventListener('touchstart', function(event) {
 	event.preventDefault();
 	}, false);
 	document.getElementById('p1').addEventListener('touchend', function(event) {
 	event.preventDefault();
 	}, false);
+}
 
+var HOSTserv = "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
 var userId;
 var skip = 0;
 var gameCount = 0;
@@ -123,7 +125,7 @@ for (var i = 0; i < scoreData.length; i++) {
 //'<td><%=orecordset("Sdate")%></td><td><%=orecordset("nom")%></td><td><%=orecordset("score")%></td></tr>';
 }
 
-if (i >= 20)
+if (i == 20)
 	var hdp = "Hand.: " + calcHDP(arrHDP);
 else
 	var hdp = "";
@@ -134,7 +136,6 @@ Tcode += '<tr><td><strong>' + hdp + '</strong></td><td><strong>' + nbrGame + '&n
 
 gameList.innerHTML = Tcode;
 
-x=5;
 }
 
 function calcHDP(arrHDP){
