@@ -1,5 +1,21 @@
 <!--
 
+var HOSTserv = localStorage.getItem("HOSTserv");
+
+function is_touch_device() {
+  return 'ontouchstart' in window        // works on most browsers 
+      || navigator.maxTouchPoints;       // works on IE10/11 and Surface
+};
+
+var isTouchDevice = is_touch_device();
+
+if (!HOSTserv || HOSTserv == null || HOSTserv == "")
+	getInfo("serv.json", initHOST);
+
+function initHOST(oURL){
+	HOSTserv = oURL.servURL
+}
+
 if (document.images) {
 	img1 = new Image();
 	img2 = new Image();
@@ -10,15 +26,6 @@ if (document.images) {
 	img3.src = "images/taille3.png";
 }
 
-var HOSTserv = "";
-//localStorage.getItem("HOSTserv");
-
-if (!HOSTserv || HOSTserv == null || HOSTserv == "")
-	getInfo("serv.json", initHOST);
-
-function initHOST(oURL){
-	HOSTserv = oURL.servURL
-}
 
 function getInfo(path, callback){
 var xhr=new XMLHttpRequest();
@@ -46,6 +53,7 @@ function getDateTime(dateTime){
 		intlDateTime = new Date();
 	
 	intlDateTime.setUTCHours(intlDateTime.getUTCHours());
+	intlDateTime = dt.format(intlDateTime);
 	intlDateTime = intlDateTime.toLocaleString();
 	intlDateTime = intlDateTime.substring(0, 10);
 	return intlDateTime;
