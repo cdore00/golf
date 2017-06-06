@@ -44,7 +44,7 @@ var urlInfo = document.location.href;
 return decodeURI(urlInfo.substring(urlInfo.indexOf("data=") + 5));
 }
 
-var dt =  new Intl.DateTimeFormat("fr-CA", { year: "numeric", month: "2-digit", day: "numeric", hour: "2-digit", minute: "2-digit"});
+//var dt =  new Intl.DateTimeFormat("fr-CA", { year: "numeric", month: "2-digit", day: "numeric", hour: "2-digit", minute: "2-digit"});
 function getDateTime(dateTime){
 	var intlDateTime ;
 	if (dateTime)
@@ -53,7 +53,7 @@ function getDateTime(dateTime){
 		intlDateTime = new Date();
 	
 	intlDateTime.setUTCHours(intlDateTime.getUTCHours());
-	intlDateTime = dt.format(intlDateTime);
+	//intlDateTime = dt.format(intlDateTime);
 	intlDateTime = intlDateTime.toLocaleString();
 	intlDateTime = intlDateTime.substring(0, 10);
 	return intlDateTime;
