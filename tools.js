@@ -15,13 +15,15 @@ var dt =  new Intl.DateTimeFormat("fr-CA", options);
 exports.getDateTime = function (dateTime){
 	var intlDateTime ;
 	if (dateTime)
-		intlDateTime = dateTime;
+		intlDateTime = new Date(dateTime);
 	else
 		intlDateTime = new Date();
 	
 	intlDateTime.setUTCHours(intlDateTime.getUTCHours() + timeZoneAjust);
 	intlDateTime = dt.format(intlDateTime);
-	return intlDateTime.toLocaleString();
+	intlDateTime = intlDateTime.toLocaleString();
+	intlDateTime = intlDateTime.substring(0, 10);
+	return intlDateTime;
 }
 
 // Log to file

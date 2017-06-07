@@ -36,7 +36,6 @@ if (isTouchDevice){
 	}, false);
 }
 
-var HOSTserv = "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
 var userId;
 var skip = 0;
 var gameCount = 0;
@@ -121,7 +120,7 @@ for (var i = 0; i < scoreData.length; i++) {
 	arrHDP[arrHDP.length] = gt;
 	listTot += gt;
 	nbrGame += 1;
-	Tcode += '<td>' + getDateTime(scoreData[i].score_date) + '</td><td>' + scoreData[i].name + '</td><td>' + gt + '</td></tr>';
+	Tcode += '<td>' + (scoreData[i].score_date) + '</td><td>' + scoreData[i].name + '</td><td>' + gt + '</td></tr>';
 //'<td><%=orecordset("Sdate")%></td><td><%=orecordset("nom")%></td><td><%=orecordset("score")%></td></tr>';
 }
 

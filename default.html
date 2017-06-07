@@ -188,9 +188,14 @@ var span3 = document.getElementById('lbl3');
 }
 
 function setIdent(){
+//prefOptions
+//identOptions
 var formAuth = document.getElementById('formAuth');
 var prefLayer = document.getElementById('prefLayer');
 var identLayer = document.getElementById('identLayer');
+var newIdent = document.getElementById('newIdent');
+var butGame = document.getElementById('butGame');
+var aLink = document.getElementById('aLink');
 
 formAuth.nameUser.value = GetCookie("userName");
 if (formAuth.nameUser.value == ''){
@@ -203,12 +208,18 @@ if (formAuth.nameUser.value == ''){
 
 prefLayer.style.visibility="hidden";
 identLayer.style.visibility="visible";
+if (!userId){
+	newIdent.style.visibility = "visible";
+	butGame.style.visibility = "hidden";
+}else{
+	newIdent.style.visibility = "hidden";
+	butGame.style.visibility = "visible";
+}
+aLink.style.display = "inline";
 }
 
 function saveIdent(){
 //var myScore = document.getElementById('myScore');
-var res;
-var xmlhttp;
 var userName = formIdent.nomUser.value;
 var userCour = formIdent.courUser.value;
 var userPass = formIdent.passUser.value;
@@ -216,11 +227,33 @@ var userConfPass = formIdent.confPassUser.value
 
 var info = userName + "$" + userCour + "$" + userPass;
 
-	if (userPass != userConfPass){
+	if (userPass == "" || userPass != userConfPass){
 		alert("La confirmation du mot de passe n'est pas valide.");
-	}else{
-		getInfo("userIdent?data=" + info);
+	}else{ 
+		getInfo("addUserIdent?data=" + info, validNewUser);
 	}
+}
+
+function validNewUser(rdata){
+var titrePref = document.getElementById('titrePref');
+var modLayer = document.getElementById('modalDiv');
+var authLayer = document.getElementById('authLayer');
+
+if (rdata.code){
+	if (rdata.code == 11000)
+		alert("Cette adresse courriel existe déjà.");
+	else
+		alert(rdata.message);
+
+}else{
+
+
+}
+	
+	//11000
+//titrePref.parentNode.removeChild(titrePref);
+//modLayer.style.visibility="hidden";
+//authLayer.style.visibility="hidden";
 }
 
 function authentif(){
@@ -254,7 +287,8 @@ if (rep[0].result){
 function showPref(){
 var prefLayer = document.getElementById('prefLayer');
 var initLayer = document.getElementById('identLayer');
-
+var aLink = document.getElementById('aLink');
+aLink.style.display="none";
 initLayer.style.visibility="hidden";
 prefLayer.style.visibility="visible";
 }
@@ -280,7 +314,8 @@ var modLayer = document.getElementById('modalDiv');
 var prefLayer = document.getElementById('prefLayer');
 var identLayer = document.getElementById('identLayer');
 var authLayer = document.getElementById('authLayer');
-
+var aLink = document.getElementById('aLink');
+aLink.style.display="none";
 authLayer.style.visibility="hidden";
 identLayer.style.visibility="hidden";
 prefLayer.style.visibility="hidden";
@@ -754,7 +789,7 @@ geocoder = new google.maps.Geocoder();
 
 <div id="menu">
   <ul id="onglets">
-    <li class="active"><a href="" onClick="return false;"> Pr&#233;f&#233;rences </a></li>
+    <li class="active"><a href="#" onClick="return false;"> Pr&#233;f&#233;rences </a></li>
     <li><a href="" onClick="setIdent(); return false;"> Identification </a></li>
   </ul>
 </div>
@@ -795,7 +830,7 @@ geocoder = new google.maps.Geocoder();
 <div id="menu">
   <ul id="onglets">
     <li><a href="" onClick="showPref(); return false;"> Pr&#233;f&#233;rences </a></li>
-    <li class="active"><a href="" onClick="return false;"> Identification </a></li>
+    <li class="active"><a href="#" onClick="return false;"> Identification </a></li>
   </ul>
 </div>
 <!-- <div id="titrePref">Préférences</div> // -->
@@ -813,9 +848,9 @@ geocoder = new google.maps.Geocoder();
 <input id="passwordUser" type="password" size="15" maxlength="50">
 </div></div>
 
-<div class="prefList">
+<div id="aLink" class="prefList">
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="" id="newIdent" onclick="newIdent(); return false;">Nouvelle identification</a>
-</br></br>&nbsp;&nbsp;&nbsp;&nbsp;<a id="butGame" class="itin" target="_blank" href="score_liste.html">Parties jou&#233;es</a>
+&nbsp;&nbsp;&nbsp;&nbsp;<a id="butGame" class="itin" target="_blank" href="score_liste.html">Parties jou&#233;es</a>
 </div>
 
 </div>
