@@ -612,6 +612,7 @@ if (localStorage.getItem("motsCleContext"))
 
 if (localStorage.getItem("regionIdContext"))
 	formCrit.IdRegion.selectedIndex = localStorage.getItem("regionIdContext");
+
 }
 
 function rechercheClub(){
@@ -623,13 +624,17 @@ var URLresult = "listeResult.html?data=";
 //alert(formCrit.IdRegion.value);
 
 localStorage.removeItem('idList');
+localStorage.removeItem('motsCleContext');
+localStorage.removeItem('checkNom');
+localStorage.removeItem('checkVille');
+localStorage.removeItem('regionIdContext');
+localStorage.removeItem('message');
 
 if (formCrit.Mots.value != ""){
 	var mess = "&nbsp;clubs&nbsp;o&#249; &#171;" + formCrit.Mots.value + "&#187; est contenu dans le ";
 	URLresult += "1$";
 	if (formCrit.checkNom.checked){
 		URLresult += encodeURI(formCrit.Mots.value) + "$";
-		localStorage.setItem('checkNom', true);
 		mess += " nom du club de golf";
 		if (formCrit.checkVille.checked)
 			mess += "&nbsp;o&#249; le nom de la ville du club.";
@@ -637,16 +642,13 @@ if (formCrit.Mots.value != ""){
 			mess += ".";
 	}else{
 		URLresult += "xxxxx$";
-		localStorage.setItem('checkNom', false);
 	}	
 	if (formCrit.checkVille.checked){
 		URLresult += encodeURI(formCrit.Mots.value);
-		localStorage.setItem('checkVille', true);
 		if (!formCrit.checkNom.checked)
 			mess += "&nbsp;le nom de la ville du club.";
 	}else{
 		URLresult += "xxxxx";
-		localStorage.setItem('checkVille', false);
 	}	
 	localStorage.setItem('motsCleContext', formCrit.Mots.value);
 	localStorage.setItem('message', mess);

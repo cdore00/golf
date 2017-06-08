@@ -293,7 +293,7 @@ intLat = data.substring(0,data.indexOf(","));
 data = data.substring(data.indexOf(",") + 1);
 intKm = parseInt(data.substring(0,data.indexOf(",")));
 data = data.substring(data.indexOf(",") + 1);
-intZoom = 15 - parseInt(Math.log(intKm/100));
+
 setFontSize();
 
 getInfo("getClubList?data=" + data, initClubs);
@@ -301,21 +301,37 @@ getInfo("getClubList?data=" + data, initClubs);
 }
 
 function initClubs(cData){
-var club;
+var chargement = document.getElementById('chargement');
+var maxX = cData[0].location.x;
+var minX = cData[0].location.x;
+var maxY = cData[0].location.y;
+var minY = cData[0].location.y;
 for (var i = 0; i < cData.length; i++) {
 	clubs[i] = [ cData[i].location.nom , cData[i].location.x , cData[i].location.y ];
+	maxX = Math.max(maxX, cData[i].location.x);
+	minX = Math.min(minX, cData[i].location.x);
+	maxY = Math.max(maxY, cData[i].location.y);
+	minY = Math.min(minY, cData[i].location.y);
 }
 
-x=5;
-var mp=initialize();
+if (intLat == 'undefined' || !intLat){
+	intLat = ((maxX + minX) / 2) + "";
+	intLng = ((maxY + minY) / 2) + "";
+	intKm = calculDistance(maxX, minX, maxY, minY);  
+}
+ 
+intZoom = 15 - parseInt(Math.log(intKm/100));
+
+initialize();
+chargement.style.display = "none";
 }
 
-function calculDistance(pt1, pt2){
-var lat1 = pt1.lat();
-var lat2 = pt2.lat();
-var lon1 = pt1.lng();
-var lon2 = pt2.lng();
-var R = 6967410.324; // Rayon moyen en verge
+function calculDistance(lat1, lat2, lon1, lon2){
+var lat1 = parseInt(lat1);
+var lat2 = parseInt(lat2);
+var lon1 = parseInt(lon1);
+var lon2 = parseInt(lon2);
+var R = 6378000; // Rayon moyen en mètre
 var rLat1 = lat1 * (Math.PI / 180);
 var rLat2 = lat2 * (Math.PI / 180);
 var dLat = (lat2-lat1) * (Math.PI / 180);
@@ -326,13 +342,7 @@ var a = Math.sin(rLat1) * Math.sin(rLat2) + Math.cos(rLat1) * Math.cos(rLat2) * 
 
 var d = R * a ;
 
-	d = Math.round(d);
-	if ( d > 1760){
-	  d = d / 1760;
-	  d = Math.round(d * 100) / 100;
-	  d = d + 'M';
-	  }
-	return d + '';
+return Math.round(d);
 }
 
 // -->  
@@ -342,6 +352,7 @@ var d = R * a ;
 
 <div id="topbar" class="vert">
 <div id="leftnav"><a title="Formulaire de recherche" href="index.html"><img alt="Formulaire de recherche" height="22" width="25" src="images/home22.png" /></a></div>
+<div id="chargement" class="textBlink">Chargement...</div>
 <button type="button" id="rightnav" title="Taille de police" onclick="changeTaille();"><img id="imgTaille" alt="Taille de police" height="20" width="45" src="images/taille.png" /></button>
 </div>
 
