@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
+<meta name="format-detection" content="telephone=no" />
+<link href="favicon.ico" rel="icon" />
+<link href="favicon.ico" rel="shortcut icon" />
+<link href="favicon.ico" rel="apple-touch-icon" />
+<link href="favicon.ico" rel="apple-touch-startup-image" />
+<link href="misc/init.css" rel="stylesheet" media="screen" type="text/css" />
+<link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
+<title>Clubs de golf au Qu&eacute;bec</title>
+<meta content="Golf, Québec, Canada, Golf du Québec, Clubs de golf au Québec, Québec golf" name="keywords" />
+<meta content="Répertoire des clubs de golf du Québec." name="description" />
+
+<script type="text/javascript" src="misc/googGeo.js"></script>
+<script type="text/javascript" src="misc/util.js"></script> 
+<script type="text/javascript" src="misc/geoLocal.js"></script>
+<!-- <script type="text/javascript" src="js/config.js"></script> // -->
+
+    <script type="text/javascript" 
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA15nyiYmWG_0IkG9H5r4Qc8KhZxwRw_xA&sensor=false"> 
+    </script> 
+
+<script type="text/javascript" language="Javascript">
+<!-- 
+
+var userId = null;
+var userName = null;
+var watchId = null;
+var locTimer;
+var resultLocalisation = 1000;
+var affL, LocT;
+//var HOSTserv = "http://127.0.0.1:3000/";
+// "http://127.0.0.1:3000/";
+// "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
+
+// the locColl object
+var locColl = {
+    // setup properties of locColl object
+    id:"locColl",
+    coord : new Array()
+}
+
+locColl.addLoc = function (lat,lng,acc) {
+	this.coord[this.coord.length] = new addCoord(lat,lng,acc);
+}
+
+function addCoord(lat,lng,acc)
+{
+this.lat=lat;
+this.lng=lng;
+this.acc=acc;
+}
+
+function getInfo(path, callback){
+//var modLayer = document.getElementById('modalDiv');
+var authLayer = document.getElementById('authLayer');
+var xmlhttp;
+
+//modLayer.style.visibility="visible";
+xhr=new XMLHttpRequest();
+
+  xhr.onloadend = function() {
+    var text = xhr.responseText;
+	//modLayer.style.visibility="hidden";	
+	var x=JSON.parse(text);
+	if (callback)
+		callback(x);
+  };
+xhr.open("GET", HOSTserv + path ,true);
+xhr.send();
+
+var x;
+}
+
+function listFav(clubList){
+var authLayer = document.getElementById('authLayer');
+var favGolfList = document.getElementById('favGolfList');
+
+if (!favGolfList){
+	var divElem = document.createElement("div");
+	divElem.setAttribute('id', 'favGolfList');
+	authLayer.appendChild(divElem);
+	var ulElem = document.createElement("ul");
+	ulElem.setAttribute('id', 'favGolfList');
+	ulElem.setAttribute('class', 'favItems');
+	divElem.appendChild(ulElem);
+	for (var i = 0; i < clubList.length; i++) {
+		var liElem = document.createElement("li");
+		liElem.setAttribute('class', 'listitem');
+		liElem.innerHTML = '<a class="itemdesc" href="ficheClub.html?data=' + clubList[i]._id + '">' + clubList[i].nom + '</a></li>';
+		ulElem.appendChild(liElem);
+	}
+	var butElem = document.createElement("button");
+	butElem.setAttribute('class', 'bouton');
+	butElem.setAttribute('onclick', 'closePref()');
+	butElem.innerHTML = 'Fermer';
+	divElem.appendChild(butElem);
+}
+authLayer.style.visibility="visible";
+}
+
+function newIdent(){
+var modLayer = document.getElementById('modalDiv');
+var authLayer = document.getElementById('authLayer');
+var xmlhttp;
+
+closePref();
+
+xmlhttp=new XMLHttpRequest();
+
+xmlhttp.onreadystatechange=function(){
+  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+    {
+    authLayer.innerHTML = xmlhttp.responseText;
+    }
+  }
+  
+xmlhttp.open("GET","identifier.html",false);
+xmlhttp.send();
+
+modLayer.style.visibility="visible";
+authLayer.style.visibility="visible";
+}
+
+function initPref(){
+var locButton = document.getElementById('locDiv');
+
+affL = GetCookie("AffLoc");
+if (affL == null || affL == 0) 
+	affL = false;
+
+LocT = GetCookie("LocTime");
+if (LocT == null || LocT == 0){ 
+	LocT = 5;
+	SetCook("LocTime",LocT);}
+LocT = LocT * 1000;
+
+if (LocT == 0)
+	locButton.style.visibility="hidden";
+else
+	locButton.style.visibility="visible";
+
+setFontSize();
+showLocalisation();
+}
+
+function initFormPref(){
+var affL = GetCookie("AffLoc");
+var polS = GetCookie("PolSize");
+var locT = GetCookie("LocTime");
+
+//alert(GetCookie("AffLoc")+GetCookie("PolSize")+GetCookie("LocTime"));
+
+if (affL == 'true')
+	formPref.locDisplay.checked = true;
+else
+	formPref.locDisplay.checked = false;
+
+for (var i=0;i<formPref.polSize.length;i++){
+	if (formPref.polSize[i].value == polS)
+		formPref.polSize.selectedIndex = i;
+}
+
+formPref.locTime.selectedIndex = null;
+for (var i=0;i<formPref.locTime.length;i++){
+	if (formPref.locTime[i].value == locT)
+		formPref.locTime.selectedIndex = i;
+}
+//formPref.locTime.selectedIndex = locT - 1;
+
+adjustPol(formPref.polSize[formPref.polSize.selectedIndex]);
+
+}
+
+function adjustPol(selOption){
+var span1 = document.getElementById('lbl1');
+var span2 = document.getElementById('lbl2');
+var span3 = document.getElementById('lbl3');
+
+	span1.style.fontSize = selOption.value;
+	span2.style.fontSize = selOption.value;
+	span3.style.fontSize = selOption.value;	
+	setFontSize(selOption.value);
+}
+
+function setIdent(){
+//prefOptions
+//identOptions
+var formAuth = document.getElementById('formAuth');
+var prefLayer = document.getElementById('prefLayer');
+var identLayer = document.getElementById('identLayer');
+var newIdent = document.getElementById('newIdent');
+var butGame = document.getElementById('butGame');
+var aLink = document.getElementById('aLink');
+
+formAuth.nameUser.value = GetCookie("userName");
+if (formAuth.nameUser.value == ''){
+	var butGame = document.getElementById('butGame');
+	butGame.style.visibility="hidden";
+}else{
+	var newIdent = document.getElementById('newIdent');
+	newIdent.style.visibility="hidden";
+}
+
+prefLayer.style.visibility="hidden";
+identLayer.style.visibility="visible";
+if (!userId){
+	newIdent.style.visibility = "visible";
+	butGame.style.visibility = "hidden";
+}else{
+	newIdent.style.visibility = "hidden";
+	butGame.style.visibility = "visible";
+}
+aLink.style.display = "inline";
+}
+
+function saveIdent(){
+//var myScore = document.getElementById('myScore');
+var userName = formIdent.nomUser.value;
+var userCour = formIdent.courUser.value;
+var userPass = formIdent.passUser.value;
+var userConfPass = formIdent.confPassUser.value
+
+var info = userName + "$" + userCour + "$" + userPass;
+
+	if (userPass == "" || userPass != userConfPass){
+		alert("La confirmation du mot de passe n'est pas valide.");
+	}else{ 
+		getInfo("addUserIdent?data=" + info, validNewUser);
+	}
+}
+
+function validNewUser(rdata){
+var titrePref = document.getElementById('titrePref');
+var modLayer = document.getElementById('modalDiv');
+var authLayer = document.getElementById('authLayer');
+
+if (rdata.code){
+	if (rdata.code == 11000)
+		alert("Cette adresse courriel existe déjà.");
+	else
+		alert(rdata.message);
+
+}else{
+
+
+}
+	
+	//11000
+//titrePref.parentNode.removeChild(titrePref);
+//modLayer.style.visibility="hidden";
+//authLayer.style.visibility="hidden";
+}
+
+function authentif(){
+var formAuth = document.getElementById('formAuth');
+var userCour = formAuth.nameUser.value;
+var userPass = formAuth.passwordUser.value;
+//alert(score);
+getInfo("identUser?data=" + userCour + "$pass$" + userPass, validUser);
+}
+
+function validUser(rep){
+var formAuth = document.getElementById('formAuth');
+var userCour = formAuth.nameUser.value;
+if (rep[0].result){
+	var modalDiv = document.getElementById('modalDiv');
+	var identLayer = document.getElementById('identLayer');
+	var leftbutton = document.getElementById('leftbutton');
+	leftbutton.style.visibility="visible";
+	modalDiv.style.visibility="hidden";
+	identLayer.style.visibility="hidden";
+	SetCook("userName",userCour);
+	SetCook("userID",rep[0].result + "");
+	userId = rep[0].result;
+	userName = userCour;
+}else{
+	DelCookie("userID");
+	alert("Utilisateur ou mot de passe non valide.");
+}
+}
+
+function showPref(){
+var prefLayer = document.getElementById('prefLayer');
+var initLayer = document.getElementById('identLayer');
+var aLink = document.getElementById('aLink');
+aLink.style.display="none";
+initLayer.style.visibility="hidden";
+prefLayer.style.visibility="visible";
+}
+
+function setPref(){
+var modLayer = document.getElementById('modalDiv');
+var prefLayer = document.getElementById('prefLayer');
+var formPref = document.getElementById('preferences');
+
+if (checkCookie()){
+	clearGeo(true);
+	initFormPref();
+
+	modLayer.style.visibility="visible";
+	prefLayer.style.visibility="visible";
+}else
+alert("Vous devez permettre l'utilisation des Cookies pour configurer vos pr&eacute;f&eacute;rences.");
+
+}
+
+function closePref(){
+var modLayer = document.getElementById('modalDiv');
+var prefLayer = document.getElementById('prefLayer');
+var identLayer = document.getElementById('identLayer');
+var authLayer = document.getElementById('authLayer');
+var aLink = document.getElementById('aLink');
+aLink.style.display="none";
+authLayer.style.visibility="hidden";
+identLayer.style.visibility="hidden";
+prefLayer.style.visibility="hidden";
+modLayer.style.visibility="hidden";
+initPref();
+}
+
+function savePref(formulaire){
+
+SetCook("AffLoc",formulaire.locDisplay.checked);
+SetCook("PolSize",formulaire.polSize.value);
+SetCook("LocTime",formulaire.locTime.value);
+
+closePref();
+}
+
+
+function setLatLng(latitude,longitude) {
+document.critere.latitude.value = parseFloat(latitude);
+document.critere.longitude.value = parseFloat(longitude);
+}
+
+function setResult(result){
+resultLocalisation = result;
+}
+
+function criteres(){
+	if (document.critere.Mots.value.length == 0 && document.critere.IdRegion.value == 0){
+		return false;
+	} else {
+		return true;
+	}
+}
+
+function showLocalisation(){
+var oDivLocalisation, oDivLocaliser, oDivLocalise;
+oDivLocalisation = document.getElementById('localisation');
+oDivLocaliser = document.getElementById('localiser');
+oDivLocalise = document.getElementById('localise');
+//alert(result);
+if ( LocT == 0 ){
+		oDivLocaliser.style.visibility="hidden";
+		oDivLocalise.style.visibility="hidden";
+		oDivLocalisation.style.visibility="hidden";
+		document.critere.Prox.value = "N";
+		resultLocalisation = 0;
+} else {
+	if (resultLocalisation == -1 && !criteres() ){
+		oDivLocaliser.style.visibility="hidden";
+		oDivLocalise.style.visibility="hidden";
+		oDivLocalisation.style.visibility="visible";
+		document.critere.Prox.value = "O";
+	} else {
+		oDivLocalise.style.visibility="hidden";
+		oDivLocalisation.style.visibility="hidden";
+		oDivLocaliser.style.visibility="visible";		
+		document.critere.Prox.value = "N";
+	}
+	}
+}
+
+function localiser(){
+var oDivlocaliser = document.getElementById('localiser');
+var oDivLocalise = document.getElementById('localise');
+var oBody = document.getElementById('content');
+			
+oDivlocaliser.style.visibility="hidden";
+oDivLocalise.style.visibility="visible";
+oBody.style.cursor="wait";
+
+	locTimer = setTimeout("clearGeo(false);", LocT);
+	getLocalisationErr();
+}
+
+
+function clearGeo(interrupt){
+var oBody = document.getElementById('content');
+var localisation = document.getElementById('localisation');
+var localiser = document.getElementById('localiser');
+
+oBody.style.cursor="default";
+clearTimeout(locTimer);
+navigator.geolocation.clearWatch(watchId);
+
+	if (resultLocalisation == -1 ){
+		repere(document.critere.latitude.value,document.critere.longitude.value);
+	}
+	showLocalisation();
+
+	if (!interrupt && affL == "true" ){
+		var donn = "";
+		for (var i=0;i<locColl.coord.length;i++)
+		{
+		donn = donn + "\nCoord " + i + ": " + locColl.coord[i].lat + ", " + locColl.coord[i].lng + ", Prec: " + locColl.coord[i].acc;
+		}
+			alert(locColl.coord.length + "\nResult:" + resultLocalisation + donn);
+	}
+}
+
+
+function getLocalisationOld(){
+	if (navigator.geolocation) {
+			var oBody = document.getElementById('content');
+			oBody.style.cursor="wait";	
+			locTimer = setTimeout("clearGeo(false);", LocT);
+			var options = { enableHighAccuracy:true, maximumAge:10000, frequency: 2000 };
+
+		watchId = navigator.geolocation.watchPosition(onLocSuccess, onLocError);
+	}
+}
+
+function onLocSuccess(position) {
+	setLatLng(position.coords.latitude,position.coords.longitude);
+	setResult(-1);
+	locColl.addLoc(position.coords.latitude,position.coords.longitude,position.coords.accuracy);
+	//alert(locColl.coord.length);
+	//document.critere.Mots.value = position.coords.latitude;
+}
+
+// the tooltip object
+var tooltip = {
+    // setup properties of tooltip object
+    id:"tooltip",
+    offsetx : 12,
+    offsety : 18,
+    _x : 0,
+    _y : 0,
+    _tooltipElement:null,
+    _saveonmouseover:null
+}
+
+tooltip.show = function () {
+	var htmlelement = document.getElementById('localisation');
+	
+	if(document.getElementById){
+        this._tooltipElement = document.getElementById(this.id);
+	}else if ( document.all ) {
+        this._tooltipElement = document.all[this.id].style;
+	}
+
+	this.moveTo( this.offsetx , posY(htmlelement) + this.offsety);
+
+    if(this._tooltipElement.style){
+        this._tooltipElement.style.visibility ="visible";
+    }else{
+        this._tooltipElement.visibility = "visible";
+    }
+
+   return false;
+}
+
+tooltip.fadeOut = function () {
+	setTimeout("fadeOutTolltip('tooltip');", 500);
+}
+
+tooltip.hide = function () {
+
+    if(this._tooltipElement.style){
+        this._tooltipElement.style.visibility ="hidden";
+    }else{
+        this._tooltipElement.visibility = "hidden";
+    }
+}
+
+tooltip.moveTo = function (xL,yL) {
+    if(this._tooltipElement.style){
+        this._tooltipElement.style.left = xL +"px";
+        this._tooltipElement.style.top = yL +"px";
+    }else{
+        this._tooltipElement.left = xL;
+        this._tooltipElement.top = yL;
+    }
+}
+
+function posY(htmlelement){
+
+var e = htmlelement; 
+var offset = {x:0,y:0}; 
+while (e) 
+{ 
+    offset.x += e.offsetLeft; 
+    offset.y += e.offsetTop; 
+    e = e.offsetParent; 
+} 
+return (offset.y);
+}
+
+function fadeOutTolltip(tooltipID) {
+  //imageId = 'tooltip';
+  obj = document.getElementById(tooltipID);
+  setOpacity(obj, 100);
+  obj.style.visibility = 'visible';
+  fadeOut(tooltipID,100);
+}
+
+//The setOpacity function is passed an object and an opacity value. It then sets the opacity of the supplied object using four proprietary ways. It also prevents a flicker in Firefox caused when opacity is set to 100%, by setting the value to 99.999% instead.
+
+function setOpacity(obj, opacity) {
+  opacity = (opacity == 0)?0.009:opacity;
+  
+  // IE/Win
+  obj.style.filter = "alpha(opacity:"+opacity+")";
+  
+  // Safari<1.2, Konqueror
+  obj.style.KHTMLOpacity = opacity/100;
+  
+  // Older Mozilla and Firefox
+  obj.style.MozOpacity = opacity/100;
+  
+  // Safari 1.2, newer Firefox and Mozilla, CSS3
+  obj.style.opacity = opacity/100;
+}
+
+//The fadeOut function uses a Timeout to call itself every 100ms with an object Id and an opacity. The opacity is specified as a percentage and increased 10% at a time. The loop stops once the opacity reaches 100%:
+
+function fadeOut(objId,opacity) {
+  if (document.getElementById) {
+    obj = document.getElementById(objId);
+    if (opacity >= 0) {
+      setOpacity(obj, opacity);
+      opacity -= 10;
+      window.setTimeout("fadeOut('"+objId+"',"+opacity+")", 100);
+	} else {
+	obj.style.visibility = 'hidden';
+	setOpacity(obj, 100);
+    }
+  }
+}
+
+
+function writeAddress(strAddress){
+var input = document.getElementById("tooltipText");
+input.innerHTML = strAddress;
+document.critere.adr.value = strAddress;
+if (resultLocalisation == -1 ){
+	tooltip.show();
+	setTimeout("tooltip.fadeOut()", 500);}
+}
+
+function showLocal(){
+//var localWindow = window.open('localMap.asp', '_blank','resizable,scrollbars=0,status=0,menubar=0,toolbar=0,location=0');
+//var localWindow = window.open('localMap.asp', 'localMap','resizable,scrollbars=0,status=0,menubar=0,toolbar=0,location=0');
+var localWindow = window.open('localMap.asp', 'localMap');
+localWindow.document.close();
+}
+
+function checkCookie(){
+    var cookieEnabled=(navigator.cookieEnabled)? true : false   
+    if (typeof navigator.cookieEnabled=="undefined" && !cookieEnabled){ 
+        document.cookie="testcookie";
+        cookieEnabled=(document.cookie.indexOf("testcookie")!=-1)? true : false;
+    }
+    return (cookieEnabled)?true:false;
+}
+
+function initPage(){
+userId = GetCookie("userID");
+//userName = GetCookie("userName");
+
+localStorage.setItem('HOSTserv', HOSTserv);
+
+if (userId){
+	var leftbutton = document.getElementById('leftbutton');
+	leftbutton.style.visibility="visible";
+}
+
+getInfo("getRegions?", listRegions);
+
+}
+
+function getFav(){
+var favGolfList = document.getElementById('favGolfList');
+if (!favGolfList){
+	getInfo('getFav?data=' + userId, listFav);
+}else{
+	var authLayer = document.getElementById('authLayer');
+	authLayer.style.visibility="visible";
+}
+}
+
+function listRegions(oRegion){
+var formCrit = document.getElementById('critere');
+var IdRegion = document.getElementById('IdRegion');
+
+for (var i = 0; i < oRegion.length; i++) {
+	var optElem = document.createElement("option");
+	optElem.setAttribute('value', oRegion[i]._id);
+	optElem.innerHTML = oRegion[i].Nom;
+	IdRegion.appendChild(optElem);
+}
+
+if (localStorage.getItem("motsCleContext"))
+	formCrit.Mots.value = localStorage.getItem("motsCleContext");
+
+if (localStorage.getItem("regionIdContext"))
+	formCrit.IdRegion.selectedIndex = localStorage.getItem("regionIdContext");
+}
+
+function rechercheClub(){
+var formCrit = document.getElementById('critere');
+var url = window.location.href
+var arr = url.split("/");
+//var URLresult = arr[0] + "//" + arr[2] + "/listeResult.html/data=" + formCrit.IdRegion.value;
+var URLresult = "listeResult.html?data=";
+//alert(formCrit.IdRegion.value);
+
+localStorage.removeItem('idList');
+
+if (formCrit.Mots.value != ""){
+	var mess = "&nbsp;clubs&nbsp;o&#249; &#171;" + formCrit.Mots.value + "&#187; est contenu dans le ";
+	URLresult += "1$";
+	if (formCrit.checkNom.checked){
+		URLresult += encodeURI(formCrit.Mots.value) + "$";
+		localStorage.setItem('checkNom', true);
+		mess += " nom du club de golf";
+		if (formCrit.checkVille.checked)
+			mess += "&nbsp;o&#249; le nom de la ville du club.";
+		else
+			mess += ".";
+	}else{
+		URLresult += "xxxxx$";
+		localStorage.setItem('checkNom', false);
+	}	
+	if (formCrit.checkVille.checked){
+		URLresult += encodeURI(formCrit.Mots.value);
+		localStorage.setItem('checkVille', true);
+		if (!formCrit.checkNom.checked)
+			mess += "&nbsp;le nom de la ville du club.";
+	}else{
+		URLresult += "xxxxx";
+		localStorage.setItem('checkVille', false);
+	}	
+	localStorage.setItem('motsCleContext', formCrit.Mots.value);
+	localStorage.setItem('message', mess);
+}else{
+	localStorage.removeItem('motsCleContext');
+	if (formCrit.IdRegion.value != 0){
+		localStorage.setItem('regionIdContext', formCrit.IdRegion.selectedIndex);
+		//localStorage.setItem('message', formCrit.IdRegion.selectedIndex);
+		localStorage.setItem('message', "&nbsp;clubs dans la r&#233;gion &#171;" + formCrit.IdRegion.options[formCrit.IdRegion.selectedIndex].innerHTML + "&#187;.");
+		URLresult += "2$" + formCrit.IdRegion.value;
+	}else{
+		//localStorage.removeItem('regionContext');
+		localStorage.removeItem('regionIdContext');
+		if (formCrit.kiloM.value != 0){
+			if (formCrit.codePostal.value != ""){
+				  localStorage.setItem('message', "&nbsp;clubs&nbsp;&#224; moins de " + formCrit.kiloM.value + "&nbsp;kilom&#232;tre du code postal &#171;" + formCrit.codePostal.value + "&nbsp;&#187;.");
+				codeAddress(formCrit.codePostal.value , formCrit.kiloM.value * 1000 * 1.05, URLresult );
+				return false;
+			}else{
+				URLresult += "3$" + formCrit.longitude.value + "$" + formCrit.latitude.value + "$" + (formCrit.kiloM.value * 1000 * 1.05);
+				localStorage.setItem('message', "&nbsp;clubs&nbsp;&#224; moins de " + formCrit.kiloM.value + "&nbsp;kilom&#232;tre d'o&#249; vous &#234;tes.");
+			}
+		}
+	}
+}
+document.location.href = URLresult;
+}
+
+function codeAddress(postCode, distance, URLresult) {
+if (distance == 0){
+	alert("Choisir une distance pour le code postal");
+	return false;
+	}
+geocoder = new google.maps.Geocoder();
+  var address = postCode;
+  geocoder.geocode( { 'address': address}, function(results, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+	  //alert(results[0].geometry.location);
+	  var lng = results[0].geometry.location.lng();
+	  var lat = results[0].geometry.location.lat();
+	  URLresult += "3$" + lng + "$" + lat + "$" + distance;
+	  document.location.href = URLresult;
+    } else {
+      alert('Code postal non retrouvé : ' + status);
+    }
+  });
+}
+
+//URLresult += "3$" + results[0].geometry.location.lng() + "$" + results[0].geometry.location.lat() + "$" + distance;
+//alert('Code postal non retrouvé : ' + status);
+
+// -->
+</script>
+
+</head>
+
+<body onload="initPage()">
+
+<script type="text/javascript" language="Javascript">
+<!--
+
+// -->
+</script>
+
+<div id="topbar" class="vert">
+<div id="logoHome"><img alt="home" width="25" height="25" src="images/golf.png" /></div>
+<div id="titre">Golfs du Qu&eacute;bec</div>
+<div id="rightnav"> <a title="R&eacute;initialiser la recherche" href="index.html"><img alt="home" height="25" width="25" src="images/home25.png" /></a> </div>
+</div>
+
+<form id="critere" name="critere" action="#" method="get">
+<input id="latitude" name="latitude" type="hidden" value="0"/>
+<input id="longitude" name="longitude" type="hidden" value="0"/>
+<input id="Prox" name="Prox" type="hidden" value="N"/>
+<input id="adr" name="adr" type="hidden" value=""/>
+
+	<div id="content" onClick="tooltip.hide();">
+		<ul class="pageitem">
+		
+			  <div class="formrow1" >
+				<div id="formradio" class="divChxChamp"><input id="checkNom" type="checkbox" checked value="Nom"><label for="checkNom">&nbsp;Nom du club</label>&nbsp;&nbsp;<input id="checkVille" type="checkbox" checked value="Ville"><label for="checkVille">&nbsp;Ville</label></div>
+			    <div id="divMot"><label for="Mots">Mot cl&eacute; </label></div>
+			    <div id="inputtextmot"><input id="Mots" class="inputtext" name="Mots" oninput="showLocalisation()"; type="text" size="17" maxlength="50" value=""/></div>
+			  </div>
+			  <div class="formrow1">
+			    <div id="divReg"><label for="IdRegion">R&eacute;gion </label></div>
+			    <div id="inputselectreg">
+			    <SELECT id="IdRegion" class="inputselect" name="IdRegion" onChange="showLocalisation()";>
+					<OPTION value="0">Toutes les r&eacute;gions</OPTION>
+
+			      </SELECT></div></div>
+
+			  <div class="formrow1">
+			  <div id="formradio" class="divChxChamp">&nbsp;&nbsp;<label for="codePostal">Code postal</label></div>
+			    <div id="divCod"><label for="kiloM">Proximit&eacute;</label></div>
+			    <div id="inputtextcod">
+			    <input id="codePostal" class="inputtext" name="codePostal"  oninput="showLocalisation()"; type="text" size="8" maxlength="7" value=""/>
+				</div>
+			    <div id="inputselectdis">
+				<SELECT id="kiloM" class="inputselect" name="KiloM">
+			        <OPTION value="5">5 km</OPTION>
+			        <OPTION value="10" selected>10 km</OPTION>
+			        <OPTION value="25">25 km</OPTION>
+			        <OPTION value="50">50 km</OPTION>
+			        <OPTION value="100">100 km</OPTION>
+			        </SELECT>
+				</div>
+			</div>
+		    <div class="formrow1">
+				<div id="locDiv">
+				<span id="localisation"  onmouseover="tooltip.show();" title="Localisation actuelle">
+					Localisation&nbsp;&nbsp;<img alt="localisation"  height="14" width="14" src="images/ici.png" />
+				</span>
+				<span id="localiser">
+					<a id="hrefLocaliser" href="javascript:localiser();">Localiser &#63;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+				</span>
+				<span id="localise" onClick="clearGeo(true);">
+					Localise...&nbsp;&nbsp;&nbsp;&nbsp;
+					<img alt="localise"  height="16" width="16" src="images/localise.gif" />
+				</span>
+				</div>
+				<button class="bouton" id="Rechercher" type="button" onclick="rechercheClub()" value="Rechercher" />Rechercher</button>
+		    </div>
+		</ul>
+	</div>
+</form>			  
+
+<div id="bottombar" class="vert">
+<!--<div id="message"></div>  // -->
+<div id="leftbutton"> <a title="Favoris" href="#" onclick="getFav()"><img alt="Favoris" width="30" height="30" src="images/favorisOff.png" /></a> </div>
+<div id="rightbutton"> <a title="Pr&eacute;f&eacute;rences" href="javascript:setPref();"><img alt="R&eacute;glages" width="32" height="32" src="images/reglages.png" /></a> </div>
+</div>
+
+<div id="copyright">
+<a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2017</a>
+</div>
+
+<div id="modalDiv"><div class="loading"></div></div>
+<div id="prefLayer">
+
+<div id="menu">
+  <ul id="onglets">
+    <li class="active"><a href="#" onClick="return false;"> Pr&#233;f&#233;rences </a></li>
+    <li><a href="" onClick="setIdent(); return false;"> Identification </a></li>
+  </ul>
+</div>
+<!-- <div id="titrePref">Préférences</div> // -->
+
+<form id="formPref">
+<div id="prefOptions">
+
+<div class="prefList">
+<label for="polSize" id="lbl1" class="prefLbl">Taille de police</label><div class="prefVal"><select id="polSize" onchange="adjustPol(this);">
+ <option value="0.9em">Petite</option>
+ <option value="1em" >Moyenne</option>
+ <option value="1.1em" >Grande</option>
+</select></div></div>
+
+<div class="prefList">
+<label for="locTime" id="lbl3" class="prefLbl">D&#233;lai de localisation</label><div class="prefVal">
+<select id="locTime">
+ <option value="0">Non</option>
+ <option value="1">1 s.</option>
+ <option value="3">3 s.</option>
+ <option value="5">5 s.</option> 
+ <option value="10">10 s.</option>
+ <option value="20">20 s.</option>
+</select></div></div>
+
+<div class="prefList"><label for="locDisplay" id="lbl2" class="prefLbl">Afficher localisations</label><div class="prefVal"><input id="locDisplay" type="checkbox" value=""/></div></div>
+
+</div>
+
+<div>
+<input id="okPref" class="bouton" type="submit" onClick="savePref(this.parentNode.parentNode); return false;" value="      Ok      " /><input id="annulePref" class="bouton" type="button" onClick="closePref(); return false;" value="  Annuler  " />
+</div>
+</form>
+
+</div>
+<div id="identLayer">
+<div id="menu">
+  <ul id="onglets">
+    <li><a href="" onClick="showPref(); return false;"> Pr&#233;f&#233;rences </a></li>
+    <li class="active"><a href="#" onClick="return false;"> Identification </a></li>
+  </ul>
+</div>
+<!-- <div id="titrePref">Préférences</div> // -->
+
+<form id="formAuth">
+<div id="identOptions">
+
+<div class="prefList">
+<label for="nameUser" id="lbl1" class="identLbl">Courriel</label><div class="prefVal">
+<input id="nameUser" type="text" size="15" maxlength="50">
+</div></div>
+
+<div class="prefList">
+<label for="passwordUser" id="lbl1" class="identLbl">Mot de passe</label><div class="prefVal">
+<input id="passwordUser" type="password" size="15" maxlength="50">
+</div></div>
+
+<div id="aLink" class="prefList">
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="" id="newIdent" onclick="newIdent(); return false;">Nouvelle identification</a>
+&nbsp;&nbsp;&nbsp;&nbsp;<a id="butGame" class="itin" target="_blank" href="score_liste.html">Parties jou&#233;es</a>
+</div>
+
+</div>
+
+<div>
+<input id="okPref" class="bouton" type="submit" onClick="authentif(); return false;" value="      Ok      " /><input id="annulePref" class="bouton" type="button" onClick="closePref(); return false;" value="  Annuler  " />
+</div>
+</form>
+</div>
+
+<div id="authLayer"></div>
+
+</div>
+<!--<div id="tooltip"></div>  // -->
+<div id="tooltip"><div id="tooltipFleche"></div><div id="tooltipMid"><a href="javascript:showLocal();"><p id="tooltipText"></p></a></div></div>
+</body>
+
+<script type="text/javascript" language="Javascript">
+<!--
+initPref();
+localiser();
+document.critere.Rechercher.focus();
+// -->
+</script>
+
+</html>

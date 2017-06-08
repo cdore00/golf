@@ -15,14 +15,14 @@
 <meta content="Golf, Québec, Canada, Golf du Québec, Clubs de golf au Québec, Québec golf" name="keywords" />
 <meta content="Répertoire des clubs de golf du Québec." name="description" />
 
-<script type="misc/javascript" src="js/util.js"></script>
+<script type="text/javascript" src="misc/util.js"></script>
 
 <script type="text/javascript" language="Javascript">
 <!--
 
 var HOSTserv = localStorage.getItem("HOSTserv");
 var clubPos = null;
-var progressBar;
+var lat, lng, km;
 
 function ficheClub (IdClub) {
 var url = 'ficheClub.html?data=' + IdClub;
@@ -30,35 +30,9 @@ document.location.href = url;
 localStorage.setItem('clubPos', IdClub);
 }
 
-function getInfo(path, callback){
-
-var xhr=new XMLHttpRequest();
-
-  xhr.onprogress = function(pe) {
-	if(pe.lengthComputable) {
-	  //progressBar.max = pe.total;
-	  progressBar.value = pe.loaded / pe.total;
-	}
-  }
-  xhr.onloadstart= function(pe) {
-	//progressBar.value = pe.loaded;
-  }
-  xhr.onloadend = function(pe) {
-    var text = xhr.responseText;
-	var x=JSON.parse(text);
-	progressBar.value = 1;
-	if (callback)
-		callback(x);
-  };
-xhr.open("GET", HOSTserv + path ,true);
-xhr.send();
-
-var x;
-}
 
 function initPage(){
 var urlInfo = document.location.href;
-progressBar = document.getElementById('progress');
 
 if (urlInfo.indexOf("data=") == -1){
 	var data = localStorage.getItem("idList");
@@ -66,13 +40,19 @@ if (urlInfo.indexOf("data=") == -1){
 	getInfo("getClubList?data=" + request, showResult);
 	clubPos = '#pos' + localStorage.getItem("clubPos");
 }else{
-	var data = (urlInfo.substring(urlInfo.indexOf("data=") + 5));
+	var data = getURLdata();
 	var request = encodeURI(data);
+	var data = data.split("$");
+	lat = (data[1]);
+	lng = (data[2]);
+	km  = (data[3]);
 	getInfo("searchResult?data=" + request, showResult);
 }
 }
 
+
 function showResult(result){
+var callMap = document.getElementById('callMap');
 var clubList = document.getElementById('clubList');
 var message = document.getElementById('message');
 
@@ -129,12 +109,16 @@ for (var i = 0; i < result.length; i++) {
 	liElem.appendChild(spanElem);
 	clubList.appendChild(liElem);
 }
-localStorage.setItem('idList', idList.substring(0, idList.length - 1 ));
+
+idList = idList.substring(0, idList.length - 1 )
+localStorage.setItem('idList', idList);
+callMap.href += lat + "," + lng + "," + km + "," + idList;
 var chargement = document.getElementById('chargement');
 chargement.style.display = "none";
 if (clubPos)
 	document.location = clubPos;
 }
+
 
 // -->
 </script>
@@ -143,13 +127,13 @@ if (clubPos)
 <body onload="initPage();"><a name="haut"></a>
 
 <div id="topbar" class="vert">
-<div id="leftnav"><a title="Formulaire de recherche" href="default.html"><img alt="Formulaire de recherche" height="22" width="25" src="images/home22.png" /></a></div>
-<div id="chargement"><progress id="progress" value="0">0</progress></div>
+<div id="leftnav"><a title="Formulaire de recherche" href="index.html"><img alt="Formulaire de recherche" height="22" width="25" src="images/home22.png" /></a></div>
+<div id="chargement" class="textBlink">Chargement...</div>
 <button type="button" id="rightnav" title="Taille de police" onclick="changeTaille();"><img id="imgTaille" alt="Taille de police" height="20" width="45" src="images/taille.png" /></button>
 <button type="button" id="rightnav" title="Taille de police" onclick="changeTaille();"><img id="imgTaille" alt="Taille de police" height="20" width="45" src="images/taille.png" /></button>
 </div><div id="duobutton"><a id="pressed" href="#">Liste</a>
 
-<a href="#" onclick="document.ListID.submit(); return false;">Carte</a>
+<a id="callMap" href="golfMap.html?data=">Carte</a>
 
 </div>
 

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type" />
+<meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
+<meta name="format-detection" content="telephone=yes" />
+<link rel="SHORTCUT ICON" href="favicon.ico">
+<link href="favicon.ico" rel="apple-touch-icon" />
+<link href="favicon.ico" rel="apple-touch-startup-image" />
+<link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
+<title>Clubs de golf au Québec</title>
+<meta content="Golf, Québec, Canada, Golf du Québec, Clubs de golf au Québec, Québec golf" name="keywords" />
+<meta content="Répertoire des clubs de golf du Québec." name="description" />
+
+<script type="text/javascript" src="misc/googGeo.js"></script>
+<script type="text/javascript" src="misc/util.js"></script>
+
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" /> 
+
+<script type="text/javascript" 
+  src="http://maps.googleapis.com/maps/api/js?key=AIzaSyA15nyiYmWG_0IkG9H5r4Qc8KhZxwRw_xA&sensor=false"> 
+</script> 
+	
+
+<script type="text/javascript"> 
+<!--
+
+var intLat, intLng, intKm, intZoom;
+var clubs = new Array();
+
+var map;
+var directionsDisplay = new google.maps.DirectionsRenderer({});
+
+function calcRoute(mLat, mLng, gLat, gLng, oInfo) {
+
+var directionsService = new google.maps.DirectionsService();
+directionsDisplay.setMap(null);
+directionsDisplay.setMap(myC.objMap);
+directionsDisplay.setPanel(document.getElementById("directionsPanel"));
+
+var myPos = new google.maps.LatLng(mLat,mLng);
+var golfPos = new google.maps.LatLng(gLat,gLng);
+
+  var request = {
+    origin:myPos,
+    destination:golfPos,
+    travelMode: google.maps.TravelMode.DRIVING
+  };
+  directionsService.route(request, function(result, status) {
+    if (status == google.maps.DirectionsStatus.OK) {
+      directionsDisplay.setDirections(result);
+	  oInfo.innerHTML = '<a href="javascript:showDetailItineraire()">' + result.routes[0].legs[0].distance.text + ', environ ' + result.routes[0].legs[0].duration.text + '</a>';
+	  oInfo.style.visibility = "visible";
+    }
+  });
+}
+
+function showDetailItineraire(){
+var detailWindow = window.open('trajet.asp', 'trajet');
+
+detailWindow.document.close();
+}
+
+function showItineraire(golfLat, golfLng, idInfo){
+//var myLat = <%=strLat%>;
+//var myLng = <%=strLng%>;
+var oInfo = document.getElementById(idInfo);
+
+calcRoute(myLat, myLng, golfLat, golfLng, oInfo);
+
+}
+	
+// Class cerclePos
+	function cerclePos () {
+    // setup properties of cerclePos object
+    this.id="cerclePos";
+    this.rayonInitial = 0;
+    this.delai = 0;
+	this.ajout = 0;
+	this.dimZero = 0;
+	this.rayon = 0;
+    this.timeOutPos=null;
+	this.objMap = null;
+	this.objCercle = null;
+	this.myPosMark = null;
+	this.objGolfArea = null;
+	
+	this.show = function (rayonInit) {
+		if (rayonInit){
+			this.rayonInitial = rayonInit;
+			incrementer(rayonInit);
+		}else{
+			incrementer(this.rayonInitial);
+		}
+   return false;
+};
+
+this.initShow = function () {
+		var oBounds = objMap.getBounds();
+		this.zoomRestart( oBounds.getNorthEast().lat(), oBounds.getSouthWest().lat(), oBounds.getNorthEast().lng(), oBounds.getSouthWest().lng() );
+return false;
+};
+
+this.zoomRestart = function (lat1, lat2, lng1, lng2) {
+	var dist, dimMeter;
+
+	clearTimeout(this.timeOutPos);
+	this.objCercle.setRadius(0);
+	
+	dist = Math.sqrt( Math.pow(lat1 - lat2 ,2) + Math.pow(lng1 - lng2 ,2) );
+	dimMeter = Math.ceil((dist/0.0144)*1000);
+	
+	this.ajout = Math.ceil(dimMeter/900);
+	this.dimZero = Math.ceil(dimMeter/200);
+	this.rayonInitial = Math.ceil(dimMeter * 0.06);
+	if (this.objGolfArea.getRadius() * .8 < this.rayonInitial)
+		this.rayonInitial = this.objGolfArea.getRadius() / 2;
+//alert(this.rayonInitial);
+	this.show();
+
+   return false;
+};
+
+}
+// Fin Class cerclePos
+
+
+  ///À revoir pour le calcul	
+      function initialize() { 
+        var myOptions = { 
+          center: new google.maps.LatLng(intLat, intLng), 
+          zoom: intZoom, 
+		  panControl: false,    
+		  zoomControl: false, 
+		  zoomControlOptions: {      
+		  style: google.maps.ZoomControlStyle.SMALL    },		  
+		  scaleControl: false,
+		  streetViewControl: false,
+		  mapTypeControl: true,    
+		  mapTypeControlOptions: {        
+		  style: google.maps.MapTypeControlStyle.DROPDOWN_MENU    },
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        }; 
+        map = new google.maps.Map(document.getElementById("map_canvas"), myOptions); 
+
+		setMarkers(map, clubs);  //setMarkers(map, clubs);
+				
+		myC.objMap = map;
+
+	var cercleOptions = {
+	  strokeColor: "#0000FF",
+	  strokeOpacity: 0.4,
+	  strokeWeight: 2,
+	  fillColor: "#0000FF",
+	  fillOpacity: 0.1,
+	  map: map,
+	  center: myOptions.center,
+	  radius: 0
+	};
+	 myC.objCercle = new google.maps.Circle(cercleOptions);
+
+//var intKm = 10;  /// À revoir pour le calculer
+	 var areaOptions = {
+	  strokeColor: "#FF0000",
+	  strokeOpacity: 0.8,
+	  strokeWeight: 1,
+	  fillColor: "#FF0000",
+	  fillOpacity: 0.05,
+	  map: map,
+	  center: myOptions.center,
+	  radius: intKm
+	};
+	myC.objGolfArea = new google.maps.Circle(areaOptions);
+//alert(areaOptions.radius);
+
+
+		google.maps.event.addListener(map, 'bounds_changed', function() {
+			var oBounds = map.getBounds();
+			myC.zoomRestart( oBounds.getNorthEast().lat(), oBounds.getSouthWest().lat(), oBounds.getNorthEast().lng(), oBounds.getSouthWest().lng() );
+		}); 
+
+				//var strAddress = '<div id="layerContent">' +  <%="'" & strAddress & "'" %>+ '</div>';
+				var infoAdr = new google.maps.InfoWindow({
+					content: "Centre",
+					maxWidth : 150,
+					disableAutoPan : true
+				});
+				setMyPosition(map, intLat, intLng, infoAdr);
+
+
+		
+} 
+//Fin initialize()
+
+/*	
+	var clubs= [<%
+			i = 0
+			Do while not orecResult.EOF
+			i = i + 1
+			%>
+			['<%=replace(orecResult("nom"),"'","\'")%>',<%=replace(orecResult("latitude"),",",".")%>, <%=replace(orecResult("longitude"),",",".")%>, <%=i%>, info<%=i%>]<%
+			orecResult.MoveNext
+			if not orecResult.EOF then%>,<%end if
+			loop
+			%>	
+	];
+*/
+
+function setMyPosition(map, lat, lng, infoAdr) {
+  // Add markers to the map
+  var image = new google.maps.MarkerImage('images/ici.png',
+      new google.maps.Size(14, 14),
+      new google.maps.Point(0,0),
+      new google.maps.Point(7, 7));
+  var shape = {
+      coord: [1, 1, 1, 20, 18, 20, 18 , 1],
+      type: 'poly'
+  };
+  //alert(location[1]);
+    var myLatLng = new google.maps.LatLng(lat, lng);
+    myC.myPosMark = new google.maps.Marker({
+        position: myLatLng,
+        map: map,
+        icon: image,
+        shape: shape,
+        title: "Ma localisation",
+        zIndex: 1
+		});
+		google.maps.event.addListener(myC.myPosMark, 'click', function() {infoAdr.open(map,this);});
+}	
+
+function setMarkers(map, locations) {
+  // Add markers to the map
+  var image = new google.maps.MarkerImage('images/golf.png',
+      new google.maps.Size(25, 25),
+      new google.maps.Point(0,0),
+      new google.maps.Point(0, 25));
+  var shape = {
+      coord: [1, 1, 1, 25, 25, 25, 25 , 1],
+      type: 'poly'
+  };
+  for (var i = 0; i < locations.length; i++) {
+    var beach = locations[i];
+    var myLatLng = new google.maps.LatLng(beach[1], beach[2]);
+    var marker = new google.maps.Marker({
+        position: myLatLng,
+        map: map,
+        icon: image,
+        shape: shape,
+        title: beach[0],
+        zIndex: beach[3],
+		animation: google.maps.Animation.DROP
+		});
+		google.maps.event.addListener(marker, 'click', function() { showWin(map,this); });
+	}
+}
+
+function showWin(oMap, oMarker){
+var id = oMarker.zIndex-1;
+var oInfo = clubs[id];
+winOpen.close();
+//alert(oInfo[4]);
+oInfo[4].open(oMap,oMarker);
+winOpen=oInfo[4];
+}
+
+function incrementer(rayon){
+	
+	if(rayon > myC.dimZero){
+		myC.objCercle.setRadius(rayon);
+		rayon=rayon-myC.ajout;
+		myC.timeOutPos = setTimeout('incrementer(' + rayon + ')',myC.delai);
+	}else{
+		if (myC.myPosMark.getAnimation() != null) {
+			myC.myPosMark.setAnimation(null);
+			} else {
+			myC.objCercle.setRadius(0);
+			myC.timeOutPos = setTimeout('incrementer(' + rayon + ')',600);
+		}
+	}
+};	
+
+
+function initPage(){
+
+userId = GetCookie("userID");
+
+var data = getURLdata();
+intLng = data.substring(0,data.indexOf(","));
+data = data.substring(data.indexOf(",") + 1);
+intLat = data.substring(0,data.indexOf(","));
+data = data.substring(data.indexOf(",") + 1);
+intKm = parseInt(data.substring(0,data.indexOf(",")));
+data = data.substring(data.indexOf(",") + 1);
+intZoom = 15 - parseInt(Math.log(intKm/100));
+setFontSize();
+
+getInfo("getClubList?data=" + data, initClubs);
+
+}
+
+function initClubs(cData){
+var club;
+for (var i = 0; i < cData.length; i++) {
+	clubs[i] = [ cData[i].location.nom , cData[i].location.x , cData[i].location.y ];
+}
+
+x=5;
+var mp=initialize();
+}
+
+function calculDistance(pt1, pt2){
+var lat1 = pt1.lat();
+var lat2 = pt2.lat();
+var lon1 = pt1.lng();
+var lon2 = pt2.lng();
+var R = 6967410.324; // Rayon moyen en verge
+var rLat1 = lat1 * (Math.PI / 180);
+var rLat2 = lat2 * (Math.PI / 180);
+var dLat = (lat2-lat1) * (Math.PI / 180);
+var dLon = (lon2-lon1) * (Math.PI / 180);
+
+var a = Math.sin(rLat1) * Math.sin(rLat2) + Math.cos(rLat1) * Math.cos(rLat2) * Math.cos(dLon);
+    a = Math.acos(a);
+
+var d = R * a ;
+
+	d = Math.round(d);
+	if ( d > 1760){
+	  d = d / 1760;
+	  d = Math.round(d * 100) / 100;
+	  d = d + 'M';
+	  }
+	return d + '';
+}
+
+// -->  
+</script> 
+  </head>
+  <body  onload="initPage();"> 
+
+<div id="topbar" class="vert">
+<div id="leftnav"><a title="Formulaire de recherche" href="index.html"><img alt="Formulaire de recherche" height="22" width="25" src="images/home22.png" /></a></div>
+<button type="button" id="rightnav" title="Taille de police" onclick="changeTaille();"><img id="imgTaille" alt="Taille de police" height="20" width="45" src="images/taille.png" /></button>
+</div>
+
+<div id="duobutton"><a href="listeResult.html">Liste</a><a id="pressed" href="#">Carte</a></div>
+
+<div id="mapZoom">
+<button class="boutonZoom" title="Zoom in" onclick="zoomMap(1); return false;">+</button>
+<button class="boutonZoom" title="Zoom out" onclick="zoomMap(-1); return false;">-</button>
+</div>
+
+
+<div id="map_canvas" ></div> 
+	
+<div id="directionsPanel" ></div>
+<script type="text/javascript" language="Javascript">
+<!--
+
+var myC = new cerclePos();
+
+
+adjustScreen(66);
+
+// -->
+</script>
+
+
+  </body> 
+</html>

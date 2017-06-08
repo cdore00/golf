@@ -551,7 +551,7 @@ var query = (decodeURI(param.data));
 var ids = query.split(',');
 ids = ids.map(function(id) { return parseInt(id); });
 var coll = dBase.collection('club');
-coll.find({_id: {$in: ids }}, ["_id","nom", "adresse", "municipal", "telephone", "telephone2", "telephone3", "courses.TROUS"]).toArray(function(err, docs) {
+coll.find({_id: {$in: ids }}, ["_id","nom", "adresse", "municipal", "telephone", "telephone2", "telephone3", "location", "courses.TROUS"]).toArray(function(err, docs) {
     console.log("Found the following list clubs");
    // console.log(docs)
 returnRes(res, docs);
