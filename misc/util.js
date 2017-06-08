@@ -1,6 +1,6 @@
 <!--
 
-var HOSTserv = localStorage.getItem("HOSTserv");
+var HOSTserv = "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
 
 function is_touch_device() {
   return 'ontouchstart' in window        // works on most browsers 
@@ -8,16 +8,6 @@ function is_touch_device() {
 };
 
 var isTouchDevice = is_touch_device();
-
-if (HOSTserv == null || HOSTserv == "null" || HOSTserv == ""){
-	getInfo("serv.json", initHOST);
-}
-
-function initHOST(oURL){
-	HOSTserv = oURL.servURL
-	localStorage.setItem("HOSTserv", HOSTserv );
-}
-
 
 if (document.images) {
 	img1 = new Image();
