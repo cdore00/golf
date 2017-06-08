@@ -9,12 +9,15 @@ function is_touch_device() {
 
 var isTouchDevice = is_touch_device();
 
-if (!HOSTserv || HOSTserv == null || HOSTserv == "")
+if (HOSTserv == null || HOSTserv == "null" || HOSTserv == ""){
 	getInfo("serv.json", initHOST);
+}
 
 function initHOST(oURL){
 	HOSTserv = oURL.servURL
+	localStorage.setItem("HOSTserv", HOSTserv );
 }
+
 
 if (document.images) {
 	img1 = new Image();
