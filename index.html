@@ -550,6 +550,7 @@ function writeAddress(strAddress){
 var input = document.getElementById("tooltipText");
 input.innerHTML = strAddress;
 document.critere.adr.value = strAddress;
+localStorage.setItem('myAdress', strAddress);
 if (resultLocalisation == -1 ){
 	tooltip.show();
 	setTimeout("tooltip.fadeOut()", 500);}
@@ -575,7 +576,10 @@ function initPage(){
 userId = GetCookie("userID");
 //userName = GetCookie("userName");
 
-localStorage.setItem('HOSTserv', HOSTserv);
+var data = getURLdata();
+if (data == "clear"){
+	clearContext();
+}
 
 if (userId){
 	var leftbutton = document.getElementById('leftbutton');
@@ -615,6 +619,15 @@ if (localStorage.getItem("regionIdContext"))
 
 }
 
+function clearContext(){
+	localStorage.removeItem('idList');
+	localStorage.removeItem('motsCleContext');
+	localStorage.removeItem('checkNom');
+	localStorage.removeItem('checkVille');
+	localStorage.removeItem('regionIdContext');
+	localStorage.removeItem('message');
+}
+
 function rechercheClub(){
 var formCrit = document.getElementById('critere');
 var url = window.location.href
@@ -623,12 +636,7 @@ var arr = url.split("/");
 var URLresult = "listeResult.html?data=";
 //alert(formCrit.IdRegion.value);
 
-localStorage.removeItem('idList');
-localStorage.removeItem('motsCleContext');
-localStorage.removeItem('checkNom');
-localStorage.removeItem('checkVille');
-localStorage.removeItem('regionIdContext');
-localStorage.removeItem('message');
+clearContext();
 
 if (formCrit.Mots.value != ""){
 	var mess = "&nbsp;clubs&nbsp;o&#249; &#171;" + formCrit.Mots.value + "&#187; est contenu dans le ";
@@ -716,7 +724,7 @@ geocoder = new google.maps.Geocoder();
 <div id="topbar" class="vert">
 <div id="logoHome"><img alt="home" width="25" height="25" src="images/golf.png" /></div>
 <div id="titre">Golfs du Qu&eacute;bec</div>
-<div id="rightnav"> <a title="R&eacute;initialiser la recherche" href="index.html"><img alt="home" height="25" width="25" src="images/home25.png" /></a> </div>
+<div id="rightnav"> <a title="R&eacute;initialiser la recherche" href="index.html?data=clear"><img alt="home" height="25" width="25" src="images/home25.png" /></a> </div>
 </div>
 
 <form id="critere" name="critere" action="#" method="get">

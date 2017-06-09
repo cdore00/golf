@@ -26,7 +26,7 @@
 <script type="text/javascript"> 
 <!--
 
-var intLat, intLng, intKm, intZoom;
+var intLat, intLng, intKm, intZoom, winOpen;
 var clubs = new Array();
 
 var map;
@@ -63,11 +63,11 @@ detailWindow.document.close();
 }
 
 function showItineraire(golfLat, golfLng, idInfo){
-//var myLat = <%=strLat%>;
-//var myLng = <%=strLng%>;
+//var myLat = intLat;
+//var myLng = intLng;
 var oInfo = document.getElementById(idInfo);
 
-calcRoute(myLat, myLng, golfLat, golfLng, oInfo);
+calcRoute(intLat, intLng, golfLat, golfLng, oInfo);
 
 }
 	
@@ -126,8 +126,8 @@ this.zoomRestart = function (lat1, lat2, lng1, lng2) {
 // Fin Class cerclePos
 
 
-  ///À revoir pour le calcul	
-      function initialize() { 
+      function initialize(showCenter) { 
+		intZoom = 15 - parseInt(Math.log(intKm/100));
         var myOptions = { 
           center: new google.maps.LatLng(intLat, intLng), 
           zoom: intZoom, 
@@ -147,20 +147,9 @@ this.zoomRestart = function (lat1, lat2, lng1, lng2) {
 		setMarkers(map, clubs);  //setMarkers(map, clubs);
 				
 		myC.objMap = map;
+if (showCenter){
 
-	var cercleOptions = {
-	  strokeColor: "#0000FF",
-	  strokeOpacity: 0.4,
-	  strokeWeight: 2,
-	  fillColor: "#0000FF",
-	  fillOpacity: 0.1,
-	  map: map,
-	  center: myOptions.center,
-	  radius: 0
-	};
-	 myC.objCercle = new google.maps.Circle(cercleOptions);
-
-//var intKm = 10;  /// À revoir pour le calculer
+}
 	 var areaOptions = {
 	  strokeColor: "#FF0000",
 	  strokeOpacity: 0.8,
@@ -180,32 +169,30 @@ this.zoomRestart = function (lat1, lat2, lng1, lng2) {
 			myC.zoomRestart( oBounds.getNorthEast().lat(), oBounds.getSouthWest().lat(), oBounds.getNorthEast().lng(), oBounds.getSouthWest().lng() );
 		}); 
 
-				//var strAddress = '<div id="layerContent">' +  <%="'" & strAddress & "'" %>+ '</div>';
-				var infoAdr = new google.maps.InfoWindow({
-					content: "Centre",
-					maxWidth : 150,
-					disableAutoPan : true
-				});
-				setMyPosition(map, intLat, intLng, infoAdr);
-
-
-		
+		if (showCenter){
+			var cercleOptions = {
+			  strokeColor: "#0000FF",
+			  strokeOpacity: 0.4,
+			  strokeWeight: 2,
+			  fillColor: "#0000FF",
+			  fillOpacity: 0.1,
+			  map: map,
+			  center: myOptions.center,
+			  radius: 0
+			};
+		myC.objCercle = new google.maps.Circle(cercleOptions);
+			var strAddress = '<div id="layerContent">' +  localStorage.getItem("myAdress") + '</div>';
+			var infoAdr = new google.maps.InfoWindow({
+				content: strAddress,
+				maxWidth : 150,
+				disableAutoPan : true
+			});
+			setMyPosition(map, intLat, intLng, infoAdr);
+		}
 } 
 //Fin initialize()
 
-/*	
-	var clubs= [<%
-			i = 0
-			Do while not orecResult.EOF
-			i = i + 1
-			%>
-			['<%=replace(orecResult("nom"),"'","\'")%>',<%=replace(orecResult("latitude"),",",".")%>, <%=replace(orecResult("longitude"),",",".")%>, <%=i%>, info<%=i%>]<%
-			orecResult.MoveNext
-			if not orecResult.EOF then%>,<%end if
-			loop
-			%>	
-	];
-*/
+
 
 function setMyPosition(map, lat, lng, infoAdr) {
   // Add markers to the map
@@ -257,7 +244,8 @@ function setMarkers(map, locations) {
 }
 
 function showWin(oMap, oMarker){
-var id = oMarker.zIndex-1;
+
+var id = oMarker.zIndex;
 var oInfo = clubs[id];
 winOpen.close();
 //alert(oInfo[4]);
@@ -306,8 +294,21 @@ var maxX = cData[0].location.x;
 var minX = cData[0].location.x;
 var maxY = cData[0].location.y;
 var minY = cData[0].location.y;
+winOpen = new google.maps.InfoWindow({
+		content: "",
+		disableAutoPan : true
+	});
 for (var i = 0; i < cData.length; i++) {
-	clubs[i] = [ cData[i].location.nom , cData[i].location.x , cData[i].location.y ];
+	var contentString = '<div id="layerContent"><p><a href="ficheClub.html?data=' + cData[i]._id + '" target="_blank">' + cData[i].nom + '</a>';
+	if (intLat != 'undefined'){
+		contentString += '&nbsp;&nbsp;<a class="itin" href="javascript:showItineraire(' + cData[i].location.x + ', ' + cData[i].location.y + ',\'contentTrajet\')">Trajet</a><div id="contentTrajet" class="itinDetail"></div>'
+	}
+	contentString += '</p><p>' + cData[i].adresse + ',&nbsp;' + cData[i].municipal + '</br>' + cData[i].telephone + '</p></div>';
+	var info = new google.maps.InfoWindow({
+		content: contentString,
+		disableAutoPan : true
+	});
+	clubs[i] = [ cData[i].nom , cData[i].location.x , cData[i].location.y, i, info ];
 	maxX = Math.max(maxX, cData[i].location.x);
 	minX = Math.min(minX, cData[i].location.x);
 	maxY = Math.max(maxY, cData[i].location.y);
@@ -317,12 +318,12 @@ for (var i = 0; i < cData.length; i++) {
 if (intLat == 'undefined' || !intLat){
 	intLat = ((maxX + minX) / 2) + "";
 	intLng = ((maxY + minY) / 2) + "";
-	intKm = calculDistance(maxX, minX, maxY, minY);  
+	intKm = calculDistance(maxX, minX, maxY, minY) / 2; 
+	initialize(false);
+}else{
+	initialize(true);
 }
  
-intZoom = 15 - parseInt(Math.log(intKm/100));
-
-initialize();
 chargement.style.display = "none";
 }
 
@@ -371,7 +372,6 @@ return Math.round(d);
 <!--
 
 var myC = new cerclePos();
-
 
 adjustScreen(66);
 
