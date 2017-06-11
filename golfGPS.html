@@ -628,21 +628,6 @@ if (Math.abs(laDistance - actDist) > 15){
 	}
 }
 
-function getInfo(path, callback){
-
-var xhr=new XMLHttpRequest();
-
-  xhr.onloadend = function() {
-    var text = xhr.responseText;
-	var x=JSON.parse(text);
-	if (callback)
-		callback(x);
-  };
-xhr.open("GET", HOSTserv + path ,true);
-xhr.send();
-
-var x;
-}
 
 function initPage(){
 var titClub = document.getElementById('titClub'); 

@@ -22,7 +22,7 @@
 
 var userId;
 var clubID;
-var courseID;
+var courseIDdef;
 var clubName;
 var clubCourse;
 var favChange = false;
@@ -86,27 +86,16 @@ getInfo("getClubParc?data=" + clubID + "$" + userId, showClub);
 
 }
 
-function getInfo(path, callback){
-
-var xhr=new XMLHttpRequest();
-
-  xhr.onloadend = function() {
-    var text = xhr.responseText;
-	var data=JSON.parse(text);
-	if (callback)
-		callback(data);
-  };
-xhr.open("GET", HOSTserv + path ,true);
-xhr.send();
-
-}
 
 function showClub(oClubParc){
 var clubInfo = document.getElementById('clubInfo');
 var clubDetail = document.getElementById('clubDetail');
+var mapLink = document.getElementById('mapLink');
 var CourseList = "";
 
 clubCourse = (oClubParc[0].courses);
+courseIDdef = oClubParc[0].courses[0]._id;
+mapLink.href += clubID + "$" + courseIDdef;
 
 for (var i = 0; i < clubCourse.length; i++) {
 	CourseList += clubCourse[i]._id + "$";
@@ -121,7 +110,7 @@ if (oClubParc[0].url_club)
 else
 	cInfo += oClubParc[0].nom + '&nbsp;';
 if (oClubParc[0].prive)
-	cInfo += oClubParc[0].prive;
+	cInfo += '&nbsp;(Privé)&nbsp;';
 if (userId){
 	if (oClubParc[0].isFavorite){
 		cInfo += '<img id="favIcon" onclick="changeFav(this)" alt="Favoris" width="30" height="30" src="images/favoris.png" />&nbsp;';
@@ -130,7 +119,7 @@ if (userId){
 	}
 }
 if (false)
-	cInfo += '&nbsp;<a class="itin" target="_blank" href="ClubTrajet.asp?Lat=">Trajet</a>';
+	cInfo += '&nbsp;<a class="itin" target="_blank" href="ClubTrajet.html?Lat=">Trajet</a>';
 
 clubInfo.innerHTML = cInfo;
 
@@ -257,7 +246,7 @@ chargement.style.display = "none";
 </div>
 <div id="duobutton">
 <a href="listeResult.html" onclick="majFav();">Liste</a>
-<a id="mapLink" href="ClubMap.asp?" onclick="majFav();">Carte</a></div>
+<a id="mapLink" target="_blank" href="ClubMap.html?data=" onclick="majFav();">Carte</a></div>
 
 
 <div id="content">

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type" />
+<meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
+<meta name="format-detection" content="telephone=no" />
+<link rel="SHORTCUT ICON" href="favicon.ico">
+<link href="favicon.ico" rel="apple-touch-icon" />
+<link href="favicon.ico" rel="apple-touch-startup-image" />
+<link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
+<title>Clubs de golf au Québec</title>
+<meta content="Golf, Québec, Canada, Golf du Québec, Clubs de golf au Québec, Québec golf" name="keywords" />
+<meta content="Répertoire des clubs de golf du Québec." name="description" />
+
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" /> 
+
+    <script type="text/javascript" 
+      src="http://maps.googleapis.com/maps/api/js?key=AIzaSyA15nyiYmWG_0IkG9H5r4Qc8KhZxwRw_xA&sensor=false"> 
+    </script> 
+	<script type="text/javascript" src="misc/util.js"></script>
+
+<script type="text/javascript"> 
+<!--
+
+var intLat, intLng;
+var map;
+var holeMarker = null;
+var trou = 1;
+var showLatLng = false;
+var trouCoord =  new Array();
+var nbrTrous, courseID, clubName;
+
+function initialize() { 
+	var leCentre = new google.maps.LatLng(intLat,intLng)
+	var myOptions = { 
+	  center: leCentre, 
+	  zoom: 15, 
+	  panControl: false,    
+	  zoomControl: false, 	  
+	  scaleControl: false,
+	  streetViewControl: false,
+	  mapTypeControl: true,    
+	  mapTypeControlOptions: {        
+	  style: google.maps.MapTypeControlStyle.DROPDOWN_MENU    },
+	  mapTypeId: google.maps.MapTypeId.HYBRID
+	}; 
+	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions); 
+
+	//adjustScreen(31);
+	setFontSize();
+
+}
+	
+	
+function afficheTrou(noTrou){
+var holePlay = document.getElementById("hole");
+
+holeMarker.setPosition(trouCoord[noTrou-1]);
+holePlay.innerHTML = noTrou;
+}
+
+function playGolf(){
+var strTrou = document.getElementById("hole");
+document.location = "golfGPS.html?data=" + courseID + "&" + clubName;
+}
+
+function holePosChange(){
+
+if (showLatLng == true){
+	var divHolePos = document.getElementById("holePos");
+	var flagLatLng = holeMarker.getPosition();
+	divHolePos.innerHTML = flagLatLng.toString();
+	}
+//alert((flagLatLng.toString()));
+}
+
+function showHole(){
+
+var setFlag = document.getElementById("setFlag");
+showLatLng = true;
+if (eval(holeMarker) == null){
+	var holePos = new google.maps.LatLng(intLat,intLng);
+	setHole(map, holePos);
+	holePosChange();
+	}
+//	alert("Set");
+setFlag.disabled = false;
+	setFlag.style.visibility = 'visible';
+}
+
+function setFlagCoord(butObj){
+var flagLatLng = holeMarker.getPosition();
+var xmlhttp;
+var resp;
+
+butObj.disabled = true;
+//alert(trou + ' Lat: ' + flagLatLng.lat() + ' Lng: ' + flagLatLng.lng());
+
+}
+
+function trouSuivant(p_m){
+
+trou = trou + p_m;
+
+if (trou > nbrTrous)
+	trou = 1;
+if (trou == 0)
+	trou = nbrTrous;
+	
+afficheTrou(trou);
+
+}
+
+function initPage(){
+
+userId = GetCookie("userID");
+
+var data = getURLdata();
+
+setFontSize();
+
+getInfo("getClubParcTrous?data=" + data, showCourse);
+
+}
+
+function showCourse(oClub){
+
+	intLat = oClub[0].latitude;
+	intLng = oClub[0].longitude;
+	clubName = oClub[0].nom;
+	initialize();
+	
+if (oClub[0].trous.length != 0){
+	var navTrou = document.getElementById("navTrou");
+	var trous = oClub[0].trous;
+	nbrTrous = trous.length;
+	intLat = trous[0].latitude;
+	intLng = trous[0].longitude;
+	courseID = trous[0].Parcours_id;
+	for (var i = 0; i < trous.length; i++) {
+		trouCoord[i] = new google.maps.LatLng(trous[i].latitude, trous[i].longitude);
+	}
+	setHole(map, trouCoord[0]);
+	navTrou.style.visibility = "visible";
+}
+
+x=5;
+}
+
+	// -->
+</script> 
+
+
+<style>
+
+#setFlag{
+background-color:#ccc;
+visibility:hidden;
+opacity:1.0 !important;
+}
+
+#navTrou, #hole, .bouton-prec-suiv{
+display:inline;
+}  
+
+#hole{
+font-size:1em;
+width:25px !important;
+color:#000 !important;
+
+}
+
+.bouton-prec-suiv{
+background:transparent;
+border:0px solid;
+margin:0;
+padding:0;
+min-width:40px
+}
+
+#map_canvas{width:100%; height:100%;}
+
+</style>
+
+</head>
+<body onload="initPage()"> 
+  
+<div id="duobutton">
+<a href="#" id="holePos" onclick="showHole();" ></a>
+<a href="#"  onclick="window.close(); return false;">Fermer</a>
+
+<!--
+//if locFlag = true then
+// -->
+	<div id="navTrou">
+	<button class="bouton-prec-suiv" onclick="trouSuivant(-1)"><img  height="18" width="13" alt="Trou précédent" src="images/prec.png" /></button>
+	<button id="holeSet" class="bouton-prec-suiv" onclick="playGolf()"><img id="imgFlag" onclick="playGolf()"; height="20" width="16" src="images/flag.png" /><a id="hole" href="javascript:playGolf()">1</a></button>
+	<button class="bouton-prec-suiv" onclick="trouSuivant(1)"><img height="18" width="13" alt="Trou suivant" src="images/suiv.png" /></button>
+	</div>
+
+</div>
+
+<div id="map_canvas" ></div> 
+	
+<div id="mapZoom">
+<button class="boutonZoom" title="Zoom in" onclick="zoomMap(1); return false;">+</button>
+<button class="boutonZoom" title="Zoom out" onclick="zoomMap(-1); return false;">-</button>
+<button id="setFlag" class="boutonZoom" title="Soumettre" onclick="setFlagCoord(this); return false;">Ok</button>
+</div>
+
+
+
+  </body> 
+</html>

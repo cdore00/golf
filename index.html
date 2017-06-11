@@ -12,8 +12,8 @@
 <link href="misc/init.css" rel="stylesheet" media="screen" type="text/css" />
 <link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
 <title>Clubs de golf au Qu&eacute;bec</title>
-<meta content="Golf, Québec, Canada, Golf du Québec, Clubs de golf au Québec, Québec golf" name="keywords" />
-<meta content="Répertoire des clubs de golf du Québec." name="description" />
+<meta content="Golf, Qu&eacute;bec, Canada, Golf du Qu&eacute;bec, Clubs de golf au Qu&eacute;bec, Qu&eacute;bec golf" name="keywords" />
+<meta content="R&eacute;pertoire des clubs de golf du Qu&eacute;bec." name="description" />
 
 <script type="text/javascript" src="misc/googGeo.js"></script>
 <script type="text/javascript" src="misc/util.js"></script> 
@@ -55,26 +55,6 @@ this.lng=lng;
 this.acc=acc;
 }
 
-function getInfo(path, callback){
-//var modLayer = document.getElementById('modalDiv');
-var authLayer = document.getElementById('authLayer');
-var xmlhttp;
-
-//modLayer.style.visibility="visible";
-xhr=new XMLHttpRequest();
-
-  xhr.onloadend = function() {
-    var text = xhr.responseText;
-	//modLayer.style.visibility="hidden";	
-	var x=JSON.parse(text);
-	if (callback)
-		callback(x);
-  };
-xhr.open("GET", HOSTserv + path ,true);
-xhr.send();
-
-var x;
-}
 
 function listFav(clubList){
 var authLayer = document.getElementById('authLayer');
@@ -235,25 +215,29 @@ var info = userName + "$" + userCour + "$" + userPass;
 }
 
 function validNewUser(rdata){
-var titrePref = document.getElementById('titrePref');
+var newUserForm = document.getElementById('newUserForm');
 var modLayer = document.getElementById('modalDiv');
 var authLayer = document.getElementById('authLayer');
+var formIdent = document.getElementById('formIdent');
 
 if (rdata.code){
 	if (rdata.code == 11000)
-		alert("Cette adresse courriel existe déjà.");
+		alert("Cette adresse courriel existe dÃ©jÃ .");
 	else
 		alert(rdata.message);
 
 }else{
-
-
+	var leftbutton = document.getElementById('leftbutton');
+	leftbutton.style.visibility="visible";
+	SetCook("userName",rdata[0].Nom);
+	SetCook("userID",rdata[0]._id);
+	userId = rdata[0]._id;
+	userName = rdata[0].Nom;
+	newUserForm.parentNode.removeChild(newUserForm);
+	modLayer.style.visibility="hidden";
+	authLayer.style.visibility="hidden";
 }
-	
-	//11000
-//titrePref.parentNode.removeChild(titrePref);
-//modLayer.style.visibility="hidden";
-//authLayer.style.visibility="hidden";
+
 }
 
 function authentif(){
@@ -336,6 +320,8 @@ closePref();
 function setLatLng(latitude,longitude) {
 document.critere.latitude.value = parseFloat(latitude);
 document.critere.longitude.value = parseFloat(longitude);
+clearGeo(true);
+localStorage.setItem('myPos', latitude + "," + longitude + "," + Date.now());
 }
 
 function setResult(result){
@@ -363,7 +349,7 @@ if ( LocT == 0 ){
 		document.critere.Prox.value = "N";
 		resultLocalisation = 0;
 } else {
-	if (resultLocalisation == -1 && !criteres() ){
+	if (resultLocalisation == -1 ){  //&& !criteres() 
 		oDivLocaliser.style.visibility="hidden";
 		oDivLocalise.style.visibility="hidden";
 		oDivLocalisation.style.visibility="visible";
@@ -557,9 +543,7 @@ if (resultLocalisation == -1 ){
 }
 
 function showLocal(){
-//var localWindow = window.open('localMap.asp', '_blank','resizable,scrollbars=0,status=0,menubar=0,toolbar=0,location=0');
-//var localWindow = window.open('localMap.asp', 'localMap','resizable,scrollbars=0,status=0,menubar=0,toolbar=0,location=0');
-var localWindow = window.open('localMap.asp', 'localMap');
+var localWindow = window.open('localMap.html', 'localMap');
 localWindow.document.close();
 }
 
@@ -588,10 +572,19 @@ if (userId){
 
 getInfo("getRegions?", listRegions);
 
+initPref();
+localiser();
+document.critere.Rechercher.focus();
+
 }
 
 function getFav(){
 var favGolfList = document.getElementById('favGolfList');
+var newUserForm = document.getElementById('newUserForm');
+
+if (newUserForm)
+	newUserForm.parentNode.removeChild(newUserForm);
+
 if (!favGolfList){
 	getInfo('getFav?data=' + userId, listFav);
 }else{
@@ -613,10 +606,10 @@ for (var i = 0; i < oRegion.length; i++) {
 
 if (localStorage.getItem("motsCleContext"))
 	formCrit.Mots.value = localStorage.getItem("motsCleContext");
-
 if (localStorage.getItem("regionIdContext"))
 	formCrit.IdRegion.selectedIndex = localStorage.getItem("regionIdContext");
-
+if (localStorage.getItem("cpContext"))
+	formCrit.codePostal.value = localStorage.getItem("cpContext");
 }
 
 function clearContext(){
@@ -625,6 +618,7 @@ function clearContext(){
 	localStorage.removeItem('checkNom');
 	localStorage.removeItem('checkVille');
 	localStorage.removeItem('regionIdContext');
+	localStorage.removeItem('cpContext');
 	localStorage.removeItem('message');
 }
 
@@ -665,13 +659,14 @@ if (formCrit.Mots.value != ""){
 	if (formCrit.IdRegion.value != 0){
 		localStorage.setItem('regionIdContext', formCrit.IdRegion.selectedIndex);
 		//localStorage.setItem('message', formCrit.IdRegion.selectedIndex);
-		localStorage.setItem('message', "&nbsp;clubs dans la r&#233;gion &#171;" + formCrit.IdRegion.options[formCrit.IdRegion.selectedIndex].innerHTML + "&#187;.");
+		localStorage.setItem('message', "&nbsp;clubs dans la r&eacute;gion &#171;" + formCrit.IdRegion.options[formCrit.IdRegion.selectedIndex].innerHTML + "&#187;.");
 		URLresult += "2$" + formCrit.IdRegion.value;
 	}else{
 		//localStorage.removeItem('regionContext');
 		localStorage.removeItem('regionIdContext');
 		if (formCrit.kiloM.value != 0){
 			if (formCrit.codePostal.value != ""){
+				  localStorage.setItem('cpContext', formCrit.codePostal.value);
 				  localStorage.setItem('message', "&nbsp;clubs&nbsp;&#224; moins de " + formCrit.kiloM.value + "&nbsp;kilom&#232;tre du code postal &#171;" + formCrit.codePostal.value + "&nbsp;&#187;.");
 				codeAddress(formCrit.codePostal.value , formCrit.kiloM.value * 1000 * 1.05, URLresult );
 				return false;
@@ -700,13 +695,10 @@ geocoder = new google.maps.Geocoder();
 	  URLresult += "3$" + lng + "$" + lat + "$" + distance;
 	  document.location.href = URLresult;
     } else {
-      alert('Code postal non retrouvé : ' + status);
+      alert('Code postal non retrouv&eacute; : ' + status);
     }
   });
 }
-
-//URLresult += "3$" + results[0].geometry.location.lng() + "$" + results[0].geometry.location.lat() + "$" + distance;
-//alert('Code postal non retrouvé : ' + status);
 
 // -->
 </script>
@@ -739,12 +731,12 @@ geocoder = new google.maps.Geocoder();
 			  <div class="formrow1" >
 				<div id="formradio" class="divChxChamp"><input id="checkNom" type="checkbox" checked value="Nom"><label for="checkNom">&nbsp;Nom du club</label>&nbsp;&nbsp;<input id="checkVille" type="checkbox" checked value="Ville"><label for="checkVille">&nbsp;Ville</label></div>
 			    <div id="divMot"><label for="Mots">Mot cl&eacute; </label></div>
-			    <div id="inputtextmot"><input id="Mots" class="inputtext" name="Mots" oninput="showLocalisation()"; type="text" size="17" maxlength="50" value=""/></div>
+			    <div id="inputtextmot"><input id="Mots" class="inputtext" name="Mots" type="text" size="17" maxlength="50" value=""/></div>
 			  </div>
 			  <div class="formrow1">
 			    <div id="divReg"><label for="IdRegion">R&eacute;gion </label></div>
 			    <div id="inputselectreg">
-			    <SELECT id="IdRegion" class="inputselect" name="IdRegion" onChange="showLocalisation()";>
+			    <SELECT id="IdRegion" class="inputselect" name="IdRegion">
 					<OPTION value="0">Toutes les r&eacute;gions</OPTION>
 
 			      </SELECT></div></div>
@@ -753,7 +745,7 @@ geocoder = new google.maps.Geocoder();
 			  <div id="formradio" class="divChxChamp">&nbsp;&nbsp;<label for="codePostal">Code postal</label></div>
 			    <div id="divCod"><label for="kiloM">Proximit&eacute;</label></div>
 			    <div id="inputtextcod">
-			    <input id="codePostal" class="inputtext" name="codePostal"  oninput="showLocalisation()"; type="text" size="8" maxlength="7" value=""/>
+			    <input id="codePostal" class="inputtext" name="codePostal" type="text" size="8" maxlength="7" value=""/>
 				</div>
 			    <div id="inputselectdis">
 				<SELECT id="kiloM" class="inputselect" name="KiloM">
@@ -799,11 +791,10 @@ geocoder = new google.maps.Geocoder();
 
 <div id="menu">
   <ul id="onglets">
-    <li class="active"><a href="#" onClick="return false;"> Pr&#233;f&#233;rences </a></li>
+    <li class="active"><a href="#" onClick="return false;"> Pr&eacute;f&eacute;rences </a></li>
     <li><a href="" onClick="setIdent(); return false;"> Identification </a></li>
   </ul>
 </div>
-<!-- <div id="titrePref">Préférences</div> // -->
 
 <form id="formPref">
 <div id="prefOptions">
@@ -816,7 +807,7 @@ geocoder = new google.maps.Geocoder();
 </select></div></div>
 
 <div class="prefList">
-<label for="locTime" id="lbl3" class="prefLbl">D&#233;lai de localisation</label><div class="prefVal">
+<label for="locTime" id="lbl3" class="prefLbl">D&eacute;lai de localisation</label><div class="prefVal">
 <select id="locTime">
  <option value="0">Non</option>
  <option value="1">1 s.</option>
@@ -839,11 +830,10 @@ geocoder = new google.maps.Geocoder();
 <div id="identLayer">
 <div id="menu">
   <ul id="onglets">
-    <li><a href="" onClick="showPref(); return false;"> Pr&#233;f&#233;rences </a></li>
+    <li><a href="" onClick="showPref(); return false;"> Pr&eacute;f&eacute;rences </a></li>
     <li class="active"><a href="#" onClick="return false;"> Identification </a></li>
   </ul>
 </div>
-<!-- <div id="titrePref">Préférences</div> // -->
 
 <form id="formAuth">
 <div id="identOptions">
@@ -860,7 +850,7 @@ geocoder = new google.maps.Geocoder();
 
 <div id="aLink" class="prefList">
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="" id="newIdent" onclick="newIdent(); return false;">Nouvelle identification</a>
-&nbsp;&nbsp;&nbsp;&nbsp;<a id="butGame" class="itin" target="_blank" href="score_liste.html">Parties jou&#233;es</a>
+&nbsp;&nbsp;&nbsp;&nbsp;<a id="butGame" class="itin" target="_blank" href="score_liste.html">Parties jou&eacute;es</a>
 </div>
 
 </div>
@@ -880,9 +870,7 @@ geocoder = new google.maps.Geocoder();
 
 <script type="text/javascript" language="Javascript">
 <!--
-initPref();
-localiser();
-document.critere.Rechercher.focus();
+
 // -->
 </script>
 

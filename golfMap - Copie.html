@@ -57,17 +57,17 @@ var golfPos = new google.maps.LatLng(gLat,gLng);
 }
 
 function showDetailItineraire(){
-var detailWindow = window.open('trajet.html', 'trajet');
+var detailWindow = window.open('trajet.asp', 'trajet');
 
 detailWindow.document.close();
 }
 
 function showItineraire(golfLat, golfLng, idInfo){
-//var myLat = intLat;
-//var myLng = intLng;
+//var myLat = <%=strLat%>;
+//var myLng = <%=strLng%>;
 var oInfo = document.getElementById(idInfo);
 
-calcRoute(intLat, intLng, golfLat, golfLng, oInfo);
+calcRoute(myLat, myLng, golfLat, golfLng, oInfo);
 
 }
 	
@@ -245,7 +245,7 @@ function setMarkers(map, locations) {
 
 function showWin(oMap, oMarker){
 
-var id = oMarker.zIndex;
+var id = oMarker.zIndex-1;
 var oInfo = clubs[id];
 winOpen.close();
 //alert(oInfo[4]);
@@ -299,16 +299,13 @@ winOpen = new google.maps.InfoWindow({
 		disableAutoPan : true
 	});
 for (var i = 0; i < cData.length; i++) {
-	var contentString = '<div id="layerContent"><p><a href="ficheClub.html?data=' + cData[i]._id + '" target="_blank">' + cData[i].nom + '</a>';
-	if (intLat != 'undefined'){
-		contentString += '&nbsp;&nbsp;<a class="itin" href="javascript:showItineraire(' + cData[i].location.x + ', ' + cData[i].location.y + ',\'contentTrajet\')">Trajet</a><div id="contentTrajet" class="itinDetail"></div>'
-	}
-	contentString += '</p><p>' + cData[i].adresse + ',&nbsp;' + cData[i].municipal + '</br>' + cData[i].telephone + '</p></div>';
+	var contentString = "<p>test"+ i +"</p>";
 	var info = new google.maps.InfoWindow({
 		content: contentString,
 		disableAutoPan : true
 	});
-	clubs[i] = [ cData[i].nom , cData[i].location.x , cData[i].location.y, i, info ];
+
+	clubs[i] = [ cData[i].location.nom , cData[i].location.x , cData[i].location.y, i, info ];
 	maxX = Math.max(maxX, cData[i].location.x);
 	minX = Math.min(minX, cData[i].location.x);
 	maxY = Math.max(maxY, cData[i].location.y);
@@ -328,6 +325,10 @@ chargement.style.display = "none";
 }
 
 function calculDistance(lat1, lat2, lon1, lon2){
+var lat1 = parseInt(lat1);
+var lat2 = parseInt(lat2);
+var lon1 = parseInt(lon1);
+var lon2 = parseInt(lon2);
 var R = 6378000; // Rayon moyen en mètre
 var rLat1 = lat1 * (Math.PI / 180);
 var rLat2 = lat2 * (Math.PI / 180);
