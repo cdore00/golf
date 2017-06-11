@@ -38,9 +38,12 @@ if (askSave){
 	var action = 0;
 }
 if (conf){
-	getInfo("endDelGame?data=" + gameID + "$" + action);
-	window.close();
+	getInfo("endDelGame?data=" + gameID + "$" + action, closePage);
 	}
+}
+
+function closePage(oRes){
+	window.close();
 }
 
 

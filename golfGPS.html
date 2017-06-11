@@ -48,6 +48,7 @@ window.addEventListener('DOMActivate', function() {
 var userId = null;
 var courseID = null;
 var currentGameID = null;
+var calltabScore = false;
 var clubName = "";
 var map;
 var posMarker;
@@ -482,7 +483,7 @@ once = 1;
 
 function showScoreFrame(strParc){
 var layerScore = document.getElementById('showScore');
-var setScore = document.getElementById('setScore');
+//var setScore = document.getElementById('setScore');
 var scoreHole = document.getElementById('scoreHole');
 
 scoreHole.innerHTML = "Trou " + trou + " par " + eval("trouNormale.T" + trou);
@@ -490,8 +491,6 @@ scoreHole.innerHTML = "Trou " + trou + " par " + eval("trouNormale.T" + trou);
 getInfo("getGame?data=" + userId + "$" + courseID, setHoleScore);
 
 layerScore.style.visibility="visible";
-	setScore.nbrCoups.focus();
-	setScore.nbrCoups.click();
 	
 }
 
@@ -505,8 +504,10 @@ var vl = eval("gData[0].L" + trou);
 setScore.nbrCoups.selectedIndex = (vc - 1);
 setScore.nbrPutts.selectedIndex = (vp );
 setScore.nbrPen.selectedIndex = (vl );
-
-getInfo("getGame?data=" + userId + "$" + courseID);
+	setScore.nbrCoups.focus();
+	setScore.nbrCoups.click();
+	
+//getInfo("getGame?data=" + userId + "$" + courseID);
 
 }
 
@@ -517,17 +518,14 @@ var layerScore = document.getElementById('showScore');
 layerScore.style.visibility="hidden";
 }
 
-function saveScore(formRef, callback){
+function saveScore(formRef){
 var score = formRef.nbrCoups[formRef.nbrCoups.selectedIndex].value;
 var putt = formRef.nbrPutts[formRef.nbrPutts.selectedIndex].value;
 var penal = formRef.nbrPen[formRef.nbrPen.selectedIndex].value;
 //alert(formRef);
 var strData = userId + "$" + courseID + "$" + trou + "$" + score + "$" + putt + "$" + penal + "$" + clubName;
-
-if (!callback)
-	callback = setMyScore;
 	
-getInfo("updateGame?data=" + strData, callback);
+getInfo("updateGame?data=" + strData, setMyScore);
 
 closeScore();
 }
@@ -562,15 +560,21 @@ if (score == 0){
 }
 
 myScore.innerHTML = tot + pref;
+
+if (calltabScore){
+	calltabScore = false;
+	calltableauScore();
+}
 }
 
 
 function tableauScore(formRef){
-	saveScore(formRef, calltableauScore);
+	calltabScore = true;
+	saveScore(formRef, true);
 }
 
-function calltableauScore(gData){
-currentGameID = gData[0]._id
+function calltableauScore(){
+
 var localWindow = window.open('scoreTab.html?data=' + currentGameID + "$" + clubName);
 localWindow.document.close();
 //closeScore();
