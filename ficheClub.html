@@ -150,7 +150,7 @@ for (var p = 0; p < clubCourse.length; p++) {
 	htmlCode += "&nbsp;" + clubCourse[p].TROUS + "&nbsp;trous&nbsp;&#224; normale&nbsp;" + clubCourse[p].NORMALE + "&nbsp;de&nbsp;" + clubCourse[p].VERGES + "&nbsp;verges&nbsp;&nbsp;";
 	if (clubCourse[p].PARCOURS != "")
 		parcoursName += " - " + clubCourse[p].PARCOURS;
-	if (clubCourse[p].golfGPS)
+	if (clubCourse[p].GPS)
 		htmlCode += '<a class="itin" target="_blank" href="golfGPS.html?data=' + clubCourse[p]._id + '&' + clubName + parcoursName + '">Jouer</a>';
 
 	var liElem = document.createElement("li");
@@ -174,13 +174,15 @@ for (var p = 0; p < clubCourse.length; p++) {
 	var htmlCode = "";
 	var courseID = clubCourse[p]._id;
 	//var bloc = oBlock[p];
-
-	var b = nextCourse;
+	var b = 0;
+	while (bloc[b] && bloc[b].PARCOURS_ID != courseID) {
+		b++;
+	}
+	
+	nextCourse = b;
 	//Bloc list
-	if(bloc[b].T14 == null || bloc[b].T14 == 0)
-		var nbrTrou = 9;
-	else
-		var nbrTrou = 18;
+
+	var nbrTrou = clubCourse[p].TROUS;
 
 	var liElem = document.createElement("li");
 	liElem.setAttribute('class', 'listitem');

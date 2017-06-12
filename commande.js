@@ -3,7 +3,6 @@ https://github.com/openshift/nodejs-ex.git
 https://github.com/cdore00/servDB
 
 mongoimport --db golftest --collection regions --jsonArray --file reg.json
-
 mongoexport --db golfDB --collection club --out traffic.json
 
 Connection BD mongoServiceName=MONGODB   DATABASE_SERVICE_NAME.toUpperCase()
@@ -17,10 +16,8 @@ mongoAdmin=fFw6j3APyvUrhfaQ   MONGODB_ADMIN_PASSWORD
 mongodb://user84C:tml6fMOcjEdNdBMq@172.30.54.12:27017/sampledb
 
 
-db.club.find( { _id: 3 } )
-
-=Select *
-db.inventory.find( {} )
+select max value
+db.club.find({}).sort({"_id":-1}).limit(1)
 
 delete all with empty query
 db.products.remove(({}))
@@ -101,7 +98,7 @@ db.club.find({ location: { $near : {$geometry: { type: "Point",  coordinates: [ 
 
 http://127.0.0.1:3000/delTable?data=users
 
-CREATE DATABSE
+CREATE DATABASE
 load?data=users.json
 load?data=userFavoris.json
 load?data=regions.json
@@ -111,7 +108,7 @@ load?data=blocs.json
 load?data=golfGPS.json
 load?data=score.json
 
-proc?data=addToParc
+proc?data=addToParc   // Non requis
 proc?data=creLoc
 proc?data=creParcClub
 proc?data=convTime
@@ -124,7 +121,7 @@ tt=db.score.aggregate([ { $match: { USER_ID: 80, PARCOURS_ID: 412, score_date: n
  tt[0].total
 
 
-
+ db.score.update({"score_date": 1497150283743}, {$set:{ "score_date": null}}) 
 
 mongoexport -u 'user84C' -p 'tml6fMOcjEdNdBMq' --db sampledb --collection users --jsonArray --out tuser.json
 mongoimport -u 'tuser' -p '123' --db tdb --collection users --jsonArray --file tuser.json 

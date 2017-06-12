@@ -29,7 +29,7 @@ var holeMarker = null;
 var trou = 1;
 var showLatLng = false;
 var trouCoord =  new Array();
-var nbrTrous, courseID, clubName;
+var nbrTrous, clubID, courseID, clubName, isMapped, initFlag;
 
 function initialize() { 
 	var leCentre = new google.maps.LatLng(intLat,intLng)
@@ -49,7 +49,6 @@ function initialize() {
 
 	//adjustScreen(31);
 	setFontSize();
-
 }
 	
 	
@@ -67,7 +66,7 @@ document.location = "golfGPS.html?data=" + courseID + "&" + clubName;
 
 function holePosChange(){
 
-if (showLatLng == true){
+if (showLatLng){
 	var divHolePos = document.getElementById("holePos");
 	var flagLatLng = holeMarker.getPosition();
 	divHolePos.innerHTML = flagLatLng.toString();
@@ -76,7 +75,8 @@ if (showLatLng == true){
 }
 
 function showHole(){
-
+var navTrou = document.getElementById("navTrou");
+navTrou.style.visibility = "visible";
 var setFlag = document.getElementById("setFlag");
 showLatLng = true;
 if (eval(holeMarker) == null){
@@ -91,37 +91,51 @@ setFlag.disabled = false;
 
 function setFlagCoord(butObj){
 var flagLatLng = holeMarker.getPosition();
-var xmlhttp;
-var resp;
 
+if (isMapped){
+	var data = courseID + "$" + trou + "$" + flagLatLng.lat() + "$" + flagLatLng.lng();
+	trouCoord[trou - 1] = new google.maps.LatLng(flagLatLng.lat(), flagLatLng.lng());
+	getInfo("setGolfGPS?data=" + data);
+}else{
+	initFlag = nbrTrous;
+	initializeGPS();
+}
 butObj.disabled = true;
 //alert(trou + ' Lat: ' + flagLatLng.lat() + ' Lng: ' + flagLatLng.lng());
+}
 
+function initializeGPS(){
+
+if (initFlag > 0){
+	var flagLatLng = holeMarker.getPosition();
+	var data = courseID + "$" + initFlag + "$" + flagLatLng.lat() + "$" + flagLatLng.lng();
+	getInfo("setGolfGPS?data=" + data, initializeGPS);
+	initFlag --;
+}
 }
 
 function trouSuivant(p_m){
+var butObj = document.getElementById("setFlag");
+butObj.disabled = false;
 
 trou = trou + p_m;
-
 if (trou > nbrTrous)
 	trou = 1;
 if (trou == 0)
 	trou = nbrTrous;
 	
 afficheTrou(trou);
-
 }
 
 function initPage(){
-
-userId = GetCookie("userID");
-
-var data = getURLdata();
-
 setFontSize();
+userId = GetCookie("userID");
+var data = getURLdata();
+var ids = data.split('$');
+clubID = parseInt(ids[0]);
+courseID = parseInt(ids[1]);
 
 getInfo("getClubParcTrous?data=" + data, showCourse);
-
 }
 
 function showCourse(oClub){
@@ -129,23 +143,29 @@ function showCourse(oClub){
 	intLat = oClub[0].latitude;
 	intLng = oClub[0].longitude;
 	clubName = oClub[0].nom;
+	nbrTrous = oClub[0].courses[0].TROUS;
+	for (var i = 0; i < nbrTrous; i++) {
+		trouCoord[i] = new google.maps.LatLng(oClub[0].latitude, oClub[0].longitude);
+	}
 	initialize();
-	
-if (oClub[0].trous.length != 0){
+	if (oClub[0].trous.length != 0)
+		isMapped = true;
+	else
+		isMapped = false;
+		
+if (isMapped){
 	var navTrou = document.getElementById("navTrou");
 	var trous = oClub[0].trous;
-	nbrTrous = trous.length;
 	intLat = trous[0].latitude;
 	intLng = trous[0].longitude;
-	courseID = trous[0].Parcours_id;
-	for (var i = 0; i < trous.length; i++) {
+	//courseID = trous[0].Parcours_id;
+	for (var i = 0; i < nbrTrous; i++) {
 		trouCoord[i] = new google.maps.LatLng(trous[i].latitude, trous[i].longitude);
 	}
 	setHole(map, trouCoord[0]);
 	navTrou.style.visibility = "visible";
 }
 
-x=5;
 }
 
 	// -->

@@ -96,6 +96,9 @@ console.log(url_parts.pathname);
 			  case "getGolfGPS":
 				getGolfGPS(req, res, url_parts.query);
 				break;
+			  case "setGolfGPS":
+				setGolfGPS(req, res, url_parts.query);
+				break;
 			  case "getClubParcTrous":
 				getClubParcTrous(req, res, url_parts.query);
 				break;
@@ -219,8 +222,7 @@ if (is18 == 18){
 
 		returnRes(res, count);	
 	});
-}else{
-	//coll.find({USER_ID: user, T18: { $exists: false, $nin: [ 0 ] }, {$or:[{T18:0}]} }).count( function(err, count){ 
+}else{ 
 	 coll.find({USER_ID: user, $or:[{T18:0},{T18:null}]  } ).count(function(err, count){ 
 		returnRes(res, count);	
 	});
@@ -246,7 +248,6 @@ if (is18 == 18){
 	//returnRes(res, doc);	
 	});
 }else{
-	//coll.find({USER_ID: user, T18: { $exists: true, $nin: [ 0 ] } }).sort({score_date:-1}).skip(skip).limit(limit).forEach(function(doc){
 	coll.find({USER_ID: user, $or:[{T18:0},{T18:null}]  } ).sort({score_date:-1}).skip(skip).limit(limit).forEach(function(doc){
 		addCur(doc);
 	//returnRes(res, doc);	
@@ -289,6 +290,7 @@ if (action == 1){
 		if (err) {
 			logErreur('Erreur end score _id : ');
 		}
+		console.log("End game");
 		returnRes(res, docr);
 	  });
 }
@@ -341,14 +343,6 @@ coll.find({ USER_ID: user, PARCOURS_ID: parc, score_date: null }).toArray(functi
   });
 }
 
-//Non utilisé
-function getGame2(res, user, parc){
-
-var coll = dBase.collection('score');
-coll.find({ USER_ID: user, PARCOURS_ID: parc, score_date: null }).toArray(function(err, docs) {
-	returnRes(res, docs);
-  });
-}
 
 function updateGame(req, res, param){
 var request = (decodeURI(param.data));
@@ -398,10 +392,10 @@ switch (hole) {
 	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T11: stroke, P11: put, L11: lost} }, { upsert : true }, callResult );
 	break;
   case 12:
-	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T12: stroke, P5: put, L12: lost} }, { upsert : true }, callResult );
+	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T12: stroke, P12: put, L12: lost} }, { upsert : true }, callResult );
 	break;
   case 13:
-	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T13: stroke, P3: put, L13: lost} }, { upsert : true }, callResult );
+	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T13: stroke, P13: put, L13: lost} }, { upsert : true }, callResult );
 	break;
   case 14:
 	coll.update({ USER_ID: user, PARCOURS_ID: parc, score_date: null }, { $set: {USER_ID: user, PARCOURS_ID: parc, score_date: null, T14: stroke, P14: put, L14: lost} }, { upsert : true }, callResult );
@@ -488,7 +482,7 @@ var clubID = parseInt(ids[0]);
 var courseID = parseInt(ids[1]);
 
 	var coll = dBase.collection('club'); 
-coll.find({"_id": clubID }, ["_id","nom", "latitude", "longitude"]).toArray(function(err, doc) {
+coll.find({"_id": clubID }, ["_id","nom", "courses", "latitude", "longitude"]).toArray(function(err, doc) {
 	getTrous(res, doc)
 
   });  
@@ -521,12 +515,12 @@ var userID = ids[1];
 	var coll = dBase.collection('club'); 
 coll.find({"_id": clubID }).toArray(function(err, docs) {
 	//console.log(docs)
-	isFavorite(res, docs, userID)
+	isFavoriteGPS(res, docs, userID)
 	//returnRes(res, docs);
   });  
 }
 
-function isFavorite(res, clubDoc, userID){
+function isFavoriteGPS(res, clubDoc, userID){
 var coll = dBase.collection('userFavoris');
   coll.find({"CLUB_ID": clubDoc[0]._id , "USER_ID": parseInt(userID)}, ["CLUB_ID"]).toArray(function(err, docs) {
 	    //console.log(docs);
@@ -535,8 +529,33 @@ var coll = dBase.collection('userFavoris');
 	else
 		clubDoc[0].isFavorite = false;
 	
-	returnRes(res, clubDoc);
+	isGPS(res, clubDoc);
+	//returnRes(res, clubDoc);
   });	
+}
+
+function isGPS(res, clubDoc){
+	for (var p = 0; p < clubDoc[0].courses.length; p++) {
+		isCourseGPS(res, clubDoc, p);
+	}
+}
+
+function isCourseGPS(res, clubDoc, ID){
+var courseID = clubDoc[0].courses[ID]._id;
+	var coll = dBase.collection('golfGPS'); 
+coll.find({"Parcours_id": courseID }).toArray(function(err, GPSdoc) {
+	addGPSend(GPSdoc);
+  });
+
+function addGPSend(GPSdoc){
+	if (GPSdoc.length > 0){
+		clubDoc[0].courses[ID].GPS = true;
+	}else{
+		clubDoc[0].courses[ID].GPS = false;
+	}
+	if (ID == clubDoc[0].courses.length - 1)
+		returnRes(res, clubDoc);
+}
 }
 
 
@@ -572,8 +591,7 @@ var query = (decodeURI(param.data));
 var ids = query.split('$');
 ids = ids.map(function(id) { return parseInt(id); });
 var coll = dBase.collection('blocs'); 
-coll.find({"PARCOURS_ID":{$in: ids }}).toArray(function(err, docs) {
-    console.log("Found the following blocs");
+coll.find({"PARCOURS_ID":{$in: ids }}, {"sort": [["PARCOURS_ID", 'asc'], ["_id", 'asc']]} ).toArray(function(err, docs) {
     //console.log(docs)
 returnRes(res, docs);
   });
@@ -600,6 +618,21 @@ coll.find({"Parcours_id": courseID }, {"sort": "trou"}).toArray(function(err, do
 	getBlocGPS(res, courseID);
   });
 }
+
+function setGolfGPS(req, res, param){
+var request = (decodeURI(param.data));
+var data = request.split("$");
+var courseId = parseInt(data[0]);
+var trou = parseInt(data[1]);
+var lat = eval(data[2]);
+var lng = eval(data[3]);
+console.log(courseId);
+var coll = dBase.collection('golfGPS'); 
+coll.update({ 'Parcours_id': courseId, 'trou': trou }, { $set: {'Parcours_id': courseId, 'trou': trou, 'latitude': lat, 'longitude': lng } }, { upsert : true }, function(err, docr) {
+	returnRes(res, docr);
+  });
+}
+
 
 function getBlocGPS(res, courseID){
 	var coll = dBase.collection('blocs'); 
