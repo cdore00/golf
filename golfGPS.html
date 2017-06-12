@@ -28,13 +28,8 @@
 
     <script type="text/javascript"> 
 	<!--
-	
-var userId = null;
-var PositionFlag = 0;
 
-
-//var pos_x;
-//var pos_y;
+//Touch move
 var diff_x;
 var diff_y;
 var move_x;
@@ -51,6 +46,7 @@ var currentGameID = null;
 var calltabScore = false;
 var clubName = "";
 var map;
+var PositionFlag = 0;
 var posMarker;
 var holeMarker;
 var piquetMarker;
@@ -637,20 +633,12 @@ if (Math.abs(laDistance - actDist) > 15){
 function initPage(){
 var titClub = document.getElementById('titClub'); 
 var changeScore = document.getElementById('changeScore'); 
-var urlInfo = document.location.href;
 
 userId = GetCookie("userID");
 if (!userId)
 	changeScore.style.visibility = "hidden";
 
-if (urlInfo.indexOf("data=") == -1){
-	var url = window.location.href
-	var arr = url.split("/");
-	var URLresult = arr[0] + "//" + arr[2] + "/";
-	//document.location.href = URLresult;
-}else{
-	var data = (urlInfo.substring(urlInfo.indexOf("data=") + 5));
-}
+var data = getURLdata();
 data = data.split("&");
 courseID = data[0];
 clubName = decodeURI(data[1]);

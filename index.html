@@ -33,7 +33,7 @@ var watchId = null;
 var locTimer;
 var resultLocalisation = 1000;
 var affL, LocT;
-//var HOSTserv = "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
+//var HOSTserv = "http://127.0.0.1:3000/";
 // "http://127.0.0.1:3000/";
 // "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
 
@@ -317,11 +317,13 @@ closePref();
 }
 
 
-function setLatLng(latitude,longitude) {
+function setLatLng(latitude,longitude,notNew) {
 document.critere.latitude.value = parseFloat(latitude);
 document.critere.longitude.value = parseFloat(longitude);
 clearGeo(true);
-localStorage.setItem('myPos', latitude + "," + longitude + "," + Date.now());
+//showLocalisation();
+if (!notNew)
+	localStorage.setItem('myPos', latitude + "," + longitude + "," + Date.now());
 }
 
 function setResult(result){
@@ -570,10 +572,22 @@ if (userId){
 	leftbutton.style.visibility="visible";
 }
 
+initPref();
 getInfo("getRegions?", listRegions);
 
-initPref();
-localiser();
+var myPos = localStorage.getItem('myPos');
+if (myPos){
+	var coord = myPos.split(',');
+	if (Date.now() - parseInt(coord[2]) > 300000){
+		localiser();
+	}else{
+		resultLocalisation = -1;
+		setLatLng(coord[0],coord[1],true);
+	}
+}else{
+	localiser();
+}
+
 document.critere.Rechercher.focus();
 
 }
@@ -620,6 +634,7 @@ function clearContext(){
 	localStorage.removeItem('regionIdContext');
 	localStorage.removeItem('cpContext');
 	localStorage.removeItem('message');
+	//localStorage.removeItem('myPos');
 }
 
 function rechercheClub(){

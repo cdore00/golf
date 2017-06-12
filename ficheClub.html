@@ -26,8 +26,6 @@ var courseIDdef;
 var clubName;
 var clubCourse;
 var favChange = false;
-var newURL ="";
-var HOSTserv = localStorage.getItem("HOSTserv");
 
 if (document.images)
 {
@@ -55,7 +53,6 @@ else
 function majFav(nextURL){
 var action;
 var imgStat = document.getElementById('favIcon');
-//newURL = nextURL;
 
 if (favChange){
 	if (imgStat.src.indexOf("Off") !=  -1)
@@ -68,16 +65,7 @@ if (favChange){
 }
 
 function initPage(){
-var urlInfo = document.location.href;
-
-if (urlInfo.indexOf("data=") == -1){
-	var url = window.location.href
-	var arr = url.split("/");
-	var URLresult = arr[0] + "//" + arr[2] + "/";
-	//document.location.href = URLresult;
-}else{
-	var data = (urlInfo.substring(urlInfo.indexOf("data=") + 5));
-}
+var data = getURLdata();
 
 clubID = parseInt(data);
 userId = GetCookie("userID");
@@ -138,6 +126,10 @@ if (oClubParc[0].telephone3)
 clubDetail.innerHTML = cInfo;
 
 var listParc = document.getElementById('listParc');
+var myPos = localStorage.getItem('myPos');
+if (myPos){
+	var coord = myPos.split(',');
+}
 
 for (var p = 0; p < clubCourse.length; p++) {
 	var htmlCode = "";
@@ -152,6 +144,8 @@ for (var p = 0; p < clubCourse.length; p++) {
 		parcoursName += " - " + clubCourse[p].PARCOURS;
 	if (clubCourse[p].GPS)
 		htmlCode += '<a class="itin" target="_blank" href="golfGPS.html?data=' + clubCourse[p]._id + '&' + clubName + parcoursName + '">Jouer</a>';
+	if (myPos)
+		htmlCode += '&nbsp;&nbsp;<a class="itin" target="_blank" href="ClubTrajet.html?data=' + coord[0] + '$' + coord[1] + '$' +  oClubParc[0].latitude + '$' + oClubParc[0].longitude + '$' + encodeURI(oClubParc[0].nom) +'">Trajet</a>';
 
 	var liElem = document.createElement("li");
 	liElem.setAttribute('class', 'listitem');

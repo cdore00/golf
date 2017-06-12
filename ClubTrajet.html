@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type" />
+<meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
+<meta name="format-detection" content="telephone=no" />
+<link rel="SHORTCUT ICON" href="favicon.ico">
+<link href="favicon.ico" rel="apple-touch-icon" />
+<link href="favicon.ico" rel="apple-touch-startup-image" />
+<link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
+<title>Clubs de golf au Québec</title>
+<meta content="Golf, Québec, Canada, Golf du Québec, Clubs de golf au Québec, Québec golf" name="keywords" />
+<meta content="Répertoire des clubs de golf du Québec." name="description" />
+
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" /> 
+
+    <script type="text/javascript" 
+      src="http://maps.googleapis.com/maps/api/js?key=AIzaSyA15nyiYmWG_0IkG9H5r4Qc8KhZxwRw_xA&sensor=false"> 
+    </script> 
+
+	<script type="text/javascript" src="misc/util.js"></script>
+    <script type="text/javascript"> 
+	<!--
+
+var userId, myPos, golfPos, strClubLat, strClubLng, strClubNom;
+
+
+var rendererOptions = {
+  draggable: false
+};
+var directionsDisplay = new google.maps.DirectionsRenderer(rendererOptions);;
+var directionsService = new google.maps.DirectionsService();
+var map;
+var golfMarker;
+
+function stopGolfDrag(){
+setDestination();
+}
+
+function initialize() {
+
+  var mapOptions = {
+
+		  panControl: false,    
+		  zoomControl: false, 	  
+		  scaleControl: false,
+		  streetViewControl: false,
+		  mapTypeControl: true,    
+		  mapTypeControlOptions: {        
+		  style: google.maps.MapTypeControlStyle.DROPDOWN_MENU    },
+          mapTypeId: google.maps.MapTypeId.HYBRID,
+    center: myPos
+  };
+  map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+  directionsDisplay.setMap(map);
+  directionsDisplay.setPanel(document.getElementById("directionsPanel"));
+
+  google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
+    setDestination();
+  });
+  setGolfMarker(strClubLat, strClubLng)
+  calcRoute(myPos,golfPos);
+  adjustScreen(31);
+}
+
+function setGolfMarker(lat, lng) {
+  // Add markers to the map
+  var image = new google.maps.MarkerImage('images/golf.png',
+      new google.maps.Size(25, 25),
+      new google.maps.Point(0,0),
+      new google.maps.Point(0, 25));
+  var shape = {
+      coord: [1, 1, 1, 25, 25, 25, 25 , 1],
+      type: 'poly'
+  };
+    var myLatLng = new google.maps.LatLng(lat, lng);
+    golfMarker = new google.maps.Marker({
+        position: myLatLng,
+        map: map,
+        icon: image,
+        shape: shape,
+        title: strClubNom,
+        zIndex: 1
+		});
+		golfMarker.position_changed = stopGolfDrag;
+}
+
+function calcRoute(origin,destin) {
+
+  var request = {
+    origin: origin,
+    destination: destin,
+//    waypoints:[{location: "Bourke, NSW"}, {location: "Broken Hill, NSW"}],
+    travelMode: google.maps.TravelMode.DRIVING
+  };
+  directionsService.route(request, function(response, status) {
+    if (status == google.maps.DirectionsStatus.OK) {
+      directionsDisplay.setDirections(response);
+    }
+  });
+}
+
+function setDestination() {
+
+  document.getElementById("destCoord").innerHTML = golfMarker.getPosition();
+  //directionsDisplay.directions.Mb.destination;
+}
+
+
+function showDetailItineraire(){
+var detailWindow = window.open('trajet.html', 'trajet');
+
+detailWindow.document.close();
+}
+
+function modifierTrajet(){
+var modTrajetButton = document.getElementById('modTrajet');
+var myDirect = directionsDisplay.directions.Mb
+
+	if (modTrajetButton.innerHTML == 'Modifier'){
+		modTrajetButton.innerHTML = 'Recalcul';
+		directionsDisplay.setOptions({draggable: true});
+		map.setCenter(myDirect.destination);
+		map.setZoom(15);
+		golfMarker.setOptions({draggable: true});
+	}else{
+		modTrajetButton.innerHTML = 'Modifier'
+		calcRoute(myDirect.origin,myDirect.destination)
+		directionsDisplay.setOptions({draggable: false});
+		golfMarker.setOptions({draggable: false});
+	}
+
+}
+
+function initPage(){
+userId = GetCookie("userID");
+var data = getURLdata();
+var ids = data.split('$');
+strClubLat = (ids[2]);
+strClubLng = (ids[3]);
+strClubNom = (ids[4]);
+
+myPos = new google.maps.LatLng(ids[0],ids[1]);
+golfPos = new google.maps.LatLng(strClubLat, strClubLng);
+
+
+initialize();
+}
+
+
+	// -->
+    </script> 
+  </head>
+<body onload="initPage()"><a name="haut"></a>
+  
+<div id="triButton">
+<div id="duobutton"><a href="#" onclick="window.close(); return false;">Fermer</a>
+<a id="modTrajet" href="javascript:modifierTrajet()" >Modifier</a>  
+<a href="javascript:showDetailItineraire()">Détail</a>
+</div></div>
+
+<div id="map_canvas"></div>
+
+<div id="mapZoom">
+<button class="boutonZoom" title="Zoom in" onclick="zoomMap(1); return false;">+</button>
+<button class="boutonZoom" title="Zoom out" onclick="zoomMap(-1); return false;">-</button>
+</div>
+
+<div id="destCoord"></div>
+<div id="directionsPanel"></div>
+
+</body> 
+</html>

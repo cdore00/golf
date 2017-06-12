@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type" />
+<meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
+<meta name="format-detection" content="telephone=no" />
+<link rel="SHORTCUT ICON" href="favicon.ico">
+<link href="favicon.ico" rel="apple-touch-icon" />
+<link href="favicon.ico" rel="apple-touch-startup-image" />
+<link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
+<title>Clubs de golf au Québec</title>
+<meta content="Golf, Québec, Canada, Golf du Québec, Clubs de golf au Québec, Québec golf" name="keywords" />
+<meta content="Répertoire des clubs de golf du Québec." name="description" />
+
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" /> 
+
+    <script type="text/javascript" 
+      src="http://maps.googleapis.com/maps/api/js?key=AIzaSyA15nyiYmWG_0IkG9H5r4Qc8KhZxwRw_xA&sensor=false"> 
+    </script> 
+	<script type="text/javascript" src="misc/util.js"></script>
+
+    <script type="text/javascript"> 
+	<!--
+
+      function initialize() { 
+
+		document.getElementById("trajet").innerHTML = opener.window.document.getElementById("directionsPanel").innerHTML;
+		document.getElementById("destCoordonne").innerHTML = "&nbsp; B: " + opener.window.document.getElementById("destCoord").innerHTML;
+		
+		setFontSize();
+	}
+
+	// -->
+    </script> 
+	
+	
+  </head>
+  <body onload="initialize()"><a name="haut"></a>
+
+<div id="duobutton"><a href="#"  onclick="window.close(); return false;">Fermer</a>
+
+</div>
+<button type="button" id="rightnav" title="Taille de police" onclick="changeTaille();"><img id="imgTaille" alt="Taille de police" height="20" width="45" src="images/taille.png" /></button>
+<div id="trajet">
+</div><div id="rightbutton"> <a href="#haut"><img height="13" width="20" alt="Haut de page" src="images/hautB.png" /></a> </div>
+<span id="destCoordonne"></span>
+
+  </body> 
+</html>
