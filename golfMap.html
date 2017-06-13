@@ -9,9 +9,9 @@
 <link href="favicon.ico" rel="apple-touch-icon" />
 <link href="favicon.ico" rel="apple-touch-startup-image" />
 <link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
-<title>Clubs de golf au Québec</title>
-<meta content="Golf, Québec, Canada, Golf du Québec, Clubs de golf au Québec, Québec golf" name="keywords" />
-<meta content="Répertoire des clubs de golf du Québec." name="description" />
+<title>Clubs de golf au QuÃ©bec</title>
+<meta content="Golf, QuÃ©bec, Canada, Golf du QuÃ©bec, Clubs de golf au QuÃ©bec, QuÃ©bec golf" name="keywords" />
+<meta content="RÃ©pertoire des clubs de golf du QuÃ©bec." name="description" />
 
 <script type="text/javascript" src="misc/googGeo.js"></script>
 <script type="text/javascript" src="misc/util.js"></script>
@@ -127,7 +127,7 @@ this.zoomRestart = function (lat1, lat2, lng1, lng2) {
 
 
       function initialize(showCenter) { 
-		intZoom = 15 - parseInt(Math.log(intKm/100));
+		intZoom = 14 - parseInt(Math.log(intKm/100));
         var myOptions = { 
           center: new google.maps.LatLng(intLat, intLng), 
           zoom: intZoom, 
@@ -329,7 +329,7 @@ chargement.style.display = "none";
 }
 
 function calculDistance(lat1, lat2, lon1, lon2){
-var R = 6378000; // Rayon moyen en mètre
+var R = 6378000; // Rayon moyen en mÃ¨tre
 var rLat1 = lat1 * (Math.PI / 180);
 var rLat2 = lat2 * (Math.PI / 180);
 var dLat = (lat2-lat1) * (Math.PI / 180);
