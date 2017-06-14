@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
+<meta name="format-detection" content="telephone=no" />
+<link href="favicon.ico" rel="icon" />
+<link href="favicon.ico" rel="shortcut icon" />
+<link href="favicon.ico" rel="apple-touch-icon" />
+<link href="favicon.ico" rel="apple-touch-startup-image" />
+<link href="misc/init.css" rel="stylesheet" media="screen" type="text/css" />
+<link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
+<title>Clubs de golf au Qu&eacute;bec</title>
+<meta content="Golf, Qu&eacute;bec, Canada, Golf du Qu&eacute;bec, Clubs de golf au Qu&eacute;bec, Qu&eacute;bec golf" name="keywords" />
+<meta content="R&eacute;pertoire des clubs de golf du Qu&eacute;bec." name="description" />
+<script type="text/javascript" src="misc/util.js"></script> 
+
+<script type="text/javascript" language="Javascript">
+<!-- 
+
+function initPage(){
+var formAuth = document.getElementById('formAuth');
+
+var data = getURLdata();
+data = data.split("$pass$");
+		
+formAuth.nameUser.value = data[0];
+formAuth.passwordUser.value = data[1];
+
+formAuth.okPref.click();
+
+}
+
+
+function validUser(rep){
+var formAuth = document.getElementById('formAuth');
+var userCour = formAuth.nameUser.value;
+if (rep[0].result){
+	SetCook("userID",rep[0].result + "");
+	document.location.href = "index.html";
+}else{
+	alert("Veuillez-vous identifier pour la première fois.");
+}
+}
+
+
+//Transférer dans util.js
+function authentif(){
+var formAuth = document.getElementById('formAuth');
+var userCour = formAuth.nameUser.value;
+var userPass = formAuth.passwordUser.value;
+//alert(score);
+getInfo("identUser?data=" + userCour + "$pass$" + userPass, validUser);
+}
+
+// -->
+</script>
+
+</head>
+
+<body onload="initPage()">
+
+<div id="topbar" class="vert">
+<div id="logoHome"><img alt="home" width="25" height="25" src="images/golf.png" /></div>
+<div id="titre">Golfs du Qu&eacute;bec</div>
+</div>
+
+	<div id="content" onClick="tooltip.hide();">
+		<ul class="pageitem">
+			<form id="formAuth">
+			<div class="prefList">
+			<label class="identLbl">Courriel: </label>
+			<input id="nameUser" type="hidden" value="">
+			<input id="passwordUser" type="hidden" value="">
+			</div>
+
+			<div>
+			<input id="okPref" class="bouton" type="submit" onclick="authentif(); return false;" value="      Ok      ">
+			</div>
+			</form>
+		</ul>
+	</div>		  
+
+<div id="bottombar" class="vert">
+</div>
+
+<div id="copyright">
+<a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2017</a>
+</div>
+
+
+
+
