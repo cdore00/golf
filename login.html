@@ -9,30 +9,25 @@
 <link href="favicon.ico" rel="shortcut icon" />
 <link href="favicon.ico" rel="apple-touch-icon" />
 <link href="favicon.ico" rel="apple-touch-startup-image" />
+<title>Golfs du Qu&eacute;bec</title>
+<meta content="Golf GPS, Qu&eacute;bec, Canada, Golf du Qu&eacute;bec, Clubs de golf au Qu&eacute;bec, Qu&eacute;bec golf" name="keywords" />
+<meta content="R&eacute;pertoire des clubs de golf du Qu&eacute;bec. GPS golf." name="description" />
 <link href="misc/init.css" rel="stylesheet" media="screen" type="text/css" />
 <link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
-<title>Clubs de golf au Qu&eacute;bec</title>
-<meta content="Golf, Qu&eacute;bec, Canada, Golf du Qu&eacute;bec, Clubs de golf au Qu&eacute;bec, Qu&eacute;bec golf" name="keywords" />
-<meta content="R&eacute;pertoire des clubs de golf du Qu&eacute;bec." name="description" />
+
 <script type="text/javascript" src="misc/util.js"></script> 
 
 <script type="text/javascript" language="Javascript">
 <!-- 
-
 function initPage(){
 var formAuth = document.getElementById('formAuth');
-
 var data = getURLdata();
 data = data.split("$pass$");
 		
 formAuth.nameUser.value = data[0];
 formAuth.passwordUser.value = data[1];
-
 formAuth.okPref.click();
-
 }
-
-
 function validUser(rep){
 var formAuth = document.getElementById('formAuth');
 var userCour = formAuth.nameUser.value;
@@ -43,8 +38,6 @@ if (rep[0].result){
 	alert("Veuillez-vous identifier pour la première fois.");
 }
 }
-
-
 //Transférer dans util.js
 function authentif(){
 var formAuth = document.getElementById('formAuth');
@@ -53,7 +46,6 @@ var userPass = formAuth.passwordUser.value;
 //alert(score);
 getInfo("identUser?data=" + userCour + "$pass$" + userPass, validUser);
 }
-
 // -->
 </script>
 
@@ -66,11 +58,11 @@ getInfo("identUser?data=" + userCour + "$pass$" + userPass, validUser);
 <div id="titre">Golfs du Qu&eacute;bec</div>
 </div>
 
-	<div id="content" onClick="tooltip.hide();">
+	<div id="content">
 		<ul class="pageitem">
 			<form id="formAuth">
 			<div class="prefList">
-			<label class="identLbl">Courriel: </label>
+			<h1>Identification</h1>
 			<input id="nameUser" type="hidden" value="">
 			<input id="passwordUser" type="hidden" value="">
 			</div>
@@ -89,6 +81,4 @@ getInfo("identUser?data=" + userCour + "$pass$" + userPass, validUser);
 <a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2017</a>
 </div>
 
-
-
-
+</body>
