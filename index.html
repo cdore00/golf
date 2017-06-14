@@ -343,7 +343,7 @@ var oDivLocalisation, oDivLocaliser, oDivLocalise;
 oDivLocalisation = document.getElementById('localisation');
 oDivLocaliser = document.getElementById('localiser');
 oDivLocalise = document.getElementById('localise');
-//alert(result);
+//console.log("showLocalisation" + resultLocalisation);
 if ( LocT == 0 ){
 		oDivLocaliser.style.visibility="hidden";
 		oDivLocalise.style.visibility="hidden";
@@ -369,7 +369,7 @@ function localiser(){
 var oDivlocaliser = document.getElementById('localiser');
 var oDivLocalise = document.getElementById('localise');
 var oBody = document.getElementById('content');
-			
+//console.log("localiser");
 oDivlocaliser.style.visibility="hidden";
 oDivLocalise.style.visibility="visible";
 oBody.style.cursor="wait";
@@ -383,7 +383,7 @@ function clearGeo(interrupt){
 var oBody = document.getElementById('content');
 var localisation = document.getElementById('localisation');
 var localiser = document.getElementById('localiser');
-
+//console.log("clearGeo");
 oBody.style.cursor="default";
 clearTimeout(locTimer);
 navigator.geolocation.clearWatch(watchId);
@@ -416,11 +416,10 @@ function getLocalisationOld(){
 }
 
 function onLocSuccess(position) {
-	setLatLng(position.coords.latitude,position.coords.longitude);
+	//console.log("onLocSuccess");
 	setResult(-1);
+	setLatLng(position.coords.latitude,position.coords.longitude);
 	locColl.addLoc(position.coords.latitude,position.coords.longitude,position.coords.accuracy);
-	//alert(locColl.coord.length);
-	//document.critere.Mots.value = position.coords.latitude;
 }
 
 // the tooltip object
@@ -565,8 +564,9 @@ userId = GetCookie("userID");
 var data = getURLdata();
 if (data == "clear"){
 	clearContext();
+	localStorage.removeItem('myPos');
 }
-
+//console.log("initPage");
 if (userId){
 	var leftbutton = document.getElementById('leftbutton');
 	leftbutton.style.visibility="visible";
@@ -682,12 +682,12 @@ if (formCrit.Mots.value != ""){
 		if (formCrit.kiloM.value != 0){
 			if (formCrit.codePostal.value != ""){
 				  localStorage.setItem('cpContext', formCrit.codePostal.value);
-				  localStorage.setItem('message', "&nbsp;clubs&nbsp;&#224; moins de " + formCrit.kiloM.value + "&nbsp;kilom&#232;tre du code postal &#171;" + formCrit.codePostal.value + "&nbsp;&#187;.");
+				  localStorage.setItem('message', "&nbsp;clubs&nbsp;&#224; moins de " + formCrit.kiloM.value + "&nbsp;kilom&#232;tres du code postal &#171;" + formCrit.codePostal.value + "&nbsp;&#187;.");
 				codeAddress(formCrit.codePostal.value , formCrit.kiloM.value * 1000 * 1.05, URLresult );
 				return false;
 			}else{
 				URLresult += "3$" + formCrit.longitude.value + "$" + formCrit.latitude.value + "$" + (formCrit.kiloM.value * 1000 * 1.05);
-				localStorage.setItem('message', "&nbsp;clubs&nbsp;&#224; moins de " + formCrit.kiloM.value + "&nbsp;kilom&#232;tre d'o&#249; vous &#234;tes.");
+				localStorage.setItem('message', "&nbsp;clubs&nbsp;&#224; moins de " + formCrit.kiloM.value + "&nbsp;kilom&#232;tres d'o&#249; vous &#234;tes.");
 			}
 		}
 	}
