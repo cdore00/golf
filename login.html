@@ -51,28 +51,27 @@ getInfo("identUser?data=" + userCour + "$pass$" + userPass, validUser);
 
 </head>
 
-<body onload="initPage()">
+<body onload="initPage();">
 
 <div id="topbar" class="vert">
 <div id="logoHome"><img alt="home" width="25" height="25" src="images/golf.png" /></div>
 <div id="titre">Golfs du Qu&eacute;bec</div>
 </div>
 
-	<div id="content">
-		<ul class="pageitem">
-			<form id="formAuth">
-			<div class="prefList">
-			<h1>Identification</h1>
+<div id="content">
+	<ul class="pageitem">
+		<form id="formAuth">
+		<div style="font-size: 200%;width: 100%;text-align: center;">
+			<h1>Authentification</h1>
 			<input id="nameUser" type="hidden" value="">
 			<input id="passwordUser" type="hidden" value="">
-			</div>
-
 			<div>
 			<input id="okPref" class="bouton" type="submit" onclick="authentif(); return false;" value="      Ok      ">
 			</div>
-			</form>
-		</ul>
-	</div>		  
+		</div>
+		</form>
+	</ul>
+</div>		  
 
 <div id="bottombar" class="vert">
 </div>
@@ -82,3 +81,4 @@ getInfo("identUser?data=" + userCour + "$pass$" + userPass, validUser);
 </div>
 
 </body>
+</html>
