@@ -2,18 +2,18 @@
 <html>
 <head>
 <meta content="yes" name="apple-mobile-web-app-capable" />
-<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
 <meta name="format-detection" content="telephone=no" />
-<link rel="SHORTCUT ICON" href="favicon.ico">
 <link href="favicon.ico" rel="icon" />
 <link href="favicon.ico" rel="shortcut icon" />
 <link href="favicon.ico" rel="apple-touch-icon" />
 <link href="favicon.ico" rel="apple-touch-startup-image" />
+<title>Golfs du Qu&eacute;bec</title>
+<meta content="Golf GPS, Qu&eacute;bec, Canada, Golf du Qu&eacute;bec, Clubs de golf au Qu&eacute;bec, Qu&eacute;bec golf" name="keywords" />
+<meta content="R&eacute;pertoire des clubs de golf du Qu&eacute;bec. GPS golf." name="description" />
+<link href="misc/init.css" rel="stylesheet" media="screen" type="text/css" />
 <link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
-<title>Clubs de golf au Québec</title>
-<meta content="Golf, Québec, Canada, Golf du Québec, Clubs de golf au Québec, Québec golf" name="keywords" />
-<meta content="Répertoire des clubs de golf du Québec." name="description" />
 
 <script type="text/javascript" src="misc/util.js"></script>
 
@@ -86,16 +86,17 @@ for (var i = 0; i < result.length; i++) {
 	liElem.appendChild(aElem);
 	var aElem = document.createElement("a");
 	aElem.setAttribute('href', 'javascript:ficheClub(\'' + result[i]._id + '\')');
-	aElem.setAttribute('class', 'itemdesc');
-	var clubCourse = "&nbsp;&nbsp;" + result[i].courses.length + '<text class="textDesc">&nbsp;parcours&nbsp;</text>';
+	aElem.setAttribute('class', 'itemdetail');
+	var clubCourse = ",&nbsp;&nbsp;" + result[i].courses.length + '<text class="textDesc">&nbsp;parcours,&nbsp;</text>';
 	var nT = 0;
 	for (var t = 0; t < result[i].courses.length; t++) {
 		nT += result[i].courses[t].TROUS;
 	}
 	clubCourse += "&nbsp;" + nT + '<text class="textDesc">&nbsp;trous&nbsp;</text>';
+	/*
 		if (myPos)
 		clubCourse += '&nbsp;&nbsp;<a class="itin" target="_blank" href="ClubTrajet.html?data=' + coord[0] + '$' + coord[1] + '$' +  result[i].location.x + '$' + result[i].location.y + '$' + encodeURI(result[i].nom) +'">Trajet</a>';
-	
+	*/
 	aElem.innerHTML = result[i].nom + clubCourse;
 	liElem.appendChild(aElem);
 	

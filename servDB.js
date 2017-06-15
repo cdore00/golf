@@ -4,7 +4,30 @@ const http = require('http');
 const fs = require('fs'); 
 const url = require('url');
 
-var ip;
+const PARAM_DIR = './param/';
+var HOSTserv = 'http://127.0.0.1:3000/';
+var HOSTclient = 'https://cdore00.github.io/golf/';
+//'http://cdore.no-ip.biz/lou/';
+//'https://cdore00.github.io/golf/';
+//'file:///C:/data/node/';
+// For hyperlink in mails and user Web pages.
+
+const Mailer = require('./mailer.js');
+tl = require('./tools.js');
+var infoBup = new Array();
+var subWeb = '';
+var subNod = 'nod/';
+
+const args = process.argv;
+if (args[2] && args[2] == 3000){
+	port = args[2];
+	//HOSTserv = 'http://cdore.no-ip.biz/nod/';
+}else{
+	var port = 8080;
+	HOSTserv = "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
+}
+console.log(HOSTserv + " args[0]=" + args[0] + " args[1]=" + args[1] + " args[2]=" + args[2]);
+//var ip;
 
 var MongoClient = require('mongodb').MongoClient
   , assert = require('assert');
@@ -35,23 +58,7 @@ var coll = dBase.collection('club');
   });
   }
 
-const args = process.argv;
-if (args[2] && args[2] == 3000){
-	port = args[2];
-	hostURL = 'http://cdore.no-ip.biz/nod/';
-}else{
-	var port = 8080;
-	hostURL = 'https://googserv4-goog-server.1d35.starter-us-east-1.openshiftapps.com/';
-}
-console.log(hostURL + " args[0]=" + args[0] + " args[1]=" + args[1] + " args[2]=" + args[2]);
 
-
-const Mailer = require('./mailer.js');
-//const Mailer = new Mail;
-tl = require('./tools.js');
-var infoBup = new Array();
-var subWeb = '';
-var subNod = 'nod/';
 
 // Instantiate Web Server
 	const server = http.createServer((req, res) => {
@@ -75,6 +82,9 @@ console.log(url_parts.pathname);
 			  case "identUser":
 				authUser(req, res, url_parts.query);
 				break;
+			  case "confInsc":
+				confInsc(req, res, url_parts.query);
+				break;				
 			  case "getFav":
 				getUserFav(req, res, url_parts.query);
 				break;
@@ -152,12 +162,12 @@ console.log(url_parts.pathname);
 	
 	
 // Start server listening request
-	server.listen(port, ip, () => {
+	server.listen(port, () => {
 		console.log('Server started on port ' + port);
 		tl.logFile('Server started on port ' + port);
+		Mailer.initMailer(Mailer,PARAM_DIR);  // Initialyse Mailer Object
 	});
 // END Web Server
-
 
 
 //
@@ -436,14 +446,50 @@ var pass = req[1];
 coll.find({"courriel": user}).toArray(function(err, docs) {
 	//debugger;
 	if (docs[0]){
-		if (pass == docs[0].motpass) 
+		if (pass == docs[0].motpass){ 
+			sendConfMail(docs[0].courriel, docs[0].motpass);
 			returnRes(res, [{"result":docs[0]._id}]);
-		else
+		}else
 			returnRes(res, [{"result":false}]);
 	}else{
 		returnRes(res, [{"result":false}]);
 	}
   });
+}
+
+function sendConfMail(eMail, pass){
+	var Mdata = Mailer.formatMailData( HOSTserv, eMail, "");
+	Mailer.sendMessage( false, "cdore00@yahoo.ca", "cdore00@yahoo.ca", Mdata, "");
+}
+
+function confInsc(req, res, param){
+var data = (decodeURI(param.data));
+	var coll = dBase.collection('users'); 
+coll.find({"courriel": data}).toArray(function(err, docs) {
+	//debugger;
+	if (docs[0]){
+		if (eval(docs[0].actif) == true ){ 
+			loginUser(res, docs[0].courriel, docs[0].motpass);
+		}else
+			res.setHeader('Access-Control-Allow-Origin', '*');
+			res.end("<h1>Déjà actif</h1>");
+	}else{
+		res.setHeader('Access-Control-Allow-Origin', '*');
+		res.end("<h1>Non valide</h1>");
+	}
+  });	
+}
+
+function loginUser(res, user, pass){
+var redir = '<html><head><script type="text/javascript" language="Javascript">function initPage(){var cliURL = "%1",user = "%2",pass = "%3";document.location.href = cliURL + "login.html?data=" + user + "$pass$" + pass;}</script></head><body onload="initPage()"><h1>Confirmation en cours...</h1></body></html>';
+
+redir = redir.replace("%1", HOSTclient);
+redir = redir.replace("%2", user);
+redir = redir.replace("%3", pass);
+
+res.setHeader('Access-Control-Allow-Origin', '*');
+res.end(redir);
+	
 }
 
 function getUserFav(req, res, param){

@@ -2,16 +2,18 @@
 <html>
 <head>
 <meta content="yes" name="apple-mobile-web-app-capable" />
-<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
 <meta name="format-detection" content="telephone=yes" />
-<link rel="SHORTCUT ICON" href="favicon.ico">
+<link href="favicon.ico" rel="icon" />
+<link href="favicon.ico" rel="shortcut icon" />
 <link href="favicon.ico" rel="apple-touch-icon" />
 <link href="favicon.ico" rel="apple-touch-startup-image" />
+<title>Golfs du Qu&eacute;bec</title>
+<meta content="Golf GPS, Qu&eacute;bec, Canada, Golf du Qu&eacute;bec, Clubs de golf au Qu&eacute;bec, Qu&eacute;bec golf" name="keywords" />
+<meta content="R&eacute;pertoire des clubs de golf du Qu&eacute;bec. GPS golf." name="description" />
+<link href="misc/init.css" rel="stylesheet" media="screen" type="text/css" />
 <link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
-<title>Clubs de golf au Québec</title>
-<meta content="Golf, Québec, Canada, Golf du Québec, Clubs de golf au Québec, Québec golf" name="keywords" />
-<meta content="Répertoire des clubs de golf du Québec." name="description" />
 
 <script type="text/javascript" src="misc/googGeo.js"></script>
 <script type="text/javascript" src="misc/util.js"></script>
@@ -127,7 +129,7 @@ this.zoomRestart = function (lat1, lat2, lng1, lng2) {
 
 
       function initialize(showCenter) { 
-		intZoom = 14 - parseInt(Math.log(intKm/100));
+		intZoom = 15 - parseInt(Math.log(intKm/100));
         var myOptions = { 
           center: new google.maps.LatLng(intLat, intLng), 
           zoom: intZoom, 
@@ -329,7 +331,7 @@ chargement.style.display = "none";
 }
 
 function calculDistance(lat1, lat2, lon1, lon2){
-var R = 6378000; // Rayon moyen en mètre
+var R = 6378000; // Rayon moyen en m�tre
 var rLat1 = lat1 * (Math.PI / 180);
 var rLat2 = lat2 * (Math.PI / 180);
 var dLat = (lat2-lat1) * (Math.PI / 180);
