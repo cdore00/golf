@@ -107,6 +107,10 @@ progress::-webkit-progress-bar { background: #fff; }
 
 .favItems{font-size:1.5em;background-color:#fff;border:#444444 solid 1px;overflow:hidden; overflow-y:scroll;margin:10px 10px;text-align:left;height:150px}
 
+#formFields{
+	visibility: hidden;
+}
+
 .form{margin:5px 0 2px 0;padding:0}select,input{font-size:15px;padding:0}select.fulllength{width:100%}
 .bouton{font-size:14px; min-width:100px;
 border:1px solid #ccc;
