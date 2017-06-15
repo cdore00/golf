@@ -558,6 +558,14 @@ function checkCookie(){
 }
 
 function initPage(){
+var formFields = document.getElementById('formFields');
+var codePostal = document.getElementById('codePostal');
+var kiloM = document.getElementById('kiloM');
+
+
+kiloM.style.height = codePostal.offsetHeight + "px";
+formFields.style.visibility = "visible";
+
 userId = GetCookie("userID");
 //userName = GetCookie("userName");
 
@@ -742,7 +750,7 @@ geocoder = new google.maps.Geocoder();
 
 	<div id="content" onClick="tooltip.hide();">
 		<ul class="pageitem">
-		
+		<div id="formFields">
 			  <div class="formrow1" >
 				<div id="formradio" class="divChxChamp"><input id="checkNom" type="checkbox" checked value="Nom"><label for="checkNom">&nbsp;Nom du club</label>&nbsp;&nbsp;<input id="checkVille" type="checkbox" checked value="Ville"><label for="checkVille">&nbsp;Ville</label></div>
 			    <div id="divMot"><label for="Mots">Mot cl&eacute; </label></div>
@@ -772,6 +780,7 @@ geocoder = new google.maps.Geocoder();
 			        </SELECT>
 				</div>
 			</div>
+		</div>
 		    <div class="formrow1">
 				<div id="locDiv">
 				<span id="localisation"  onmouseover="tooltip.show();" title="Localisation actuelle">
