@@ -533,8 +533,11 @@ function fadeOut(objId,opacity) {
 }
 
 
-function writeAddress(strAddress){
+function writeAddress(adr, cit, cp){
+var strAddress = adr + "," + cit + ", " + cp;
 var input = document.getElementById("tooltipText");
+var codePostal = document.getElementById('codePostal');
+codePostal.value = cp;
 input.innerHTML = strAddress;
 document.critere.adr.value = strAddress;
 localStorage.setItem('myAdress', strAddress);
