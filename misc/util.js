@@ -1,6 +1,7 @@
 <!--
 
-var HOSTserv = "http://127.0.0.1:3000/";
+var HOSTserv = "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
+//"http://127.0.0.1:3000/";
 
 function is_touch_device() {
   return 'ontouchstart' in window        // works on most browsers 
