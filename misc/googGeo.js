@@ -35,7 +35,7 @@ while (strAdr.indexOf(',', 0) != -1)
 
 strCP = myAdr[i-1].slice(myAdr[i-1].length-7, myAdr[i-1].length);
 
-writeAddress(myAdr[0] + "," + myAdr[1] + ", " + strCP);
+writeAddress(myAdr[0], myAdr[1], strCP);
 
 }
 

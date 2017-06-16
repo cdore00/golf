@@ -1,6 +1,6 @@
 <!--
 
-var HOSTserv = "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
+var HOSTserv = "http://127.0.0.1:3000/";
 
 function is_touch_device() {
   return 'ontouchstart' in window        // works on most browsers 
@@ -8,6 +8,7 @@ function is_touch_device() {
 };
 
 var isTouchDevice = is_touch_device();
+
 
 if (document.images) {
 	img1 = new Image();
@@ -18,7 +19,6 @@ if (document.images) {
 	img2.src = "images/taille2.png";
 	img3.src = "images/taille3.png";
 }
-
 
 function getInfo(path, callback){
 var xhr=new XMLHttpRequest();
