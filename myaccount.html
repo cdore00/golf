@@ -1,8 +1,10 @@
+
 <div id="accountForm">
-<div id="titrePref">Nouvelle identification</div>
+<div id="titrePref">Mon compte</div>
 
 <form id="formIdent">
 <div id="identOptions">
+<input id="_id" type="hidden" value="">
 
 <div class="prefList">
 <label for="nomUser" id="lbl1" class="identLbl">Nom</label><div class="prefVal">
@@ -20,6 +22,11 @@
 </div></div>
 
 <div class="prefList">
+<label for="newPassUser" id="lbl1" class="identLbl">Nouveau mot de passe</label><div class="prefVal">
+<input id="newPassUser" type="password" size="12" maxlength="50">
+</div></div>
+
+<div class="prefList">
 <label for="confPassUser" id="lbl1" class="identLbl">Confirmer mot de passe</label><div class="prefVal">
 <input id="confPassUser" type="password" size="12" maxlength="50">
 </div></div>
@@ -27,7 +34,7 @@
 </div>
 
 <div>
-<input id="okPref" class="bouton" type="submit" onClick="saveIdent(); return false;" value="      Ok      " /><input id="annulePref" class="bouton" type="button" onClick="closePref(); return false;" value="  Annuler  " />
+<input id="okPref" class="bouton" type="submit" onClick="saveAccount(); return false;" value="      Ok      " /><input id="annulePref" class="bouton" type="button" onClick="closePref(); return false;" value="  Annuler  " />
 </div>
 </form>
 </div>

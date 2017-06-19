@@ -31,6 +31,7 @@ var watchId = null;
 var locTimer;
 var resultLocalisation = 1000;
 var affL, LocT;
+var tryLog = 0;
 //var HOSTserv = "http://127.0.0.1:3000/";
 // "http://127.0.0.1:3000/";
 // "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
@@ -81,28 +82,73 @@ if (!favGolfList){
 authLayer.style.visibility="visible";
 }
 
-function newIdent(){
+function manageIdent(action){
 var modLayer = document.getElementById('modalDiv');
 var authLayer = document.getElementById('authLayer');
-var xmlhttp;
 
 closePref();
+var xmlhttp = new XMLHttpRequest();
 
-xmlhttp=new XMLHttpRequest();
-
-xmlhttp.onreadystatechange=function(){
-  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-    {
+  xmlhttp.onloadend = function() {
     authLayer.innerHTML = xmlhttp.responseText;
-    }
+	initAccountForm(action);
   }
-  
-xmlhttp.open("GET","identifier.html",false);
+if (action == 0)
+	xmlhttp.open("GET","identifier.html",false);
+if (action == 1)
+	xmlhttp.open("GET","myaccount.html",false);
 xmlhttp.send();
 
 modLayer.style.visibility="visible";
 authLayer.style.visibility="visible";
 }
+
+
+function initAccountForm(action){
+if (action == 1)
+	getInfo("identUser?user=" + userId, initMyForm);
+}
+
+function initMyForm(oUser){
+var formIdent = document.getElementById('formIdent');
+
+if (oUser._id){
+	formIdent._id.value = oUser._id;
+	formIdent.nomUser.value = oUser.Nom;
+	formIdent.courUser.value = oUser.courriel;
+}
+
+}
+
+function saveAccount(){
+var formIdent = document.getElementById('formIdent');
+
+if (formIdent.passUser.value == ""){
+		alert("Le mot de passe actuel est requis.");
+		return false;
+}
+
+if (formIdent.newPassUser.value != ""){  // Change password
+	if (formIdent.newPassUser.value == "" || formIdent.newPassUser.value != formIdent.confPassUser.value){
+			alert("La confirmation du nouveau mot de passe n'est pas valide.");
+			return false;
+	}
+	var rInfo = "saveUser?id=" + formIdent._id.value + "&name=" + formIdent.nomUser.value + "&cour=" + formIdent.courUser.value + "&pass=" + formIdent.passUser.value + "&newpass=" + formIdent.newPassUser.value;
+	getInfo(rInfo, saveAccRes);
+	}else{  // Not change password
+		var rInfo = "saveUser?id=" + formIdent._id.value + "&name=" + formIdent.nomUser.value + "&cour=" + formIdent.courUser.value + "&pass=" + formIdent.passUser.value;
+		getInfo(rInfo, saveAccRes);
+	}
+}
+
+function saveAccRes(oRes){
+
+if (oRes.resp.result)
+	x=5;  // close
+else
+	alert(oRes.resp.message);
+}
+
 
 function initPref(){
 var locButton = document.getElementById('locDiv');
@@ -130,8 +176,6 @@ function initFormPref(){
 var affL = GetCookie("AffLoc");
 var polS = GetCookie("PolSize");
 var locT = GetCookie("LocTime");
-
-//alert(GetCookie("AffLoc")+GetCookie("PolSize")+GetCookie("LocTime"));
 
 if (affL == 'true')
 	formPref.locDisplay.checked = true;
@@ -173,7 +217,9 @@ var prefLayer = document.getElementById('prefLayer');
 var identLayer = document.getElementById('identLayer');
 var newIdent = document.getElementById('newIdent');
 var butGame = document.getElementById('butGame');
-var aLink = document.getElementById('aLink');
+var myAccount = document.getElementById('myAccount');
+/*var aLink = document.getElementById('aLink');
+
 
 formAuth.nameUser.value = GetCookie("userName");
 if (formAuth.nameUser.value == ''){
@@ -183,17 +229,19 @@ if (formAuth.nameUser.value == ''){
 	var newIdent = document.getElementById('newIdent');
 	newIdent.style.visibility="hidden";
 }
-
+*/
 prefLayer.style.visibility="hidden";
 identLayer.style.visibility="visible";
 if (!userId){
-	newIdent.style.visibility = "visible";
-	butGame.style.visibility = "hidden";
+	newIdent.style.display = "block";
+	butGame.style.display = "none";
+	myAccount.style.display = "none";
 }else{
-	newIdent.style.visibility = "hidden";
-	butGame.style.visibility = "visible";
+	newIdent.style.display = "none";
+	butGame.style.display = "block";
+	myAccount.style.display = "block";
 }
-aLink.style.display = "inline";
+//aLink.style.display = "inline";
 }
 
 function saveIdent(){
@@ -203,37 +251,29 @@ var userCour = formIdent.courUser.value;
 var userPass = formIdent.passUser.value;
 var userConfPass = formIdent.confPassUser.value
 
-var info = userName + "$" + userCour + "$" + userPass;
+var info = "user=" + userName + "&email=" + userCour + "&pass=" + userPass;
 
 	if (userPass == "" || userPass != userConfPass){
 		alert("La confirmation du mot de passe n'est pas valide.");
 	}else{ 
-		getInfo("addUserIdent?data=" + info, validNewUser);
+		getInfo("addUserIdent?" + info, validNewUser);
 	}
 }
 
 function validNewUser(rdata){
-var newUserForm = document.getElementById('newUserForm');
+var accountForm = document.getElementById('accountForm');
 var modLayer = document.getElementById('modalDiv');
 var authLayer = document.getElementById('authLayer');
-var formIdent = document.getElementById('formIdent');
 
 if (rdata.code){
-	if (rdata.code == 11000)
-		alert("Cette adresse courriel existe déjà.");
-	else
-		alert(rdata.message);
-
+	alert(rdata.message);
+	if (rdata.code < 2){
+		accountForm.parentNode.removeChild(accountForm);
+		modLayer.style.visibility="hidden";
+		authLayer.style.visibility="hidden";	
+	}
 }else{
-	var leftbutton = document.getElementById('leftbutton');
-	leftbutton.style.visibility="visible";
-	SetCook("userName",rdata[0].Nom);
-	SetCook("userID",rdata[0]._id);
-	userId = rdata[0]._id;
-	userName = rdata[0].Nom;
-	newUserForm.parentNode.removeChild(newUserForm);
-	modLayer.style.visibility="hidden";
-	authLayer.style.visibility="hidden";
+	alert(rdata);
 }
 
 }
@@ -242,35 +282,41 @@ function authentif(){
 var formAuth = document.getElementById('formAuth');
 var userCour = formAuth.nameUser.value;
 var userPass = formAuth.passwordUser.value;
-//alert(score);
-getInfo("identUser?data=" + userCour + "$pass$" + userPass, validUser);
+
+getInfo("identUser?user=" + userCour + "&pass=" + userPass, validUser);
 }
 
 function validUser(rep){
 var formAuth = document.getElementById('formAuth');
 var userCour = formAuth.nameUser.value;
-if (rep[0].result){
+if (rep.resp.result){
 	var modalDiv = document.getElementById('modalDiv');
 	var identLayer = document.getElementById('identLayer');
 	var leftbutton = document.getElementById('leftbutton');
 	leftbutton.style.visibility="visible";
 	modalDiv.style.visibility="hidden";
 	identLayer.style.visibility="hidden";
-	SetCook("userName",userCour);
-	SetCook("userID",rep[0].result + "");
-	userId = rep[0].result;
-	userName = userCour;
+	SetCook("userName",rep.resp.user.Nom);
+	SetCook("userID",rep.resp.user.courriel + "");
+	userId = rep.resp.user.courriel;
+	userName = rep.resp.user.Nom;
 }else{
 	DelCookie("userID");
 	alert("Utilisateur ou mot de passe non valide.");
+	tryLog++;
+	if (tryLog > 3){
+		if (confirm("Mot de passe oublié?\n\rVoulez-vous récupérer votre mot de passe par courriel?")) {
+			alert("Oui");
+		}
+	}
 }
 }
 
 function showPref(){
 var prefLayer = document.getElementById('prefLayer');
 var initLayer = document.getElementById('identLayer');
-var aLink = document.getElementById('aLink');
-aLink.style.display="none";
+/*var aLink = document.getElementById('aLink');
+aLink.style.display="none";*/
 initLayer.style.visibility="hidden";
 prefLayer.style.visibility="visible";
 }
@@ -296,8 +342,8 @@ var modLayer = document.getElementById('modalDiv');
 var prefLayer = document.getElementById('prefLayer');
 var identLayer = document.getElementById('identLayer');
 var authLayer = document.getElementById('authLayer');
-var aLink = document.getElementById('aLink');
-aLink.style.display="none";
+/*var aLink = document.getElementById('aLink');
+aLink.style.display="none";*/
 authLayer.style.visibility="hidden";
 identLayer.style.visibility="hidden";
 prefLayer.style.visibility="hidden";
@@ -603,10 +649,10 @@ document.critere.Rechercher.focus();
 
 function getFav(){
 var favGolfList = document.getElementById('favGolfList');
-var newUserForm = document.getElementById('newUserForm');
+var accountForm = document.getElementById('accountForm');
 
-if (newUserForm)
-	newUserForm.parentNode.removeChild(newUserForm);
+if (accountForm)
+	accountForm.parentNode.removeChild(accountForm);
 
 if (!favGolfList){
 	getInfo('getFav?data=' + userId, listFav);
@@ -652,7 +698,6 @@ var url = window.location.href
 var arr = url.split("/");
 //var URLresult = arr[0] + "//" + arr[2] + "/listeResult.html/data=" + formCrit.IdRegion.value;
 var URLresult = "listeResult.html?data=";
-//alert(formCrit.IdRegion.value);
 
 clearContext();
 
@@ -713,7 +758,6 @@ geocoder = new google.maps.Geocoder();
   var address = postCode;
   geocoder.geocode( { 'address': address}, function(results, status) {
     if (status == google.maps.GeocoderStatus.OK) {
-	  //alert(results[0].geometry.location);
 	  var lng = results[0].geometry.location.lng();
 	  var lat = results[0].geometry.location.lat();
 	  URLresult += "3$" + lng + "$" + lat + "$" + distance;
@@ -875,8 +919,9 @@ geocoder = new google.maps.Geocoder();
 </div></div>
 
 <div id="aLink" class="prefList">
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="" id="newIdent" onclick="newIdent(); return false;">Nouvelle identification</a>
-&nbsp;&nbsp;&nbsp;&nbsp;<a id="butGame" class="itin" target="_blank" href="score_liste.html">Parties jou&eacute;es</a>
+<p id="newIdent" class="prefOpt"><a href="#" class="itin" onclick="manageIdent(0); return false;">Nouvelle identification</a></p>
+<p id="butGame" class="prefOpt"><a class="itin" target="_blank" href="score_liste.html">Parties jou&eacute;es</a></p>
+<p id="myAccount" class="prefOpt"><a href="#" class="itin" onclick="manageIdent(1); return false;">Mon compte</a></p>
 </div>
 
 </div>

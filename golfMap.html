@@ -125,73 +125,76 @@ this.zoomRestart = function (lat1, lat2, lng1, lng2) {
 }
 // Fin Class cerclePos
 
+// Start initialize function
+function initialize(showCenter) { 
+	intZoom = 15 - parseInt(Math.log(intKm/100));
+	var myOptions = { 
+	  center: new google.maps.LatLng(intLat, intLng), 
+	  zoom: intZoom, 
+	  panControl: false,    
+	  zoomControl: false, 
+	  zoomControlOptions: {      
+	  style: google.maps.ZoomControlStyle.SMALL    },		  
+	  scaleControl: false,
+	  streetViewControl: false,
+	  mapTypeControl: true,    
+	  mapTypeControlOptions: {        
+	  style: google.maps.MapTypeControlStyle.DROPDOWN_MENU    },
+	  mapTypeId: google.maps.MapTypeId.ROADMAP
+	}; 
+	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions); 
 
-      function initialize(showCenter) { 
-		intZoom = 15 - parseInt(Math.log(intKm/100));
-        var myOptions = { 
-          center: new google.maps.LatLng(intLat, intLng), 
-          zoom: intZoom, 
-		  panControl: false,    
-		  zoomControl: false, 
-		  zoomControlOptions: {      
-		  style: google.maps.ZoomControlStyle.SMALL    },		  
-		  scaleControl: false,
-		  streetViewControl: false,
-		  mapTypeControl: true,    
-		  mapTypeControlOptions: {        
-		  style: google.maps.MapTypeControlStyle.DROPDOWN_MENU    },
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        }; 
-        map = new google.maps.Map(document.getElementById("map_canvas"), myOptions); 
+	setMarkers(map, clubs);  //setMarkers(map, clubs);
+			
+	myC.objMap = map;
 
-		setMarkers(map, clubs);  //setMarkers(map, clubs);
-				
-		myC.objMap = map;
-if (showCenter){
-
-}
-	 var areaOptions = {
-	  strokeColor: "#FF0000",
-	  strokeOpacity: 0.8,
-	  strokeWeight: 1,
-	  fillColor: "#FF0000",
-	  fillOpacity: 0.05,
-	  map: map,
-	  center: myOptions.center,
-	  radius: intKm
-	};
-	myC.objGolfArea = new google.maps.Circle(areaOptions);
+ var areaOptions = {
+  strokeColor: "#FF0000",
+  strokeOpacity: 0.8,
+  strokeWeight: 1,
+  fillColor: "#FF0000",
+  fillOpacity: 0.05,
+  map: map,
+  center: myOptions.center,
+  radius: intKm
+};
+myC.objGolfArea = new google.maps.Circle(areaOptions);
 //alert(areaOptions.radius);
 
 
-		google.maps.event.addListener(map, 'bounds_changed', function() {
-			var oBounds = map.getBounds();
-			myC.zoomRestart( oBounds.getNorthEast().lat(), oBounds.getSouthWest().lat(), oBounds.getNorthEast().lng(), oBounds.getSouthWest().lng() );
-		}); 
+	google.maps.event.addListener(map, 'bounds_changed', function() {
+		var oBounds = map.getBounds();
+		myC.zoomRestart( oBounds.getNorthEast().lat(), oBounds.getSouthWest().lat(), oBounds.getNorthEast().lng(), oBounds.getSouthWest().lng() );
+	}); 
 
-		if (showCenter){
-			var cercleOptions = {
-			  strokeColor: "#0000FF",
-			  strokeOpacity: 0.4,
-			  strokeWeight: 2,
-			  fillColor: "#0000FF",
-			  fillOpacity: 0.1,
-			  map: map,
-			  center: myOptions.center,
-			  radius: 0
-			};
-		myC.objCercle = new google.maps.Circle(cercleOptions);
-			var strAddress = '<div id="layerContent">' +  localStorage.getItem("myAdress") + '</div>';
-			var infoAdr = new google.maps.InfoWindow({
-				content: strAddress,
-				maxWidth : 150,
-				disableAutoPan : true
-			});
-			setMyPosition(map, intLat, intLng, infoAdr);
-		}
+	if (showCenter){
+		var cercleOptions = {
+		  strokeColor: "#0000FF",
+		  strokeOpacity: 0.4,
+		  strokeWeight: 2,
+		  fillColor: "#0000FF",
+		  fillOpacity: 0.1,
+		  map: map,
+		  center: myOptions.center,
+		  radius: 0
+		};
+	myC.objCercle = new google.maps.Circle(cercleOptions);
+		var strAddress = '<div id="layerContent">' +  localStorage.getItem("myAdress") + '</div>';
+		var infoAdr = new google.maps.InfoWindow({
+			content: strAddress,
+			maxWidth : 150,
+			disableAutoPan : true
+		});
+		setMyPosition(map, intLat, intLng, infoAdr);
+	}
+	endCharge();
 } 
 //Fin initialize()
 
+function endCharge(){
+var chargement = document.getElementById('chargement');
+chargement.style.display = "none";
+}
 
 
 function setMyPosition(map, lat, lng, infoAdr) {
@@ -289,7 +292,6 @@ getInfo("getClubList?data=" + data, initClubs);
 }
 
 function initClubs(cData){
-var chargement = document.getElementById('chargement');
 var maxX = cData[0].location.x;
 var minX = cData[0].location.x;
 var maxY = cData[0].location.y;
@@ -324,8 +326,7 @@ if (intLat == 'undefined' || !intLat){
 }else{
 	initialize(true);
 }
- 
-chargement.style.display = "none";
+
 }
 
 function calculDistance(lat1, lat2, lon1, lon2){
