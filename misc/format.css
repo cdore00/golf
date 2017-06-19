@@ -89,7 +89,7 @@ progress::-webkit-progress-bar { background: #fff; }
 #duobutton a:last-child{width:110px}
 #triButton a:first-child, #triButton a:last-child{width:110px}
 #duobutton a{width:90px}
-#duobutton{font-size: 0;width:100%;overflow:hidden;height:32px;filter:progid:DXImageTransform.Microsoft.gradient(startcolorstr='#d9d9d9',endcolorstr='#666666');background:-webkit-gradient(linear,0% 0,0% 100%,from(#d9d9d9),color-stop(3%,#d9d9d9),color-stop(97%,#666),to(#666));background:-moz-linear-gradient(top,#d9d9d9,#666);text-align:center};}
+#duobutton{font-size: 0;width:100%;overflow:hidden;height:32px;filter:progid:DXImageTransform.Microsoft.gradient(startcolorstr='#d9d9d9',endcolorstr='#666666');background:-webkit-gradient(linear,0% 0,0% 100%,from(#d9d9d9),color-stop(3%,#d9d9d9),color-stop(97%,#666),to(#666));background:-moz-linear-gradient(top,#d9d9d9,#555);text-align:center};}
 #duobutton a:first-child{border:0px solid #fff;}
 
 #duobutton a{height:30px;display:inline-block;line-height:30px;margin-top:0px;font-weight:bold;font-size:18px;text-decoration:none;color:#0022ff;}
@@ -123,14 +123,14 @@ box-shadow: 1px 1px 1px #ccccdd, 2px 2px 2px #aaaaaa inset;
    -moz-box-shadow: 1px 1px 1px rgba(0,0,0,0.5),
    inset 2px 2px 2px rgba(255,255,255,0.75);
 border-radius:40px;
-background-color:#666;color:#fff;font-weight:bold}
+background-color:#555;color:#fff;font-weight:bold}
 
 #Rechercher{display:block; position:absolute;right:13px; top:11px;}
 #okPref, #annulePref{margin: 5px 10px 0px 10px}
 
 .formrow1 {font-size:17px;font-weight:bold;position:relative;width:98%;display:block;padding:8px 0px 0px 5px;min-height:50px;}
 #divMot, #divReg, #divCod {position:relative;float:left;clear:both;display:inline;width:111px;font-weight:bold;}
-.divChxChamp {position:relative;clear:both;display:inline;float:left;left:113px;right:0px;font-size:14px;font-weight:bold;top:0px;background-color:white;top:0px}
+.divChxChamp {position:relative;clear:both;display:inline;float:left;left:105px;right:0px;font-size:14px;font-weight:bold;top:0px;background-color:white;top:0px}
 .inputtext {position:relative;display:inline;float:left;left:0px;right:0px;font-weight:bold;top:0px;text-align:left; height:25px}
 .inputselect {position:relative;display:inline-block;float:left;left:0px;right:0px;font-weight:bold;top:0px;text-align:left;}
 
@@ -206,7 +206,11 @@ box-shadow: 1px 1px 1px #ccccdd, 2px 2px 2px #aaaaaa inset;
    -webkit-box-shadow: 1px 1px 1px rgba(204,204,221,0.5),
    inset 2px 2px 2px rgba(170,170,170,0.75);
    -moz-box-shadow: 2px 2px 2px rgba(0,0,0,0.5),
-   inset 2px 2px 2px rgba(255,255,255,0.75);}
+   inset 2px 2px 2px rgba(255,255,255,0.75);
+   background-color: #ddd;
+   display: inline-block;
+   padding: 2px;
+   text-decoration: none;}
 
 .itinDetail{visibility:hidden;}
 
@@ -271,7 +275,7 @@ overflow: hidden;
 }
 
 #prefLayer, #identLayer, #authLayer{
-font-size: 0.95em;
+font-size: 0.8em;
 visibility:hidden;
 position:absolute;
 /* max-height:250px; */
@@ -315,11 +319,18 @@ text-align:left;
  #identOptions a{
  color: #33f;
  }
+ 
+ .prefOpt{
+	/* width:100%;*/
+	 text-align:center;
+	 margin-bottom: 10px;
+ }
 
 .prefVal, .prefLbl, .identLbl{
 margin: 0;
 padding: 0;
 display:inline-block;
+font-size: 0.8em;
 }
 
 .prefLbl{
