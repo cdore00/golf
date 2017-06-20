@@ -19,6 +19,10 @@ html, body, form, fieldset, p, div, h1, h2, h3, h4, h5, h6 {
     -webkit-text-size-adjust:none;
 }
 
+.gm-style .gm-style-iw{
+	/*font-size:0.9em;*/
+}
+
 .center{
 margin:auto;
 display:block;
@@ -30,7 +34,7 @@ img{border:0}
 display: înline;
 width: 90%;
 margin-left: 5%;
-font-size: 16pt;
+/*font-size: 16pt;*/
 color: white !important;
 }
 
@@ -52,14 +56,12 @@ color: white !important;
 #mapzone{position:relative}
 #map_canvas{width:100%; height:327px;}
 
-#titrePref{font-size:1.3em;font-weight:bold;color:#228;padding-top:5px}
+#titrePref{font-weight:bold;color:#228;padding-top:5px}
 #titrePref,#titre{font-size:22px;font-weight:bold;color:#ccf;padding-top:10px}
 #titrePref{color:#446;}
 
 
 progress {
-  font-size: 1em;
-
   border: 1px solid #0063a6;
   background: #fff;
 }
@@ -82,8 +84,8 @@ progress::-webkit-progress-bar { background: #fff; }
 #rightbutton{position:relative;float:right;top:-5px;right:15px}
 #leftbutton{margin-top:-5px;left:15px; visibility:hidden}
 #rightbuttonItem{position:relative;clear:both;float:right;top:16px;right:5px;font-size:12px;font-weight:bold;text-align:left}
-#message, #messageErreur {position:relative;display:block;width:85%;left:10px;color:#222222;font-size:1em;font-weight:bold;padding-bottom:5px}
-#messageErreur{font-size:1.2em;color:#FF3333;text-decoration:blink}
+#message, #messageErreur {position:relative;display:block;width:85%;left:10px;color:#222222;font-weight:bold;padding-bottom:5px}
+#messageErreur{color:#FF3333;text-decoration:blink}
 
 #duobutton a:first-child{width:110px}
 #duobutton a:last-child{width:110px}
@@ -105,7 +107,7 @@ progress::-webkit-progress-bar { background: #fff; }
 
 .pageitem{-webkit-border-radius:8px;background-color:#fff;border:#444444 solid 1px;overflow:auto;padding:1px;padding-bottom:5px;position:relative;display:block;margin:10px 10px;list-style:none;border-radius: 20px;}
 
-.favItems{font-size:1.5em;background-color:#fff;border:#444444 solid 1px;overflow:hidden; overflow-y:scroll;margin:10px 10px;text-align:left;height:150px}
+.favItems{background-color:#fff;border:#444444 solid 1px;overflow:hidden; overflow-y:scroll;margin:10px 10px;text-align:left;height:150px}
 
 #formFields{
 	visibility: hidden;
@@ -147,13 +149,13 @@ box-shadow: 1px 1px 1px #ccccdd, 3px 3px 3px #aaaaaa inset;
 #localise{cursor: wait;}
 #localisation,#localiser{visibility:hidden;}
 
-.listitem {display:block;overflow:auto;padding:0px 0px 2px 5px;font-size:1em;border:0px solid #aaa;}
+.listitem {display:block;overflow:auto;padding:0px 0px 2px 5px;border:0px solid #aaa;}
 .listitem a {color:#55f;text-decoration:none;font-weight:bold}
 .listitem a:hover {color:#DD3333}
 
 .prefList{clear:both;left: 0px; padding-left: 0px;margin: 2px; height:40px; border:0px solid #aaa}
-.prefPart{display:block; font-size: 0.75em; left: 0px; padding: 0px;margin: 0px; border:0px;text-align: center;}
-.itemdesc{font-size:1.1em;font-weight:bold}
+.prefPart{display:block; left: 0px; padding: 0px;margin: 0px; border:0px;text-align: center;}
+.itemdesc{font-weight:bold}
 .itemdetail, .itemdetail90{display:block;overflow:auto;overflow-wrap:break-word;word-wrap: break-word;clear:both}
 .itemdetail, .itemdetail{ 
   -webkit-hyphens: auto;
@@ -165,14 +167,14 @@ box-shadow: 1px 1px 1px #ccccdd, 3px 3px 3px #aaaaaa inset;
 .itemdetail90{width:90%}
 .textDesc{font-size:0.7em}
 
-#copyright{position:relative;top:0px;padding:10px 0px;text-align:center;font-size: 0.9em; font-weight:bold; width: 100%;FONT-VARIANT: small-caps}#copyright a{color: #444;text-decoration:none}
+#copyright{position:relative;top:0px;padding:10px 0px;text-align:center; font-weight:bold; width: 100%;FONT-VARIANT: small-caps}#copyright a{color: #444;text-decoration:none}
 
 #favIcon{
 position: relative;
 top: 7px;
 }
 
-table.cartePts{background-color: #ccc;border: buttonhighlight 2px outset;font-size: 0.90em;}
+table.cartePts{background-color: #ccc;border: buttonhighlight 2px outset;}
 table.cartePts th,td{background-color: inherit;width: 1em;text-align:right;}
 table.cartePts th{background-color: #999;text-align:center}
 .entete{background-color: #999;text-align:center}
@@ -195,7 +197,7 @@ table.cartePts th{background-color: #999;text-align:center}
 
 #layerContent{padding-top:7px}
 #layerContent p{border:0px; margin:0px;width:250px}
-#layerContent a {color:#55f;font-size:1.2em;font-weight:bold;text-decoration:none}
+#layerContent a {color:#55f;font-weight:bold;text-decoration:none}
 #layerContent a:hoverm #layerContent a:focus {color:#DD3333;text-decoration:none}
 .itin {padding-left:5px;padding-right:5px;
 border:1px solid #999;
@@ -238,7 +240,7 @@ padding-top:17px;
 
 #tooltipMid {
   background-color:#fefefe;
-  font-size:1.0em;
+  /*font-size:1.0em;*/
   width:240px; height:auto;
   box-shadow: 5px 5px 5px rgba(150, 150, 150, 0.95), 3px 3px 3px rgba(100, 100, 100, 0.95) inset;
   border-radius: 20px 20px 15px 15px;  
@@ -275,7 +277,7 @@ overflow: hidden;
 }
 
 #prefLayer, #identLayer, #authLayer{
-font-size: 0.8em;
+/*font-size: 0.8em;*/
 visibility:hidden;
 position:absolute;
 /* max-height:250px; */
@@ -330,7 +332,7 @@ text-align:left;
 margin: 0;
 padding: 0;
 display:inline-block;
-font-size: 0.8em;
+/*font-size: 0.8em;*/
 }
 
 .prefLbl{
