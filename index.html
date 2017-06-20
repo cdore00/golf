@@ -308,10 +308,15 @@ if (rep.resp.result){
 	tryLog++;
 	if (tryLog > 3){
 		if (confirm("Mot de passe oublié?\n\rVoulez-vous récupérer votre mot de passe par courriel?")) {
-			alert("Oui");
+			//alert("Oui");
+			getInfo("getPass?data=" + formAuth.nameUser.value , repMailPass);
 		}
 	}
 }
+}
+
+function repMailPass(oRep){
+	alert(oRep.message);
 }
 
 function showPref(){
