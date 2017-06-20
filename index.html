@@ -142,11 +142,10 @@ if (formIdent.newPassUser.value != ""){  // Change password
 }
 
 function saveAccRes(oRes){
-
-if (oRes.resp.result)
-	x=5;  // close
-else
-	alert(oRes.resp.message);
+	if (oRes.resp.result)
+		closeAccountForm();  // close
+	else
+		alert(oRes.resp.message);
 }
 
 
@@ -261,21 +260,24 @@ var info = "user=" + userName + "&email=" + userCour + "&pass=" + userPass;
 }
 
 function validNewUser(rdata){
+
+	if (rdata.code){
+		alert(rdata.message);
+		if (rdata.code < 2){
+			closeAccountForm();
+		}
+	}else{
+		alert(rdata);
+	}
+}
+
+function closeAccountForm(){
 var accountForm = document.getElementById('accountForm');
 var modLayer = document.getElementById('modalDiv');
 var authLayer = document.getElementById('authLayer');
-
-if (rdata.code){
-	alert(rdata.message);
-	if (rdata.code < 2){
 		accountForm.parentNode.removeChild(accountForm);
 		modLayer.style.visibility="hidden";
-		authLayer.style.visibility="hidden";	
-	}
-}else{
-	alert(rdata);
-}
-
+		authLayer.style.visibility="hidden";
 }
 
 function authentif(){
@@ -297,8 +299,8 @@ if (rep.resp.result){
 	modalDiv.style.visibility="hidden";
 	identLayer.style.visibility="hidden";
 	SetCook("userName",rep.resp.user.Nom);
-	SetCook("userID",rep.resp.user.courriel + "");
-	userId = rep.resp.user.courriel;
+	SetCook("userID",rep.resp.user._id + "");
+	userId = rep.resp.user._id;
 	userName = rep.resp.user.Nom;
 }else{
 	DelCookie("userID");
