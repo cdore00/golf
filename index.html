@@ -106,7 +106,7 @@ authLayer.style.visibility="visible";
 
 function initAccountForm(action){
 if (action == 1)
-	getInfo("identUser?user=" + userId, initMyForm);
+	getInfo("identUser?user=" + GetCookie("userMail"), initMyForm);
 }
 
 function initMyForm(oUser){
@@ -298,8 +298,9 @@ if (rep.resp.result){
 	leftbutton.style.visibility="visible";
 	modalDiv.style.visibility="hidden";
 	identLayer.style.visibility="hidden";
-	SetCook("userName",rep.resp.user.Nom);
 	SetCook("userID",rep.resp.user._id + "");
+	SetCook("userName",rep.resp.user.Nom);
+	SetCook("userMail",rep.resp.user.courriel);
 	userId = rep.resp.user._id;
 	userName = rep.resp.user.Nom;
 }else{
