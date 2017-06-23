@@ -31,6 +31,8 @@ localStorage.setItem('clubPos', IdClub);
 function initPage(){
 var urlInfo = document.location.href;
 
+setFontSize();
+
 if (urlInfo.indexOf("data=") == -1){
 	var data = localStorage.getItem("idList");
 	var pos = localStorage.getItem("posList");

@@ -52,11 +52,10 @@ localWindow.document.close();
 
 function initPage(){
 
+setFontSize();
 userId = GetCookie("userID");
 
 var data = getURLdata();
-
-setFontSizeGolfGPS();
 
 initCount();
 }
@@ -75,8 +74,11 @@ var formPref = document.getElementById('formPref');
 localStorage.setItem('gameListPrefTrous', formPref.prefTrous.selectedIndex);
 localStorage.setItem('gameListPrefNbr', formPref.prefNbr.selectedIndex);
 
+var date = Date.parse(formPref.prefDate.value);
+if (!date)
+	date = 0;
 var nbrTrous = parseInt(formPref.prefTrous.value);
-limit= parseInt(formPref.prefNbr.value);
+limit= parseInt(formPref.prefNb.value);
 
 if (oCount){
 	gameCount = oCount;
@@ -88,8 +90,10 @@ if (skip >= gameCount)
 	skip = 0;
 if (skip + limit > gameCount)
 	limit = gameCount - skip ;
+if (date)
+	skip = 0;
 
-getInfo("getGameList?data=" + userId + "$" + skip + "$" + limit + "$" + nbrTrous, showGameList);
+getInfo("getGameList?user=" + userId + "&skip=" + skip + "&limit=" + limit + "&is18=" + nbrTrous  + "&date=" + date, showGameList);
 }
 
 
@@ -147,6 +151,10 @@ for (var i = 0; i < 10; i++) {
 return (hdp / 10);
 }
 
+function setNB(oNbr){
+var prefNb = document.getElementById('prefNb');
+prefNb.value = oNbr.value;
+}
 
 // -->
 </script> 
@@ -159,18 +167,20 @@ return (hdp / 10);
 <form id="formPref" action="#">
 
 <div class="prefPart">
+<input id="prefDate" type="text" size="8" placeholder="aaaa/mm/jj"/>
 <select id="prefTrous" onchange="initCount()">
  <option value="18" selected>18 trous</option>
  <option value="9" >9 trous</option>
  <option value="T" >Tous</option>
 </select>
-<select id="prefNbr">
+<select id="prefNbr" onchange="setNB(this)">
  <option value="5" >5 parties</option>
  <option value="10" selected>10 parties</option>
  <option value="20" >20 parties</option>
  <option value="50" >50 parties</option>
   <option value="100" >100 parties</option>
 </select>
+<input id="prefNb" type"text" size="3" value="10"/>
 </div>
 
 

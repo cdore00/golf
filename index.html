@@ -167,7 +167,7 @@ if (LocT == 0)
 else
 	locButton.style.visibility="visible";
 
-setFontSize();
+//setFontSize();
 showLocalisation();
 }
 
@@ -198,14 +198,16 @@ adjustPol(formPref.polSize[formPref.polSize.selectedIndex]);
 }
 
 function adjustPol(selOption){
+var fs = eval(selOption.value);
 var span1 = document.getElementById('lbl1');
 var span2 = document.getElementById('lbl2');
 var span3 = document.getElementById('lbl3');
 
-	span1.style.fontSize = selOption.value;
-	span2.style.fontSize = selOption.value;
-	span3.style.fontSize = selOption.value;	
-	setFontSize(selOption.value);
+//SetCook("PolSize",fs);
+	span1.style.fontSize = arrPol[fs].em;
+	span2.style.fontSize = arrPol[fs].em;
+	span3.style.fontSize = arrPol[fs].em;	
+	setFontSize(fs);
 }
 
 function setIdent(){
@@ -362,7 +364,7 @@ initPref();
 function savePref(formulaire){
 
 SetCook("AffLoc",formulaire.locDisplay.checked);
-SetCook("PolSize",formulaire.polSize.value);
+SetCook("PolSize",eval(formulaire.polSize.value));
 SetCook("LocTime",formulaire.locTime.value);
 
 closePref();
@@ -617,7 +619,7 @@ var formFields = document.getElementById('formFields');
 var codePostal = document.getElementById('codePostal');
 var kiloM = document.getElementById('kiloM');
 
-
+setFontSize();
 kiloM.style.height = codePostal.offsetHeight + "px";
 formFields.style.visibility = "visible";
 
@@ -879,9 +881,9 @@ geocoder = new google.maps.Geocoder();
 
 <div class="prefList">
 <label for="polSize" id="lbl1" class="prefLbl">Taille de police</label><div class="prefVal"><select id="polSize" onchange="adjustPol(this);">
- <option value="0.9em">Petite</option>
- <option value="1em" >Moyenne</option>
- <option value="1.1em" >Grande</option>
+ <option value="1">Petite</option>
+ <option value="2" >Moyenne</option>
+ <option value="3" >Grande</option>
 </select></div></div>
 
 <div class="prefList">
