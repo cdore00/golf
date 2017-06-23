@@ -14,7 +14,7 @@
 <link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" /> 
 
     <script type="text/javascript" 
-      src="http://maps.googleapis.com/maps/api/js?key=AIzaSyA15nyiYmWG_0IkG9H5r4Qc8KhZxwRw_xA&sensor=false"> 
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA15nyiYmWG_0IkG9H5r4Qc8KhZxwRw_xA&sensor=false"> 
     </script> 
 	<script type="text/javascript" src="misc/util.js"></script>
 	<script type="text/javascript" src="misc/markerLabel.js"></script>
@@ -116,7 +116,7 @@ function setMarkers(map, locations) {
 		var donn = "";
 		for (var i=0;i<locCollection.length;i++)
 		{
-		donn = donn + "</br>" + (i+1) + ": " + locCollection[i].lat + ", " + locCollection[i].lng + ", Préc:" + locCollection[i].acc;
+		donn = donn + "</br>" + (i+1) + ": " + locCollection[i].lat + ", " + locCollection[i].lng + ", PrÃ©c:" + locCollection[i].acc;
 		}
 	divLayer.innerHTML = donn;
 	}
