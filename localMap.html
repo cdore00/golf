@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
+<meta name="format-detection" content="telephone=no" />
+
+<link rel="shortcut icon" type="image/x-icon" href="favicon.ico?">
+<title>Golfs du Qu&eacute;bec</title>
+<meta content="Golf GPS, Qu&eacute;bec, Canada, Golf du Qu&eacute;bec, Clubs de golf au Qu&eacute;bec, Qu&eacute;bec golf" name="keywords" />
+<meta content="R&eacute;pertoire des clubs de golf du Qu&eacute;bec. GPS golf." name="description" />
+<link href="misc/init.css" rel="stylesheet" media="screen" type="text/css" />
+<link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" /> 
+
+    <script type="text/javascript" 
+      src="http://maps.googleapis.com/maps/api/js?key=AIzaSyA15nyiYmWG_0IkG9H5r4Qc8KhZxwRw_xA&sensor=false"> 
+    </script> 
+	<script type="text/javascript" src="misc/util.js"></script>
+	<script type="text/javascript" src="misc/markerLabel.js"></script>
+	<script type="text/javascript" src="misc/geoLocal.js"></script>
+	
+    <script type="text/javascript"> 
+	<!--
+
+var map
+var posMarker;
+var watchId = null;
+var locTimer = null;
+var locCollection = null;
+var watchLoc = false;
+
+      function initialize() { 
+	   locCollection = opener.locColl.coord;
+	   //alert(locCollection.length);
+	   
+        var myOptions = { 
+          center: new google.maps.LatLng(locCollection[locCollection.length-1].lat,locCollection[locCollection.length-1].lng), 
+          zoom: 19, 
+		  panControl: false,    
+		  zoomControl: false, 	  
+		  scaleControl: false,
+		  streetViewControl: false,
+		  mapTypeControl: true,    
+		  mapTypeControlOptions: {        
+		  style: google.maps.MapTypeControlStyle.DROPDOWN_MENU    },
+          mapTypeId: google.maps.MapTypeId.HYBRID
+        }; 
+        map = new google.maps.Map(document.getElementById("map_canvas"), myOptions); 
+	
+	adjustScreen(31);
+	setFontSize();
+	setMarkers(map, locCollection);
+	setMyPosition(map, locCollection[locCollection.length-1].lat,locCollection[locCollection.length-1].lng);
+	//alert(locCollection[locCollection.length-1].lat);
+	}
+
+function setMyPosition(map, lat, lng) {
+  // Add markers to the map
+  var image = new google.maps.MarkerImage('images/ici.png',
+      new google.maps.Size(14, 14),
+      new google.maps.Point(0,0),
+      new google.maps.Point(7, 7));
+  var shape = {
+      coord: [-10, -10, -10, 24, 24, 24, 24 , -10],
+      type: 'poly'
+  };
+  //alert(location[1]);
+    var myLatLng = new google.maps.LatLng(lat, lng);
+    posMarker = new google.maps.Marker({
+        position: myLatLng,
+        map: map,
+        icon: image,
+        shape: shape,
+        title: "Ma localisation",
+        zIndex: 1000
+		});
+
+}	
+
+function setMarkers(map, locations) {
+  // Add markers to the map
+  var image = new google.maps.MarkerImage('images/ici.png',
+      new google.maps.Size(25, 25),
+      new google.maps.Point(0,0),
+      new google.maps.Point(0, 25));
+  var shape = {
+      coord: [1, 1, 1, 25, 25, 25, 25 , 1],
+      type: 'poly'
+  };
+  for (var i = 0; i < locations.length - 1; i++) {
+    var beach = locations[i];
+    var myLatLng = new google.maps.LatLng(beach.lat, beach.lng);
+    var marker = new MarkerWithLabel({
+        position: myLatLng,
+        map: map,
+		draggable: true,
+       labelContent: i ,
+       labelAnchor: new google.maps.Point(3, 30),
+       labelClass: "markLabels", // the CSS class for the label
+       labelInBackground: false
+		});
+	}
+};
+   function log(h) {
+     document.getElementById("log").innerHTML += h + "<br />";
+   };
+
+   function lister() {
+   var divLayer = document.getElementById("prefLayer");
+   
+   if (divLayer.style.visibility == "visible" ){
+		divLayer.style.visibility="hidden";
+   }else{
+     divLayer.style.visibility="visible";
+		var donn = "";
+		for (var i=0;i<locCollection.length;i++)
+		{
+		donn = donn + "</br>" + (i+1) + ": " + locCollection[i].lat + ", " + locCollection[i].lng + ", Préc:" + locCollection[i].acc;
+		}
+	divLayer.innerHTML = donn;
+	}
+	 //alert(locCollection.length);
+   };
+
+function localiser(){
+
+watchLoc = document.typeLoc.typeLoc[0].checked;
+
+//navigator.geolocation.stop();
+//navigator.geolocation.start();
+if (watchLoc){
+	clearGeo();
+	getLocalisationErr();
+	}else
+	getLocalisation();
+}
+
+function clearGeo(){
+//alert(watchId);
+navigator.geolocation.clearWatch(watchId);
+}
+
+function onLocSuccess(position) {
+var myLatLng = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+posMarker.setPosition(myLatLng);
+map.setCenter(myLatLng);
+//alert(myLatLng);
+if (!watchLoc)
+	locTimer = setTimeout("getLocalisation();", 500);
+}
+
+function quitter(){
+
+	clearTimeout(locTimer);
+	clearGeo();
+	//alert(watchId);
+	window.close();
+	
+}
+
+function getLocalisation(){
+	if (navigator.geolocation) {
+			//var options = { enableHighAccuracy:true, maximumAge:10000, timeout:10000, frequency: 2000 };
+		var options = { enableHighAccuracy:true, maximumAge:0, timeout:400 };
+
+		navigator.geolocation.getCurrentPosition(onLocSuccess, onLocAffError, options);
+	}						
+
+}
+
+	// -->
+    </script> 
+  </head>
+  <body onload='initialize()' onUnload='clearGeo()'> 
+
+<div id="triButton">
+<div id="duobutton">
+<a href="#"  onclick="quitter(); return false;">Fermer</a>
+<a href="#" onclick="lister(); return false;">Lister</a>
+<a href="javascript:localiser()">Localiser</a>
+</div></div>
+
+
+<div id="mapzone">
+
+<div id="menuGPS"><form id="typeLoc" name="typeLoc" ><input type="radio" checked name="typeLoc" value="Watch">Watch<input type="radio" name="typeLoc" value="Get">Get</form></div>
+	
+<div id="map_canvas" ></div> 
+</div>
+
+<div id="mapZoom">
+<button class="boutonZoom" title="Zoom in" onclick="zoomMap(1); return false;">+</button>
+<button class="boutonZoom" title="Zoom out" onclick="zoomMap(-1); return false;">-</button>
+</div>
+
+ <div id="log"></div>
+ <div id="prefLayer"></div>
+  </body> 
+</html>
