@@ -1,6 +1,6 @@
 <!--
 
-var HOSTserv = "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
+var HOSTserv = "http://127.0.0.1:3000/";
 //"http://127.0.0.1:3000/";
 //"https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
 
@@ -11,6 +11,10 @@ function is_touch_device() {
 
 var isTouchDevice = is_touch_device();
 
+var arrPol = [{"em":"0em", "im": new Image()}, {"em":"0.9em", "im": new Image()}, {"em":"1.05em", "im": new Image()}, {"em":"1.2em", "im": new Image()} ];
+arrPol[1].im.src = "images/taille.png";
+arrPol[2].im.src = "images/taille2.png";
+arrPol[3].im.src = "images/taille3.png";
 
 if (document.images) {
 	img1 = new Image();
@@ -20,6 +24,7 @@ if (document.images) {
 	img1.src = "images/taille.png";
 	img2.src = "images/taille2.png";
 	img3.src = "images/taille3.png";
+
 }
 
 function getInfo(path, callback){
@@ -98,18 +103,18 @@ var bodyobj = document.getElementsByTagName('body')[0];
 var pSize;
 
 if (policeSize)
-	pSize = policeSize;
+	pSize = arrPol[policeSize].em;
 else
-	polSize = GetCookie("PolSize");
+	polSize = eval(GetCookie("PolSize"));
 
 if (polSize == null || polSize == 0 )
-	polSize = "0.9em";
+	polSize = 1;
 
 if (pSize == null)
-	pSize = polSize;
-	
+	pSize = arrPol[polSize].em;
+
 bodyobj.style.fontSize = pSize;
-setImgTaille(pSize);
+setImgTaille(polSize);
 //alert(bodyobj.style.fontSize + "Ok");
 }
 
@@ -118,41 +123,26 @@ var bodyobj = document.getElementsByTagName('body')[0];
 var policeSize;
 
 //alert(bodyobj.style.fontSize + "polSize=" + polSize);
-	
-if (bodyobj.style.fontSize=="" || bodyobj.style.fontSize=="0.9em" || bodyobj.style.fontSize=="1em" || bodyobj.style.fontSize=="1.1em"){
-	policeSize="1.3em";}
-if (bodyobj.style.fontSize=="1.3em"){
-	policeSize="1.7em";}
-if (bodyobj.style.fontSize=="1.7em"){
-	policeSize = "1em";}
 
-setFontSize(policeSize);
-SetCook("PolSize",policeSize);
+if (polSize == 3 ){
+	polSize = 1;
+	}else{
+		if (polSize == 1)
+			polSize = 2;
+		else{
+			if (polSize == 2)
+				polSize = 3;
+			}
+		}
+setFontSize(polSize);
+SetCook("PolSize",polSize);
 }
 
 function setImgTaille(policeSize){
 var imgT = document.getElementById('imgTaille');
-var srcImg;
 
-if (imgT){
-	switch(policeSize)
-		{
-		case "0.9em" :
-		case "1em" :
-		case "1.1em" :
-		case "1.2em" :
-		  srcImg = img1.src;
-		  break;
-		case "1.3em" :
-		case "1.6em" :
-		  srcImg = img2.src;
-		  break;
-		case "1.7em" :
-		case "2em" :
-		  srcImg = img3.src;
-		  break;
-		}
-	imgT.src = srcImg;
+	if (imgT){
+		imgT.src = arrPol[policeSize].im.src;
 	}
 }
 

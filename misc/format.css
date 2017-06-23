@@ -34,7 +34,7 @@ img{border:0}
 display: înline;
 width: 90%;
 margin-left: 5%;
-/*font-size: 16pt;*/
+font-size: 16pt;
 color: white !important;
 }
 
@@ -153,7 +153,7 @@ box-shadow: 1px 1px 1px #ccccdd, 3px 3px 3px #aaaaaa inset;
 .listitem a {color:#55f;text-decoration:none;font-weight:bold}
 .listitem a:hover {color:#DD3333}
 
-.prefList{clear:both;left: 0px; padding-left: 0px;margin: 2px; height:40px; border:0px solid #aaa}
+.prefList{clear:both;left: 0px; padding-left: 0px;margin: 2px; min-height:40px; border:0px solid #aaa}
 .prefPart{display:block; left: 0px; padding: 0px;margin: 0px; border:0px;text-align: center;}
 .itemdesc{font-weight:bold}
 .itemdetail, .itemdetail90{display:block;overflow:auto;overflow-wrap:break-word;word-wrap: break-word;clear:both}
@@ -163,9 +163,12 @@ box-shadow: 1px 1px 1px #ccccdd, 3px 3px 3px #aaaaaa inset;
   -ms-hyphens: auto;
   -o-hyphens: auto;
   hyphens: auto;
+  
 }
 .itemdetail90{width:90%}
 .textDesc{font-size:0.7em}
+
+.gras{font-weight:bold}
 
 #copyright{position:relative;top:0px;padding:10px 0px;text-align:center; font-weight:bold; width: 100%;FONT-VARIANT: small-caps}#copyright a{color: #444;text-decoration:none}
 
@@ -175,7 +178,7 @@ top: 7px;
 }
 
 table.cartePts{background-color: #ccc;border: buttonhighlight 2px outset;}
-table.cartePts th,td{background-color: inherit;width: 1em;text-align:right;}
+table.cartePts th,td{font-weight: bold;background-color: inherit;width: 1em;text-align:right;}
 table.cartePts th{background-color: #999;text-align:center}
 .entete{background-color: #999;text-align:center}
 .titre{font-weight:bold;text-align:left}
@@ -234,7 +237,7 @@ padding-top:17px;
 	position:absolute;
 	top:0px;
 	left:129px;
-   background-image: url('images/Fleche.png');
+   background-image: url('images/fleche.png');
    width:31px;height:23px;
 }
 
@@ -306,6 +309,7 @@ z-index: 1501;
 #authLayer{
 min-height: 200px;
 z-index: 1502;
+font-size:1.2em;
 }
 
 #prefOptions, #identOptions{
