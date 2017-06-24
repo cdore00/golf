@@ -1,6 +1,6 @@
 <!--
 
-var HOSTserv = "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
+var HOSTserv = "http://127.0.0.1:3000/";
 //"http://127.0.0.1:3000/";
 //"https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
 
@@ -11,7 +11,7 @@ function is_touch_device() {
 
 var isTouchDevice = is_touch_device();
 
-var arrPol = [{"em":"0em", "im": new Image()}, {"em":"0.9em", "im": new Image()}, {"em":"1.05em", "im": new Image()}, {"em":"1.2em", "im": new Image()} ];
+var arrPol = [{"em":"0em", "im": new Image()}, {"em":"0.9em", "im": new Image()}, {"em":"1.1em", "im": new Image()}, {"em":"1.3em", "im": new Image()} ];
 arrPol[1].im.src = "images/taille.png";
 arrPol[2].im.src = "images/taille2.png";
 arrPol[3].im.src = "images/taille3.png";
