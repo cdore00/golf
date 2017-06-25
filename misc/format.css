@@ -171,7 +171,18 @@ box-shadow: 1px 1px 1px #ccccdd, 3px 3px 3px #aaaaaa inset;
 
 .gras{font-weight:bold}
 
-#copyright{position:relative;top:0px;padding:10px 0px;text-align:center; font-weight:bold; width: 100%;FONT-VARIANT: small-caps}#copyright a{color: #444;text-decoration:none}
+#dPrefNbr{
+display: inline;
+position: relative;
+}
+
+#xprefNbr{
+	position: absolute;
+	left: 0px;
+	right:0px;
+}
+
+#copyright{position:relative;top:0px;text-align:center; font-weight:bold; width: 100%;font-variant: small-caps;}#copyright a{color: #444;text-decoration:none}
 
 #favIcon{
 position: relative;
