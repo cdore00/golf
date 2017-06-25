@@ -771,8 +771,8 @@ geocoder = new google.maps.Geocoder();
 	  var lng = results[0].geometry.location.lng();
 	  var lat = results[0].geometry.location.lat();
 	  URLresult += "3$" + lng + "$" + lat + "$" + distance;
-	  document.location.href = URLresult;
 	  localStorage.setItem('myPos', lat + "," + lng + "," + Date.now());
+	  document.location.href = URLresult;
     } else {
       alert('Code postal non retrouv&eacute; : ' + status);
     }
