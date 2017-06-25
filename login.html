@@ -31,8 +31,10 @@ formAuth.okPref.click();
 function validUser(rep){
 var formAuth = document.getElementById('formAuth');
 var userCour = formAuth.nameUser.value;
-if (rep[0].result){
-	SetCook("userID",rep[0].result + "");
+if (rep.resp.result){
+	SetCook("userID",rep.resp.user._id);
+	SetCook("userName",rep.resp.user.Nom);
+	SetCook("userMail",rep.resp.user.courriel);
 	document.location.href = "index.html";
 }else{
 	alert("Veuillez-vous identifier pour la première fois.");
