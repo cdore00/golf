@@ -122,20 +122,25 @@ if (oUser._id){
 
 function saveAccount(){
 var formIdent = document.getElementById('formIdent');
+var Npass = formIdent.newPassUser.value;
 
 if (formIdent.passUser.value == ""){
 		alert("Le mot de passe actuel est requis.");
 		return false;
 }
 
-if (formIdent.newPassUser.value != ""){  // Change password
-	if (formIdent.newPassUser.value == "" || formIdent.newPassUser.value != formIdent.confPassUser.value){
+if (Npass != ""){  // Change password
+	if (Npass.length < 3){
+		alert("Le mot de passe doit comprendre au moins 3 caractères.");
+		return false;
+	}
+	if (Npass != formIdent.confPassUser.value){
 			alert("La confirmation du nouveau mot de passe n'est pas valide.");
 			return false;
 	}
 	var rInfo = "saveUser?id=" + formIdent._id.value + "&name=" + formIdent.nomUser.value + "&cour=" + formIdent.courUser.value + "&pass=" + formIdent.passUser.value + "&newpass=" + formIdent.newPassUser.value;
 	getInfo(rInfo, saveAccRes);
-	}else{  // Not change password
+}else{  // Not change password
 		var rInfo = "saveUser?id=" + formIdent._id.value + "&name=" + formIdent.nomUser.value + "&cour=" + formIdent.courUser.value + "&pass=" + formIdent.passUser.value;
 		getInfo(rInfo, saveAccRes);
 	}
@@ -219,18 +224,7 @@ var identLayer = document.getElementById('identLayer');
 var newIdent = document.getElementById('newIdent');
 var butGame = document.getElementById('butGame');
 var myAccount = document.getElementById('myAccount');
-/*var aLink = document.getElementById('aLink');
 
-
-formAuth.nameUser.value = GetCookie("userName");
-if (formAuth.nameUser.value == ''){
-	var butGame = document.getElementById('butGame');
-	butGame.style.visibility="hidden";
-}else{
-	var newIdent = document.getElementById('newIdent');
-	newIdent.style.visibility="hidden";
-}
-*/
 prefLayer.style.visibility="hidden";
 identLayer.style.visibility="visible";
 if (!userId){
@@ -242,11 +236,10 @@ if (!userId){
 	butGame.style.display = "block";
 	myAccount.style.display = "block";
 }
-//aLink.style.display = "inline";
+;
 }
 
 function saveIdent(){
-//var myScore = document.getElementById('myScore');
 var userName = formIdent.nomUser.value;
 var userCour = formIdent.courUser.value;
 var userPass = formIdent.passUser.value;
@@ -254,7 +247,15 @@ var userConfPass = formIdent.confPassUser.value
 
 var info = "user=" + userName + "&email=" + userCour + "&pass=" + userPass;
 
-	if (userPass == "" || userPass != userConfPass){
+	if (!validEmail(userCour)){ 
+		alert("L'adresse de courriel n'est pas valide.");
+		return false;
+	}
+	if (userPass.length < 3){
+		alert("Le mot de passe doit comprendre au moins 3 caractères.");
+		return false;
+	}
+	if (userPass != userConfPass){
 		alert("La confirmation du mot de passe n'est pas valide.");
 	}else{ 
 		getInfo("addUserIdent?" + info, validNewUser);
@@ -798,7 +799,7 @@ geocoder = new google.maps.Geocoder();
 <div id="rightnav"> <a title="R&eacute;initialiser la recherche" href="index.html?data=clear"><img alt="home" height="25" width="25" src="images/home25.png" /></a> </div>
 </div>
 
-<form id="critere" name="critere" action="#" method="get">
+<form id="critere" name="critere" action="javascript:void(0);">
 <input id="latitude" name="latitude" type="hidden" value="0"/>
 <input id="longitude" name="longitude" type="hidden" value="0"/>
 <input id="Prox" name="Prox" type="hidden" value="N"/>
@@ -850,7 +851,7 @@ geocoder = new google.maps.Geocoder();
 					<img alt="localise"  height="16" width="16" src="images/localise.gif" />
 				</span>
 				</div>
-				<button class="bouton" id="Rechercher" type="button" onclick="rechercheClub()" value="Rechercher" />Rechercher</button>
+				<button class="bouton" id="Rechercher" type="submit" onclick="rechercheClub()" value="Rechercher" />Rechercher</button>
 		    </div>
 		</ul>
 	</div>
