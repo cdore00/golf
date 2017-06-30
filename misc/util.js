@@ -1,6 +1,6 @@
 <!--
 
-var HOSTserv = "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
+var HOSTserv = "http://127.0.0.1:3000/";
 //"http://127.0.0.1:3000/";
 //"https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
 
@@ -104,9 +104,14 @@ var pSize;
 
 if (policeSize)
 	pSize = arrPol[policeSize].em;
-else
-	polSize = eval(GetCookie("PolSize"));
-
+else{
+	try {
+		polSize = eval(GetCookie("PolSize"));
+	} catch (e) {
+		polSize = 1;
+	}
+}
+	
 if (polSize == null || polSize == 0 )
 	polSize = 1;
 
@@ -194,5 +199,6 @@ function validEmail(email){
      else 
     	return false;
 }
+
 
 // -->
