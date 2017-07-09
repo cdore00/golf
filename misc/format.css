@@ -352,7 +352,7 @@ display:inline-block;
 }
 
 .prefLbl{
-width: 165px ;
+width: 12em ;
 }
 
 .identLbl{
@@ -510,4 +510,13 @@ text-align:center;
 .unselectable {
 	-moz-user-select: none;
 	-webkit-user-select: none;
+}
+
+@media screen and (max-width: 540px), only screen and (min-device-width: 320px) and (max-device-width: 480px), only screen and (-moz-min-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) 
+{ 
+
+.prefLbl{
+width: 165px ;
+}
+
 }
