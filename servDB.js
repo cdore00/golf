@@ -58,8 +58,10 @@ MongoClient.connect(urlDB, function(err, db) {
 		var arrPath = url_parts.pathname.split("/");
 		var filePath = arrPath[arrPath.length - 1];
 		subWeb = arrPath[arrPath.length - 2] + '/';
-if (isLog)
-console.log(url_parts.pathname);
+	if (isLog){
+		console.log(url_parts.pathname);
+		console.log(url_parts.query);
+	}
 		if (req.method == 'POST') {
 			if (filePath == "listLog"){
 				tl.listLog2(req, res, Mailer.pass);
@@ -478,6 +480,7 @@ var user = (decodeURI(param.user));
 var pass = (decodeURI(param.pass));
 
 debugger;
+
 	var coll = dBase.collection('users'); 
 coll.find({"courriel": user, "actif": true}, ["_id","Nom", "courriel", "motpass"]).toArray(function(err, docs) {
 	//debugger;
@@ -555,7 +558,7 @@ coll.find({"_id": o_id, "actif": true}).toArray(function(err, docs) {
 
 function sendConfMail(eMail, name){
 	var Mdata = Mailer.formatMailData( HOSTserv, eMail, "");
-	Mailer.sendMessage( false, name, eMail, Mdata, "");
+	Mailer.sendMessage( false, "Golf du Québec - Confirmer l'inscription de " + name, eMail, Mdata, "");
 }
 
 function confInsc(req, res, param){
@@ -612,7 +615,7 @@ var coll = dBase.collection('users');
   
 	function sendRecupPassMail(eMail, name, pass){
 		var Mdata = Mailer.formatMailPass( HOSTserv, name, eMail, pass);
-		Mailer.sendMessage( false, name, eMail, Mdata, "");
+		Mailer.sendMessage( false, "Golf du Québec - Récupérer mot de passe de " + name, eMail, Mdata, "");
 	}
 }
 
