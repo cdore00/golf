@@ -17,6 +17,29 @@
 
 <style>
 table.cartePts tr:focus, tr:active{color: #FF3333}
+
+#menuList{
+display:none;
+position: absolute;
+background: #eee;
+}
+
+#menuList td{
+border: buttonhighlight 2px inset;
+background: #eee;
+cursor: pointer;
+text-align: left;
+padding: 5px;
+padding-left: 25px;
+width: auto;
+}
+
+#menuList td:hover{
+background: #999 ;
+cursor: pointer;
+
+}
+
 </style>
 
 <script type="text/javascript" src="misc/util.js"></script>
@@ -66,7 +89,7 @@ getInfo("countUserGame?data=" + userId + "$" + nbrTrous, getGameList);
 }
 
 
-function getGameList(oCount){
+function getGameList(oCount, tel){
 var formPref = document.getElementById('formPref');
 
 localStorage.setItem('gameListPrefTrous', formPref.prefTrous.selectedIndex);
@@ -82,7 +105,8 @@ if (oCount){
 	gameCount = oCount;
 	skip = 0;
 }else{
-	skip += limit ;
+	if (!tel)
+		skip += limit ;
 }
 if (skip >= gameCount)
 	skip = 0;
@@ -91,7 +115,12 @@ if (skip + limit > gameCount)
 if (date)
 	skip = 0;
 
-getInfo("getGameList?user=" + userId + "&skip=" + skip + "&limit=" + limit + "&is18=" + nbrTrous  + "&date=" + date, showGameList);
+if (!tel)
+	getInfo("getGameList?user=" + userId + "&skip=" + skip + "&limit=" + limit + "&is18=" + nbrTrous  + "&date=" + date, showGameList);
+else{
+	var param = ("getGameList?user=" + userId + "&skip=" + skip + "&limit=" + limit + "&is18=" + nbrTrous  + "&date=" + date + "&tele=" + tel);
+	document.location.href = HOSTserv + param;
+	}
 }
 
 
@@ -104,6 +133,14 @@ for (var i = 1; i < 19; i++) {
 return tot;
 }
 
+function telGameList(option){
+var menuList = document.getElementById('menuList');
+
+if (option > 0){
+	getGameList(false, option);
+}
+menuList.style.display = "none";
+}
 
 function showGameList(scoreData){
 var gameList = document.getElementById('gameList');
@@ -154,6 +191,19 @@ var prefNb = document.getElementById('prefNb');
 prefNb.value = oNbr.value;
 }
 
+function optGameList(objOpt){
+var menuList = document.getElementById('menuList');
+
+menuList.style.left = objOpt.offsetLeft + "px";
+menuList.style.top = objOpt.offsetTop  + objOpt.offsetHeight  +"px";
+
+if (menuList.style.display == "inherit")
+	menuList.style.display = "none";
+else
+	menuList.style.display = "inherit";
+
+}
+
 // -->
 </script> 
 </head>
@@ -196,9 +246,20 @@ prefNb.value = oNbr.value;
 </div>
 
 <div class="space10">
-<input name="date_deb" type="hidden" value="<%=date_deb%>">
 &nbsp;<input name="nextGame" class="itin" type="button" onclick="getGameList()" value="Parties suivantes">
 </div>
+<div class="space10">
+&nbsp;<input name="telGame" class="itin" type="button" onclick="optGameList(this)" value="Télécharger">
+</div>
+
+<div id="menuList">
+<table><tbody>
+<tr><td onclick="telGameList(1);" title="Télécharger un fichier csv.">Format csv...</td></tr>
+<tr><td onclick="telGameList(2);" title="Télécharger un fichier json.">Format json...</td></tr>
+<tr><td onclick="telGameList(0);">Annuler</td></tr>
+</tbody></table>
+</div>
+
 </form>
 &nbsp;
 </body>
