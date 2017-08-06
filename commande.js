@@ -124,8 +124,66 @@ tt=db.score.aggregate([ { $match: { USER_ID: 80, PARCOURS_ID: 412, score_date: n
  db.score.update({"score_date": 1497150283743}, {$set:{ "score_date": null}}) 
 
 mongoexport -u 'user84C' -p 'tml6fMOcjEdNdBMq' --db sampledb --collection users --jsonArray --out tuser.json
+mongoexport --host cdore.no-ip.biz:27017 --db golf --collection users --jsonArray --out users.json
 mongoimport -u 'tuser' -p '123' --db tdb --collection users --jsonArray --file tuser.json 
 db.createUser({user:"tuser",pwd:"123",roles:["readWrite","dbAdmin"]}) 
 
 tt=db.club.find({}).sort({nom:1}).skip(10).limit(1).toArray();
+
+mongodump --host 192.168.2.160 --port 27017 -d golf --out mdump
+mongorestore -d golf mdump/golf
+
+mongoexport --db=golf --collection=regions --type csv --fieldFile fields.txt --out reg.txt
+
+
+COPY DIR
+oc cp mongodb-1-ck6bk:/tmp/bup /data/bup
+
+To listen on port 8888 locally and forward to 5000 in the pod, run:
+$ oc port-forward <pod> 8888:5000
+
+
+var fs = require('fs');
+
+// Where fileName is name of the file and response is Node.js Reponse. 
+function responseFile(fileName, response) {
+  var filePath =  "/path/to/archive.rar" // or any file format
+
+  // Check if file specified by the filePath exists 
+  fs.exists(filePath, function(exists){
+      if (exists) {     
+        // Content-type is very interesting part that guarantee that
+        // Web browser will handle response in an appropriate manner.
+        response.writeHead(200, {
+          "Content-Type": "application/octet-stream",
+          "Content-Disposition" : "attachment; filename=" + file});
+        fs.createReadStream(filePath).pipe(response);
+      } else {
+        response.writeHead(400, {"Content-Type": "text/plain"});
+        response.end("ERROR File does NOT Exists");
+      }
+    });
+  }
+}
+
+
+vi command 	description
+i 	insert at the current position
+I 	insert at the beginning of line
+a 	append just after the current cursor position
+A 	append at the end of line
+o 	Open a new line below the current line
+O 	Open a new line above the current line
+
+ADD to sudores
+
+su -
+usermod username -a -G wheel
+
+
+MongoDB Installation Fedora
+https://developer.fedoraproject.org/tech/database/mongodb/about.html
+
+
+
 

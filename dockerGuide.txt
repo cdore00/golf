@@ -1,0 +1,130 @@
+INSTALL
+https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/#install-from-a-package
+
+WORK
+https://www.wanadev.fr/23-tuto-docker-comprendre-docker-partie1/
+
+sudo docker login
+
+sudo docker commit -a cdore_mongo mon_golf mongo_golf:v1
+
+REMOVE IMAGE
+sudo docker rmi -f cc5dfe78e8d4
+
+sudo docker tag mymongo:mongodb cdore00/mymongo
+cdore@ubuntu:~$ sudo docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+mymongo             mongodb             df09adaf813d        14 minutes ago      359MB
+cdore00/mymongo     latest              df09adaf813d        14 minutes ago      359MB
+mongo               latest              57c67caab3d8        10 days ago         359MB
+debian              wheezy              bbd62956fac7        3 weeks ago         85.1MB
+debian              latest              a2ff708b7413        3 weeks ago         100MB
+hello-world         latest              1815c82652c0        4 weeks ago         1.84kB
+
+sudo docker push cdore00/mymongo
+
+LIST CONTAINERS
+docker ps -l
+docker ps -a
+
+REMOVE CONTAINER
+sudo docker rm -f 085d52e6764c
+
+
+docker run --tty --interactive debian:7
+sudo docker run --tty --interactive -p 8080 --workdir /home/servDB --entrypoint "bash" --name="t_node" mynode:start_node
+32771
+
+sudo docker create --tty --interactive --name="mongo_con" mymongo:mongodb 
+sudo docker create --tty --interactive --workdir /home/servDB --name="start_node" mynode:nodejs
+
+
+sudo docker stop debian_test
+debian_test
+cdore@ubuntu:~$ sudo docker ps -l
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS                      PORTS               NAMES
+77e35d04fe0e        debian:latest       "bash"              4 minutes ago       Exited (0) 13 seconds ago                       debian_test
+cdore@ubuntu:~$ sudo docker start --attach debian_test
+
+
+sudo docker exec -it debian_test bash
+exit
+
+
+COPY FILE
+sudo docker cp mdump 2cb3b87a0afe:home/servDB
+
+CONTAINER IP
+sudo docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' 2cb3b87a0afe
+
+ssh -L 192.168.20.130:8080:172.17.0.3:8080 root@172.17.0.3
+iptables -t nat -A DOCKER -p tcp --dport 8080 -j DNAT --to-destination 172.17.0.3:8080
+iptables -t nat -A OUTPUT -p tcp -d 192.168.20.1 --dport 8080 -j DNAT --to-destination 172.17.0.3:8080
+
+sudo iptables -t nat -L -n
+Chain PREROUTING (policy ACCEPT)
+target     prot opt source               destination         
+DOCKER     all  --  0.0.0.0/0            0.0.0.0/0            ADDRTYPE match dst-type LOCAL
+
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination         
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination         
+DOCKER     all  --  0.0.0.0/0           !127.0.0.0/8          ADDRTYPE match dst-type LOCAL
+
+Chain POSTROUTING (policy ACCEPT)
+target     prot opt source               destination         
+MASQUERADE  all  --  172.17.0.0/16        0.0.0.0/0           
+
+Chain DOCKER (2 references)
+target     prot opt source               destination         
+RETURN     all  --  0.0.0.0/0            0.0.0.0/0    
+
+FLUSH RULES
+sudo iptables -F -t nat
+
+
+sudo ip addr add 192.168.10.11/24 dev docker0
+docker run -p 192.168.10.11:8080:27017 --workdir /home/servDB --entrypoint "npm start" --name="mon_g" mongo:golf
+docker run -p 192.168.10.11:8080:27017 --name="mon_g" mongo:golf
+
+CLEAN IMAGES ? stop CONTAINER
+#!/usr/bin/env bash
+set -euo pipefail
+
+for c in $(docker ps -a -f status=exited -f status=created -f status=dead --format="{{.ID}}"); do
+    docker rm $c
+done
+for img in $(docker images -f dangling=true --format="{{.ID}}"); do
+    docker rmi $img
+done
+
+UBUNTU IMAGES REPOSITORY
+/var/lib/docker/image/aufs/imagedb/content/sha256
+
+systemctl restart docker
+
+How PULL
+https://blog.openshift.com/remotely-push-pull-container-images-openshift/
+
+
+sudo cat /home/cdore/.docker/config.json
+	"auths": {
+		"https://index.docker.io/v1/": {
+			"auth": "Y2RvcmUwMDo5MjUwNDU="
+		}
+	}
+
+    openshift.io/image.dockerRepositoryCheck: '2017-07-14T22:07:27Z'
+	
+	    openshift.io/image.dockerRepositoryCheck: '2017-07-27T03:46:57Z'
+    openshift.io/image.insecureRepository: 'true'
+  creationTimestamp: '2017-07-14T22:07:27Z'
+  
+INSTALL DOCKER Fedora 26
+sudo dnf install docker docker-latest
+
+sudo nmap -sT -O localhost
+
+iptables -I INPUT 4 -i docker0 -j ACCEPT
