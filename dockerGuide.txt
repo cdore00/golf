@@ -33,26 +33,27 @@ sudo docker rm -f 085d52e6764c
 
 docker run --tty --interactive debian:7
 sudo docker run --tty --interactive -p 8080 --workdir /home/servDB --entrypoint "bash" --name="t_node" mynode:start_node
+sudo docker run -p 192.168.2.188:8080:8080 --name="serv" servdb:v1
 32771
 
 sudo docker create --tty --interactive --name="mongo_con" mymongo:mongodb 
 sudo docker create --tty --interactive --workdir /home/servDB --name="start_node" mynode:nodejs
 
 
-sudo docker stop debian_test
-debian_test
+sudo docker stop mon_golf
+mon_golf
 cdore@ubuntu:~$ sudo docker ps -l
 CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS                      PORTS               NAMES
-77e35d04fe0e        debian:latest       "bash"              4 minutes ago       Exited (0) 13 seconds ago                       debian_test
-cdore@ubuntu:~$ sudo docker start --attach debian_test
+77e35d04fe0e        debian:latest       "bash"              4 minutes ago       Exited (0) 13 seconds ago                       mon_golf
+cdore@ubuntu:~$ sudo docker start --attach mon_golf
 
 
-sudo docker exec -it debian_test bash
+sudo docker exec -it mon_golf bash
 exit
 
 
 COPY FILE
-sudo docker cp mdump 2cb3b87a0afe:home/servDB
+sudo docker cp mdump mon_golf:home
 
 CONTAINER IP
 sudo docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' 2cb3b87a0afe
@@ -127,4 +128,11 @@ sudo dnf install docker docker-latest
 
 sudo nmap -sT -O localhost
 
+Fedora server essential iptables to see docker to docker IP
 iptables -I INPUT 4 -i docker0 -j ACCEPT
+
+sudo qemu-img convert -f vmdk "fed26.vmdk" -O raw fed26.raw
+
+ sudo qemu-img convert -O vmdk turnkey-core.raw fedServ.vmdk
+
+dd if=turnkey-core.raw of=pd.iso

@@ -99,6 +99,7 @@ var date = Date.parse(formPref.prefDate.value);
 if (!date)
 	date = 0;
 var nbrTrous = parseInt(formPref.prefTrous.value);
+var actLimit = limit;
 limit= parseInt(formPref.prefNb.value);
 
 if (oCount){
@@ -106,13 +107,13 @@ if (oCount){
 	skip = 0;
 }else{
 	if (!tel)
-		skip += limit ;
+		skip += actLimit ;
 }
 if (skip >= gameCount)
 	skip = 0;
 if (skip + limit > gameCount)
 	limit = gameCount - skip ;
-if (date)
+if (date) // If date then start to date
 	skip = 0;
 
 if (!tel)
@@ -225,7 +226,7 @@ else
 <select id="prefNbr" onchange="setNB(this)">
  <option value="5" >5 parties</option>
  <option value="10" selected>10 parties</option>
- <option value="20" >20 parties</option>
+ <option value="20" >20 parties H</option>
  <option value="50" >50 parties</option>
   <option value="100" >100 parties</option>
 </select>
