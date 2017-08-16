@@ -44,6 +44,10 @@ cursor: pointer;
 text-align: center;
 }
 
+.attend{
+cursor: wait;
+}
+
 </style>
 
 <script type="text/javascript" src="misc/util.js"></script>
@@ -95,6 +99,10 @@ getInfo("countUserGame?data=" + userId + "$" + nbrTrous, getGameList);
 
 function getGameList(oCount, tel){
 var formPref = document.getElementById('formPref');
+
+var sh = document.styleSheets[0];
+Wait_a_bit="* {cursor: wait !important}";
+sh.insertRule(Wait_a_bit, 0);
 
 localStorage.setItem('gameListPrefTrous', formPref.prefTrous.selectedIndex);
 localStorage.setItem('gameListPrefNbr', formPref.prefNbr.selectedIndex);
@@ -182,6 +190,9 @@ Tcode += '<tr><td><strong>' + hdp + '</strong></td><td><strong>' + nbrGame + '&n
 //'<tr><td><strong>Moyenne</strong></td><td><strong><%=i%>&nbsp;parties</strong></td><td><strong><%=round(coupTot/i,1)%></strong></td></tr>';
 
 gameList.innerHTML = Tcode;
+
+var sh = document.styleSheets[0];
+sh.deleteRule(0);
 
 }
 
