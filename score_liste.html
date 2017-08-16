@@ -101,7 +101,7 @@ function getGameList(oCount, tel){
 var formPref = document.getElementById('formPref');
 
 var sh = document.styleSheets[0];
-Wait_a_bit="* {cursor: wait !important}";
+var Wait_a_bit="* {cursor: wait !important}";
 sh.insertRule(Wait_a_bit, 0);
 
 localStorage.setItem('gameListPrefTrous', formPref.prefTrous.selectedIndex);
