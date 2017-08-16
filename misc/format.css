@@ -214,7 +214,7 @@ table.cartePts th{background-color: #999;text-align:center}
 #layerContent p{border:0px; margin:0px;width:250px}
 #layerContent a {color:#55f;font-weight:bold;text-decoration:none}
 #layerContent a:hoverm #layerContent a:focus {color:#DD3333;text-decoration:none}
-.itin {padding-left:5px;padding-right:5px;
+.itin {padding-left:5px !important;padding-right:5px !important;
 border:1px solid #999;
 border-radius:7px;
 box-shadow: 1px 1px 1px #ccccdd, 2px 2px 2px #aaaaaa inset;
@@ -487,7 +487,10 @@ margin-top:14%;
 		-moz-animation-delay: .2s;
 	}
 	
-	
+#divLoading{
+
+}
+
 #holePos{
 position:absolute;
 background-color:transparent;
