@@ -97,6 +97,7 @@ function getGameList(oCount, tel){
 var formPref = document.getElementById('formPref');
 var divLoad = document.getElementById('divLoad');
 
+closeMenu();
 divLoad.style.top = ( divLoad.parentElement.offsetHeight + divLoad.parentElement.offsetTop - 100 ) + "px";
 divLoad.style.display = "inherit";
 
@@ -147,11 +148,15 @@ return tot;
 }
 
 function telGameList(option){
-var menuList = document.getElementById('menuList');
 
 if (option > 0){
 	getGameList(false, option);
 }
+closeMenu();
+}
+
+function closeMenu(){
+var menuList = document.getElementById('menuList');
 menuList.style.display = "none";
 }
 
