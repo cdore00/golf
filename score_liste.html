@@ -42,8 +42,6 @@ cursor: pointer;
 
 #divLoad{
 text-align: center;
-position: absolute;
-margin-left: 45%;
 }
 
 </style>
@@ -161,6 +159,9 @@ var gameList = document.getElementById('gameList');
 var divLoad = document.getElementById('divLoad');
 
 divLoad.style.display = "none";
+divLoad.style.position = "absolute";
+divLoad.style.marginLeft  = "45%";
+
 
 var listTot = 0, nbrGame = 0;
 //coupTot = coupTot + orecordset("score")
