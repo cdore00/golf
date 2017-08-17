@@ -65,6 +65,9 @@ var par = gameData.par;
 var tb = document.getElementById('gameCard'); 
 var gameBut = document.getElementById('gameBut');
 var tabTitle = document.getElementById('tabTitle');
+var divLoad = document.getElementById('divLoad');
+
+divLoad.style.display = "none";
 
 if (gameData.score_date != null){
 	gameBut.style.visibility = "hidden";
@@ -280,6 +283,7 @@ x=1;
 <div id="p1" name="p1" class="cartePts">
 	<table class="cartePts">
 	<tbody id="gameCard">
+<div id="divLoad"><img id="imgLoad" alt="Chargement en cours..." height="64" width="64" src="images/loading.gif" /></div>
 	</tbody>
 	</table>
 </div>
