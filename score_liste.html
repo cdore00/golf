@@ -131,6 +131,7 @@ if (!tel)
 else{
 	var param = ("getGameList?user=" + userId + "&skip=" + skip + "&limit=" + limit + "&is18=" + nbrTrous  + "&date=" + date + "&tele=" + tel);
 	document.location.href = HOSTserv + param;
+	stopLoad();
 	}
 }
 
@@ -159,12 +160,8 @@ menuList.style.display = "none";
 
 function showGameList(scoreData){
 var gameList = document.getElementById('gameList');
-var divLoad = document.getElementById('divLoad');
 
-divLoad.style.display = "none";
-divLoad.style.position = "absolute";
-divLoad.style.marginLeft  = "45%";
-
+stopLoad();
 var listTot = 0, nbrGame = 0;
 //coupTot = coupTot + orecordset("score")
 
@@ -195,9 +192,15 @@ Tcode += '<tr><td><strong>' + hdp + '</strong></td><td><strong>' + nbrGame + '&n
 
 gameList.innerHTML = Tcode;
 
+}
+
+function stopLoad(){
+var divLoad = document.getElementById('divLoad');
+divLoad.style.display = "none";
+divLoad.style.position = "absolute";
+divLoad.style.marginLeft  = "45%";
 var sh = document.styleSheets[0];
 sh.deleteRule(0);
-
 }
 
 function calcHDP(arrHDP){
