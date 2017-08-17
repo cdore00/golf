@@ -19,6 +19,11 @@
 <script type="text/javascript" src="misc/utilGolfGPS.js"></script>
 <script type="text/javascript" src="misc/geoLocal.js"></script>
 
+<style>
+#gameBut{
+visibility:hidden;
+}
+</style>
 
 <script type="text/javascript"> 
 <!--
@@ -70,10 +75,10 @@ var divLoad = document.getElementById('divLoad');
 divLoad.style.display = "none";
 
 if (gameData.score_date != null){
-	gameBut.style.visibility = "hidden";
 	tabTitle.innerHTML = getDateTime(gameData.score_date) + "&nbsp;-&nbsp;" +  clubName;
 }else{
 	tabTitle.innerHTML = getDateTime() + "&nbsp;-&nbsp;" +  clubName;
+	gameBut.style.visibility = "visible";
 }
 
 var nt = 19;
