@@ -78,6 +78,7 @@ max-width: 1% !important;
 <!--
 
 var editMode = false;
+var menuOn = false;
 
 if (isTouchDevice){
 	document.getElementById('p1').addEventListener('touchstart', function(event) {
@@ -102,8 +103,11 @@ if (!editMode){
 }
 }
 
-
 function initPage(){
+var p1 = document.getElementById('p1');
+p1.addEventListener("mouseover", function() {
+    closeMenu();
+}); 
 
 setFontSize();
 userId = GetCookie("userID");
@@ -184,11 +188,14 @@ if (option > 0){
 }
 
 function closeMenu(){
-var menuList = document.getElementById('menuList');
-var submenu = document.getElementById('submenu1');
+if (menuOn){
+	var menuList = document.getElementById('menuList');
+	var submenu = document.getElementById('submenu1');
 
-submenu.style.display = "none";
-menuList.style.height = "0px";
+	submenu.style.display = "none";
+	menuList.style.height = "0px";
+	menuOn = false;
+}
 }
 
 function showGameList(scoreData){
@@ -210,7 +217,7 @@ for (var i = 0; i < scoreData.length; i++) {
 	listTot += gt;
 	nbrGame += 1;
 	Tcode += '<td>' + (scoreData[i].score_date) + '</td><td>' + scoreData[i].name + '</td><td>' + gt + '</td>';
-	Tcode += '<td class="tdEdit"><img onclick="delGame(\'' + scoreID + '\')" height="16" width="16" src="images/delete.png" /></td></tr>'
+	Tcode += '<td class="tdEdit"><img onclick="delGame(this.parentNode.parentNode.childNodes,\'' + scoreID + '\')" height="16" width="16" src="images/delete.png" /></td></tr>'
 //'<td><%=orecordset("Sdate")%></td><td><%=orecordset("nom")%></td><td><%=orecordset("score")%></td></tr>';
 }
 
@@ -278,6 +285,7 @@ if (menuList.style.height != "0px"){
 	var adj = menuList.childNodes[1].offsetHeight;
 	menuList.style.height = (adj * .75) + "pt";
 	}
+menuOn = true;
 }
 
 function showSubmenu(objOpt, state){
@@ -330,8 +338,8 @@ if (editMode){
 	}
 }
 
-function delGame(id){
-if (confirm("Supprimer cette partie ?")){
+function delGame(rChilds, id){
+if (confirm("Supprimer cette partie ?\n - Date: " + rChilds[0].innerHTML + " \n - Club: " + rChilds[1].innerHTML + "\n - Score: " + rChilds[2].innerHTML)){
 	getInfo("delGame?id=" + id, showDelRes);
 }
 }
