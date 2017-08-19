@@ -18,13 +18,26 @@
 <style>
 table.cartePts tr:focus, tr:active{color: #FF3333}
 
-#menuList{
-display:none;
-position: absolute;
-background: #eee;
+#divOptions{
+height: 0px;
+overflow: hidden;
+transition: height 0.6s ease-in-out;
 }
 
-#menuList td{
+#menuList, #submenu1{
+position: absolute;
+background: #eee;
+overflow: hidden;
+height: 0px;
+transition: height 0.6s ease-in-out;
+}
+
+#submenu1{
+display: none;
+height: auto;
+}
+
+#menuList td, #submenu1 td{
 border: buttonhighlight 2px inset;
 background: #eee;
 cursor: pointer;
@@ -34,12 +47,26 @@ padding-left: 10px;
 width: auto;
 }
 
-#menuList td:hover{
+#menuList td:hover, #submenu1 td:hover{
 background: #999 ;
 cursor: pointer;
-
 }
 
+#butMenu{
+float: left;
+}
+
+.tdEdit{
+visibility:hidden;
+width: 1% !important;
+max-width: 1% !important;
+}
+
+.tdEditOn{
+visibility:visible;
+width: 1% !important;
+max-width: 1% !important;
+}
 
 </style>
 
@@ -49,6 +76,9 @@ cursor: pointer;
 
 <script type="text/javascript"> 
 <!--
+
+var editMode = false;
+
 if (isTouchDevice){
 	document.getElementById('p1').addEventListener('touchstart', function(event) {
 	event.preventDefault();
@@ -65,10 +95,11 @@ var limit= 0;
 var localWindow=null;
 
 function show_score(gameID, clubName){
-//alert('liste');
-localWindow=null;
-localWindow = window.open('scoreTab.html?data=' + gameID + "$" + clubName);
-localWindow.document.close();
+if (!editMode){
+	localWindow=null;
+	localWindow = window.open('scoreTab.html?data=' + gameID + "$" + clubName);
+	localWindow.document.close();
+}
 }
 
 
@@ -146,16 +177,18 @@ return tot;
 }
 
 function telGameList(option){
-
+closeMenu();
 if (option > 0){
 	getGameList(false, option);
 }
-closeMenu();
 }
 
 function closeMenu(){
 var menuList = document.getElementById('menuList');
-menuList.style.display = "none";
+var submenu = document.getElementById('submenu1');
+
+submenu.style.display = "none";
+menuList.style.height = "0px";
 }
 
 function showGameList(scoreData){
@@ -165,19 +198,19 @@ stopLoad();
 var listTot = 0, nbrGame = 0;
 //coupTot = coupTot + orecordset("score")
 
-var Tcode = '<tr><th>Date</th><th>Club</th><th>Score</th></tr>';
+var Tcode = '<tr><th>Date</th><th>Club</th><th>Score</th><th class="tdEdit"></th></tr>';
 var arrHDP = new Array();
 
 for (var i = 0; i < scoreData.length; i++) {
 	var scoreID = scoreData[i]._id;
 	var courseName = scoreData[i].name;
 	Tcode += '<tr class="norm" ontouchstart="this.className=\'rowOver\'" ontouchend="this.className=\'rowNorm\'" onmouseover="this.className=\'rowOver\'" onmouseout="this.className=\'rowNorm\'" onclick="show_score(\'' + scoreID + '\',' + '\'' + courseName + '\');">';
-	//'<td><%=orecordset("Sdate")%></td><td><%=orecordset("nom")%></td><td><%=orecordset("score")%></td></tr>';
 	var gt = calcScore(scoreData[i]);
 	arrHDP[arrHDP.length] = gt;
 	listTot += gt;
 	nbrGame += 1;
-	Tcode += '<td>' + (scoreData[i].score_date) + '</td><td>' + scoreData[i].name + '</td><td>' + gt + '</td></tr>';
+	Tcode += '<td>' + (scoreData[i].score_date) + '</td><td>' + scoreData[i].name + '</td><td>' + gt + '</td>';
+	Tcode += '<td class="tdEdit"><img onclick="delGame(\'' + scoreID + '\')" height="16" width="16" src="images/delete.png" /></td></tr>'
 //'<td><%=orecordset("Sdate")%></td><td><%=orecordset("nom")%></td><td><%=orecordset("score")%></td></tr>';
 }
 
@@ -186,7 +219,7 @@ if (i == 20)
 else
 	var hdp = "";
 
-Tcode += '<tr><td><strong>' + hdp + '</strong></td><td><strong>' + nbrGame + '&nbsp;parties</strong></td><td><strong>Moy.: ' + (Math.round(listTot/limit*10) /10 ) + '</strong></td></tr>';
+Tcode += '<tr><td><strong>' + hdp + '</strong></td><td><strong>' + nbrGame + '&nbsp;parties</strong></td><td><strong>Moy.: ' + (Math.round(listTot/limit*10) /10 ) + '</strong></td><td class="tdEdit"></td></tr>';
 
 //'<tr><td><strong>Moyenne</strong></td><td><strong><%=i%>&nbsp;parties</strong></td><td><strong><%=round(coupTot/i,1)%></strong></td></tr>';
 
@@ -222,26 +255,109 @@ function optGameList(objOpt){
 var menuList = document.getElementById('menuList');
 
 menuList.style.left = objOpt.offsetLeft + "px";
-menuList.style.top = objOpt.offsetTop  + objOpt.offsetHeight  +"px";
+menuList.style.width = menuList.childNodes[1].offsetWidth + "px";
 
-if (menuList.style.display == "inherit")
-	menuList.style.display = "none";
-else
-	menuList.style.display = "inherit";
+if (menuList.style.height != "0px"){
+	closeMenu();
+}else{
+	menuList.style.height = "150px";
+	}
+}
 
+function showMenu(){
+var menuList = document.getElementById('menuList');
+
+if (menuList.style.height != "0px"){
+	menuList.style.height = "0px";
+}else{
+	var adj = menuList.childNodes[1].offsetHeight;
+	menuList.style.height = (adj * .75) + "pt";
+	}
+}
+
+function showSubmenu(objOpt, state){
+var submenu = document.getElementById('submenu1');
+
+if (objOpt){
+	submenu.style.left = objOpt.offsetWidth + "px";
+	submenu.style.top = (objOpt.offsetTop + 32) + "px";
+}
+
+submenu.style.display = state;
+
+}
+
+function showOptions(menuTxt){
+var divOptions = document.getElementById('divOptions');
+
+if (divOptions.style.height != "0px" && divOptions.style.height != ""){
+	divOptions.style.height = "0px";
+	menuTxt.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;Options";
+}else{
+	divOptions.style.height = "3em";
+	menuTxt.innerHTML = "&#10004;&nbsp;Options";
+	}
+}
+
+function changeTailleP(){
+closeMenu();
+changeTaille();
+}
+
+function editGame(menuTxt){
+				
+if (editMode){
+	menuTxt.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&Eacute;diter";
+	editMode = false;
+	var elem = document.getElementsByClassName("tdEditOn");
+	while(elem.length > 0) {
+		elem[0].className = 'tdEdit'; 
+		}
+}else{
+	menuTxt.innerHTML = "&#10004;&nbsp;&Eacute;diter";
+	editMode = true;
+	var elem = document.getElementsByClassName("tdEdit");
+	while(elem.length > 0) {
+		elem[0].className = 'tdEditOn';  
+		}
+	}
+}
+
+
+function delGame(id){
+alert(id);
 }
 
 // -->
 </script> 
 </head>
 <body onload="initPage()">
-<div id="duobutton"><a href="#"  onclick="window.close(); return false;">Fermer</a>
-<button type="button" id="changeTaille" title="Taille de police" onclick="changeTaille()"><img id="imgTaille" alt="Taille de police" height="20" width="45" src="images/taille.png" /></button>
+<div id="duobutton">
+<a href="#"  id="butMenu" title="Menu" onclick="showMenu()" onmouseover="showMenu();"><img id="logomenu" alt="Menu" height="32" width="64" src="images/menu.png" /></a>
+<a href="#"  onclick="window.close(); return false;">Fermer</a>
+<button type="button" id="changeTaille" title="Taille de police" onclick="changeTailleP()"><img id="imgTaille" alt="Taille de police" height="20" width="45" src="images/taille.png" /></button>
+</div>
+
+<div id="menuList">
+<table><tbody>
+<tr><td onclick="editGame(this);" title="T&eacute;l&eacute;charger un fichier csv.">&nbsp;&nbsp;&nbsp;&nbsp;&Eacute;diter</td></tr>
+<tr><td onclick="showOptions(this);" title="Options de recherche.">&nbsp;&nbsp;&nbsp;&nbsp;Options</td></tr>
+<tr><td onclick="showSubmenu(this, 'inherit');" onmouseover="showSubmenu(this, 'inherit');" onmouseout="showSubmenu(this, 'none');" title="T&eacute;l&eacute;charger un fichier json.">&nbsp;&nbsp;&nbsp;&nbsp;T&eacute;l&eacute;charger&nbsp;&#9658;</td></tr>
+<tr><td onclick="telGameList(0);">&nbsp;&nbsp;&nbsp;&nbsp;Annuler</td></tr>
+</tbody></table>
+</div>
+
+<div id="submenu1">
+<table><tbody>
+<tr><td onclick="telGameList(1);" onmouseover="showSubmenu(false, 'inherit');" title="T&eacute;l&eacute;charger un fichier csv.">Format csv...</td></tr>
+<tr><td onclick="telGameList(2);" title="T&eacute;l&eacute;charger un fichier json.">Format json...</td></tr>
+</tbody></table>
 </div>
 
 <form id="formPref" action="#">
 
-<div class="prefPart">
+
+<div id="divOptions" class="prefPart">
 <input id="prefDate" type="text" size="8" placeholder="aaaa/mm/jj"/>
 <select id="prefTrous" onchange="initCount()">
  <option value="18" selected>18 trous</option>
@@ -260,7 +376,6 @@ else
 </div>
 </div>
 
-
 <div id="p1" name="p1" class="unselectable">
 	<table class="cartePts">
 	<tbody id="gameList">
@@ -274,14 +389,6 @@ else
 </div>
 <div class="space10">
 &nbsp;<input name="telGame" class="itin" type="button" onclick="optGameList(this)" value="T&eacute;l&eacute;charger">
-</div>
-
-<div id="menuList">
-<table><tbody>
-<tr><td onclick="telGameList(1);" title="T&eacute;l&eacute;charger un fichier csv.">Format csv...</td></tr>
-<tr><td onclick="telGameList(2);" title="T&eacute;l&eacute;charger un fichier json.">Format json...</td></tr>
-<tr><td onclick="telGameList(0);">Annuler</td></tr>
-</tbody></table>
 </div>
 
 </form>
