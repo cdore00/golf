@@ -157,7 +157,7 @@ if (skip + limit > gameCount)
 if (date) // If date then start to date
 	skip = 0;
 
-if (!tel)
+if (!tel || tel == 99)
 	getInfo("getGameList?user=" + userId + "&skip=" + skip + "&limit=" + limit + "&is18=" + nbrTrous  + "&date=" + date, showGameList);
 else{
 	var param = ("getGameList?user=" + userId + "&skip=" + skip + "&limit=" + limit + "&is18=" + nbrTrous  + "&date=" + date + "&tele=" + tel);
@@ -224,6 +224,11 @@ Tcode += '<tr><td><strong>' + hdp + '</strong></td><td><strong>' + nbrGame + '&n
 //'<tr><td><strong>Moyenne</strong></td><td><strong><%=i%>&nbsp;parties</strong></td><td><strong><%=round(coupTot/i,1)%></strong></td></tr>';
 
 gameList.innerHTML = Tcode;
+
+if (editMode){
+	editMode = false;
+	editGame(false);
+}
 
 }
 
@@ -307,14 +312,16 @@ changeTaille();
 function editGame(menuTxt){
 				
 if (editMode){
-	menuTxt.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&Eacute;diter";
+	if (menuTxt)
+		menuTxt.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&Eacute;diter";
 	editMode = false;
 	var elem = document.getElementsByClassName("tdEditOn");
 	while(elem.length > 0) {
 		elem[0].className = 'tdEdit'; 
 		}
 }else{
-	menuTxt.innerHTML = "&#10004;&nbsp;&Eacute;diter";
+	if (menuTxt)
+		menuTxt.innerHTML = "&#10004;&nbsp;&Eacute;diter";
 	editMode = true;
 	var elem = document.getElementsByClassName("tdEdit");
 	while(elem.length > 0) {
@@ -323,9 +330,18 @@ if (editMode){
 	}
 }
 
-
 function delGame(id){
-alert(id);
+if (confirm("Supprimer cette partie ?")){
+	getInfo("delGame?id=" + id, showDelRes);
+}
+}
+
+function showDelRes(oRes){
+if (oRes.ok){
+	getGameList(false, 99)
+}else{
+	alert(oRes);
+}
 }
 
 // -->
@@ -333,7 +349,7 @@ alert(id);
 </head>
 <body onload="initPage()">
 <div id="duobutton">
-<a href="#"  id="butMenu" title="Menu" onclick="showMenu()" onmouseover="showMenu();"><img id="logomenu" alt="Menu" height="32" width="64" src="images/menu.png" /></a>
+<a href="#"  id="butMenu" title="Menu" onclick="showMenu()"><img id="logomenu" alt="Menu" height="32" width="64" src="images/menu.png" /></a>
 <a href="#"  onclick="window.close(); return false;">Fermer</a>
 <button type="button" id="changeTaille" title="Taille de police" onclick="changeTailleP()"><img id="imgTaille" alt="Taille de police" height="20" width="45" src="images/taille.png" /></button>
 </div>
@@ -386,9 +402,6 @@ alert(id);
 
 <div class="space10">
 &nbsp;<input name="nextGame" class="itin" type="button" onclick="getGameList()" value="Parties suivantes">
-</div>
-<div class="space10">
-&nbsp;<input name="telGame" class="itin" type="button" onclick="optGameList(this)" value="T&eacute;l&eacute;charger">
 </div>
 
 </form>
