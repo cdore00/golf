@@ -11,7 +11,7 @@ function is_touch_device() {
 
 var isTouchDevice = is_touch_device();
 
-var arrPol = [{"em":"0em", "im": new Image()}, {"em":"0.9em", "im": new Image()}, {"em":"1.1em", "im": new Image()}, {"em":"1.3em", "im": new Image()} ];
+var arrPol = [{"em":"0em", "im": new Image()}, {"em":"0.9em", "im": new Image()}, {"em":"1.2em", "im": new Image()}, {"em":"1.5em", "im": new Image()} ];
 arrPol[1].im.src = "images/taille.png";
 arrPol[2].im.src = "images/taille2.png";
 arrPol[3].im.src = "images/taille3.png";
