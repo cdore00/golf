@@ -311,15 +311,17 @@ submenu.style.display = state;
 
 function showOptions(menuTxt){
 var divOptions = document.getElementById('divOptions');
+//var fur = navigator.userAgent;
+var adj = menuTxt.offsetHeight;
 
 if (divOptions.style.height != "0px" && divOptions.style.height != ""){
 	divOptions.style.height = "0px";
 	menuTxt.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;Options";
 }else{
-	divOptions.style.height = "3em";
+	divOptions.style.height = (adj * 2 * .77) + "px";
+	//divOptions.style.height = adj + "3em";
 	menuTxt.innerHTML = "&#10004;&nbsp;Options";
 	}
-alert(navigator.userAgent);
 }
 
 function changeTailleP(){
