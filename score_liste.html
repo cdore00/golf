@@ -83,6 +83,7 @@ var menuOn = false;
 if (isTouchDevice){
 	document.getElementById('p1').addEventListener('touchstart', function(event) {
 	event.preventDefault();
+	closeMenu();
 	}, false);
 	document.getElementById('p1').addEventListener('touchend', function(event) {
 	event.preventDefault();
