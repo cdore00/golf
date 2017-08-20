@@ -21,7 +21,7 @@ table.cartePts tr:focus, tr:active{color: #FF3333}
 #divOptions{
 height: 0px;
 overflow: hidden;
-transition: height 0.6s ease-in-out;
+transition: height 0.4s ease-in-out;
 }
 
 #menuList, #submenu1{
@@ -29,7 +29,7 @@ position: absolute;
 background: #eee;
 overflow: hidden;
 height: 0px;
-transition: height 0.6s ease-in-out;
+transition: height 0.4s ease-in-out;
 }
 
 #submenu1{
@@ -161,9 +161,18 @@ if (skip + limit > gameCount)
 if (date) // If date then start to date
 	skip = 0;
 
-if (!tel || tel == 99)
-	getInfo("getGameList?user=" + userId + "&skip=" + skip + "&limit=" + limit + "&is18=" + nbrTrous  + "&date=" + date, showGameList);
-else{
+if (!tel || tel == 99){
+	if (tel == 99){
+		limit--;
+		gameCount--;
+		}
+	if (gameCount == 0){
+		var noGame = {};
+		noGame.length = 0;
+		showGameList(noGame);
+	}else
+		getInfo("getGameList?user=" + userId + "&skip=" + skip + "&limit=" + limit + "&is18=" + nbrTrous  + "&date=" + date, showGameList);
+}else{
 	var param = ("getGameList?user=" + userId + "&skip=" + skip + "&limit=" + limit + "&is18=" + nbrTrous  + "&date=" + date + "&tele=" + tel);
 	document.location.href = HOSTserv + param;
 	stopLoad();
@@ -346,7 +355,7 @@ if (confirm("Supprimer cette partie ?\n - Date: " + rChilds[0].innerHTML + " \n 
 
 function showDelRes(oRes){
 if (oRes.ok){
-	getGameList(false, 99)
+	getGameList(false, 99);
 }else{
 	alert(oRes);
 }
