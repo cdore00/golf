@@ -75,7 +75,7 @@ var divLoad = document.getElementById('divLoad');
 divLoad.style.display = "none";
 
 if (gameData.score_date != null){
-	tabTitle.innerHTML = getDateTime(gameData.score_date) + "&nbsp;-&nbsp;" +  clubName;
+	tabTitle.innerHTML = (gameData.score_date) + "&nbsp;-&nbsp;" +  clubName;
 }else{
 	tabTitle.innerHTML = getDateTime() + "&nbsp;-&nbsp;" +  clubName;
 	gameBut.style.visibility = "visible";
