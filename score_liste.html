@@ -318,9 +318,9 @@ if (divOptions.style.height != "0px" && divOptions.style.height != ""){
 	menuTxt.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;Options";
 }else{
 	var fur = navigator.userAgent;
-	var adj = menuTxt.offsetHeight * 2.1 ;
+	var adj = menuTxt.offsetHeight * 2.5 ;
 	if(fur.indexOf('Safari') == -1)
-		adj = (adj * .77);
+		adj = (adj * .7);
 	divOptions.style.height = adj + "px";
 	//divOptions.style.height = adj + "3em";
 	menuTxt.innerHTML = "&#10004;&nbsp;Options";
