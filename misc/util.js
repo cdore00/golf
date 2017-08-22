@@ -31,12 +31,21 @@ function getInfo(path, callback){
 var xhr=new XMLHttpRequest();
   xhr.onloadend = function() {
     var text = xhr.responseText;
+     	if (text == "")
+		affNoRep();  
 	var data=JSON.parse(text);
 	if (callback)
 		callback(data);
   };
 xhr.open("GET", HOSTserv + path ,true);
 xhr.send();
+
+	function affNoRep(){
+		var eBod = document.getElementsByTagName('body')[0];
+		var divErr = document.createElement("div");
+		divErr.innerHTML = "Pas de réponse";
+		eBod.insertBefore(divErr, eBod.firstChild);
+	}
 }
 
 function getURLdata(){
