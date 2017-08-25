@@ -82,6 +82,7 @@ var lastTime = 0;
 var trouCoord =  new Array();	
 var trouPar =  new Array();	
 var trouNormale = false;
+var aScore = [{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}];
 
 google.maps.visualRefresh = true;
 
@@ -481,18 +482,35 @@ once = 1;
 
 function showScoreFrame(strParc){
 var layerScore = document.getElementById('showScore');
-//var setScore = document.getElementById('setScore');
 var scoreHole = document.getElementById('scoreHole');
 
 scoreHole.innerHTML = "Trou " + trou + " par " + eval("trouNormale.T" + trou);
 
-getInfo("getGame?data=" + userId + "$" + courseID, setHoleScore);
+//getInfo("getGam?data=" + userId + "$" + courseID, setHoleScore);
+setHoleScore();
 
 layerScore.style.visibility="visible";
 	
 }
 
 function setHoleScore(gData){
+var setScore = document.getElementById('setScore');
+
+
+var vc = aScore[trou-1].T;
+var vp = aScore[trou-1].P;
+var vl = aScore[trou-1].L;
+setScore.nbrCoups.selectedIndex = (vc - 1);
+setScore.nbrPutts.selectedIndex = (vp );
+setScore.nbrPen.selectedIndex = (vl );
+
+
+setScore.nbrCoups.click();
+	setScore.nbrCoups.focus();
+
+}
+
+/*function setHoleScore(gData){
 var setScore = document.getElementById('setScore');
 
 var vc = eval("gData[0].T" + trou);
@@ -504,11 +522,8 @@ setScore.nbrPutts.selectedIndex = (vp );
 setScore.nbrPen.selectedIndex = (vl );
 setScore.nbrCoups.click();
 	setScore.nbrCoups.focus();
-	
-	
-//getInfo("getGame?data=" + userId + "$" + courseID);
 
-}
+}*/
 
 function closeScore(){
 var layerScore = document.getElementById('showScore');
@@ -529,9 +544,9 @@ getInfo("updateGame?data=" + strData, setMyScore);
 closeScore();
 }
 
-function callMyScore(){  // non utilisé
+/*function callMyScore(){  // non utilisé
 	getInfo("getGame?data=" + userId + "$" + courseID, setMyScore);
-}
+}*/
 
 function setMyScore(gData){
 var myScore = document.getElementById('myScore');
@@ -546,6 +561,9 @@ for (var i= 1; i < 19 ; i++){
 	if (ts > 0){
 		tot += ts;
 		laN += eval("trouNormale.T" + i);
+		aScore[i-1].T=ts;
+		aScore[i-1].P=eval("gData[0].P" + i);
+		aScore[i-1].L=eval("gData[0].L" + i);
 	}
 }
 score = tot - laN;
@@ -680,8 +698,10 @@ for (var i= 10; i < nt ; i++){
 
 var noB = 0;
 for (var i= 0; i < bloc.length; i++){
-	if (!trouNormale && bloc[i].Bloc == "Normale")
+	if (!trouNormale && bloc[i].Bloc == "Normale"){
 		trouNormale = bloc[i];
+		getInfo("getGame?data=" + userId + "$" + courseID, setMyScore);
+		}
 	if (bloc[i].Bloc != "Normale" && bloc[i].Bloc != "Hdcp" && bloc[i].Bloc !=  "" ){
 		trouPar[noB] = arrB(bloc[i], nt);
 		var divElem = document.createElement("div");
