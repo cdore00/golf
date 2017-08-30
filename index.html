@@ -32,9 +32,12 @@ var locTimer;
 var resultLocalisation = 1000;
 var affL, LocT;
 var tryLog = 0;
-//var HOSTserv = "http://127.0.0.1:3000/";
+var HOSTserv = "http://127.0.0.1:3000/";
+// "http://192.168.2.188:8080/";
 // "http://127.0.0.1:3000/";
 // "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
+// "http://192.168.20.130:8080/";
+// "http://192.168.20.130:32768/";
 
 // the locColl object
 var locColl = {
@@ -817,7 +820,7 @@ geocoder = new google.maps.Geocoder();
 			    <div id="divReg"><label for="IdRegion">R&eacute;gion </label></div>
 			    <div id="inputselectreg">
 			    <SELECT id="IdRegion" class="inputselect" name="IdRegion">
-					<OPTION value="0">Toutes les r&eacute;gions</OPTION>
+					<OPTION value="0">Toutes</OPTION>
 
 			      </SELECT></div></div>
 

@@ -139,13 +139,29 @@ if (clubPos)
 
 // -->
 </script>
+
+<style>
+/*
+.loading, .loading::before, .loading::after {
+		width: 9px;
+		height: 9px;
+}
+
+.charge{
+display: inline-block;
+margin: 0;
+margin-left: 1em;
+}
+*/
+</style>
+
 </head>
 
 <body onload="initPage();"><a name="haut"></a>
 
 <div id="topbar" class="vert">
 <div id="leftnav"><a title="Formulaire de recherche" href="index.html"><img alt="Formulaire de recherche" height="22" width="25" src="images/home22.png" /></a></div>
-<div id="chargement" class="textBlink">Chargement...</div>
+<div id="chargement" class=""><div class="charge">Recherche</div><div class="charge loading"></div></div>
 <button type="button" id="rightnav" title="Taille de police" onclick="changeTaille();"><img id="imgTaille" alt="Taille de police" height="20" width="45" src="images/taille.png" /></button>
 </div><div id="duobutton"><a id="pressed" href="#">Liste</a>
 
