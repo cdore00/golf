@@ -38,6 +38,7 @@ font-size: 16pt;
 color: white !important;
 }
 
+
 @-webkit-keyframes blinker {
   from {opacity: 1.0;}
   to {opacity: 0.0;}
@@ -453,6 +454,8 @@ width:40px;
 margin-top:14%;
 }
 
+
+
 	@-webkit-keyframes color {
 		0%, 100% { background: hsla(120,95%,65%,0.5); }
 			 50% { background: hsla(120,95%,35%,0.5); }
@@ -463,14 +466,14 @@ margin-top:14%;
 	}
 	
 	.loading {
-		margin: 130px auto 0;
+		margin: 1em;
 		position: relative;
 		-webkit-animation-delay: .4s;
 		-moz-animation-delay: .4s;
 	}
 	.loading, .loading::before, .loading::after {
-		width: 30px;
-		height: 30px;
+		width: 9px;
+		height: 9px;
 		border-radius: 50%;
 		background: hsla(120,95%,65%,0.5);
 		-webkit-animation: color .5s infinite;
@@ -493,6 +496,12 @@ margin-top:14%;
 	
 #divLoading{
 
+}
+
+.charge{
+display: inline-block;
+margin: 0;
+margin-left: 1em;
 }
 
 #holePos{
