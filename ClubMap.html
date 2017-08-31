@@ -73,6 +73,9 @@ if (showLatLng){
 }
 
 function showHole(){
+if (GetCookie("userRole") == "MEM")
+	return false;
+
 var navTrou = document.getElementById("navTrou");
 navTrou.style.visibility = "visible";
 var setFlag = document.getElementById("setFlag");
@@ -84,7 +87,7 @@ if (eval(holeMarker) == null){
 	}
 //	alert("Set");
 setFlag.disabled = false;
-	setFlag.style.display = 'inherit';
+setFlag.style.display = 'inherit';
 }
 
 function setFlagCoord(butObj){
@@ -118,6 +121,10 @@ afficheTrou(trou);
 }
 
 function initPage(resp){
+var butMenu = document.getElementById("butMenu");
+if ( GetCookie("userRole") != "MEM")
+	butMenu.style.visibility = "visible";
+
 setFontSize();
 userId = GetCookie("userID");
 var data = getURLdata();
@@ -164,11 +171,19 @@ if (isMapped){
 
 <style>
 
+
+#duobutton a:first-child {width:0px}
+#butMenu {
+float: left;
+visibility: hidden;
+}
+
 #setFlag{
-/*background-color:#ccc;*/
 display:none;
 opacity:1.0 !important;
 }
+
+.bouton {min-width: 40px;}
 
 #navTrou, #hole, .bouton-prec-suiv{
 display:inline;
@@ -178,7 +193,6 @@ display:inline;
 font-size:1em;
 width:25px !important;
 color:#000 !important;
-
 }
 
 .bouton-prec-suiv{
@@ -197,7 +211,8 @@ min-width:40px
 <body onload="initPage()"> 
   
 <div id="duobutton">
-<a href="#" id="holePos" onclick="showHole();" ></a>
+<a href="#" id="butMenu" title="Menu" onclick="showHole();"><img id="logomenu" alt="Menu" src="images/menu.png" width="64" height="32"></a>
+<!--<a href="#" id="holePos" onclick="showHole();" ></a>// -->
 <a href="#"  onclick="window.close(); return false;">Fermer</a>
 
 <!--

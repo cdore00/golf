@@ -32,7 +32,7 @@ var locTimer;
 var resultLocalisation = 1000;
 var affL, LocT;
 var tryLog = 0;
-var HOSTserv = "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
+//var HOSTserv = "http://127.0.0.1:3000/";
 // "http://192.168.2.188:8080/";
 // "http://127.0.0.1:3000/";
 // "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
@@ -307,6 +307,7 @@ if (rep.resp.result){
 	SetCook("userID",rep.resp.user._id + "");
 	SetCook("userName",rep.resp.user.Nom);
 	SetCook("userMail",rep.resp.user.courriel);
+	SetCook("userRole",rep.resp.user.niveau);
 	userId = rep.resp.user._id;
 	userName = rep.resp.user.Nom;
 }else{
@@ -750,7 +751,7 @@ if (formCrit.Mots.value != ""){
 		if (formCrit.kiloM.value != 0){
 			if (formCrit.codePostal.value != ""){
 				  localStorage.setItem('cpContext', formCrit.codePostal.value);
-				  localStorage.setItem('message', "&nbsp;clubs&nbsp;&#224; moins de " + formCrit.kiloM.value + "&nbsp;kilom&#232;tres du code postal &#171;" + formCrit.codePostal.value + "&nbsp;&#187;.");
+				  localStorage.setItem('message', "&nbsp;clubs&nbsp;&#224; moins de " + formCrit.kiloM.value + "&nbsp;kilom&#232;tres du code postal &#171;&nbsp;" + formCrit.codePostal.value + "&nbsp;&#187;.");
 				codeAddress(formCrit.codePostal.value , formCrit.kiloM.value * 1000 * 1.05, URLresult );
 				return false;
 			}else{
