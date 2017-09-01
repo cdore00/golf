@@ -31,9 +31,7 @@ text-align:center!important}
 img{border:0}
 
 #chargement{
-display: înline;
-width: 90%;
-margin-left: 5%;
+display: inline-block;
 font-size: 16pt;
 color: white !important;
 }
