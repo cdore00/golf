@@ -1,6 +1,8 @@
 <!--
 
-var HOSTserv = "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
+var HOSTserv = "http://127.0.0.1:3000/";
+// "http://127.0.0.1:3000/";
+// "http://192.168.2.188:8080/";
 //"http://127.0.0.1:3000/";
 //"https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
 
@@ -31,8 +33,8 @@ function getInfo(path, callback){
 var xhr=new XMLHttpRequest();
   xhr.onloadend = function() {
     var text = xhr.responseText;
-     	if (text == "")
-		affNoRep();  
+	if (text == "")
+		affNoRep();
 	var data=JSON.parse(text);
 	if (callback)
 		callback(data);
@@ -105,7 +107,8 @@ function SetCook(name,value){
 //alert(name + "="+ value + "; expires=" + exp.toGMTString())
 }
 
-function setFontSize2(sizeAD){
+
+function setFontSize(sizeAD){
 var fs = document.body.style.fontSize;
 
 if (sizeAD){
@@ -126,60 +129,6 @@ if (sizeAD){
 
 }
 
-var polSize;
-
-function setFontSize(policeSize){
-var bodyobj = document.getElementsByTagName('body')[0];
-var pSize;
-
-if (policeSize)
-	pSize = arrPol[policeSize].em;
-else{
-	try {
-		polSize = eval(GetCookie("PolSize"));
-	} catch (e) {
-		polSize = 1;
-	}
-}
-	
-if (polSize == null || polSize == 0 )
-	polSize = 1;
-
-if (pSize == null)
-	pSize = arrPol[polSize].em;
-
-bodyobj.style.fontSize = pSize;
-setImgTaille(polSize);
-//alert(bodyobj.style.fontSize + "Ok");
-}
-
-function changeTaille(){
-var bodyobj = document.getElementsByTagName('body')[0];
-var policeSize;
-
-//alert(bodyobj.style.fontSize + "polSize=" + polSize);
-
-if (polSize == 3 ){
-	polSize = 1;
-	}else{
-		if (polSize == 1)
-			polSize = 2;
-		else{
-			if (polSize == 2)
-				polSize = 3;
-			}
-		}
-setFontSize(polSize);
-SetCook("PolSize",polSize);
-}
-
-function setImgTaille(policeSize){
-var imgT = document.getElementById('imgTaille');
-
-	if (imgT){
-		imgT.src = arrPol[policeSize].im.src;
-	}
-}
 
 function adjustScreen(hauteurUtil){
 	var divMap, dispH, pxRatio
