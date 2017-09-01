@@ -105,6 +105,27 @@ function SetCook(name,value){
 //alert(name + "="+ value + "; expires=" + exp.toGMTString())
 }
 
+function setFontSize2(sizeAD){
+var fs = document.body.style.fontSize;
+
+if (sizeAD){
+	fs = eval(fs.replace("em", "")) + sizeAD; 
+	if (fs >= 2 || fs <= 0.5)
+		fs = 1;
+	document.body.style.fontSize = fs + "em";
+	SetCook( "_fontSize", fs + "em");
+}else{
+	if (localStorage)
+		fs = GetCookie( "_fontSize");
+	if (!fs || fs == "")
+		fs = document.body.style.fontSize;
+	if (fs == "")
+		fs = "1em";
+	document.body.style.fontSize = fs;
+}
+
+}
+
 var polSize;
 
 function setFontSize(policeSize){
