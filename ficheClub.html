@@ -151,7 +151,10 @@ for (var p = 0; p < clubCourse.length; p++) {
 	var parcoursName = "";
 	if (clubCourse[p].POINTS == "E")
 		htmlCode += "Ex&eacute;cutif,&nbsp;";
-	htmlCode += clubCourse[p].PARCOURS + "&nbsp;" + clubCourse[p].TROUS + "&nbsp;trous";
+	if (clubCourse[p].PARCOURS != null && clubCourse[p].PARCOURS != "")
+		htmlCode += clubCourse[p].PARCOURS + "&nbsp;" 
+	
+		htmlCode += clubCourse[p].TROUS + "&nbsp;trous";
 	if (clubCourse[p].DEPUIS)	
 		htmlCode += "&nbsp;depuis&nbsp;" + clubCourse[p].DEPUIS ;
 	htmlCode +=  ",&nbsp;&#224; normale&nbsp;" + clubCourse[p].NORMALE + "&nbsp;de&nbsp;" + clubCourse[p].VERGES + "&nbsp;verges&nbsp;&nbsp;";
