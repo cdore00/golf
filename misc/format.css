@@ -125,6 +125,35 @@ letter-spacing: -0.1em;
 	margin-right: .1em;
 }
 
+#menuList, #submenu1{
+position: absolute;
+background: #eee;
+overflow: hidden;
+height: 0px;
+transition: height 0.4s ease-in-out;
+z-index: 1000;
+}
+
+#submenu1{
+display: none;
+height: auto;
+}
+
+#menuList td, #submenu1 td{
+border: buttonhighlight 2px inset;
+background: #eee;
+cursor: pointer;
+text-align: left;
+padding: 5px;
+padding-left: 10px;
+width: auto;
+}
+
+#menuList td:hover, #submenu1 td:hover{
+background: #999 ;
+cursor: pointer;
+}
+
 .divFont{
 /*border: 1px solid blue;*/
 display: inline-block;

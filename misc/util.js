@@ -1,6 +1,6 @@
 <!--
 
-var HOSTserv = "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
+var HOSTserv = "http://127.0.0.1:3000/";
 // "http://127.0.0.1:3000/";
 // "http://192.168.2.188:8080/";
 //"http://127.0.0.1:3000/";
@@ -127,6 +127,41 @@ if (sizeAD){
 	document.body.style.fontSize = fs;
 }
 
+}
+
+
+//The fadeOut function uses a Timeout to call itself every 100ms with an object Id and an opacity. The opacity is specified as a percentage and decreased 10% at a time. The loop stops once the opacity reaches 100%:
+
+function fadeOut(objId,opacity) {
+  if (document.getElementById) {
+    obj = document.getElementById(objId);
+    if (opacity >= 0) {
+      setOpacity(obj, opacity);
+      opacity -= 10;
+      window.setTimeout("fadeOut('"+objId+"',"+opacity+")", 100);
+	} else {
+	obj.style.visibility = 'hidden';
+	setOpacity(obj, 100);
+    }
+  }
+}
+
+//The setOpacity function is passed an object and an opacity value. It then sets the opacity of the supplied object using four proprietary ways. It also prevents a flicker in Firefox caused when opacity is set to 100%, by setting the value to 99.999% instead.
+
+function setOpacity(obj, opacity) {
+  opacity = (opacity == 0)?0.009:opacity;
+  
+  // IE/Win
+  obj.style.filter = "alpha(opacity:"+opacity+")";
+  
+  // Safari<1.2, Konqueror
+  obj.style.KHTMLOpacity = opacity/100;
+  
+  // Older Mozilla and Firefox
+  obj.style.MozOpacity = opacity/100;
+  
+  // Safari 1.2, newer Firefox and Mozilla, CSS3
+  obj.style.opacity = opacity/100;
 }
 
 
