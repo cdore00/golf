@@ -91,7 +91,7 @@ progress::-webkit-progress-bar { background: #fff; }
 #duobutton a:last-child{width:110px}*/
 #triButton a:first-child, #triButton a:last-child{width:110px}
 #duobutton a{min-width:90px}
-#duobutton{/*font-size: 0;*/width:100%;overflow:hidden;height:32px;
+#duobutton{/*font-size: 0;*/width:100%;overflow:hidden;min-height: 32px;height:32px;
 filter:progid:DXImageTransform.Microsoft.gradient(startcolorstr='#d9d9d9',endcolorstr='#666666');
 background: -ms-linear-gradient(top, #4f4f4f 0%, #888888 100%);
 background:-webkit-gradient(linear,0% 0,0% 100%,from(#d9d9d9),color-stop(3%,#d9d9d9),color-stop(97%,#666),to(#666));
