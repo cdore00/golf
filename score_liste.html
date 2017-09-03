@@ -24,37 +24,12 @@ overflow: hidden;
 transition: height 0.4s ease-in-out;
 }
 
-#menuList, #submenu1{
-position: absolute;
-background: #eee;
-overflow: hidden;
-height: 0px;
-transition: height 0.4s ease-in-out;
-}
 
-#submenu1{
-display: none;
-height: auto;
-}
-
-#menuList td, #submenu1 td{
-border: buttonhighlight 2px inset;
-background: #eee;
-cursor: pointer;
-text-align: left;
-padding: 5px;
-padding-left: 10px;
-width: auto;
-}
-
-#menuList td:hover, #submenu1 td:hover{
-background: #999 ;
-cursor: pointer;
-}
 
 #butMenu{
 visibility: visible;
 }
+
 .tdEdit{
 display: none;
 
@@ -193,17 +168,6 @@ if (option > 0){
 }
 }
 
-function closeMenu(){
-if (menuOn){
-	var menuList = document.getElementById('menuList');
-	var submenu = document.getElementById('submenu1');
-
-	submenu.style.display = "none";
-	menuList.style.height = "0px";
-	menuOn = false;
-}
-}
-
 function showGameList(scoreData){
 var gameList = document.getElementById('gameList');
 
@@ -306,6 +270,17 @@ submenu.style.display = state;
 
 }
 
+function closeMenu(){
+if (menuOn){
+	var menuList = document.getElementById('menuList');
+	var submenu = document.getElementById('submenu1');
+
+	submenu.style.display = "none";
+	menuList.style.height = "0px";
+	menuOn = false;
+}
+}
+
 function showOptions(menuTxt){
 var divOptions = document.getElementById('divOptions');
 
@@ -323,10 +298,6 @@ if (divOptions.style.height != "0px" && divOptions.style.height != ""){
 	}
 }
 
-function changeTailleP(){
-closeMenu();
-changeTaille();
-}
 
 function editGame(menuTxt){
 				

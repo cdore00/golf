@@ -26,6 +26,7 @@ var map;
 var holeMarker = null;
 var trou = 1;
 var showLatLng = false;
+var affCenter = false;
 var trouCoord =  new Array();
 var nbrTrous, clubID, courseID, clubName, isMapped;
 
@@ -55,6 +56,8 @@ var holePlay = document.getElementById("hole");
 
 holeMarker.setPosition(trouCoord[noTrou-1]);
 holePlay.innerHTML = noTrou;
+if (affCenter)
+	map.setCenter(trouCoord[noTrou-1]);
 }
 
 function playGolf(){
@@ -62,37 +65,47 @@ var strTrou = document.getElementById("hole");
 document.location = "golfGPS.html?data=" + courseID + "&" + clubName;
 }
 
-function holePosChange(){
-
-if (showLatLng){
-	var divHolePos = document.getElementById("holePos");
-	var flagLatLng = holeMarker.getPosition();
-	divHolePos.innerHTML = flagLatLng.toString();
-	}
-//alert((flagLatLng.toString()));
-}
-
-function showHole(){
+function showHole(menuTxt){
+var setFlag = document.getElementById("setFlag");
 if (GetCookie("userRole") == "MEM")
 	return false;
 
-var navTrou = document.getElementById("navTrou");
-navTrou.style.visibility = "visible";
-var setFlag = document.getElementById("setFlag");
-showLatLng = true;
-if (eval(holeMarker) == null){
-	var holePos = new google.maps.LatLng(intLat,intLng);
-	setHole(map, holePos);
-	holePosChange();
-	}
-//	alert("Set");
-setFlag.disabled = false;
-setFlag.style.display = 'inherit';
+if (!showLatLng){
+	showLatLng = true;
+	if (eval(holeMarker) == null){
+		var holePos = new google.maps.LatLng(intLat,intLng);
+		setHole(map, holePos);
+		}
+	//	alert("Set");
+	setFlag.disabled = false;
+	setFlag.style.display = 'inherit';
+	menuTxt.innerHTML = "&#10004;&nbsp;&Eacute;diter";
+}else{
+	showLatLng = false;
+	setFlag.style.display = 'none';
+	menuTxt.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&Eacute;diter";
+}
+
+closeMenu();
+}
+
+function showCenter(menuTxt){
+if (affCenter){
+	menuTxt.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;Centrer";
+	affCenter = false;
+}else{
+	menuTxt.innerHTML = "&#10004;&nbsp;Centrer";
+	affCenter = true;
+}
+closeMenu();
 }
 
 function setFlagCoord(butObj){
 var flagLatLng = holeMarker.getPosition();
+var divCoor = document.getElementById("divCoor");
 
+divCoor.innerHTML = "&nbsp;<b>Lat.: </b>" + flagLatLng.lat() + "&nbsp;</br>&nbsp;<b>Long.: </b>" + flagLatLng.lng();
+divCoor.style.visibility = 'visible';
 if (isMapped){
 	var data = courseID + "$" + trou + "$" + flagLatLng.lat() + "$" + flagLatLng.lng() + "$0$0";
 	trouCoord[trou - 1] = new google.maps.LatLng(flagLatLng.lat(), flagLatLng.lng());
@@ -102,7 +115,7 @@ if (isMapped){
 	var data = courseID + "$" + trou + "$" + flagLatLng.lat() + "$" + flagLatLng.lng() + "$" + nbrTrous + "$" + clubID;
 	getInfo("setGolfGPS?data=" + data, initPage);
 }
-
+fadeOut("divCoor",100);
 //alert(trou + ' Lat: ' + flagLatLng.lat() + ' Lng: ' + flagLatLng.lng());
 }
 
@@ -162,7 +175,23 @@ if (isMapped){
 	setHole(map, trouCoord[0]);
 	navTrou.style.visibility = "visible";
 }
+}
 
+function showMenu(){
+var menuList = document.getElementById('menuList');
+
+if (menuList.style.height != "0px" && menuList.style.height != ""){
+	menuList.style.height = "0px";
+}else{
+	var adj = menuList.childNodes[1].offsetHeight;
+	menuList.style.height = (adj * .75) + "pt";
+	}
+//menuOn = true;
+}
+
+function closeMenu(){
+	var menuList = document.getElementById('menuList');
+	menuList.style.height = "0px";
 }
 
 	// -->
@@ -199,13 +228,23 @@ min-width:30px
 
 #map_canvas{width:100%; height:100%;}
 
+#divCoor{
+position: absolute;
+top: 35px;
+left: 50%;
+background:white;
+visibility:hidden;
+border: buttonhighlight 4px inset;
+border-radius: 10px;
+}
+
 </style>
 
 </head>
 <body onload="initPage()"> 
   
 <div id="duobutton">
-<a href="#" id="butMenu" title="Menu" onclick="showHole();"><img id="logomenu" alt="Menu" src="images/menu.png" width="64" height="32"></a>
+<a href="#" id="butMenu" title="Menu" onclick="showMenu();"><img id="logomenu" alt="Menu" src="images/menu.png" width="64" height="32"></a>
 <a href="#"  onclick="window.close(); return false;">Fermer</a>
 
 	<div id="navTrou">
@@ -217,6 +256,14 @@ min-width:30px
 
 </div>
 
+<div id="menuList">
+<table><tbody>
+<tr><td onclick="showHole(this);" title="&Eacute;diter la position des drapeaux.">&nbsp;&nbsp;&nbsp;&nbsp;&Eacute;diter</td></tr>
+<tr><td onclick="showCenter(this);" title="Centrage sur changement de drapeau.">&nbsp;&nbsp;&nbsp;&nbsp;Centrer</td></tr>
+</tbody></table>
+</div>
+
+
 <div id="map_canvas" ></div> 
 	
 <div id="mapZoom">
@@ -225,6 +272,7 @@ min-width:30px
 <!--<button id="setFlag2" class="boutonZoom" title="Soumettre" onclick="setFlagCoord(this); return false;">Ok</button>// -->
 </div>
 
+<div id="divCoor"></div>
 
 
   </body> 

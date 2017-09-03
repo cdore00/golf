@@ -330,7 +330,7 @@ if (intLat == 'undefined' || !intLat){
 }
 
 function calculDistance(lat1, lat2, lon1, lon2){
-var R = 6378000; // Rayon moyen en mètre
+var R = 6378000; // Rayon moyen en mÃ¨tre
 var rLat1 = lat1 * (Math.PI / 180);
 var rLat2 = lat2 * (Math.PI / 180);
 var dLat = (lat2-lat1) * (Math.PI / 180);
@@ -344,6 +344,7 @@ var d = R * a ;
 return Math.round(d);
 }
 
+
 // -->  
 </script> 
   </head>
@@ -352,10 +353,7 @@ return Math.round(d);
 <div id="topbar" class="vert">
 <div id="leftnav"><a title="Formulaire de recherche" href="index.html"><img alt="Formulaire de recherche" height="22" width="25" src="images/home22.png" /></a></div>
 <div id="chargement" class=""><div class="charge">Chargement</div><div class="charge loading"></div></div>
-<div id="fontAdjust">
-<div class="divFont" onclick="setFontSize(0.2)"><div class="divFontSize">A</div><div class="fontLogo">&#8593;</div></div>
-<div class="divFont" onclick="setFontSize(-0.2)"><div class="divFontSize fontSmall">A</div><div class="fontLogo">&#8595;</div></div>
-</div>
+;
 </div>
 
 <div id="duobutton"><a href="listeResult.html">Liste</a><a id="pressed" href="#">Carte</a></div>
