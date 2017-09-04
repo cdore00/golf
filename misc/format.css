@@ -224,7 +224,7 @@ font-weight:bold;position:relative;width:98%;display:block;padding:8px 0px 0px 5
 .mlinediv{display: inline-block;}
 .olinediv{float: left;
 }
-#locDiv{font-size:0.8em;position:relative;float:left; border: 2px solid #999;height:1.4em;width:7.5em;border-radius:10px;
+#locDiv{font-size:0.8em;position:relative;float:left; border: 2px solid #999;height:1.4em;width:8em;padding: 2px;border-radius:10px;
 box-shadow: 1px 1px 1px #ccccdd, 3px 3px 3px #aaaaaa inset;
    -o-box-shadow: 1px 1px 1px rgba(200,0,0,0.5),
    inset 3px 3px 3px rgba(255,255,255,0.75);
