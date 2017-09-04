@@ -557,40 +557,6 @@ function fadeOutTolltip(tooltipID) {
   fadeOut(tooltipID,100);
 }
 
-//The setOpacity function is passed an object and an opacity value. It then sets the opacity of the supplied object using four proprietary ways. It also prevents a flicker in Firefox caused when opacity is set to 100%, by setting the value to 99.999% instead.
-
-function setOpacity(obj, opacity) {
-  opacity = (opacity == 0)?0.009:opacity;
-  
-  // IE/Win
-  obj.style.filter = "alpha(opacity:"+opacity+")";
-  
-  // Safari<1.2, Konqueror
-  obj.style.KHTMLOpacity = opacity/100;
-  
-  // Older Mozilla and Firefox
-  obj.style.MozOpacity = opacity/100;
-  
-  // Safari 1.2, newer Firefox and Mozilla, CSS3
-  obj.style.opacity = opacity/100;
-}
-
-//The fadeOut function uses a Timeout to call itself every 100ms with an object Id and an opacity. The opacity is specified as a percentage and increased 10% at a time. The loop stops once the opacity reaches 100%:
-
-function fadeOut(objId,opacity) {
-  if (document.getElementById) {
-    obj = document.getElementById(objId);
-    if (opacity >= 0) {
-      setOpacity(obj, opacity);
-      opacity -= 10;
-      window.setTimeout("fadeOut('"+objId+"',"+opacity+")", 100);
-	} else {
-	obj.style.visibility = 'hidden';
-	setOpacity(obj, 100);
-    }
-  }
-}
-
 
 function writeAddress(adr, cit, cp){
 var strAddress = adr + "," + cit + ", " + cp;
@@ -787,6 +753,10 @@ geocoder = new google.maps.Geocoder();
 // -->
 </script>
 
+<style>
+
+</style>
+
 </head>
 
 <body onload="initPage()">
@@ -798,9 +768,14 @@ geocoder = new google.maps.Geocoder();
 </script>
 
 <div id="topbar" class="vert">
-<div id="logoHome"><img alt="home" width="25" height="25" src="images/golf.png" /></div>
+
+<div id="logoHome"><a title="Réinitialiser la recherche" href="index.html?data=clear"><img alt="home" src="images/golf.png" width="25" height="25"></a></div>
 <div id="titre">Golfs du Qu&eacute;bec</div>
-<div id="rightnav"> <a title="R&eacute;initialiser la recherche" href="index.html?data=clear"><img alt="home" height="25" width="25" src="images/home25.png" /></a> </div>
+<!--<div id="rightnav"> <a title="R&eacute;initialiser la recherche" href="index.html?data=clear"><img alt="home" height="25" width="25" src="images/home25.png" /></a> </div>// -->
+<div id="fontAdjust">
+<div class="divFont" onclick="setFontSize(0.2)"><div class="divFontSize">A</div><div class="fontLogo">&#8593;</div></div>
+<div class="divFont" onclick="setFontSize(-0.2)"><div class="divFontSize fontSmall">A</div><div class="fontLogo">&#8595;</div></div>
+</div>
 </div>
 
 <form id="critere" name="critere" action="javascript:void(0);">
@@ -813,23 +788,31 @@ geocoder = new google.maps.Geocoder();
 		<ul class="pageitem">
 		<div id="formFields">
 			  <div class="formrow1" >
-				<div id="formradio" class="divChxChamp"><input id="checkNom" type="checkbox" checked value="Nom"><label for="checkNom">&nbsp;Nom du club</label>&nbsp;&nbsp;<input id="checkVille" type="checkbox" checked value="Ville"><label for="checkVille">&nbsp;Ville</label></div>
-			    <div id="divMot"><label for="Mots">Mot cl&eacute; </label></div>
-			    <div id="inputtextmot"><input id="Mots" class="inputtext" name="Mots" type="text" size="17" maxlength="50" value=""/></div>
+			  <div id="divMot"><label for="Mots">Mot cl&eacute; </label></div>
+			  <div class="mlinediv">
+				<div class="divChxChamp"><input id="checkNom" type="checkbox" checked value="Nom"><label for="checkNom">&nbsp;Nom du club</label>&nbsp;&nbsp;<input id="checkVille" type="checkbox" checked value="Ville"><label for="checkVille">&nbsp;Ville</label></div>
+			    
+			    <div id="inputtextmot"><input id="Mots" class="inputtext" name="Mots" type="text" size="15" maxlength="50" value=""/></div>
 			  </div>
+			  </div>
+			  
 			  <div class="formrow1">
 			    <div id="divReg"><label for="IdRegion">R&eacute;gion </label></div>
 			    <div id="inputselectreg">
 			    <SELECT id="IdRegion" class="inputselect" name="IdRegion">
 					<OPTION value="0">Toutes</OPTION>
 
-			      </SELECT></div></div>
+			      </SELECT></div>
+			  </div>
 
 			  <div class="formrow1">
-			  <div id="formradio" class="divChxChamp">&nbsp;&nbsp;<label for="codePostal">Code postal</label></div>
-			    <div id="divCod"><label for="kiloM">Proximit&eacute;</label></div>
+				<div id="divCod"><label for="kiloM">Proximit&eacute;</label></div>
+				<div class="mlinediv">
+				  <div class="divChxChamp"><label for="codePostal">Code postal</label></div>
+			    <div class="olinediv">
 			    <div id="inputtextcod">
-			    <input id="codePostal" class="inputtext" name="codePostal" type="text" size="8" maxlength="7" value=""/>
+			    <input id="codePostal" class="inputtext" name="codePostal" type="text" size="6" maxlength="7" value=""/>
+				</div>
 				</div>
 			    <div id="inputselectdis">
 				<SELECT id="kiloM" class="inputselect" name="KiloM">
@@ -837,9 +820,11 @@ geocoder = new google.maps.Geocoder();
 			        <OPTION value="10" selected>10 km</OPTION>
 			        <OPTION value="25">25 km</OPTION>
 			        <OPTION value="50">50 km</OPTION>
-			        <OPTION value="100">100 km</OPTION>
+			        <OPTION value="100">99 km</OPTION>
 			        </SELECT>
 				</div>
+				</div>
+				
 			</div>
 		</div>
 		    <div class="formrow1">
