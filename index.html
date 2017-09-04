@@ -494,7 +494,8 @@ var tooltip = {
 }
 
 tooltip.show = function () {
-	var htmlelement = document.getElementById('localisation');
+	var htmlelement = document.getElementById('iciLogo');
+	var tooltipFleche = document.getElementById('tooltipFleche');
 	
 	if(document.getElementById){
         this._tooltipElement = document.getElementById(this.id);
@@ -503,6 +504,7 @@ tooltip.show = function () {
 	}
 
 	this.moveTo( this.offsetx , posY(htmlelement) + this.offsety);
+	tooltipFleche.style.left = (posX(htmlelement) - this.offsetx) + "px";
 
     if(this._tooltipElement.style){
         this._tooltipElement.style.visibility ="visible";
@@ -536,18 +538,7 @@ tooltip.moveTo = function (xL,yL) {
     }
 }
 
-function posY(htmlelement){
 
-var e = htmlelement; 
-var offset = {x:0,y:0}; 
-while (e) 
-{ 
-    offset.x += e.offsetLeft; 
-    offset.y += e.offsetTop; 
-    e = e.offsetParent; 
-} 
-return (offset.y);
-}
 
 function fadeOutTolltip(tooltipID) {
   //imageId = 'tooltip';
@@ -811,7 +802,7 @@ geocoder = new google.maps.Geocoder();
 				  <div class="divChxChamp"><label for="codePostal">Code postal</label></div>
 			    <div class="olinediv">
 			    <div id="inputtextcod">
-			    <input id="codePostal" class="inputtext" name="codePostal" type="text" size="7" maxlength="7" value=""/>
+			    <input id="codePostal" class="inputtext" name="codePostal" type="text" size="8" maxlength="7" value=""/>
 				</div>
 				</div>
 			    <div id="inputselectdis">
@@ -830,7 +821,7 @@ geocoder = new google.maps.Geocoder();
 		    <div class="formrow1">
 				<div id="locDiv">
 				<span id="localisation"  onmouseover="tooltip.show();" title="Localisation actuelle">
-					Localisation&nbsp;&nbsp;<img alt="localisation"  height="14" width="14" src="images/ici.png" />
+					Localisation&nbsp;&nbsp;<img id="iciLogo" alt="localisation"  height="14" width="14" src="images/ici.png" />
 				</span>
 				<span id="localiser">
 					<a id="hrefLocaliser" href="javascript:localiser();">Localiser &#63;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
