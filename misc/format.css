@@ -57,7 +57,7 @@ color: #efe !important;
 #map_canvas{width:100%; height:327px;}
 
 #titrePref{font-weight:bold;color:#228;}
-#titrePref,#titre{font-weight:bold;color:#ccf;padding-top:5px;display: inline-block;}
+#titrePref,#titre{font-size:24px;font-weight:bold;color:#ccf;padding-top:5px;display: inline-block;}
 #titrePref{color:#446;}
 
 
@@ -271,8 +271,8 @@ position: relative;
 	right:0px;
 }
 
-#copyright{font-size: 0.7em;position:relative;top:0px;text-align:center; font-weight:bold; width: 100%;font-variant: small-caps;}
-#copyright a{color: #444;text-decoration:none}
+#copyright{color:#ccf;font-size: 0.7em;position:relative;top:0px;text-align:center; font-weight:bold; width: 100%;font-variant: small-caps;}
+#copyright a{color:#ccf;text-decoration:none}
 
 #favIcon{
 position: relative;
