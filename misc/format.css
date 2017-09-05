@@ -224,6 +224,7 @@ background-color:#555;color:#fff;font-weight:bold}
 .mlinediv{display: inline-block;}
 .olinediv{float: left;}
 #inputselectreg{margin-top: 0.1em;}
+#inputselectdis{letter-spacing: -0.05em;}
 
 #locDiv{font-size:0.8em;position:relative;float:left; border: 2px solid #999;height:1.4em;width:8em;padding: 2px;border-radius:10px;
 box-shadow: 1px 1px 1px #ccccdd, 3px 3px 3px #aaaaaa inset;
