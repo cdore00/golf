@@ -1,6 +1,6 @@
 <!--
 
-var HOSTserv = "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
+var HOSTserv = "http://127.0.0.1:3000/";
 // "http://127.0.0.1:3000/";
 // "http://192.168.2.188:8080/";
 //"http://127.0.0.1:3000/";
@@ -108,28 +108,40 @@ function SetCook(name,value){
 }
 
 
-function setFontSize(sizeAD){
+function setFontSize(sizeAD, oIncDec){
 var fs = document.body.style.fontSize;
+var oCtls = document.getElementsByClassName('divFont');
 
+for (i = 0; i < oCtls.length; i++) {
+	oCtls[i].style.color = "#efe";
+}
 if (sizeAD){
 	fs = eval(fs.replace("em", "")) + sizeAD; 
-	if (fs >= 2.2)
-		fs = 2.2;
-	if (fs <= 0.8)
-		fs = 0.8;
+	if (sizeAD > 0){
+		if (fs >= 2.2){
+			fs = 2.2;
+			oIncDec.style.color = "#555";
+		}
+	}
+	if (sizeAD < 0){
+		if (fs <= 0.8){
+			fs = 0.8;
+			oIncDec.style.color = "#555";
+		}
+	}
 	document.body.style.fontSize = fs + "em";
 	SetCook( "_fontSize", fs + "em");
 }else{
-	if (localStorage)
-		fs = GetCookie( "_fontSize");
-	if (!fs || fs == "")
+	fs = GetCookie( "_fontSize");
+	if (!fs || fs == ""){
 		fs = document.body.style.fontSize;
-	if (fs == "")
-		fs = "1em";
+		if (fs == "")
+			fs = "1em";
+	}
 	document.body.style.fontSize = fs;
 }
-
 }
+
 
 
 //The fadeOut function uses a Timeout to call itself every 100ms with an object Id and an opacity. The opacity is specified as a percentage and decreased 10% at a time. The loop stops once the opacity reaches 100%:

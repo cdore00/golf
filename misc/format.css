@@ -158,6 +158,12 @@ cursor: pointer;
 .divFont{
 /*border: 1px solid blue;*/
 display: inline-block;
+-webkit-user-select: none;
+-khtml-user-select: none;
+-moz-user-select: none;
+-o-user-select: none;
+user-select: none;
+
 }
 
 .divFontSize {
@@ -271,7 +277,7 @@ position: relative;
 	right:0px;
 }
 
-#copyright{color:#ccf;font-size: 0.7em;position:relative;top:0px;text-align:center; font-weight:bold; width: 100%;font-variant: small-caps;}
+#copyright{color:#ccf;font-size: 0.8em;position:relative;top:0px;text-align:center; font-weight:bold; width: 100%;font-variant: small-caps;}
 #copyright a{color:#ccf;text-decoration:none}
 
 #favIcon{
