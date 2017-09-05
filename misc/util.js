@@ -1,6 +1,6 @@
 <!--
 
-var HOSTserv = "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
+var HOSTserv = "http://127.0.0.1:3000/";
 // "http://127.0.0.1:3000/";
 // "http://192.168.2.188:8080/";
 //"http://127.0.0.1:3000/";
@@ -113,8 +113,10 @@ var fs = document.body.style.fontSize;
 
 if (sizeAD){
 	fs = eval(fs.replace("em", "")) + sizeAD; 
-	if (fs >= 2 || fs <= 0.5)
-		fs = 1;
+	if (fs >= 2.2)
+		fs = 2.2;
+	if (fs <= 0.8)
+		fs = 0.8;
 	document.body.style.fontSize = fs + "em";
 	SetCook( "_fontSize", fs + "em");
 }else{
