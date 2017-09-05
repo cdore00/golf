@@ -221,8 +221,9 @@ background-color:#555;color:#fff;font-weight:bold}
 .inputtext {position:relative;display:inline;float:left;left:0px;right:0px;font-weight:bold;top:0px;text-align:left; height:25px}
 .inputselect {position:relative;display:inline-block;float:left;left:0px;right:0px;font-weight:bold;top:0px;text-align:left;}
 .mlinediv{display: inline-block;}
-.olinediv{float: left;
-}
+.olinediv{float: left;}
+#inputselectreg{margin-top: 0.1em;}
+
 #locDiv{font-size:0.8em;position:relative;float:left; border: 2px solid #999;height:1.4em;width:8em;padding: 2px;border-radius:10px;
 box-shadow: 1px 1px 1px #ccccdd, 3px 3px 3px #aaaaaa inset;
    -o-box-shadow: 1px 1px 1px rgba(200,0,0,0.5),
