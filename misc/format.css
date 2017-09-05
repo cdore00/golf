@@ -219,7 +219,8 @@ background-color:#555;color:#fff;font-weight:bold}
 #divMot, #divReg, #divCod {position:relative;float:left;clear:both;display:inline;min-width:120px;font-weight:bold;}
 .divChxChamp {position:relative;clear:both;width:100%;display:inline;float:left;right:0px;font-size:14px;font-weight:bold;background-color:white;}
 .inputtext {position:relative;display:inline;float:left;left:0px;right:0px;font-weight:bold;top:0px;text-align:left; height:25px}
-.inputselect {position:relative;display:inline-block;float:left;left:0px;right:0px;font-weight:bold;top:0px;text-align:left;width: 4.7em;}
+.inputselect {position:relative;display:inline-block;float:left;left:0px;right:0px;font-weight:bold;top:0px;text-align:left;}
+.inpSelSW{width: 4.7em;}
 .mlinediv{display: inline-block;}
 .olinediv{float: left;}
 #inputselectreg{margin-top: 0.1em;}
