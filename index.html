@@ -651,6 +651,8 @@ if (localStorage.getItem("regionIdContext"))
 	formCrit.IdRegion.selectedIndex = localStorage.getItem("regionIdContext");
 if (localStorage.getItem("cpContext"))
 	formCrit.codePostal.value = localStorage.getItem("cpContext");
+if (localStorage.getItem('cpDist'))
+	formCrit.kiloM.selectedIndex = localStorage.getItem('cpDist');
 }
 
 function clearContext(){
@@ -661,6 +663,7 @@ function clearContext(){
 	localStorage.removeItem('regionIdContext');
 	localStorage.removeItem('cpContext');
 	localStorage.removeItem('message');
+	localStorage.removeItem('cpDist');
 	//localStorage.removeItem('myPos');
 }
 
@@ -675,49 +678,55 @@ clearContext();
 
 if (formCrit.Mots.value != ""){
 	var mess = "&nbsp;clubs&nbsp;o&#249; &#171;" + formCrit.Mots.value + "&#187; est contenu dans le ";
-	URLresult += "1$";
 	if (formCrit.checkNom.checked){
-		URLresult += encodeURI(formCrit.Mots.value) + "$";
+		URLresult += "qn=";
+		URLresult += encodeURI(formCrit.Mots.value) + "&";
 		mess += " nom du club de golf";
 		if (formCrit.checkVille.checked)
 			mess += "&nbsp;ou le nom de la ville du club.";
 		else
 			mess += ".";
 	}else{
-		URLresult += "xxxxx$";
+		URLresult += "qn=xxxxx&";
 	}	
 	if (formCrit.checkVille.checked){
-		URLresult += encodeURI(formCrit.Mots.value);
+		URLresult += "qv=";
+		URLresult += encodeURI(formCrit.Mots.value)  + "&";
 		if (!formCrit.checkNom.checked)
 			mess += "&nbsp;le nom de la ville du club.";
 	}else{
-		URLresult += "xxxxx";
+		URLresult += "qv=xxxxx&";
 	}	
 	localStorage.setItem('motsCleContext', formCrit.Mots.value);
 	localStorage.setItem('message', mess);
-}else{
-	localStorage.removeItem('motsCleContext');
-	if (formCrit.IdRegion.value != 0){
-		localStorage.setItem('regionIdContext', formCrit.IdRegion.selectedIndex);
-		//localStorage.setItem('message', formCrit.IdRegion.selectedIndex);
-		localStorage.setItem('message', "&nbsp;clubs dans la r&eacute;gion &#171;" + formCrit.IdRegion.options[formCrit.IdRegion.selectedIndex].innerHTML + "&#187;.");
-		URLresult += "2$" + formCrit.IdRegion.value;
-	}else{
-		//localStorage.removeItem('regionContext');
-		localStorage.removeItem('regionIdContext');
-		if (formCrit.kiloM.value != 0){
-			if (formCrit.codePostal.value != ""){
-				  localStorage.setItem('cpContext', formCrit.codePostal.value);
-				  localStorage.setItem('message', "&nbsp;clubs&nbsp;&#224; moins de " + formCrit.kiloM.value + "&nbsp;kilom&#232;tres du code postal &#171;&nbsp;" + formCrit.codePostal.value + "&nbsp;&#187;.");
-				codeAddress(formCrit.codePostal.value , formCrit.kiloM.value * 1000 * 1.05, URLresult );
-				return false;
-			}else{
-				URLresult += "3$" + formCrit.longitude.value + "$" + formCrit.latitude.value + "$" + (formCrit.kiloM.value * 1000 * 1.05);
-				localStorage.setItem('message', "&nbsp;clubs&nbsp;&#224; moins de " + formCrit.kiloM.value + "&nbsp;kilom&#232;tres d'o&#249; vous &#234;tes.");
-			}
+}
+
+if (formCrit.IdRegion.value != 0){
+	URLresult += "qr=";
+	localStorage.setItem('regionIdContext', formCrit.IdRegion.selectedIndex);
+	//localStorage.setItem('message', formCrit.IdRegion.selectedIndex);
+	localStorage.setItem('message', "&nbsp;clubs dans la r&eacute;gion &#171;" + formCrit.IdRegion.options[formCrit.IdRegion.selectedIndex].innerHTML + "&#187;.");
+	URLresult += formCrit.IdRegion.value + "&";
+}
+	
+if (formCrit.codePostal.value != ""){
+	if (formCrit.Mots.value == "" && formCrit.IdRegion.value == 0 && formCrit.kiloM.value == 0){
+		formCrit.kiloM.selectedIndex = 3;
+	}
+	if (formCrit.kiloM.value != 0){
+		localStorage.setItem('cpDist', formCrit.kiloM.selectedIndex);
+		if (formCrit.codePostal.value != ""){
+			  localStorage.setItem('cpContext', formCrit.codePostal.value);
+			  localStorage.setItem('message', "&nbsp;clubs&nbsp;&#224; moins de " + formCrit.kiloM.value + "&nbsp;kilom&#232;tres du code postal &#171;&nbsp;" + formCrit.codePostal.value + "&nbsp;&#187;.");
+			codeAddress(formCrit.codePostal.value , (formCrit.kiloM.value * 1000) + 1000, URLresult );
+			return false;
+		}else{
+			URLresult += "qlt=" + formCrit.longitude.value + "&qln=" + formCrit.latitude.value + "&qd=" + (formCrit.kiloM.value * 1000 * 1.05) + "&";
+			localStorage.setItem('message', "&nbsp;clubs&nbsp;&#224; moins de " + formCrit.kiloM.value + "&nbsp;kilom&#232;tres d'o&#249; vous &#234;tes.");
 		}
 	}
 }
+URLresult = URLresult.substr(0,URLresult.length-1);
 document.location.href = URLresult;
 }
 
@@ -732,8 +741,9 @@ geocoder = new google.maps.Geocoder();
     if (status == google.maps.GeocoderStatus.OK) {
 	  var lng = results[0].geometry.location.lng();
 	  var lat = results[0].geometry.location.lat();
-	  URLresult += "3$" + lng + "$" + lat + "$" + distance;
+	  URLresult += "qlt=" + lng + "&qln=" + lat + "&qd=" + distance + "&";
 	  localStorage.setItem('myPos', lat + "," + lng + "," + Date.now());
+	  URLresult = URLresult.substr(0,URLresult.length-1);
 	  document.location.href = URLresult;
     } else {
       alert('Code postal non retrouv&eacute; : ' + status);
@@ -807,8 +817,9 @@ geocoder = new google.maps.Geocoder();
 				</div>
 			    <div id="inputselectdis">
 				<SELECT id="kiloM" class="inputselect inpSelSW" name="KiloM">
+					<OPTION value="0">? km</OPTION>
 			        <OPTION value="5">5 km</OPTION>
-			        <OPTION value="10" selected>10 km</OPTION>
+			        <OPTION value="10">10 km</OPTION>
 			        <OPTION value="25">25 km</OPTION>
 			        <OPTION value="50">50 km</OPTION>
 			        <OPTION value="100">100 km</OPTION>
