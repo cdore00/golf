@@ -714,16 +714,16 @@ if (formCrit.codePostal.value != ""){
 		localStorage.setItem('cpDist', formCrit.kiloM.selectedIndex);
 		if (formCrit.codePostal.value != ""){
 			  localStorage.setItem('cpContext', formCrit.codePostal.value);
-			  localStorage.setItem('message', "&#224; moins de " + formCrit.kiloM.value + "&nbsp;kilom&#232;tres du code postal &#171;&nbsp;" + formCrit.codePostal.value + "&nbsp;&#187;.");
+			  mess += "&nbsp;&#224; moins de " + formCrit.kiloM.value + "&nbsp;kilom&#232;tres du code postal &#171;&nbsp;" + formCrit.codePostal.value + "&nbsp;&#187; ET";
 			codeAddress(formCrit.codePostal.value , (formCrit.kiloM.value * 1000) + 1000, URLresult );
-			return false;
+			//return false;
 		}else{
 			URLresult += "qlt=" + formCrit.longitude.value + "&qln=" + formCrit.latitude.value + "&qd=" + (formCrit.kiloM.value * 1000 * 1.05) + "&";
-			localStorage.setItem('message', "&#224; moins de " + formCrit.kiloM.value + "&nbsp;kilom&#232;tres d'o&#249; vous &#234;tes.");
+			mess += "&nbsp;&#224; moins de " + formCrit.kiloM.value + "&nbsp;kilom&#232;tres d'o&#249; vous &#234;tes ET";
 		}
 	}
 }
-mess = mess.substring(0, mess.indexOf("ET") - 2);
+mess = mess.substring(0, mess.length - 3);
 mess = " clubs, " + mess + ".";
 localStorage.setItem('message', mess);
 URLresult = URLresult.substr(0,URLresult.length-1);
