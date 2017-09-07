@@ -730,7 +730,7 @@ URLresult = URLresult.substr(0,URLresult.length-1);
 document.location.href = URLresult;
 }
 
-function codeAddress(postCode, distance, URLresult) {
+function codeAddress(postCode, distance, URLresult, mess) {
 if (distance == 0){
 	alert("Choisir une distance pour le code postal");
 	return false;
