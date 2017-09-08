@@ -181,7 +181,7 @@ showLocalisation();
 
 function initFormPref(){
 var affL = GetCookie("AffLoc");
-var polS = GetCookie("PolSize");
+var polS = GetCookie("PolSize") + "em";
 var locT = GetCookie("LocTime");
 
 if (affL == 'true')
@@ -206,16 +206,11 @@ adjustPol(formPref.polSize[formPref.polSize.selectedIndex]);
 }
 
 function adjustPol(selOption){
-var fs = eval(selOption.value);
-var span1 = document.getElementById('lbl1');
-var span2 = document.getElementById('lbl2');
-var span3 = document.getElementById('lbl3');
-
-//SetCook("PolSize",fs);
-	span1.style.fontSize = arrPol[fs].em;
-	span2.style.fontSize = arrPol[fs].em;
-	span3.style.fontSize = arrPol[fs].em;	
-	setFontSize(fs);
+var fs = (selOption.value);
+var elem = document.getElementsByClassName("prefLbl");
+	for (i = 0; i < elem.length; i++) {
+		elem[i].style.fontSize = fs;
+		}
 }
 
 function setIdent(){
@@ -369,9 +364,9 @@ initPref();
 function savePref(formulaire){
 
 SetCook("AffLoc",formulaire.locDisplay.checked);
-SetCook("PolSize",eval(formulaire.polSize.value));
+SetCook("_fontSize",eval(formulaire.polSize.value) );
 SetCook("LocTime",formulaire.locTime.value);
-
+setFontSize();
 closePref();
 }
 
@@ -875,9 +870,9 @@ geocoder = new google.maps.Geocoder();
 
 <div class="prefList">
 <label for="polSize" id="lbl1" class="prefLbl">Taille de police</label><div class="prefVal"><select id="polSize" onchange="adjustPol(this);">
- <option value="1">Petite</option>
- <option value="2" >Moyenne</option>
- <option value="3" >Grande</option>
+ <option value="1em">Petite</option>
+ <option value="1.4em" >Moyenne</option>
+ <option value="2em" >Grande</option>
 </select></div></div>
 
 <div class="prefList">
