@@ -364,7 +364,7 @@ initPref();
 function savePref(formulaire){
 
 SetCook("AffLoc",formulaire.locDisplay.checked);
-SetCook("_fontSize",eval(formulaire.polSize.value) );
+SetCook("_fontSize",formulaire.polSize.value );
 SetCook("LocTime",formulaire.locTime.value);
 setFontSize();
 closePref();
