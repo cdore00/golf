@@ -59,7 +59,7 @@ if (urlInfo.indexOf("data=") == -1){  // Not a new request
 }
 
 
-function showResult(result){
+function showResult(oResult){
 var callMap = document.getElementById('callMap');
 var clubList = document.getElementById('clubList');
 var message = document.getElementById('message');
@@ -68,6 +68,12 @@ var regionLabel = "";
 if (localStorage.getItem("regionContext"))
 	regionLabel = localStorage.getItem("regionContext");
 
+if (oResult.posList){
+	var result = oResult.clubList;
+	localStorage.setItem('posList', oResult.posList.lat + "," + oResult.posList.lng + "," + oResult.posList.dist);
+}else{
+	var result = oResult;
+}
 message.innerHTML = result.length + localStorage.getItem("message");
 
 var cntItem = 0;

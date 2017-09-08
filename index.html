@@ -673,7 +673,6 @@ var url = window.location.href
 var arr = url.split("/");
 //var URLresult = arr[0] + "//" + arr[2] + "/listeResult.html/data=" + formCrit.IdRegion.value;
 var URLresult = "listeResult.html?data=";
-
 clearContext();
 var mess = "";
 if (formCrit.Mots.value != ""){
@@ -698,7 +697,6 @@ if (formCrit.Mots.value != ""){
 	localStorage.setItem('motsCleContext', formCrit.Mots.value);
 	mess += " ET";
 }
-
 if (formCrit.IdRegion.value != 0){
 	URLresult += "qr=";
 	localStorage.setItem('regionIdContext', formCrit.IdRegion.selectedIndex);
@@ -718,17 +716,19 @@ if (formCrit.codePostal.value != ""){
 			mess = mess.substring(0, mess.length - 3);
 			localStorage.setItem('message', " clubs, " + mess + ".");
 			codeAddress(formCrit.codePostal.value , (formCrit.kiloM.value * 1000) + 1000, URLresult );
+			return false;
 		}else{
 			URLresult += "qlt=" + formCrit.longitude.value + "&qln=" + formCrit.latitude.value + "&qd=" + (formCrit.kiloM.value * 1000 * 1.05) + "&";
 			mess += "&nbsp;&#224; moins de " + formCrit.kiloM.value + "&nbsp;kilom&#232;tres d'o&#249; vous &#234;tes ET";
 		}
 	}
-}else{
-mess = mess.substring(0, mess.length - 3);
-localStorage.setItem('message', " clubs, " + mess + ".");
-URLresult = URLresult.substr(0,URLresult.length-1);
-document.location.href = URLresult;
 }
+
+	mess = mess.substring(0, mess.length - 3);
+	localStorage.setItem('message', " clubs, " + mess + ".");
+	URLresult = URLresult.substr(0,URLresult.length-1);
+	document.location.href = URLresult;
+
 }
 
 function codeAddress(postCode, distance, URLresult) {
