@@ -181,7 +181,7 @@ showLocalisation();
 
 function initFormPref(){
 var affL = GetCookie("AffLoc");
-var polS = GetCookie("PolSize") + "em";
+var polS = GetCookie("PolSize");
 var locT = GetCookie("LocTime");
 
 if (affL == 'true')
@@ -365,6 +365,7 @@ function savePref(formulaire){
 
 SetCook("AffLoc",formulaire.locDisplay.checked);
 SetCook("_fontSize",formulaire.polSize.value );
+SetCook("PolSize",formulaire.polSize.value );
 SetCook("LocTime",formulaire.locTime.value);
 setFontSize();
 closePref();
