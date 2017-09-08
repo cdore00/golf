@@ -157,62 +157,6 @@ function saveAccRes(oRes){
 }
 
 
-function initPref(){
-var locButton = document.getElementById('locDiv');
-
-affL = GetCookie("AffLoc");
-if (affL == null || affL == 0) 
-	affL = false;
-
-LocT = GetCookie("LocTime");
-if (LocT == null || LocT == 0){ 
-	LocT = 5;
-	SetCook("LocTime",LocT);}
-LocT = LocT * 1000;
-
-if (LocT == 0)
-	locButton.style.visibility="hidden";
-else
-	locButton.style.visibility="visible";
-
-//setFontSize();
-showLocalisation();
-}
-
-function initFormPref(){
-var affL = GetCookie("AffLoc");
-var polS = GetCookie("PolSize");
-var locT = GetCookie("LocTime");
-
-if (affL == 'true')
-	formPref.locDisplay.checked = true;
-else
-	formPref.locDisplay.checked = false;
-
-for (var i=0;i<formPref.polSize.length;i++){
-	if (formPref.polSize[i].value == polS)
-		formPref.polSize.selectedIndex = i;
-}
-
-formPref.locTime.selectedIndex = null;
-for (var i=0;i<formPref.locTime.length;i++){
-	if (formPref.locTime[i].value == locT)
-		formPref.locTime.selectedIndex = i;
-}
-//formPref.locTime.selectedIndex = locT - 1;
-
-adjustPol(formPref.polSize[formPref.polSize.selectedIndex]);
-
-}
-
-function adjustPol(selOption){
-var fs = (selOption.value);
-var elem = document.getElementsByClassName("prefLbl");
-	for (i = 0; i < elem.length; i++) {
-		elem[i].style.fontSize = fs;
-		}
-}
-
 function setIdent(){
 //prefOptions
 //identOptions
@@ -361,16 +305,61 @@ modLayer.style.visibility="hidden";
 initPref();
 }
 
-function savePref(formulaire){
+function initPref(){
+var locButton = document.getElementById('locDiv');
+affL = GetCookie("AffLoc");
+if (affL == null || affL == 0) 
+	affL = false;
+LocT = GetCookie("LocTime");
+if (LocT == null || LocT == 0){ 
+	LocT = 5;
+	SetCook("LocTime",LocT);}
+LocT = LocT * 1000;
+if (LocT == 0)
+	locButton.style.visibility="hidden";
+else
+	locButton.style.visibility="visible";
+//setFontSize();
+showLocalisation();
+}
+function initFormPref(){
+var affL = GetCookie("AffLoc");
+var polS = GetCookie("_fontSize");
+var locT = GetCookie("LocTime");
+if (affL == 'true')
+	formPref.locDisplay.checked = true;
+else
+	formPref.locDisplay.checked = false;
+for (var i=0;i<formPref.polSize.length;i++){
+	if (formPref.polSize[i].value == polS)
+		formPref.polSize.selectedIndex = i;
+}
+formPref.locTime.selectedIndex = null;
+for (var i=0;i<formPref.locTime.length;i++){
+	if (formPref.locTime[i].value == locT)
+		formPref.locTime.selectedIndex = i;
+}
+//formPref.locTime.selectedIndex = locT - 1;
+adjustPol(formPref.polSize[formPref.polSize.selectedIndex]);
+}
+function adjustPol(selOption){
+var fs = (selOption.value);
+//var elem = document.getElementsByClassName("prefLbl");
+var elem = document.getElementsByClassName("prefList");
 
+	for (i = 0; i < elem.length; i++) {
+		elem[i].style.fontSize = fs;
+		}
+}
+
+function savePref(formulaire){
 SetCook("AffLoc",formulaire.locDisplay.checked);
 SetCook("_fontSize",formulaire.polSize.value );
-SetCook("PolSize",formulaire.polSize.value );
+//SetCook("PolSize",formulaire.polSize.value );
 SetCook("LocTime",formulaire.locTime.value);
 setFontSize();
 closePref();
 }
-
 
 function setLatLng(latitude,longitude,notNew) {
 document.critere.latitude.value = parseFloat(latitude);
