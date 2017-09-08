@@ -240,7 +240,7 @@ box-shadow: 1px 1px 1px #ccccdd, 3px 3px 3px #aaaaaa inset;
    inset 3px 3px 3px rgba(170,170,170,0.75);
    -moz-box-shadow: 1px 1px 1px rgba(0,0,0,0.5),
    inset 3px 3px 3px rgba(255,255,255,0.75);}
-#localisation,#localise,#localiser a{cursor: default;position:absolute;display:inline-block;left:6px;top:3px;font-size:1em;text-decoration:none;font-weight:bold}
+#localisation,#localise,#localiser a{cursor: default;position:absolute;display:inline-block;left:5px;top:3px;font-size:1em;text-decoration:none;font-weight:bold}
 #localiser a{cursor: pointer;}
 #localise{cursor: wait;}
 #localisation,#localiser{visibility:hidden;}
@@ -391,11 +391,8 @@ text-align: center;
 }
 
 #prefLayer, #identLayer, #authLayer{
-/*font-size: 0.8em;*/
 visibility:hidden;
 position:absolute;
-/* max-height:250px; */
-overflow:none;
 top: 0px;
 left: 0px;
 margin: 1.5%;
@@ -424,6 +421,7 @@ font-size:1.2em;
 }
 
 #prefOptions, #identOptions{
+font-size: initial;
 border: 3px solid #9EA0A1;
 -webkit-border-radius: 5px;
 border-radius: 5px; 

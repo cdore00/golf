@@ -1,6 +1,6 @@
 <!--
 
-var HOSTserv = "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
+var HOSTserv = "http://127.0.0.1:3000/";
 // "http://127.0.0.1:3000/";
 // "http://192.168.2.188:8080/";
 //"http://127.0.0.1:3000/";
@@ -120,17 +120,19 @@ if (sizeAD){
 	if (sizeAD > 0){
 		if (fs >= 2.2){
 			fs = 2.2;
-			oIncDec.style.color = "#555";
+			if (oIncDec)
+				oIncDec.style.color = "#555";
 		}
 	}
 	if (sizeAD < 0){
 		if (fs <= 0.8){
 			fs = 0.8;
-			oIncDec.style.color = "#555";
+			if (oIncDec)
+				oIncDec.style.color = "#555";
 		}
 	}
 	document.body.style.fontSize = fs + "em";
-	SetCook( "_fontSize", fs + "em");
+	//SetCook( "_fontSize", fs + "em");
 }else{
 	fs = GetCookie( "_fontSize");
 	if (!fs || fs == ""){
