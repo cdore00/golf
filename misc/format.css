@@ -205,9 +205,10 @@ background:-moz-linear-gradient(top,#3A9D23,#00bb00)}
 }
 
 .form{margin:5px 0 2px 0;padding:0}select,input{font-size:0.7em;padding:0}select.fulllength{width:100%}
-.bouton{float:right;font-size:0.8em; min-width:100px;
+.bouton{font-size:0.8em; min-width:100px;
 border:1px solid #ccc;
-padding: 4px;
+padding: 6px;
+margin: 5px;
 box-shadow: 1px 1px 1px #ccccdd, 2px 2px 2px #aaaaaa inset;
    -o-box-shadow: 1px 1px 1px rgba(0,0,0,0.5),
    inset 2px 2px 2px rgba(255,255,255,0.75);
