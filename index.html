@@ -602,15 +602,18 @@ document.critere.Rechercher.focus();
 function getFav(){
 var favGolfList = document.getElementById('favGolfList');
 var accountForm = document.getElementById('accountForm');
+var authLayer = document.getElementById('authLayer');
 
 if (accountForm)
 	accountForm.parentNode.removeChild(accountForm);
+	
+authLayer.style.visibility="visible";
 
 if (!favGolfList){
 	getInfo('getFav?data=' + userId, listFav);
 }else{
-	var authLayer = document.getElementById('authLayer');
-	authLayer.style.visibility="visible";
+	//var authLayer = document.getElementById('authLayer');
+	//authLayer.style.visibility="visible";
 }
 }
 
