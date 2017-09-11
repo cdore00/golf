@@ -291,9 +291,9 @@ if (divOptions.style.height != "0px" && divOptions.style.height != ""){
 }else{
 	var fur = navigator.userAgent;
 	adj=prefDate.offsetHeight * 2;
-	if(fur.indexOf('Safari') == -1){
+	if(fur.indexOf('Safari') != -1){
 		adj = (adj + 20);
-alert("saf=" + adj);
+alert("safari=" + adj);
 		}
 	divOptions.style.height = adj + "px";
 	menuTxt.innerHTML = "&#10004;&nbsp;Options";
