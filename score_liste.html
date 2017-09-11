@@ -283,16 +283,16 @@ if (menuOn){
 
 function showOptions(menuTxt){
 var divOptions = document.getElementById('divOptions');
-var prefTrous = document.getElementById('prefTrous');
+var prefNbr = document.getElementById('prefNbr');
 
 if (divOptions.style.height != "0px" && divOptions.style.height != ""){
 	divOptions.style.height = "0px";
 	menuTxt.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;Options";
 }else{
 	var fur = navigator.userAgent;
-	adj=prefTrous.offsetHeight * 2;
+	adj = prefNbr.offsetTop + prefNbr.offsetHeight - 32;
 	if(fur.indexOf('Safari') != -1){
-		adj = (adj + 20);
+		//adj = (adj + 20);
 //alert("safari2=" + adj);
 		}
 	divOptions.style.height = adj + "px";
