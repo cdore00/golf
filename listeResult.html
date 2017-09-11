@@ -65,7 +65,7 @@ var clubList = document.getElementById('clubList');
 var message = document.getElementById('message');
 
 var regionLabel = "";
-if (localStorage.getItem("regionContext"))
+if (localStorage)
 	regionLabel = localStorage.getItem("regionContext");
 
 if (oResult.posList){
@@ -117,7 +117,7 @@ for (var i = 0; i < result.length; i++) {
 	}
 	var spanElem = document.createElement("span");
 	spanElem.setAttribute('class', nextClass);
-	if (regionLabel != "") 
+	if (regionLabel) 
 		spanElem.innerHTML = result[i].adresse + ", " + result[i].municipal + ", " + regionLabel;
 	else
 		spanElem.innerHTML = result[i].adresse + ", " + result[i].municipal;

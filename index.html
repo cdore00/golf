@@ -682,6 +682,7 @@ if (formCrit.Mots.value != ""){
 if (formCrit.IdRegion.value != 0){
 	URLresult += "qr=";
 	localStorage.setItem('regionIdContext', formCrit.IdRegion.selectedIndex);
+	localStorage.setItem('regionContext', formCrit.IdRegion.options[formCrit.IdRegion.selectedIndex].innerHTML);
 	mess += "&nbsp;dans la r&eacute;gion &#171;" + formCrit.IdRegion.options[formCrit.IdRegion.selectedIndex].innerHTML + "&#187;&nbsp;ET";
 	URLresult += formCrit.IdRegion.value + "&";
 }
