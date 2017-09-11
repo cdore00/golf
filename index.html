@@ -562,13 +562,8 @@ function checkCookie(){
 }
 
 function initPage(){
-var formFields = document.getElementById('formFields');
-var codePostal = document.getElementById('codePostal');
-var kiloM = document.getElementById('kiloM');
 
 setFontSize();
-kiloM.style.height = codePostal.offsetHeight + "px";
-formFields.style.visibility = "visible";
 
 userId = GetCookie("userID");
 //userName = GetCookie("userName");
@@ -622,6 +617,7 @@ if (!favGolfList){
 function listRegions(oRegion){
 var formCrit = document.getElementById('critere');
 var IdRegion = document.getElementById('IdRegion');
+var formFields = document.getElementById('formFields');
 
 for (var i = 0; i < oRegion.length; i++) {
 	var optElem = document.createElement("option");
@@ -638,6 +634,7 @@ if (localStorage.getItem("cpContext"))
 	formCrit.codePostal.value = localStorage.getItem("cpContext");
 if (localStorage.getItem('cpDist'))
 	formCrit.kiloM.selectedIndex = localStorage.getItem('cpDist');
+formFields.style.visibility = "visible";
 }
 
 function clearContext(){
@@ -805,11 +802,11 @@ geocoder = new google.maps.Geocoder();
 			    <div id="inputselectdis">
 				<SELECT id="kiloM" class="inputselect inpSelSW" name="KiloM">
 					<OPTION value="0">? km</OPTION>
-			        <OPTION value="5">5 km</OPTION>
 			        <OPTION value="10">10 km</OPTION>
 			        <OPTION value="25">25 km</OPTION>
 			        <OPTION value="50">50 km</OPTION>
 			        <OPTION value="100">100 km</OPTION>
+			        <OPTION value="200">200 km</OPTION>
 			        </SELECT>
 				</div>
 				</div>
