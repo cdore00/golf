@@ -57,34 +57,6 @@ this.lng=lng;
 this.acc=acc;
 }
 
-
-function listFav(clubList){
-var authLayer = document.getElementById('authLayer');
-var favGolfList = document.getElementById('favGolfList');
-
-if (!favGolfList){
-	var divElem = document.createElement("div");
-	divElem.setAttribute('id', 'favGolfList');
-	authLayer.appendChild(divElem);
-	var ulElem = document.createElement("ul");
-	ulElem.setAttribute('id', 'favGolfList');
-	ulElem.setAttribute('class', 'favItems');
-	divElem.appendChild(ulElem);
-	for (var i = 0; i < clubList.length; i++) {
-		var liElem = document.createElement("li");
-		liElem.setAttribute('class', 'listitem');
-		liElem.innerHTML = '<a class="itemdesc" href="ficheClub.html?data=' + clubList[i]._id + '">' + clubList[i].nom + '</a></li>';
-		ulElem.appendChild(liElem);
-	}
-	var butElem = document.createElement("button");
-	butElem.setAttribute('class', 'bouton');
-	butElem.setAttribute('onclick', 'closePref()');
-	butElem.innerHTML = 'Fermer';
-	divElem.appendChild(butElem);
-}
-authLayer.style.visibility="visible";
-}
-
 function manageIdent(action){
 var modLayer = document.getElementById('modalDiv');
 var authLayer = document.getElementById('authLayer');
@@ -606,15 +578,35 @@ var authLayer = document.getElementById('authLayer');
 
 if (accountForm)
 	accountForm.parentNode.removeChild(accountForm);
-	
-authLayer.style.visibility="visible";
 
 if (!favGolfList){
+	var divElem = document.createElement("div");
+	divElem.setAttribute('id', 'favGolfList');
+	authLayer.appendChild(divElem);
+	var butElem = document.createElement("button");
+	butElem.setAttribute('class', 'bouton');
+	butElem.setAttribute('onclick', 'closePref()');
+	butElem.innerHTML = 'Fermer';
+	divElem.appendChild(butElem);
+
 	getInfo('getFav?data=' + userId, listFav);
-}else{
-	//var authLayer = document.getElementById('authLayer');
-	//authLayer.style.visibility="visible";
 }
+authLayer.style.visibility="visible";
+}
+
+function listFav(clubList){
+var favGolfList = document.getElementById('favGolfList');
+
+var ulElem = document.createElement("ul");
+ulElem.setAttribute('class', 'favItems');
+favGolfList.insertBefore(ulElem, favGolfList.firstChild);
+for (var i = 0; i < clubList.length; i++) {
+	var liElem = document.createElement("li");
+	liElem.setAttribute('class', 'listitem');
+	liElem.innerHTML = '<a class="itemdesc" href="ficheClub.html?data=' + clubList[i]._id + '">' + clubList[i].nom + '</a></li>';
+	ulElem.appendChild(liElem);
+}
+
 }
 
 function listRegions(oRegion){
