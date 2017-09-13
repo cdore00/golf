@@ -47,13 +47,6 @@ if (urlInfo.indexOf("data=") == -1){  // Not a new request
 }else{  // New request
 	var data = getURLdata();
 	var request = encodeURI(data);
-	var data = data.split("$");
-	if (data[0] == "3"){
-		lat = (data[1]);
-		lng = (data[2]);
-		km  = (data[3]);
-		localStorage.setItem('posList', lat + "," + lng + "," + km);
-	}
 	getInfo("searchResult?" + request, showResult);
 }
 }
@@ -71,6 +64,9 @@ if (localStorage)
 if (oResult.posList){
 	var result = oResult.clubList;
 	localStorage.setItem('posList', oResult.posList.lat + "," + oResult.posList.lng + "," + oResult.posList.dist);
+		lat = oResult.posList.lat;
+		lng = oResult.posList.lng;
+		km  = oResult.posList.dist;
 }else{
 	var result = oResult;
 }

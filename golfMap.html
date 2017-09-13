@@ -25,23 +25,17 @@
 
 <script type="text/javascript"> 
 <!--
-
 var intLat, intLng, intKm, intZoom, winOpen;
 var clubs = new Array();
-
 var map;
 var directionsDisplay = new google.maps.DirectionsRenderer({});
-
 function calcRoute(mLat, mLng, gLat, gLng, oInfo) {
-
 var directionsService = new google.maps.DirectionsService();
 directionsDisplay.setMap(null);
 directionsDisplay.setMap(myC.objMap);
 directionsDisplay.setPanel(document.getElementById("directionsPanel"));
-
 var myPos = new google.maps.LatLng(mLat,mLng);
 var golfPos = new google.maps.LatLng(gLat,gLng);
-
   var request = {
     origin:myPos,
     destination:golfPos,
@@ -55,20 +49,15 @@ var golfPos = new google.maps.LatLng(gLat,gLng);
     }
   });
 }
-
 function showDetailItineraire(){
 var detailWindow = window.open('trajet.html', 'trajet');
-
 detailWindow.document.close();
 }
-
 function showItineraire(golfLat, golfLng, idInfo){
 //var myLat = intLat;
 //var myLng = intLng;
 var oInfo = document.getElementById(idInfo);
-
 calcRoute(intLat, intLng, golfLat, golfLng, oInfo);
-
 }
 	
 // Class cerclePos
@@ -95,16 +84,13 @@ calcRoute(intLat, intLng, golfLat, golfLng, oInfo);
 		}
    return false;
 };
-
 this.initShow = function () {
 		var oBounds = objMap.getBounds();
 		this.zoomRestart( oBounds.getNorthEast().lat(), oBounds.getSouthWest().lat(), oBounds.getNorthEast().lng(), oBounds.getSouthWest().lng() );
 return false;
 };
-
 this.zoomRestart = function (lat1, lat2, lng1, lng2) {
 	var dist, dimMeter;
-
 	clearTimeout(this.timeOutPos);
 	this.objCercle.setRadius(0);
 	
@@ -118,13 +104,10 @@ this.zoomRestart = function (lat1, lat2, lng1, lng2) {
 		this.rayonInitial = this.objGolfArea.getRadius() / 2;
 //alert(this.rayonInitial);
 	this.show();
-
    return false;
 };
-
 }
 // Fin Class cerclePos
-
 // Start initialize function
 function initialize(showCenter) { 
 	intZoom = 15 - parseInt(Math.log(intKm/100));
@@ -143,11 +126,9 @@ function initialize(showCenter) {
 	  mapTypeId: google.maps.MapTypeId.ROADMAP
 	}; 
 	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions); 
-
 	setMarkers(map, clubs);  //setMarkers(map, clubs);
 			
 	myC.objMap = map;
-
  var areaOptions = {
   strokeColor: "#FF0000",
   strokeOpacity: 0.8,
@@ -160,13 +141,10 @@ function initialize(showCenter) {
 };
 myC.objGolfArea = new google.maps.Circle(areaOptions);
 //alert(areaOptions.radius);
-
-
 	google.maps.event.addListener(map, 'bounds_changed', function() {
 		var oBounds = map.getBounds();
 		myC.zoomRestart( oBounds.getNorthEast().lat(), oBounds.getSouthWest().lat(), oBounds.getNorthEast().lng(), oBounds.getSouthWest().lng() );
 	}); 
-
 	if (showCenter){
 		var cercleOptions = {
 		  strokeColor: "#0000FF",
@@ -190,13 +168,10 @@ myC.objGolfArea = new google.maps.Circle(areaOptions);
 	endCharge();
 } 
 //Fin initialize()
-
 function endCharge(){
 var chargement = document.getElementById('chargement');
 chargement.style.display = "none";
 }
-
-
 function setMyPosition(map, lat, lng, infoAdr) {
   // Add markers to the map
   var image = new google.maps.MarkerImage('images/ici.png',
@@ -219,7 +194,6 @@ function setMyPosition(map, lat, lng, infoAdr) {
 		});
 		google.maps.event.addListener(myC.myPosMark, 'click', function() {infoAdr.open(map,this);});
 }	
-
 function setMarkers(map, locations) {
   // Add markers to the map
   var image = new google.maps.MarkerImage('images/golf.png',
@@ -245,9 +219,7 @@ function setMarkers(map, locations) {
 		google.maps.event.addListener(marker, 'click', function() { showWin(map,this); });
 	}
 }
-
 function showWin(oMap, oMarker){
-
 var id = oMarker.zIndex;
 var oInfo = clubs[id];
 winOpen.close();
@@ -272,23 +244,17 @@ function incrementer(rayon){
 	}
 };	
 
-
 function initPage(){
-
 userId = GetCookie("userID");
-
 var data = getURLdata();
-intLng = data.substring(0,data.indexOf(","));
-data = data.substring(data.indexOf(",") + 1);
 intLat = data.substring(0,data.indexOf(","));
+data = data.substring(data.indexOf(",") + 1);
+intLng = data.substring(0,data.indexOf(","));
 data = data.substring(data.indexOf(",") + 1);
 intKm = parseInt(data.substring(0,data.indexOf(",")));
 data = data.substring(data.indexOf(",") + 1);
-
 setFontSize();
-
 getInfo("getClubList?data=" + data, initClubs);
-
 }
 
 function initClubs(cData){
@@ -296,7 +262,6 @@ var maxX = cData[0].location.x;
 var minX = cData[0].location.x;
 var maxY = cData[0].location.y;
 var minY = cData[0].location.y;
-
 winOpen = new google.maps.InfoWindow({
 		content: "",
 		disableAutoPan : true
@@ -317,7 +282,6 @@ for (var i = 0; i < cData.length; i++) {
 	maxY = Math.max(maxY, cData[i].location.y);
 	minY = Math.min(minY, cData[i].location.y);
 }
-
 if (intLat == 'undefined' || !intLat){
 	intLat = ((maxX + minX) / 2) + "";
 	intLng = ((maxY + minY) / 2) + "";
@@ -326,7 +290,6 @@ if (intLat == 'undefined' || !intLat){
 }else{
 	initialize(true);
 }
-
 }
 
 function calculDistance(lat1, lat2, lon1, lon2){
@@ -335,32 +298,24 @@ var rLat1 = lat1 * (Math.PI / 180);
 var rLat2 = lat2 * (Math.PI / 180);
 var dLat = (lat2-lat1) * (Math.PI / 180);
 var dLon = (lon2-lon1) * (Math.PI / 180);
-
 var a = Math.sin(rLat1) * Math.sin(rLat2) + Math.cos(rLat1) * Math.cos(rLat2) * Math.cos(dLon);
     a = Math.acos(a);
-
 var d = R * a ;
-
 return Math.round(d);
 }
-
-
 // -->  
 </script> 
 
 <style>
-
 .gm-style .gm-style-iw {
 	font: 400 1em Roboto, Arial, sans-serif !important;
 	font-size: 1em !important;
     font-weight: 300;
 }
-
 .gm-style {
 font: inherit;
 font-size: 1em !important;
 }
-
 </style>
 
   </head>
@@ -389,11 +344,8 @@ font-size: 1em !important;
 <div id="directionsPanel" ></div>
 <script type="text/javascript" language="Javascript">
 <!--
-
 var myC = new cerclePos();
-
 adjustScreen(66);
-
 // -->
 </script>
 
