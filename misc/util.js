@@ -118,8 +118,8 @@ for (i = 0; i < oCtls.length; i++) {
 if (sizeAD){
 	fs = eval(fs.replace("em", "")) + sizeAD; 
 	if (sizeAD > 0){
-		if (fs >= 2.2){
-			fs = 2.2;
+		if (fs >= 2){
+			fs = 2;
 			if (oIncDec)
 				oIncDec.style.color = "#555";
 		}
