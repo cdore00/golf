@@ -134,6 +134,9 @@ var myDirect = directionsDisplay.directions.Mb
 }
 
 function initPage(){
+
+setFontSize();
+
 userId = GetCookie("userID");
 var data = getURLdata();
 var ids = data.split('$');
