@@ -629,6 +629,9 @@ if (localStorage.getItem("cpContext"))
 	formCrit.codePostal.value = localStorage.getItem("cpContext");
 if (localStorage.getItem('cpDist'))
 	formCrit.kiloM.selectedIndex = localStorage.getItem('cpDist');
+
+var divLoad = document.getElementById('divLoad');
+divLoad.style.display = "none";
 formFields.style.visibility = "visible";
 }
 
@@ -736,6 +739,11 @@ geocoder = new google.maps.Geocoder();
 
 <style>
 
+#divLoad {
+    position: absolute;
+    margin-left: 45%;
+}
+
 </style>
 
 </head>
@@ -767,6 +775,7 @@ geocoder = new google.maps.Geocoder();
 
 	<div id="content" onClick="tooltip.hide();">
 		<ul class="pageitem">
+		<div id="divLoad"><img id="imgLoad" alt="Chargement en cours..." height="64" width="64" src="images/loading.gif" /></div>
 		<div id="formFields">
 			  <div class="formrow1" >
 			  <div id="divMot"><label for="Mots">Mot cl&eacute; </label></div>
