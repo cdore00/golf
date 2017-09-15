@@ -98,7 +98,7 @@ background:-webkit-gradient(linear,0% 0,0% 100%,from(#d9d9d9),color-stop(3%,#d9d
 background:-moz-linear-gradient(top,#d9d9d9,#555);text-align:center};}
 #duobutton a:first-child{border:0px solid #fff;}
 
-#duobutton a{height:30px;display:inline-block;line-height:30px;margin-top:0px;font-weight:bold;/*font-size:18px;*/overflow: hidden;text-decoration:none;color:#0022ff;}
+#duobutton a{height:30px;display:inline-block;line-height:30px;margin-top:0px;font-weight:bold;overflow: hidden;text-decoration:none;color:#0022ff;}
 
 #duobutton a:hover, #pressed {
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#4f4f4f',endColorstr='#888888');
@@ -200,10 +200,6 @@ background:-moz-linear-gradient(top,#3A9D23,#00bb00)}
 
 .favItems{background-color:#fff;border:#444444 solid 1px;overflow:hidden; overflow-y:scroll;margin:10px 10px;text-align:left;height:150px}
 
-#formFields{
-	visibility: hidden;
-}
-
 .form{margin:5px 0 2px 0;padding:0}select,input{font-size:0.7em;padding:0}select.fulllength{width:100%}
 .bouton{font-size:0.8em; min-width:100px;
 border:1px solid #ccc;
@@ -232,6 +228,10 @@ background-color:#555;color:#fff;font-weight:bold}
 .olinediv{float: left;}
 #inputselectreg{margin-top: 0.1em;}
 #inputselectdis{letter-spacing: -0.05em;}
+
+.inSelReg{
+	width: 10em;
+}
 
 #locDiv{font-size:0.8em;position:relative;float:left; border: 2px solid #999;height:1.4em;width:8em;padding: 2px;border-radius:10px;margin: 5px;
 box-shadow: 1px 1px 1px #ccccdd, 3px 3px 3px #aaaaaa inset;
@@ -351,7 +351,6 @@ padding-top:17px;
 
 #tooltipMid {
   background-color:#fefefe;
-  /*font-size:1.0em;*/
   width:240px; height:auto;
   box-shadow: 5px 5px 5px rgba(150, 150, 150, 0.95), 3px 3px 3px rgba(100, 100, 100, 0.95) inset;
   border-radius: 20px 20px 15px 15px;  
@@ -446,7 +445,6 @@ text-align:left;
 margin: 0;
 padding: 0;
 display:inline-block;
-/*font-size: 0.8em;*/
 }
 
 .prefLbl{
@@ -620,6 +618,97 @@ text-align:center;
 	-moz-user-select: none;
 	-webkit-user-select: none;
 }
+
+
+/* Loading animation */
+.loading2{
+	width:100px;
+	height:100px;
+	margin:30px auto;
+	position:relative;
+}
+
+.loading2.bar div{
+	width: 10px;
+	height: 30px;
+	background: white;
+	position: absolute;
+	top: 35px;
+	left: 45px;
+	opacity:0.05;
+
+	-webkit-animation: fadeit 1.1s linear infinite;
+	animation: fadeit 1.1s linear infinite;
+}
+
+.loading2.bar div:nth-child(1){
+	-webkit-transform: rotate(0deg) translate(0, -30px);
+	transform: rotate(0deg) translate(0, -30px);
+
+	-webkit-animation-delay:0.39s;
+	animation-delay:0.39s;
+}
+.loading2.bar div:nth-child(2){
+	-webkit-transform: rotate(45deg) translate(0, -30px);
+	transform: rotate(45deg) translate(0, -30px);
+
+	-webkit-animation-delay:0.52s;
+	animation-delay:0.52s;
+}
+.loading2.bar div:nth-child(3){
+	-webkit-transform: rotate(90deg) translate(0, -30px);
+	transform: rotate(90deg) translate(0, -30px);
+
+	-webkit-animation-delay:0.65s;
+	animation-delay:0.65s;
+}
+.loading2.bar div:nth-child(4){
+	-webkit-transform: rotate(135deg) translate(0, -30px);
+	transform: rotate(135deg) translate(0, -30px);
+
+	-webkit-animation-delay:0.78s;
+	animation-delay:0.78s;
+}
+.loading2.bar div:nth-child(5){
+	-webkit-transform: rotate(180deg) translate(0, -30px);
+	transform: rotate(180deg) translate(0, -30px);
+
+	-webkit-animation-delay:0.91s;
+	animation-delay:0.91s;
+}
+.loading2.bar div:nth-child(6){
+	-webkit-transform: rotate(225deg) translate(0, -30px);
+	transform: rotate(225deg) translate(0, -30px);
+
+	-webkit-animation-delay:1.04s;
+	animation-delay:1.04s;
+}
+.loading2.bar div:nth-child(7){
+	-webkit-transform: rotate(270deg) translate(0, -30px);
+	transform: rotate(270deg) translate(0, -30px);
+
+	-webkit-animation-delay:1.17s;
+	animation-delay:1.17s;
+}
+.loading2.bar div:nth-child(8){
+	-webkit-transform: rotate(315deg) translate(0, -30px);
+	transform: rotate(315deg) translate(0, -30px);
+
+	-webkit-animation-delay:1.3s;
+	animation-delay:1.3s;
+}
+
+@-webkit-keyframes fadeit{
+	0%{ opacity:1; }
+	100%{ opacity:0;}
+}
+@keyframes fadeit{
+	0%{ opacity:1; }
+	100%{ opacity:0;}
+}
+
+/* End Loading animation */
+
 
 @media screen and (max-width: 540px), only screen and (min-device-width: 320px) and (max-device-width: 480px), only screen and (-moz-min-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) 
 { 
