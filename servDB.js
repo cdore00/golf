@@ -37,7 +37,7 @@ var ObjectId = require('mongodb').ObjectId;
 
 // Connection URL
 //var urlDB = 'mongodb://localhost:27017/golfDB';
-var urlDB = 'mongodb://localhost:27017/golf';
+var urlDB = 'mongodb://192.168.10.11:8080/golf';
 var dBase;
 
 // Use connect method to connect to the server
@@ -232,7 +232,7 @@ if (is18 == 18){
 function deleteGame(req, res, param){
 var id = (decodeURI(param.id));
 
-if (parseInt(id) < 500)
+if (gID.length < 5)
 	var o_id = parseInt(id);
 else	
 	var o_id = new ObjectId(id);
@@ -351,7 +351,7 @@ var request = (decodeURI(param.data));
 var data = request.split("$");
 var gID = (data[0]);
 //var parc = parseInt(data[1]);
-if (parseInt(gID) < 500)
+if (gID.length < 5)
 	var o_id = parseInt(gID);
 else	
 	var o_id = new ObjectId(gID);
@@ -561,7 +561,7 @@ var user = (decodeURI(param.cour));
 var pass = (decodeURI(param.pass));
 var Npass = (decodeURI(param.newpass));
 
-if (parseInt(id) < 500)
+if (gID.length < 5)
 	var o_id = parseInt(id);
 else	
 	var o_id = new ObjectId(id);
@@ -895,10 +895,69 @@ coll.find({"PARCOURS_ID": courseID }, {"sort": "_id"}).toArray(function(err, doc
   });
 }
 
-
 function searchResult(req, res, param){
+var qNom = param.qn;
+var qVille = param.qv;
+var qReg = param.qr;
+var lng = param.qlt;
+var lat = param.qln;
+var dist = param.qd;
+
+var coll = dBase.collection('club');
+var posList = {};
+var qT = new Array();
+
+if (qNom){
+	var q1 = {"$or": [ {"nom": {"$regex": new RegExp(qNom, "ig") } } , {"municipal": {"$regex": new RegExp(qVille, "ig")} } ]};
+	qT[qT.length] = q1;
+	}
+if (qReg){
+	var q2 = {region: eval(qReg) };
+	qT[qT.length] = q2;
+	}
+if (lng){
+	var q3 = {"location": { "$near" : {"$geometry": { "type": "Point",  "coordinates": [ eval(lng) , eval(lat) ] }, "$maxDistance": eval(dist) }}};
+	var posList = {"lng": eval(lng), "lat": eval(lat), "dist": eval(dist) };
+	qT[qT.length] = q3;
+	}
+
+var query = { $and: qT };
+
+coll.find(query, {"sort": "nom"}).toArray( function(err, docs) {
+	var result = {};
+	result.posList = posList;
+	result.clubList = docs;
+	returnRes(res, result);
+  }.bind(posList));
+
+}
+
+function searchResultN2(req, res, param){
 var request = (decodeURI(param.data));
 var req = request.split("$");
+var coll = dBase.collection('club');
+	
+
+	listByName(req[1], req[2]);
+
+
+function listByName(qNom, qVille){
+var query = '{ $or:[ {nom: {"$regex": new RegExp("' + qNom + '", "ig")} }, {municipal: {"$regex": new RegExp("' + qVille + '", "ig")} } ]}';
+coll.find(query, {"sort": "nom"}).toArray(function(err, docs) {
+	returnRes(res, docs);
+  });
+}
+
+}
+
+function searchResultOLD(req, res, param){
+var qNom = param.qn;
+var qVille = param.qv;
+var qReg = param.qr;
+var lng = param.qlt;
+var lat = param.qln;
+var dist = param.qd;
+
 var coll = dBase.collection('club');
 	
 switch (req[0]) {
@@ -917,8 +976,8 @@ switch (req[0]) {
 }
 
 function listByName(qNom, qVille){
-
-coll.find({ $or:[ {nom: {'$regex': new RegExp(qNom, "ig")} }, {municipal: {'$regex': new RegExp(qVille, "ig")} } ]}, {"sort": "nom"}).toArray(function(err, docs) {
+var query = {"$or": [ {"nom": {"$regex": new RegExp(qNom, "ig") } } , {"municipal": {"$regex": new RegExp(qVille, "ig")} } ]};
+coll.find(query, {"sort": "nom"}).toArray(function(err, docs) {
 	returnRes(res, docs);
   });
 }
@@ -934,8 +993,9 @@ coll.find({region: {$in: ids }}, {"sort": "nom"}).toArray(function(err, docs) {
 }
 
 function listByDistance(lng, lat, dist){
+var query = '{ "location": { "$near" : {"$geometry": { "type": "Point",  "coordinates": ["' + eval(lng) + ' , ' + eval(lat) + ' ] }, "$maxDistance":' + eval(dist) + ' }}}';
 //console.log("lng=" + lng + "  lat=" + lat + "  dist=" + dist);
-coll.find({ "location": { "$near" : {"$geometry": { "type": "Point",  "coordinates": [ lng , lat ] }, "$maxDistance": dist }}}, {"sort": "nom"}).toArray(function(err, docs) {
+coll.find(query, {"sort": "nom"}).toArray(function(err, docs) {
 	if (err){
 		console.log(err.message);
 	}
