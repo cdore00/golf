@@ -1,6 +1,6 @@
 <!--
 
-var HOSTserv = "http://cdore.ddns.net:8080/";
+var HOSTserv = "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
 // "http://127.0.0.1:3000/";
 // "http://192.168.2.188:8080/";
 //"http://cdore.ddns.net:8080/";
