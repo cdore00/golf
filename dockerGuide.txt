@@ -90,6 +90,9 @@ sudo ip addr add 192.168.10.11/24 dev docker0
 docker run -p 192.168.10.11:8080:27017 --workdir /home/servDB --entrypoint "npm start" --name="mon_g" mongo:golf
 docker run -p 192.168.10.11:8080:27017 --name="mon_g" mongo:golf
 
+LISTEN PORTS
+sudo netstat -tulpn
+
 CLEAN IMAGES ? stop CONTAINER
 #!/usr/bin/env bash
 set -euo pipefail
@@ -136,3 +139,24 @@ sudo qemu-img convert -f vmdk "fed26.vmdk" -O raw fed26.raw
  sudo qemu-img convert -O vmdk turnkey-core.raw fedServ.vmdk
 
 dd if=turnkey-core.raw of=pd.iso
+
+MAKE SSL CERTIFICATE
+sudo mkdir /etc/nginx/ssl
+cd /etc/nginx/ssl
+
+// Not USED
+//sudo openssl genrsa -out cdore.ddns.key 4096
+//sudo openssl req -new -key cdore.ddns.key -out cdore.ddns.csr -sha512
+//sudo openssl x509 -req -days 3650 -in cdore.ddns.csr -signkey cdore.ddns.key -out cdore.ddns.crt -sha512
+
+sudo certbot certonly --webroot -w /var/www/example -d cdore.ddns.net
+sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+
+FEDORA FIREWALL
+firewall-cmd --zone=public --permanent --add-port=25565/tcp
+
+firewall-cmd --permanent --add-service=https
+firewall-cmd --reload
+sudo firewall-cmd --list-services
+		dhcpv6-client http ssh https
+http://www.firewalld.org/documentation/man-pages/firewall-cmd.html
