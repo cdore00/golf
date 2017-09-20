@@ -13,22 +13,6 @@ function is_touch_device() {
 
 var isTouchDevice = is_touch_device();
 
-var arrPol = [{"em":"0em", "im": new Image()}, {"em":"0.9em", "im": new Image()}, {"em":"1.2em", "im": new Image()}, {"em":"1.5em", "im": new Image()} ];
-arrPol[1].im.src = "images/taille.png";
-arrPol[2].im.src = "images/taille2.png";
-arrPol[3].im.src = "images/taille3.png";
-
-if (document.images) {
-	img1 = new Image();
-	img2 = new Image();
-	img3 = new Image();
-
-	img1.src = "images/taille.png";
-	img2.src = "images/taille2.png";
-	img3.src = "images/taille3.png";
-
-}
-
 function getInfo(path, callback){
 var xhr=new XMLHttpRequest();
   xhr.onloadend = function() {
