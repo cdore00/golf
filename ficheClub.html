@@ -143,7 +143,7 @@ if (oClubParc[0].telephone3)
 	
 clubDetail.innerHTML = cInfo;
 
-var listParc = document.getElementById('listParc');
+var pageZone = document.getElementById('pageZone');
 
 	var htmlCode = "<ul>";
 for (var p = 0; p < clubCourse.length; p++) {
@@ -169,7 +169,7 @@ htmlCode += "</ul>";
 	var liElem = document.createElement("li");
 	liElem.setAttribute('class', 'listitem gras');
 	liElem.innerHTML = htmlCode;
-	listParc.appendChild(liElem);
+	pageZone.appendChild(liElem);
 
 }
 
@@ -178,7 +178,7 @@ var bloc = oBlock;
 var nextCourse = 0;
 
 // Course list
-var listParc = document.getElementById('listParc');
+var pageZone = document.getElementById('pageZone');
 
 for (var p = 0; p < clubCourse.length; p++) {
 	var htmlCode = "";
@@ -239,7 +239,7 @@ for (var p = 0; p < clubCourse.length; p++) {
 	htmlCode += '</table>';
 	divElem.innerHTML = htmlCode;
 	liElem.appendChild(divElem);
-	listParc.appendChild(liElem);
+	pageZone.appendChild(liElem);
 }
 var chargement = document.getElementById('chargement');
 chargement.style.display = "none";
@@ -266,7 +266,7 @@ chargement.style.display = "none";
 
 <div id="content">
 
-<ul id="listParc" class="pageitem">
+<ul id="pageZone" class="pageitem">
 			<li class="listitem gras">			
 			<div id="clubInfo" class="itemdesc">
 			</div>

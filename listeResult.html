@@ -54,7 +54,7 @@ if (urlInfo.indexOf("data=") == -1){  // Not a new request
 
 function showResult(oResult){
 var callMap = document.getElementById('callMap');
-var clubList = document.getElementById('clubList');
+var pageZone = document.getElementById('pageZone');
 var message = document.getElementById('message');
 
 var regionLabel = "";
@@ -118,7 +118,7 @@ for (var i = 0; i < result.length; i++) {
 	else
 		spanElem.innerHTML = result[i].adresse + ", " + result[i].municipal;
 	liElem.appendChild(spanElem);
-	clubList.appendChild(liElem);
+	pageZone.appendChild(liElem);
 	var spanElem = document.createElement("span");
 	spanElem.setAttribute('class', 'itemdetail');
 	var tel = "&nbsp;&nbsp;" + result[i].telephone
@@ -126,7 +126,7 @@ for (var i = 0; i < result.length; i++) {
 		tel += "&nbsp;&nbsp;" + result[i].telephone2
 	spanElem.innerHTML = tel;
 	liElem.appendChild(spanElem);
-	clubList.appendChild(liElem);
+	pageZone.appendChild(liElem);
 }
 
 idList = idList.substring(0, idList.length - 1 )
@@ -164,7 +164,7 @@ if (clubPos)
 
 <div id="content">
 
-<ul id="clubList" class="pageitem">
+<ul id="pageZone" class="pageitem">
 
 </ul>
 
