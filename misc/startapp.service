@@ -1,0 +1,13 @@
+[UNIT]
+Description=Execute script to lauch app for golf.
+After=network-online.target docker.socket firewalld.service
+Wants=network-online.target
+Requires=firewalld.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/sh /init/start.sh
+
+[Install]
+WantedBy=multi-user.target
