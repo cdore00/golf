@@ -196,6 +196,10 @@ background:-moz-linear-gradient(top,#3A9D23,#00bb00)}
 #footer{text-align:center;position:relative;height:auto;width:auto;bottom:10px;color:#CCC;text-shadow:#000 0 1px 0}
 #directionsPanel, #destCoord{visibility:hidden;}
 
+#pageZone{
+	visibility: hidden;
+}
+
 .pageitem{-webkit-border-radius:8px;background-color:#fff;border:#444444 solid 1px;overflow:auto;padding:1px;padding-bottom:5px;position:relative;display:block;margin:10px 8px;list-style:none;border-radius: 20px;}
 
 .favItems{background-color:#fff;border:#444444 solid 1px;overflow:hidden; overflow-y:scroll;margin:10px 10px;text-align:left;height:150px}

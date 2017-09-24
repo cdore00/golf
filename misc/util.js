@@ -1,10 +1,11 @@
 <!--
 
-var HOSTserv = "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
-// "http://127.0.0.1:3000/";
-// "http://192.168.2.188:8080/";
-//"http://cdore.ddns.net:8080/";
-//"https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
+var HOSTserv = "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Openshift
+// "http://127.0.0.1:3000/";		//Local host
+// "http://cdore.ddns.net:8080/";  // VULTR Fedora 26 Server
+// "http://192.168.2.188:8080/";  //Ubuntu workstation
+//"http://127.0.0.1:3000/";
+//"https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Openshift
 
 function is_touch_device() {
   return 'ontouchstart' in window        // works on most browsers 
@@ -29,7 +30,7 @@ xhr.send();
 	function affNoRep(){
 		var eBod = document.getElementsByTagName('body')[0];
 		var divErr = document.createElement("div");
-		divErr.innerHTML = "Pas de réponse";
+		divErr.innerHTML = "Pas de réponse: " + HOSTserv;
 		eBod.insertBefore(divErr, eBod.firstChild);
 	}
 }
@@ -125,6 +126,9 @@ if (sizeAD){
 			fs = "1em";
 	}
 	document.body.style.fontSize = fs;
+	var pageZone = document.getElementById('pageZone');
+	if (pageZone)
+		pageZone.style.visibility = "visible";
 }
 }
 
