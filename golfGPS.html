@@ -433,7 +433,7 @@ localiser(watchLoc);
 }
 
 
-function chxPiqDist(){
+function chxPiqDist(oPiqDist){
 var chxPiqD = document.getElementById('chxPiqDist');
 
 chxPiqD.style.visibility="visible";
@@ -768,7 +768,9 @@ initialize();
 
 <div id="changeScore" class="unselectable" onmousedown="PositionFlag=1;" onmouseup="PositionFlag=0;once=0;"><img onclick="showScoreFrame()" alt="Réglages" src="images/reglages.png" /><div id="myScore"></div></div>
 
-<div id="piquetDist" onclick="chxPiqDist()"></div>
+<div id="piquetDist" onclick="chxPiqDist(this)">
+	<div id="chxPiqDist"><a href="#" onclick="setChxPiqDist(0)"><img id="imgLoc" height="16" width="16" alt="Distance de ma position" src="images/ici.png" /></a><a href="#" onclick="setChxPiqDist(1)"><img id="imgLoc" height="25" width="16" alt="Distance du drapeau" src="images/flag.png" /></a></div>
+	</div>
 <div id="locForm">
 <table id="typeLocList">
 <tr><td><a href="#"; onclick="goTract(0)">Suivre</a></td></tr>
@@ -777,7 +779,6 @@ initialize();
 <tr><td><a id="chxParler" href="#"; onclick="goTract(3)">Parler</a></td></tr>
 </table>
 </div>
-<div id="chxPiqDist"><a href="#" onclick="setChxPiqDist(0)"><img id="imgLoc" height="16" width="16" alt="Distance de ma position" src="images/ici.png" /></a><a href="#" onclick="setChxPiqDist(1)"><img id="imgLoc" height="25" width="16" alt="Distance du drapeau" src="images/flag.png" /></a></div>
 
 <div id="listeTrous">
 <table>
