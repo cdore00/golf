@@ -503,10 +503,10 @@ var offSetY = 0;
 function startTouch(event) {
 
 	var touch = event.targetTouches[0];
-	offSetX = touch.pageX-this.parentElement.offsetLeft;
-	offSetY = touch.pageY-this.parentElement.offsetTop;
+	offSetX = touch.pageX-this.offsetLeft;
+	offSetY = touch.pageY-this.offsetTop;
 	this.addEventListener('touchmove', moveTouch, false);
-	this.addEventListener('touchend', endTouch, false);
+//	this.addEventListener('touchend', endTouch, false);
 }
 
 function moveTouch(event) {
