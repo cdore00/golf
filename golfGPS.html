@@ -17,8 +17,8 @@
 <link href="misc/golfGPS.css" rel="stylesheet" media="screen" type="text/css" />
 
 <title id="titClub"></title>
-<meta content="Golf, Québec, Canada, Golf du Québec, Clubs de golf au Québec, Québec golf" name="keywords" />
-<meta content="Répertoire des clubs de golf du Québec." name="description" />
+<meta content="Golf, QuÃ©bec, Canada, Golf du QuÃ©bec, Clubs de golf au QuÃ©bec, QuÃ©bec golf" name="keywords" />
+<meta content="RÃ©pertoire des clubs de golf du QuÃ©bec." name="description" />
 
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" /> 
 
@@ -449,6 +449,10 @@ if (piquetMarker.getVisible())
 }
 
 function UpdateXY(divName) {
+var x=5;
+}
+	    
+function UpdateXY2(divName) {
 var layerDiv = document.getElementById(divName);
 box_x = layerDiv.offsetLeft;
 box_y = layerDiv.offsetTop;
@@ -493,6 +497,26 @@ setHoleScore();
 layerScore.style.visibility="visible";
 	
 }
+	    
+var offSetX = 0;
+var offSetY = 0;
+function startTouch(event) {
+
+	var touch = event.targetTouches[0];
+	offSetX = touch.pageX-this.parentElement.offsetLeft;
+	offSetY = touch.pageY-this.parentElement.offsetTop;
+	this.addEventListener('touchmove', moveTouch, false);
+	this.addEventListener('touchend', endTouch, false);
+}
+
+function moveTouch(event) {
+    var touch = event.targetTouches[0];
+    // Place element where the finger is
+    this.style.left = touch.pageX-this.parentElement.offsetLeft-offSetX + 'px';
+    this.style.top = touch.pageY-this.parentElement.offsetTop-offSetY + 'px';
+    event.preventDefault();
+}
+	    
 
 function setHoleScore(gData){
 var setScore = document.getElementById('setScore');
@@ -545,7 +569,7 @@ getInfo("updateGame?data=" + strData, setMyScore);
 closeScore();
 }
 
-/*function callMyScore(){  // non utilisé
+/*function callMyScore(){  // non utilisÃ©
 	getInfo("getGame?data=" + userId + "$" + courseID, setMyScore);
 }*/
 
@@ -616,14 +640,14 @@ if (touchin == true){
 function initVoice(){
 
 if ('speechSynthesis' in window) {
-//	msg.voice = speechSynthesis.getVoices().filter(function(voice) { return voice.name == 'Google français'; })[0];
+//	msg.voice = speechSynthesis.getVoices().filter(function(voice) { return voice.name == 'Google franÃ§ais'; })[0];
 	msg.default= false;
 	msg.localService=false;
 	msg.lang= "fr-FR";
-	msg.name= "Google Français";
-	msg.voiceURI= "Google Français";
+	msg.name= "Google FranÃ§ais";
+	msg.voiceURI= "Google FranÃ§ais";
 }else{
-	alert('Synthèse vocale non supportée par le fureteur.');
+	alert('SynthÃ¨se vocale non supportÃ©e par le fureteur.');
 	watchLoc = 0;}
 }
 
@@ -636,13 +660,13 @@ var actTime = time1.getTime(time1);
 if ( laDistance > 30 && Math.abs(laDistance - lastDist) > 10 && (actTime - lastTime > 30000 || lastTime == 1 ) ){
 	//alert(trouPar[0][trou]);
 	msg.text = laDistance + ' verges, trou ' + trou 
-	//+ ' Dernière distance ' + actDist ;
+	//+ ' DerniÃ¨re distance ' + actDist ;
 	window.speechSynthesis.speak(msg);
 	lastDist = laDistance;
 	//lastTime = actTime;
 }
 
-if (lastDist != 1)  // géolocalisation arrêté clearGeo() = 1 
+if (lastDist != 1)  // gÃ©olocalisation arrÃªtÃ© clearGeo() = 1 
 	getLocalisation();
 if (Math.abs(laDistance - actDist) > 15){
 	actDist = laDistance;
@@ -654,6 +678,10 @@ if (Math.abs(laDistance - actDist) > 15){
 function initPage(){
 var titClub = document.getElementById('titClub'); 
 var changeScore = document.getElementById('changeScore'); 
+
+var holeDist = document.getElementById('holeDist');
+holeDist.addEventListener('touchstart', startTouch, false);  // Drag and drop for mobil
+changeScore.addEventListener('touchstart', startTouch, false);  // Drag and drop for mobil
 
 userId = GetCookie("userID");
 if (!userId)
@@ -748,7 +776,7 @@ initialize();
 <body onload='initPage()' onUnload='clearGeo()' > 
 
 <div id="menuGPS" class="unselectable">
-<button class="bouton-prec-suiv" onclick="trouSuivant(-1)"><img  height="18" width="13" alt="Trou précédent" src="images/prec.png" /></button>
+<button class="bouton-prec-suiv" onclick="trouSuivant(-1)"><img  height="18" width="13" alt="Trou prÃ©cÃ©dent" src="images/prec.png" /></button>
 <img id="imgFlag" onclick="trouSuivant(-1)" height="25" width="16" src="images/flag.png" />
 <div id="holePlay" onclick="trouSuivant(1)" ontouchstart="detectLong('listeTrous');" ontouchend="touchin = false;" onmouseover="detectLong('listeTrous');" onmouseout="touchin = false;"></div>
 <button class="bouton-prec-suiv" onclick="trouSuivant(1)"><img height="18" width="13" alt="Trou suivant" src="images/suiv.png" /></button>
@@ -771,13 +799,13 @@ initialize();
 
 <div id="holeDist" class="unselectable" ontouchmove="UpdateXY('holeDist');" onmousedown="PositionFlag=1;" onmouseup="PositionFlag=0;once=0;"></div>
 
-<div id="changeScore" class="unselectable" ontouchmove="UpdateXY('changeScore');" onmousedown="PositionFlag=1;" onmouseup="PositionFlag=0;once=0;"><img onclick="showScoreFrame()" alt="Réglages" src="images/reglages.png" /><div id="myScore"></div></div>
+<div id="changeScore" class="unselectable" ontouchmove="UpdateXY('changeScore');" onmousedown="PositionFlag=1;" onmouseup="PositionFlag=0;once=0;"><img onclick="showScoreFrame()" alt="RÃ©glages" src="images/reglages.png" /><div id="myScore"></div></div>
 
 <div id="piquetDist" onclick="chxPiqDist()"></div>
 <div id="locForm">
 <table id="typeLocList">
 <tr><td><a href="#"; onclick="goTract(0)">Suivre</a></td></tr>
-<tr><td><a href="#"; onclick="goTract(1)">Repérer</a></td></tr>
+<tr><td><a href="#"; onclick="goTract(1)">RepÃ©rer</a></td></tr>
 <tr><td><a href="#"; onclick="goTract(2)">Continue</a></td></tr>
 <tr><td><a id="chxParler" href="#"; onclick="goTract(3)">Parler</a></td></tr>
 </table>
