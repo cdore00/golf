@@ -327,6 +327,7 @@ var chxPiquetDist = document.getElementById('chxPiqDist');
   }else{
 	imgPiquet.width="16";
 	piquetDist.innerHTML = '';
+	piquetDist.style.left = bPiq.offsetLeft + "px";
 	piquetDist.style.visibility="visible";
 	clicListener = google.maps.event.addListener(map, 'click', addLatLng);
   }
@@ -448,42 +449,6 @@ if (piquetMarker.getVisible())
 	traceLine(piquetMarker.getPosition());
 }
 
-function UpdateXY(divName) {
-var x=5;
-}
-	    
-function UpdateXY2(divName) {
-var layerDiv = document.getElementById(divName);
-box_x = layerDiv.offsetLeft;
-box_y = layerDiv.offsetTop;
-
-move_x = event.touches[0].pageX;
-move_y = event.touches[0].pageY;
-
-if (move_x > box_x-225 && move_x < box_x+225 && move_y > box_y-225 && move_y < box_y+225) {
-PositionFlag = 1;
-}
-else {
-PositionFlag = 0;
-}
-
-if (once == 0) {
-diff_x = move_x - box_x;
-diff_y = move_y - box_y;
-}
-
-if (PositionFlag == 1) {
-xx = move_x - diff_x-30;
-yy = move_y - diff_y;
-xx = xx + 'px';
-yy = yy + 'px';
-layerDiv.style.left = xx;
-layerDiv.style.top = yy;
-once = 1;
-}
-//alert(yy);
-//alert(layerDiv.style.top);
-}
 
 function showScoreFrame(strParc){
 var layerScore = document.getElementById('showScore');
