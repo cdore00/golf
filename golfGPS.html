@@ -579,7 +579,8 @@ var tot = 0;
 var laN = 0;
 var score, pref, ts;
 
-currentGameID = gData[0]._id
+if (gData[0]._id){
+currentGameID = gData[0]._id;
 
 for (var i= 1; i < 19 ; i++){
 	ts = eval("gData[0].T" + i);
@@ -590,6 +591,7 @@ for (var i= 1; i < 19 ; i++){
 		aScore[i-1].P=eval("gData[0].P" + i);
 		aScore[i-1].L=eval("gData[0].L" + i);
 	}
+}
 }
 score = tot - laN;
 if (score == 0){
