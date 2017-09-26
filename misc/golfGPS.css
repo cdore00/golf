@@ -76,7 +76,6 @@ background-color:#fff;
 left:3.5em;
 z-index: 1010;
 cursor: pointer;
-border:2px solid #000;
 }
 
 #chxPiqDist a{
@@ -88,7 +87,7 @@ left:3.3em;
 width:auto;
 text-align:center;
 z-index: 1008;
-overflow:hidden;
+height: 0px;
 }
 
 #blocForm{
