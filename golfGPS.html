@@ -308,7 +308,7 @@ holeMarker.position_changed = holePosChange;
 //alert(google.maps.geometry.spherical.computeHeading(posMarker.getPosition(),holeMarker.getPosition()));
 }
 
-function getPiquet(){
+function getPiquet(bPiq){
 var path = polyLine.getPath();
 var imgPiquet = document.getElementById('imgPiquet');
 var piquetDist = document.getElementById('piquetDist');
@@ -784,7 +784,7 @@ initialize();
 <button class="bouton-prec-suiv" onclick="trouSuivant(1)"><img height="18" width="13" alt="Trou suivant" src="images/suiv.png" /></button>
 
 <div id="hole" onclick="showBlocs();" ><div id="holePar"></div><div id="holeBloc" ></div></div>
-<button id="boutonPiquet" class="itin" title="Placer un piquet" onclick="getPiquet(); return false;"><img id="imgPiquet" height="18" width="3" src="images/piquet.png" /></button>
+<button id="boutonPiquet" class="itin" title="Placer un piquet" onclick="getPiquet(this); return false;"><img id="imgPiquet" height="18" width="3" src="images/piquet.png" /></button>
 <button id="boutonLoc" class="itin" title="Localiser" onclick="getLoc(); return false;"><img id="imgLoc" height="18" width="18" alt="Localiser" src="images/ici.png" /></button>
 <!--
 <div id="boutonTaille"><button type="button" id="rightnav" title="Taille de police" onclick="changeTaille()"><img id="imgTaille" alt="Taille de police" height="20" width="45" src="images/taille.png" /></button></div>
