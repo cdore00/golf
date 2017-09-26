@@ -61,6 +61,10 @@ this.acc=acc;
 function manageIdent(action){
 var modLayer = document.getElementById('modalDiv');
 var authLayer = document.getElementById('authLayer');
+var favGolfList = document.getElementById('favGolfList');
+
+if (favGolfList)
+	favGolfList.parentNode.removeChild(favGolfList);
 
 closePref();
 var xmlhttp = new XMLHttpRequest();
@@ -479,7 +483,7 @@ tooltip.fadeOut = function () {
 
 tooltip.hide = function () {
 
-    if(this._tooltipElement){
+    if(this._tooltipElement.style){
         this._tooltipElement.style.visibility ="hidden";
     }else{
         this._tooltipElement.visibility = "hidden";
@@ -597,7 +601,10 @@ authLayer.style.visibility="visible";
 
 function listFav(clubList){
 var favGolfList = document.getElementById('favGolfList');
+var divLoad = document.getElementById('divLoad');
 
+if (divLoad)
+	divLoad.style.display = "none";
 var ulElem = document.createElement("ul");
 ulElem.setAttribute('class', 'favItems');
 favGolfList.insertBefore(ulElem, favGolfList.firstChild);
@@ -922,8 +929,8 @@ geocoder = new google.maps.Geocoder();
 </form>
 </div>
 
-<div id="authLayer"></div>
-
+<div id="authLayer">
+<div id="divLoad"><img id="imgLoad" alt="Chargement en cours..." height="64" width="64" src="images/loading.gif" /></div>
 </div>
 <!--<div id="tooltip"></div>  // -->
 <div id="tooltip"><div id="tooltipFleche"></div><div id="tooltipMid"><a href="javascript:showLocal();"><p id="tooltipText"></p></a></div></div>

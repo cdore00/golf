@@ -31,7 +31,6 @@
 
     <script type="text/javascript"> 
 	<!--
-
 //Touch move
 var diff_x;
 var diff_y;
@@ -42,7 +41,6 @@ var once = 0;
 window.addEventListener('DOMActivate', function() {
     setTimeout(scrollTo, 0, 0, 1);
 }, true);
-
 var userId = null;
 var courseID = null;
 var currentGameID = null;
@@ -75,20 +73,15 @@ var lastTime = 0;
    {
      iciOn= new Image(14,14);
      iciOn.src="images/ici.png";  
-
      iciOff= new Image(14,14);
      iciOff.src="images/iciX.png";
    }
-
 var trouCoord =  new Array();	
 var trouPar =  new Array();	
 var trouNormale = false;
 var aScore = [{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}];
-
 google.maps.visualRefresh = true;
-
 function initialize() { 
-
 var myOptions = { 
   center: trouCoord[0], 
   zoom: 18,
@@ -96,13 +89,13 @@ var myOptions = {
   zoomControl: false, 
   scaleControl: false,
   streetViewControl: false,
-  mapTypeControl: false,    
+  mapTypeControl: false,   
+  fullscreenControl: false, 
   mapTypeId: google.maps.MapTypeId.SATELLITE
 //heading: 180,
 //tilt: 45
 }; 
 map = new google.maps.Map(document.getElementById("map_canvas"), myOptions); 
-
 //setFontSizeGolfGPS();
 var bodyobj = document.getElementsByTagName('body')[0];
 bodyobj.style.fontSize = '2.5em';
@@ -110,7 +103,6 @@ adjustScreen(0);
 setMyPosition(map, trouCoord[0]);
 setHole(map, trouCoord[0]);
 setpiquetMarker(map, trouCoord[0]);
-
 var polyOptions = {
 strokeColor: '#ffffff',
 clickable: false,
@@ -119,10 +111,8 @@ strokeWeight: 2
 }
 polyLine = new google.maps.Polyline(polyOptions);
 polyLine.setMap(map);	
-
 changeBloc(blocID);
 goTract(0);
-
 document.getElementById('holeDist').addEventListener('touchmove', function(event) {
 event.preventDefault();
 }, false);
@@ -135,12 +125,8 @@ event.preventDefault();
 document.getElementById('holePlay').addEventListener('touchend', function(event) {
 event.preventDefault();
 }, false);
-
 holeMarker.position_changed = holePosChange;
-
 }
-
-
 function setMyPosition(map, lat, lng) {
   var image = {
     url: iciOn.src,
@@ -164,7 +150,6 @@ function setMyPosition(map, lat, lng) {
 		});
 	//posMarker.position_changed = calcPosDist;
 }	
-
 function setpiquetMarker(map, location) {
   var image = {url:'images/piquet.png',
   			size: new google.maps.Size(50, 50),
@@ -174,7 +159,6 @@ function setpiquetMarker(map, location) {
       coord: [1, 1, 50, 50],
       type: 'rect'
   };
-
   piquetMarker = new google.maps.Marker({
     position: location,
 	icon: image,
@@ -184,29 +168,21 @@ function setpiquetMarker(map, location) {
   });
   piquetMarker.position_changed = stopPiquetDrag;
 }
-
 function changeBloc(B_id){
 var blockName;
 var blocForm = document.getElementById('blocForm');
-
 blocForm.style.visibility="hidden";
 blocID = B_id;
 blockName = 'B' + trouPar[blocID][0]
 document.getElementById("holeBloc").className = blockName;
 afficheTrou(trou, true);
 }
-
 function showBlocs(){
-
 var blocForm = document.getElementById('blocForm');
-
 blocForm.style.visibility="visible";
-
 }
-
 function calcPosDist(myLatLng, precision){
 var distance = calculDistance( posMarker.getPosition(), holeMarker.getPosition());
-
 	holeDist.innerHTML = distance + '<p id="accu">' + precision + '&apos;</p>';
 //alert(watchLoc);
 	if (distance.indexOf('M') != -1)
@@ -219,23 +195,17 @@ var distance = calculDistance( posMarker.getPosition(), holeMarker.getPosition()
 		parler(distance);
 		}
 }
-
 function holePosChange(){
-
 	if (piquetMarker.getVisible())
 		traceLine(piquetMarker.getPosition());
-
 }
-
 function localiser(chx){
-
 if (watchLoc == 0){
 	clearGeo();
 	getLocalisationErr();  //utils.js
   }else
 	getLocalisation();
 }
-
 function clearGeo(){
 //alert(watchId);
 clearTimeout(locTimer);
@@ -244,22 +214,16 @@ lastDist = 1;
 if ('speechSynthesis' in window)
 	window.speechSynthesis.cancel();
 }
-
 function onLocSuccess(position) {
 var myLatLng = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
 var precision = Math.round(position.coords.accuracy * 3.280839895013123);
 var boutonLoc = document.getElementById('boutonLoc');
-
 posMarker.setPosition(myLatLng);
 boutonLoc.className='itin';
-
 if (watchLoc == 2)
 	locTimer = setTimeout("getLocalisation();", 1000);
-
 calcPosDist(myLatLng, precision);
-
 }
-
 function getLocalisation(){
 	if (navigator.geolocation) {
 			//var options = { enableHighAccuracy:true, maximumAge:10000, timeout:10000, frequency: 2000 };
@@ -268,37 +232,27 @@ function getLocalisation(){
 		navigator.geolocation.getCurrentPosition(onLocSuccess, onLocAffError, options);
 	}
 }
-
 function trouSuivant(p_m){
-
 trou = trou + p_m;
-
 if (trou > trouCoord.length)
 	trou = 1;
 if (trou == 0)
 	trou = trouCoord.length;
 	
 afficheTrou(trou);
-
 }
-
 function afficheTrou(noTrou, keepPosition){
 var holePar = document.getElementById("holePar");
 var holePlay = document.getElementById("holePlay");
 var layerHoles = document.getElementById('listeTrous');
-
 layerHoles.style.visibility="hidden";
 holeMarker.position_changed = null;
-
 if (!keepPosition)
 	map.setCenter(trouCoord[noTrou-1]);
-
 holeMarker.setPosition(trouCoord[noTrou-1]);
-
 holePar.innerHTML = trouPar[blocID][noTrou];
 holePlay.innerHTML = noTrou;
 trou = noTrou;
-
 holeMarker.position_changed = holePosChange;
 //holeDist.innerHTML = ' ';
 //var hea =google.maps.geometry.spherical.computeHeading( posMarker.getPosition(), holeMarker.getPosition());
@@ -307,14 +261,11 @@ holeMarker.position_changed = holePosChange;
 //map.setTilt(45);
 //alert(google.maps.geometry.spherical.computeHeading(posMarker.getPosition(),holeMarker.getPosition()));
 }
-
 function getPiquet(bPiq){
 var path = polyLine.getPath();
 var imgPiquet = document.getElementById('imgPiquet');
 var piquetDist = document.getElementById('piquetDist');
 var chxPiquetDist = document.getElementById('chxPiqDist');
-
-
 //alert(clicListener);
   if (clicListener){
 	google.maps.event.removeListener(clicListener);
@@ -332,20 +283,16 @@ var chxPiquetDist = document.getElementById('chxPiqDist');
 	clicListener = google.maps.event.addListener(map, 'click', addLatLng);
   }
 }
-
 function addLatLng(event) {
 	movePiquet(event.latLng);
 }
-
 function movePiquet(latLng){
 	piquetMarker.setPosition(latLng);
 	piquetMarker.setVisible(true);
 }
-
 function traceLine(piquetLatLng){
 var path = polyLine.getPath();
 var piquetDist = document.getElementById('piquetDist');
-
   path.clear();
   path.push(piquetLatLng);
   
@@ -357,13 +304,10 @@ var piquetDist = document.getElementById('piquetDist');
 	piquetDist.innerHTML = calculDistance(piquetLatLng, holeMarker.getPosition());
   }
 }
-
 function stopPiquetDrag(){
-
 traceLine(piquetMarker.getPosition());
 //alert("Move");
 }
-
 function calculDistance(pt1, pt2){
 var lat1 = pt1.lat();
 var lat2 = pt2.lat();
@@ -374,12 +318,9 @@ var rLat1 = lat1 * (Math.PI / 180);
 var rLat2 = lat2 * (Math.PI / 180);
 var dLat = (lat2-lat1) * (Math.PI / 180);
 var dLon = (lon2-lon1) * (Math.PI / 180);
-
 var a = Math.sin(rLat1) * Math.sin(rLat2) + Math.cos(rLat1) * Math.cos(rLat2) * Math.cos(dLon);
     a = Math.acos(a);
-
 var d = R * a ;
-
 	d = Math.round(d);
 	if ( d > 1760){
 	  d = d / 1760;
@@ -387,78 +328,58 @@ var d = R * a ;
 	  d = d + 'M';
 	  }
 	return d + '';
-
 }
-
-function getLoc(){
+function getLoc(bLoc){
 var locForm = document.getElementById('locForm');
 var imgLoc = document.getElementById('imgLoc');
 var image = new google.maps.MarkerImage(iciOff.src);
 var boutonLoc = document.getElementById('boutonLoc');
-
 boutonLoc.className='itin';
 posMarker.setIcon(image);
-
 	clearGeo();
 	if ( locForm.style.visibility == "visible"){
 		locForm.style.visibility="hidden";
 	}else{
+		locForm.style.left = (bLoc.offsetLeft + bLoc.offsetWidth - locForm.offsetWidth ) + "px";
 		locForm.style.visibility="visible";
 	}
 imgLoc.src=iciOff.src;
-
 var sh = posMarker.getIcon();
 posMarker.setIcon(sh);
 //alert(sh);
 }
-
 function goTract(chx){
 var boutonLoc = document.getElementById('boutonLoc');
 var locForm = document.getElementById('locForm');
 var imgLoc = document.getElementById('imgLoc');
 var image = new google.maps.MarkerImage(iciOn.src);
-
 watchLoc = chx;
 if (watchLoc == 3 )
 	initVoice();
-
 posMarker.setIcon(image);
-
 boutonLoc.className='itinS';
-
 locForm.style.visibility="hidden";
 imgLoc.src=iciOn.src;
 localiser(watchLoc);
-
 }
-
-
 function chxPiqDist(oPiqDist){
 var chxPiqD = document.getElementById('chxPiqDist');
-
+chxPiqD.style.left = oPiqDist.offsetLeft + "px";
 chxPiqD.style.visibility="visible";
-
 }
-
 function setChxPiqDist(chx){
 var chxPiqD = document.getElementById('chxPiqDist');
-
 chxDistPiq = chx;
 chxPiqD.style.visibility="hidden";
 if (piquetMarker.getVisible())
 	traceLine(piquetMarker.getPosition());
 }
-
-
 function showScoreFrame(strParc){
 var layerScore = document.getElementById('showScore');
 var scoreHole = document.getElementById('scoreHole');
-
 scoreHole.innerHTML = "Trou " + trou + " par " + eval("trouNormale.T" + trou);
-
 //getInfo("getGam?data=" + userId + "$" + courseID, setHoleScore);
 setHoleScore();
-
 layerScore.style.visibility="visible";
 	
 }
@@ -466,14 +387,12 @@ layerScore.style.visibility="visible";
 var offSetX = 0;
 var offSetY = 0;
 function startTouch(event) {
-
 	var touch = event.targetTouches[0];
 	offSetX = touch.pageX-this.offsetLeft;
 	offSetY = touch.pageY-this.offsetTop;
 	this.addEventListener('touchmove', moveTouch, false);
 //	this.addEventListener('touchend', endTouch, false);
 }
-
 function moveTouch(event) {
     var touch = event.targetTouches[0];
     // Place element where the finger is
@@ -482,46 +401,33 @@ function moveTouch(event) {
     event.preventDefault();
 }
 	    
-
 function setHoleScore(gData){
 var setScore = document.getElementById('setScore');
-
-
 var vc = aScore[trou-1].T;
 var vp = aScore[trou-1].P;
 var vl = aScore[trou-1].L;
 setScore.nbrCoups.selectedIndex = (vc - 1);
 setScore.nbrPutts.selectedIndex = (vp );
 setScore.nbrPen.selectedIndex = (vl );
-
-
 setScore.nbrCoups.click();
 	setScore.nbrCoups.focus();
-
 }
-
 /*function setHoleScore(gData){
 var setScore = document.getElementById('setScore');
-
 var vc = eval("gData[0].T" + trou);
 var vp = eval("gData[0].P" + trou);
 var vl = eval("gData[0].L" + trou);
-
 setScore.nbrCoups.selectedIndex = (vc - 1);
 setScore.nbrPutts.selectedIndex = (vp );
 setScore.nbrPen.selectedIndex = (vl );
 setScore.nbrCoups.click();
 	setScore.nbrCoups.focus();
-
 }*/
-
 function closeScore(){
 var layerScore = document.getElementById('showScore');
-
 //alert(setScore.nbrCoups[setScore.nbrCoups.selectedIndex].value);
 layerScore.style.visibility="hidden";
 }
-
 function saveScore(formRef){
 var score = formRef.nbrCoups[formRef.nbrCoups.selectedIndex].value;
 var putt = formRef.nbrPutts[formRef.nbrPutts.selectedIndex].value;
@@ -530,23 +436,18 @@ var penal = formRef.nbrPen[formRef.nbrPen.selectedIndex].value;
 var strData = userId + "$" + courseID + "$" + trou + "$" + score + "$" + putt + "$" + penal + "$" + clubName;
 	
 getInfo("updateGame?data=" + strData, setMyScore);
-
 closeScore();
 }
-
 /*function callMyScore(){  // non utilisé
 	getInfo("getGame?data=" + userId + "$" + courseID, setMyScore);
 }*/
-
 function setMyScore(gData){
 var myScore = document.getElementById('myScore');
 var tot = 0;
 var laN = 0;
 var score, pref, ts;
-
 if (gData.length > 0){
 currentGameID = gData[0]._id;
-
 for (var i= 1; i < 19 ; i++){
 	ts = eval("gData[0].T" + i);
 	if (ts > 0){
@@ -557,7 +458,6 @@ for (var i= 1; i < 19 ; i++){
 		aScore[i-1].L=eval("gData[0].L" + i);
 	}
 }
-
 score = tot - laN;
 if (score == 0){
 	pref = "&nbsp;E";
@@ -567,7 +467,6 @@ if (score == 0){
 	else
 		pref = "&nbsp;" + (tot - laN);
 }
-
 myScore.innerHTML = tot + pref;
 }
 if (calltabScore){
@@ -575,37 +474,27 @@ if (calltabScore){
 	calltableauScore();
 }
 }
-
-
 function tableauScore(formRef){
 	calltabScore = true;
 	saveScore(formRef, true);
 }
-
 function calltableauScore(){
-
 var localWindow = window.open('scoreTab.html?data=' + currentGameID + "$" + clubName);
 localWindow.document.close();
 //closeScore();
 }
-
 function detectLong(idName){
 locTimer = setTimeout("showDiv('" + idName + "');", 900);
 touchin = true;
 }
-
 function showDiv(idName){
-
 if (touchin == true){
 	var divElement = document.getElementById(idName);
 	divElement.style.visibility = "visible";
 	touchin = false;
 }
-
 }
-
 function initVoice(){
-
 if ('speechSynthesis' in window) {
 //	msg.voice = speechSynthesis.getVoices().filter(function(voice) { return voice.name == 'Google français'; })[0];
 	msg.default= false;
@@ -617,13 +506,10 @@ if ('speechSynthesis' in window) {
 	alert('Synthèse vocale non supportée par le fureteur.');
 	watchLoc = 0;}
 }
-
 function parler(laDistance){
 var time1 = new Date();
 var actTime = time1.getTime(time1);
-
 //alert(Math.abs(lastDist - laDistance) + '  Time=' + (actTime-lastTime) + ' lastTime= ' + lastTime + ' lastDist= ' + lastDist);
-
 if ( laDistance > 30 && Math.abs(laDistance - lastDist) > 10 && (actTime - lastTime > 30000 || lastTime == 1 ) ){
 	//alert(trouPar[0][trou]);
 	msg.text = laDistance + ' verges, trou ' + trou 
@@ -632,7 +518,6 @@ if ( laDistance > 30 && Math.abs(laDistance - lastDist) > 10 && (actTime - lastT
 	lastDist = laDistance;
 	//lastTime = actTime;
 }
-
 if (lastDist != 1)  // géolocalisation arrêté clearGeo() = 1 
 	getLocalisation();
 if (Math.abs(laDistance - actDist) > 15){
@@ -640,44 +525,32 @@ if (Math.abs(laDistance - actDist) > 15){
 	lastTime = actTime;
 	}
 }
-
-
 function initPage(){
 var titClub = document.getElementById('titClub'); 
 var changeScore = document.getElementById('changeScore'); 
-
 var holeDist = document.getElementById('holeDist');
 holeDist.addEventListener('touchstart', startTouch, false);  // Drag and drop for mobil
 changeScore.addEventListener('touchstart', startTouch, false);  // Drag and drop for mobil
-
 userId = GetCookie("userID");
 if (!userId)
 	changeScore.style.visibility = "hidden";
-
 var data = getURLdata();
 data = data.split("&");
 courseID = data[0];
 clubName = decodeURI(data[1]);
 titClub.innerHTML = clubName;
 //userId = GetCookie("userName");
-
 getInfo("getGolfGPS?data=" + courseID, showCourse);
-
 }
-
-
 function showCourse(oGps){
 var bloc = oGps[0].parc;
 var blocForm = document.getElementById('blocForm'); 
 var holeList = document.getElementById('holeList'); 
 //<tr>
 //<td><a href="#"; onclick="afficheTrou(1)">1</a></td>
-
-
 for (var i= 0; i < oGps.length; i++){
 	trouCoord[i] = new google.maps.LatLng(oGps[i].latitude, oGps[i].longitude);
 }
-
 var nt = 19;
 if(bloc[0].T14 == null || bloc[0].T14 == 0)
 	nt = 10;
@@ -691,7 +564,6 @@ for (var i= 10; i < nt ; i++){
 	}
 	holeList.appendChild(trElem);
 }
-
 var noB = 0;
 for (var i= 0; i < bloc.length; i++){
 	if (!trouNormale && bloc[i].Bloc == "Normale"){
@@ -709,7 +581,6 @@ for (var i= 0; i < bloc.length; i++){
 		noB += 1;
 		}
 }
-
 	function arrB(b, n){
 		var a = b.Bloc;
 		for (var j = 1; j < n; j++) {
@@ -718,12 +589,8 @@ for (var i= 0; i < bloc.length; i++){
 		}
 	return a.split(",");;
 	}
-
 initialize();
-
 }
-
-
 // -->
 </script> 
 
@@ -743,14 +610,14 @@ initialize();
 <body onload='initPage()' onUnload='clearGeo()' > 
 
 <div id="menuGPS" class="unselectable">
-<button class="bouton-prec-suiv" onclick="trouSuivant(-1)"><img  height="18" width="13" alt="Trou précédent" src="images/prec.png" /></button>
+<button class="bouton-prec-suiv" onclick="trouSuivant(-1)"><img  height="18" width="13" alt="Trou pr&eacute;c&eacute;dent" src="images/prec.png" /></button>
 <img id="imgFlag" onclick="trouSuivant(-1)" height="25" width="16" src="images/flag.png" />
 <div id="holePlay" onclick="trouSuivant(1)" ontouchstart="detectLong('listeTrous');" ontouchend="touchin = false;" onmouseover="detectLong('listeTrous');" onmouseout="touchin = false;"></div>
 <button class="bouton-prec-suiv" onclick="trouSuivant(1)"><img height="18" width="13" alt="Trou suivant" src="images/suiv.png" /></button>
 
 <div id="hole" onclick="showBlocs();" ><div id="holePar"></div><div id="holeBloc" ></div></div>
 <button id="boutonPiquet" class="itin" title="Placer un piquet" onclick="getPiquet(this); return false;"><img id="imgPiquet" height="18" width="3" src="images/piquet.png" /></button>
-<button id="boutonLoc" class="itin" title="Localiser" onclick="getLoc(); return false;"><img id="imgLoc" height="18" width="18" alt="Localiser" src="images/ici.png" /></button>
+<button id="boutonLoc" class="itin" title="Localiser" onclick="getLoc(this); return false;"><img id="imgLoc" height="18" width="18" alt="Localiser" src="images/ici.png" /></button>
 <!--
 <div id="boutonTaille"><button type="button" id="rightnav" title="Taille de police" onclick="changeTaille()"><img id="imgTaille" alt="Taille de police" height="20" width="45" src="images/taille.png" /></button></div>
 </div>
@@ -766,15 +633,15 @@ initialize();
 
 <div id="holeDist" class="unselectable" onmousedown="PositionFlag=1;" onmouseup="PositionFlag=0;once=0;"></div>
 
-<div id="changeScore" class="unselectable" onmousedown="PositionFlag=1;" onmouseup="PositionFlag=0;once=0;"><img onclick="showScoreFrame()" alt="Réglages" src="images/reglages.png" /><div id="myScore"></div></div>
+<div id="changeScore" class="unselectable" onmousedown="PositionFlag=1;" onmouseup="PositionFlag=0;once=0;"><img onclick="showScoreFrame()" alt="R&eacute;glages" src="images/reglages.png" /><div id="myScore"></div></div>
 
-<div id="piquetDist" onclick="chxPiqDist(this)">
-	<div id="chxPiqDist"><a href="#" onclick="setChxPiqDist(0)"><img id="imgLoc" height="16" width="16" alt="Distance de ma position" src="images/ici.png" /></a><a href="#" onclick="setChxPiqDist(1)"><img id="imgLoc" height="25" width="16" alt="Distance du drapeau" src="images/flag.png" /></a></div>
-	</div>
+<div id="piquetDist" onclick="chxPiqDist(this)"></div>
+<div id="chxPiqDist"><a href="#" onclick="setChxPiqDist(0)"><img id="imgLoc" height="16" width="16" alt="Distance de ma position" src="images/ici.png" /></a><a href="#" onclick="setChxPiqDist(1)"><img id="imgLoc" height="25" width="16" alt="Distance du drapeau" src="images/flag.png" /></a></div>
+
 <div id="locForm">
 <table id="typeLocList">
 <tr><td><a href="#"; onclick="goTract(0)">Suivre</a></td></tr>
-<tr><td><a href="#"; onclick="goTract(1)">Repérer</a></td></tr>
+<tr><td><a href="#"; onclick="goTract(1)">Rep&eacute;rer</a></td></tr>
 <tr><td><a href="#"; onclick="goTract(2)">Continue</a></td></tr>
 <tr><td><a id="chxParler" href="#"; onclick="goTract(3)">Parler</a></td></tr>
 </table>
@@ -875,7 +742,6 @@ initialize();
 <!--
 //alert("ok22");
 holeDist = document.getElementById("holeDist");
-
 if ('speechSynthesis' in window) {
  var elementP  =  document.getElementById('chxParler');
     elementP.addEventListener('click', function () {
