@@ -658,7 +658,6 @@ function rechercheClub(){
 var formCrit = document.getElementById('critere');
 var url = window.location.href
 var arr = url.split("/");
-//var URLresult = arr[0] + "//" + arr[2] + "/listeResult.html/data=" + formCrit.IdRegion.value;
 var URLresult = "listeResult.html?data=";
 clearContext();
 var mess = "";
@@ -753,9 +752,23 @@ if (lang.toUpperCase().indexOf("FR-") != -1)
 	switch (l) {
 	  case "FR":
 		langLbl["title"] = "Golfs du Qu&eacute;bec";
+		langLbl["motcl"] = "Mot cl&eacute;";
+		langLbl["clubn"] = "Nom club";
+		langLbl["clubc"] = "Ville";
+		langLbl["regio"] = "R&eacute;gion";
+		langLbl["toute"] = "Toutes";
+		langLbl["proxi"] = "Proximit&eacute;";
+		langLbl["posta"] = "Code postal";
 		break;
 	  default:
 		langLbl["title"] = "Quebec Golfs Course";
+		langLbl["motcl"] = "Key Word";
+		langLbl["clubn"] = "Club name";
+		langLbl["clubc"] = "City";
+		langLbl["regio"] = "Country";
+		langLbl["toute"] = "All";
+		langLbl["proxi"] = "Proximity";
+		langLbl["posta"] = "Postal Code";
 		break;
 	}
 }
@@ -773,7 +786,10 @@ for (var i = 0; i < otextColl.length; i++) {
 function initText(oText){
 var textId = oText.id;
 textId = textId.substring(0, 5);
+if (langLbl[textId])
 	oText.innerHTML = langLbl[textId] ;
+else	
+	alert("Miss: " + textId);
 }
 
 // -->
@@ -821,27 +837,27 @@ textId = textId.substring(0, 5);
 		
 		<div id="formFields">
 			  <div class="formrow1" >
-			  <div id="divMot"><label for="Mots">Mot cl&eacute; </label></div>
+			  <div id="divMot"><label for="Mots"><text id="motcl">Mot cl&eacute; </text></label></div>
 			  <div class="mlinediv">
-				<div class="divChxChamp"><input id="checkNom" type="checkbox" checked value="Nom"><label for="checkNom">&nbsp;Nom du club</label>&nbsp;&nbsp;<input id="checkVille" type="checkbox" checked value="Ville"><label for="checkVille">&nbsp;Ville</label></div>
+				<div class="divChxChamp"><input id="checkNom" type="checkbox" checked value="Nom"><label for="checkNom">&nbsp;<text id="clubn">Nom du club</text></label>&nbsp;&nbsp;<input id="checkVille" type="checkbox" checked value="Ville"><label for="checkVille">&nbsp;<text id="clubc">Ville</text></label></div>
 			    
-			    <div id="inputtextmot"><input id="Mots" class="inputtext" name="Mots" type="text" size="15" maxlength="50" value=""/></div>
+			    <div id="inputtextmot"><input id="Mots" class="inputtext" type="text" size="15" maxlength="50" value=""/></div>
 			  </div>
 			  </div>
 			  
 			  <div class="formrow1">
-			    <div id="divReg"><label for="IdRegion">R&eacute;gion </label></div>
+			    <div id="divReg"><label for="IdRegion"><text id="region">R&eacute;gion</text></label></div>
 			    <div id="inputselectreg">
 			    <SELECT id="IdRegion" class="inputselect inSelReg" name="IdRegion">
-					<OPTION value="0">Toutes</OPTION>
+					<OPTION value="0"><text id="toute">Toutes</text></OPTION>
 
 			      </SELECT></div>
 			  </div>
 
 			  <div class="formrow1">
-				<div id="divCod"><label for="kiloM">Proximit&eacute;</label></div>
+				<div id="divCod"><label for="kiloM"><text id="proxi">Proximit&eacute;</text></label></div>
 				<div class="mlinediv">
-				  <div class="divChxChamp">&nbsp;&nbsp;<label for="codePostal">Code postal</label></div>
+				  <div class="divChxChamp">&nbsp;&nbsp;<label for="codePostal"><text id="postal">Code postal</text></label></div>
 			    <div class="olinediv">
 			    <div id="inputtextcod">
 			    <input id="codePostal" class="inputtext" name="codePostal" type="text" size="8" maxlength="7" value=""/>
