@@ -766,6 +766,8 @@ if (lang.toUpperCase().indexOf("FR-") != -1)
 		langLbl["locat"] = "Localisation";
 		langLbl["local"] = "Localiser";
 		langLbl["searc"] = "Rechercher";
+		langLbl["prefe"] = "Pr&eacute;f&eacute;rences";
+		langLbl["ident"] = "Identit&eacute;";
 		break;
 	  default:
 		langLbl["title"] = "Quebec Golfs Course";
@@ -779,6 +781,8 @@ if (lang.toUpperCase().indexOf("FR-") != -1)
 		langLbl["locat"] = "Location";
 		langLbl["local"] = "Locate";
 		langLbl["searc"] = "Search";
+		langLbl["prefe"] = "Preferences";
+		langLbl["ident"] = "Identity";
 		break;
 	}
 }
@@ -919,8 +923,8 @@ else
 
 <div id="menu">
   <ul id="onglets">
-    <li class="active"><a href="#" onClick="return false;"> Pr&eacute;f&eacute;rences </a></li>
-    <li><a href="" onClick="setIdent(); return false;"> Identification </a></li>
+    <li class="active"><a href="#" onClick="return false;"> <text id="prefe">Pr&eacute;f&eacute;rences</text> </a></li>
+    <li><a href="" onClick="setIdent(); return false;"> <text id="ident">Identit&eacute;</text> </a></li>
   </ul>
 </div>
 
