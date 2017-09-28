@@ -341,7 +341,7 @@ optElem.innerHTML = langLbl["small"];
 polSize.appendChild(optElem);
 var optElem = document.createElement("option");
 optElem.setAttribute('value', '1.4em');
-optElem.innerHTML = langLbl["middle"];
+optElem.innerHTML = langLbl["middl"];
 polSize.appendChild(optElem);
 var optElem = document.createElement("option");
 optElem.setAttribute('value', '2em');
@@ -795,10 +795,15 @@ if (lang.toUpperCase().indexOf("FR-") != -1)
 		langLbl["_okok"] = "Ok";
 		langLbl["_canc"] = "Annuler";
 		langLbl["small"] = "Petite";
-		langLbl["midde"] = "Moyenne";
+		langLbl["middl"] = "Moyenne";
 		langLbl["large"] = "Grande";
 		langLbl["psize"] = "Taille de police";
 		langLbl["ldela"] = "D&eacute;lai de localisation";
+		langLbl["pplay"] = "Mes parties";
+		langLbl["macou"] = "Mon compte";
+		langLbl["niden"] = "Nouvelle identification";
+		langLbl["email"] = "Courriel";
+		langLbl["passw"] = "Mot de pass";
 		break;
 	  default:
 		langLbl["title"] = "Quebec's Golfs Course";
@@ -818,10 +823,15 @@ if (lang.toUpperCase().indexOf("FR-") != -1)
 		langLbl["_okok"] = "Ok";
 		langLbl["_canc"] = "Cancel";
 		langLbl["small"] = "Small";
-		langLbl["midde"] = "Middle";
+		langLbl["middl"] = "Middle";
 		langLbl["large"] = "Large";
 		langLbl["psize"] = "Font size";
 		langLbl["ldela"] = "Locate delay";
+		langLbl["pplay"] = "My games";
+		langLbl["macou"] = "My account";
+		langLbl["niden"] = "New account";
+		langLbl["email"] = "E-mail";
+		langLbl["passw"] = "Password";
 		break;
 	}
 }
@@ -1005,8 +1015,8 @@ else
 <div id="identLayer">
 <div id="menu">
   <ul id="onglets">
-    <li><a href="" onClick="showPref(); return false;"> Pr&eacute;f&eacute;rences </a></li>
-    <li class="active"><a href="#" onClick="return false;"> Identification </a></li>
+    <li><a href="" onClick="showPref(); return false;"> <text id="prefe">Pr&eacute;f&eacute;rences</text> </a></li>
+    <li class="active"><a href="#" onClick="return false;"> <text id="prefe">Identification</text> </a></li>
   </ul>
 </div>
 
@@ -1014,25 +1024,25 @@ else
 <div id="identOptions">
 
 <div class="prefList">
-<label for="nameUser" id="lbl1" class="identLbl">Courriel</label><div class="prefVal">
+<label for="nameUser" id="lbl1" class="identLbl"><text id="email">Courriel</text></label><div class="prefVal">
 <input id="nameUser" type="text" size="15" maxlength="50">
 </div></div>
 
 <div class="prefList">
-<label for="passwordUser" id="lbl1" class="identLbl">Mot de passe</label><div class="prefVal">
+<label for="passwordUser" id="lbl1" class="identLbl"><text id="passw">Mot de passe</text></label><div class="prefVal">
 <input id="passwordUser" type="password" size="15" maxlength="50">
 </div></div>
 
 <div id="aLink" class="prefList">
-<p id="newIdent" class="prefOpt"><a href="#" class="itin" onclick="manageIdent(0); return false;">Nouvelle identification</a></p>
-<p id="butGame" class="prefOpt"><a class="itin" target="_blank" href="score_liste.html">Parties jou&eacute;es</a></p>
-<p id="myAccount" class="prefOpt"><a href="#" class="itin" onclick="manageIdent(1); return false;">Mon compte</a></p>
+<p id="newIdent" class="prefOpt"><a href="#" class="itin" onclick="manageIdent(0); return false;"><text id="niden">Nouvelle identification</text></a></p>
+<p id="butGame" class="prefOpt"><a class="itin" target="_blank" href="score_liste.html"><text id="pplay">Parties jou&eacute;es</text></a></p>
+<p id="myAccount" class="prefOpt"><a href="#" class="itin" onclick="manageIdent(1); return false;"><text id="macco">Mon compte</text></a></p>
 </div>
 
 </div>
 
 <div>
-<input id="okPref" class="bouton" type="submit" onClick="authentif(); return false;" value="      Ok      " /><input id="annulePref" class="bouton" type="button" onClick="closePref(); return false;" value="  Annuler  " />
+<input id="okPref" class="bouton" type="submit" onClick="authentif(); return false;" value="_okok" /><input id="annulePref" class="bouton" type="button" onClick="closePref(); return false;" value="_canc" />
 </div>
 </form>
 </div>
