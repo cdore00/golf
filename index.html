@@ -72,15 +72,17 @@ var xmlhttp = new XMLHttpRequest();
   xmlhttp.onloadend = function() {
     authLayer.innerHTML = xmlhttp.responseText;
 	initAccountForm(action);
+	  setLanguage();
+	 authLayer.style.visibility="visible";
   }
 if (action == 0)
 	xmlhttp.open("GET","identifier.html",false);
 if (action == 1)
 	xmlhttp.open("GET","myaccount.html",false);
 xmlhttp.send();
-setLanguage();
+
 modLayer.style.visibility="visible";
-authLayer.style.visibility="visible";
+
 }
 
 
