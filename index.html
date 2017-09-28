@@ -741,29 +741,39 @@ geocoder = new google.maps.Geocoder();
   });
 }
 
+var langLbl = [];
+
+function initLang(lang){
+
+	switch (lang) {
+	  case "FR":
+		langLbl["title"] = "Golfs du Qu&eacute;bec";
+		break;
+	  default:
+		langLbl["title"] = "Quebec Golfs Course";
+		break;
+	}
+}
+
 function setLanguage(otextColl){
 var lang = window.navigator.userLanguage || window.navigator.language;
 var l = "EN";
 
 if (lang.toUpperCase().indexOf("FR-") != -1)
 	l = "FR";
+	
+initLang(l);
 
 for (var i = 0; i < otextColl.length; i++) {
-	initText(otextColl[i], l)
+	initText(otextColl[i])
 }
 
 }
 
-function initText(oText, lang){
+function initText(oText){
 var textId = oText.id;
-textId.substring(1, 5);
-
-if (lang == "FR"){
-	oText.innerHTML = "Golfs du Qu&eacute;bec";
-}else{
-	oText.innerHTML = "Quebec Golfs Course";
-}
-
+textId = textId.substring(0, 5);
+	oText.innerHTML = langLbl[textId] ;
 }
 
 // -->
