@@ -743,9 +743,14 @@ geocoder = new google.maps.Geocoder();
 
 var langLbl = [];
 
-function initLang(lang){
+function initLang(){
+var lang = window.navigator.userLanguage || window.navigator.language;
+var l = "EN";
 
-	switch (lang) {
+if (lang.toUpperCase().indexOf("FR-") != -1)
+	l = "FR";
+
+	switch (l) {
 	  case "FR":
 		langLbl["title"] = "Golfs du Qu&eacute;bec";
 		break;
@@ -756,13 +761,8 @@ function initLang(lang){
 }
 
 function setLanguage(otextColl){
-var lang = window.navigator.userLanguage || window.navigator.language;
-var l = "EN";
-
-if (lang.toUpperCase().indexOf("FR-") != -1)
-	l = "FR";
 	
-initLang(l);
+initLang();
 
 for (var i = 0; i < otextColl.length; i++) {
 	initText(otextColl[i])
