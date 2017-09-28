@@ -622,7 +622,11 @@ for (var i = 0; i < clubList.length; i++) {
 function listRegions(oRegion){
 var formCrit = document.getElementById('critere');
 var IdRegion = document.getElementById('IdRegion');
-
+					//<OPTION value="0"><text id="toute">Toutes</text></OPTION>
+	var optElem = document.createElement("option");
+	optElem.setAttribute('value', '0');
+	optElem.innerHTML = langLbl["toute"];
+	IdRegion.appendChild(optElem);
 for (var i = 0; i < oRegion.length; i++) {
 	var optElem = document.createElement("option");
 	optElem.setAttribute('value', oRegion[i]._id);
@@ -849,8 +853,6 @@ else
 			    <div id="divReg"><label for="IdRegion"><text id="region">R&eacute;gion</text></label></div>
 			    <div id="inputselectreg">
 			    <SELECT id="IdRegion" class="inputselect inSelReg" name="IdRegion">
-					<OPTION value="0"><text id="toute">Toutes</text></OPTION>
-
 			      </SELECT></div>
 			  </div>
 
