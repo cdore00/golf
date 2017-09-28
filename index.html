@@ -970,7 +970,9 @@ else
 
 <div class="prefList">
 <label for="polSize" id="lbl1" class="prefLbl"><text id="psize">Taille de police</text></label><div class="prefVal"><select id="polSize" onchange="adjustPol(this);">
-
+ <option value="1em">Petite</option>
+ <option value="1.4em" >Moyenne</option>
+ <option value="2em" >Grande</option>
 </select></div></div>
 
 <div class="prefList">
@@ -989,7 +991,7 @@ else
 </div>
 
 <div>
-<input id="okPref" class="bouton" type="submit" onClick="savePref(this.parentNode.parentNode); return false;" value="      Ok      " /><input id="annulePref" class="bouton" type="button" onClick="closePref(); return false;"><text id="bcanc">Annuler</text></input>
+<input id="okPref" class="bouton" type="submit" onClick="savePref(this.parentNode.parentNode); return false;" value="      Ok      " /><input id="annulePref" class="bouton" type="button" onClick="closePref(); return false;" value=" Annuler " />
 </div>
 </form>
 
