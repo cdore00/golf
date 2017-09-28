@@ -303,6 +303,10 @@ function initFormPref(){
 var affL = GetCookie("AffLoc");
 var polS = GetCookie("_fontSize");
 var locT = GetCookie("LocTime");
+
+if (formPref.polSize.length == 0)
+	initSizeList();
+	
 if (affL == 'true')
 	formPref.locDisplay.checked = true;
 else
@@ -327,6 +331,23 @@ var elem = document.getElementsByClassName("prefList");
 	for (i = 0; i < elem.length; i++) {
 		elem[i].style.fontSize = fs;
 		}
+}
+	
+function initSizeList(){
+var polSize = document.getElementById('polSize');
+var optElem = document.createElement("option");
+optElem.setAttribute('value', '0');
+optElem.innerHTML = langLbl["small"];
+polSize.appendChild(optElem);
+var optElem = document.createElement("option");
+optElem.setAttribute('value', '0');
+optElem.innerHTML = langLbl["middle"];
+polSize.appendChild(
+var optElem = document.createElement("option");
+optElem.setAttribute('value', '0');
+optElem.innerHTML = langLbl["large"];
+polSize.appendChild(
+alert("list");
 }
 
 function savePref(formulaire){
@@ -765,12 +786,20 @@ if (lang.toUpperCase().indexOf("FR-") != -1)
 		langLbl["posta"] = "Code postal";
 		langLbl["locat"] = "Localisation";
 		langLbl["local"] = "Localiser";
+		langLbl["loca."] = "Localise";
 		langLbl["searc"] = "Rechercher";
 		langLbl["prefe"] = "Pr&eacute;f&eacute;rences";
 		langLbl["ident"] = "Identit&eacute;";
+		langLbl["bokok"] = "Ok";
+		langLbl["bcanc"] = "Annuler";
+		langLbl["small"] = "Petite";
+		langLbl["midde"] = "Moyenne";
+		langLbl["large"] = "Grande";
+		langLbl["psize"] = "Taille de police";
+		langLbl["ldela"] = "D&eacute;lai de localisation";
 		break;
 	  default:
-		langLbl["title"] = "Quebec Golfs Course";
+		langLbl["title"] = "Quebec's Golfs Course";
 		langLbl["motcl"] = "Key Word";
 		langLbl["clubn"] = "Club name";
 		langLbl["clubc"] = "City";
@@ -780,9 +809,17 @@ if (lang.toUpperCase().indexOf("FR-") != -1)
 		langLbl["posta"] = "Postal Code";
 		langLbl["locat"] = "Location";
 		langLbl["local"] = "Locate";
+		langLbl["loca."] = "Locate";
 		langLbl["searc"] = "Search";
 		langLbl["prefe"] = "Preferences";
 		langLbl["ident"] = "Identity";
+		langLbl["bokok"] = "Ok";
+		langLbl["bcanc"] = "Cancel";
+		langLbl["small"] = "Small";
+		langLbl["midde"] = "Middle";
+		langLbl["large"] = "Large";
+		langLbl["psize"] = "Font size";
+		langLbl["ldela"] = "Locate delay";
 		break;
 	}
 }
@@ -898,7 +935,7 @@ else
 					<a id="hrefLocaliser" href="javascript:localiser();"><text id="local">Localiser</text> &#63;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
 				</span>
 				<span id="localise" onClick="clearGeo(true);">
-					Localise...&nbsp;&nbsp;&nbsp;&nbsp;
+					<text id="loca.">Localise</text>...&nbsp;&nbsp;&nbsp;&nbsp;
 					<img alt="localise" style="margin-left: -10px;" height="16" width="16" src="images/localise.gif" />
 				</span>
 				</div>
@@ -932,14 +969,12 @@ else
 <div id="prefOptions">
 
 <div class="prefList">
-<label for="polSize" id="lbl1" class="prefLbl">Taille de police</label><div class="prefVal"><select id="polSize" onchange="adjustPol(this);">
- <option value="1em">Petite</option>
- <option value="1.4em" >Moyenne</option>
- <option value="2em" >Grande</option>
+<label for="polSize" id="lbl1" class="prefLbl"><text id="psize">Taille de police</text></label><div class="prefVal"><select id="polSize" onchange="adjustPol(this);">
+
 </select></div></div>
 
 <div class="prefList">
-<label for="locTime" id="lbl3" class="prefLbl">D&eacute;lai de localisation</label><div class="prefVal">
+<label for="locTime" id="lbl3" class="prefLbl"><text id="ldela">D&eacute;lai de localisation</text></label><div class="prefVal">
 <select id="locTime">
  <option value="0">Non</option>
  <option value="1">1 s.</option>
@@ -954,7 +989,7 @@ else
 </div>
 
 <div>
-<input id="okPref" class="bouton" type="submit" onClick="savePref(this.parentNode.parentNode); return false;" value="      Ok      " /><input id="annulePref" class="bouton" type="button" onClick="closePref(); return false;" value="  Annuler  " />
+<input id="okPref" class="bouton" type="submit" onClick="savePref(this.parentNode.parentNode); return false;" value="      Ok      " /><input id="annulePref" class="bouton" type="button" onClick="closePref(); return false;"><text id="bcanc">Annuler</text></input>
 </div>
 </form>
 
