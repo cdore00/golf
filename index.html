@@ -78,7 +78,7 @@ if (action == 0)
 if (action == 1)
 	xmlhttp.open("GET","myaccount.html",false);
 xmlhttp.send();
-
+setLanguage();
 modLayer.style.visibility="visible";
 authLayer.style.visibility="visible";
 }
@@ -800,10 +800,12 @@ if (lang.toUpperCase().indexOf("FR-") != -1)
 		langLbl["psize"] = "Taille de police";
 		langLbl["ldela"] = "D&eacute;lai de localisation";
 		langLbl["pplay"] = "Mes parties";
-		langLbl["macou"] = "Mon compte";
+		langLbl["macco"] = "Mon compte";
 		langLbl["niden"] = "Nouvelle identification";
 		langLbl["email"] = "Courriel";
+		langLbl["uname"] = "Nom";
 		langLbl["passw"] = "Mot de pass";
+		langLbl["cassw"] = "Confirmer mot de passe";
 		break;
 	  default:
 		langLbl["title"] = "Quebec's Golfs Course";
@@ -828,10 +830,12 @@ if (lang.toUpperCase().indexOf("FR-") != -1)
 		langLbl["psize"] = "Font size";
 		langLbl["ldela"] = "Locate delay";
 		langLbl["pplay"] = "My games";
-		langLbl["macou"] = "My account";
+		langLbl["macco"] = "My account";
 		langLbl["niden"] = "New account";
 		langLbl["email"] = "E-mail";
+		langLbl["uname"] = "Name";
 		langLbl["passw"] = "Password";
+		langLbl["cassw"] = "Valid Password";
 		break;
 	}
 }
