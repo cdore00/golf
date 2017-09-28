@@ -539,9 +539,11 @@ function checkCookie(){
 }
 
 function initPage(){
+var otext = document.getElementsByTagName("text");
 
+setLanguage(otext);
 setFontSize();
-
+//alert("Nav: " + navigator.language + "User: " + navigator.userLanguage + " Brows.: " + navigator.browserLanguage + "  Syst.: " + navigator.systemLanguage);
 userId = GetCookie("userID");
 //userName = GetCookie("userName");
 
@@ -739,6 +741,31 @@ geocoder = new google.maps.Geocoder();
   });
 }
 
+function setLanguage(otextColl){
+var lang = window.navigator.userLanguage || window.navigator.language;
+var l = "EN";
+
+if (lang.toUpperCase().indexOf("FR-") != -1)
+	l = "FR";
+
+for (var i = 0; i < otextColl.length; i++) {
+	initText(otextColl[i], l)
+}
+
+}
+
+function initText(oText, lang){
+var textId = oText.id;
+textId.substring(1, 5);
+
+if (lang == "FR"){
+	oText.innerHTML = "Golfs du Qu&eacute;bec";
+}else{
+	oText.innerHTML = "Quebec Golfs Course";
+}
+
+}
+
 // -->
 </script>
 
@@ -765,7 +792,7 @@ geocoder = new google.maps.Geocoder();
 <div id="topbar" class="vert">
 
 <div id="logoHome"><a title="Réinitialiser la recherche" href="index.html?data=clear"><img alt="home" src="images/golf.png" width="25" height="25"></a></div>
-<div id="titre">Golfs du Qu&eacute;bec</div>
+<div id="titre"><text id="title">Golfs du Qu&eacute;bec</text></div>
 <!--<div id="rightnav"> <a title="R&eacute;initialiser la recherche" href="index.html?data=clear"><img alt="home" height="25" width="25" src="images/home25.png" /></a> </div>// -->
 <div id="fontAdjust">
 <div class="divFont" onclick="setFontSize(0.2, this)"><div class="divFontSize">A</div><div class="fontLogo">&#8593;</div></div>
