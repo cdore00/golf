@@ -763,6 +763,9 @@ if (lang.toUpperCase().indexOf("FR-") != -1)
 		langLbl["toute"] = "Toutes";
 		langLbl["proxi"] = "Proximit&eacute;";
 		langLbl["posta"] = "Code postal";
+		langLbl["locat"] = "Localisation";
+		langLbl["local"] = "Localiser";
+		langLbl["searc"] = "Rechercher";
 		break;
 	  default:
 		langLbl["title"] = "Quebec Golfs Course";
@@ -773,6 +776,9 @@ if (lang.toUpperCase().indexOf("FR-") != -1)
 		langLbl["toute"] = "All";
 		langLbl["proxi"] = "Proximity";
 		langLbl["posta"] = "Postal Code";
+		langLbl["locat"] = "Location";
+		langLbl["local"] = "Locate";
+		langLbl["searc"] = "Search";
 		break;
 	}
 }
@@ -882,17 +888,17 @@ else
 		    <div class="formrow1">
 				<div id="locDiv">
 				<span id="localisation"  onmouseover="tooltip.show();" title="Localisation actuelle">
-					Localisation&nbsp;&nbsp;<img id="iciLogo" alt="localisation"  height="14" width="14" src="images/ici.png" />
+					<text id="locat">Localisation</text>&nbsp;&nbsp;<img id="iciLogo" alt="localisation"  height="14" width="14" src="images/ici.png" />
 				</span>
 				<span id="localiser">
-					<a id="hrefLocaliser" href="javascript:localiser();">Localiser &#63;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+					<a id="hrefLocaliser" href="javascript:localiser();"><text id="local">Localiser</text> &#63;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
 				</span>
 				<span id="localise" onClick="clearGeo(true);">
 					Localise...&nbsp;&nbsp;&nbsp;&nbsp;
 					<img alt="localise" style="margin-left: -10px;" height="16" width="16" src="images/localise.gif" />
 				</span>
 				</div>
-				<button class="bouton" id="Rechercher" type="submit" onclick="rechercheClub()" value="Rechercher" />Rechercher</button>
+				<button class="bouton" id="Rechercher" type="submit" onclick="rechercheClub()" value="Rechercher" /><text id="searc">Rechercher</text></button>
 		    </div>
 		</ul>
 	</div>
