@@ -792,8 +792,8 @@ if (lang.toUpperCase().indexOf("FR-") != -1)
 		langLbl["searc"] = "Rechercher";
 		langLbl["prefe"] = "Pr&eacute;f&eacute;rences";
 		langLbl["ident"] = "Identit&eacute;";
-		langLbl["bokok"] = "Ok";
-		langLbl["bcanc"] = "Annuler";
+		langLbl["_okok"] = "Ok";
+		langLbl["_canc"] = "Annuler";
 		langLbl["small"] = "Petite";
 		langLbl["midde"] = "Moyenne";
 		langLbl["large"] = "Grande";
@@ -815,8 +815,8 @@ if (lang.toUpperCase().indexOf("FR-") != -1)
 		langLbl["searc"] = "Search";
 		langLbl["prefe"] = "Preferences";
 		langLbl["ident"] = "Identity";
-		langLbl["bokok"] = "Ok";
-		langLbl["bcanc"] = "Cancel";
+		langLbl["_okok"] = "Ok";
+		langLbl["_canc"] = "Cancel";
 		langLbl["small"] = "Small";
 		langLbl["midde"] = "Middle";
 		langLbl["large"] = "Large";
@@ -835,7 +835,9 @@ for (var i = 0; i < otextColl.length; i++) {
 	initText(otextColl[i])
 }
 for (var i = 0; i < oinputColl.length; i++) {
-	//initText(otextColl[i])
+	if (oinputColl[i].value.indexOf("_") == 0){
+		oinputColl[i].value = langLbl[oinputColl[i].value];
+	}
 }
 
 }
@@ -995,7 +997,7 @@ else
 </div>
 
 <div>
-<input id="okPref" class="bouton" type="submit" onClick="savePref(this.parentNode.parentNode); return false;" value="      Ok      " /><input id="annulePref" class="bouton" type="button" onClick="closePref(); return false;" value=" Annuler " />
+<input id="okPref" class="bouton" type="submit" onClick="savePref(this.parentNode.parentNode); return false;" value="_okok" /><input id="annulePref" class="bouton" type="button" onClick="closePref(); return false;" value="_canc" />
 </div>
 </form>
 
