@@ -1,40 +1,40 @@
 
 <div id="accountForm">
-<div id="titrePref">Mon compte</div>
+<div id="titrePref"><text id="macco">Mon compte</text></div>
 
 <form id="formIdent">
 <div id="identOptions">
 <input id="_id" type="hidden" value="">
 
 <div class="prefList">
-<label for="nomUser" id="lbl1" class="identLbl">Nom:</label><div class="prefVal">
+<label for="nomUser" id="lbl1" class="identLbl"><text id="uname">Nom:</text></label><div class="prefVal">
 <input id="nomUser" type="text" size="15" maxlength="50">
 </div></div>
 
 <div class="prefList">
-<label for="courUser" id="lbl1" class="identLbl">Courriel:</label><div class="prefVal">
+<label for="courUser" id="lbl1" class="identLbl"><text id="email">Courriel:</text></label><div class="prefVal">
 <input id="courUser" type="text" size="15" maxlength="50">
 </div></div>
 
 <div class="prefList">
-<label for="passUser" id="lbl1" class="identLbl">Mot de passe:</label><div class="prefVal">
+<label for="passUser" id="lbl1" class="identLbl"><text id="passw">Mot de passe:</text></label><div class="prefVal">
 <input id="passUser" type="password" size="15" maxlength="50">
 </div></div>
 
 <div class="prefList">
-<label for="newPassUser" id="lbl1" class="identLbl">Nouveau mot de passe:</label><div class="prefVal">
+<label for="newPassUser" id="lbl1" class="identLbl"><text id="npass">Nouveau mot de passe:</text></label><div class="prefVal">
 <input id="newPassUser" type="password" size="15" maxlength="50">
 </div></div>
 
 <div class="prefList">
-<label for="confPassUser" id="lbl1" class="identLbl">Confirmer mot de passe:</label><div class="prefVal">
+<label for="confPassUser" id="lbl1" class="identLbl"><text id="cpass">Confirmer mot de passe:</text></label><div class="prefVal">
 <input id="confPassUser" type="password" size="15" maxlength="50">
 </div></div>
 
 </div>
 
 <div>
-<input id="okPref" class="bouton" type="submit" onClick="saveAccount(); return false;" value="      Ok      " /><input id="annulePref" class="bouton" type="button" onClick="closePref(); return false;" value="  Annuler  " />
+<input id="okPref" class="bouton" type="submit" onClick="saveAccount(); return false;" value="_okok" /><input id="annulePref" class="bouton" type="button" onClick="closePref(); return false;"  value="_canc"/>
 </div>
 </form>
 </div>
