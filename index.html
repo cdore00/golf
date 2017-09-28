@@ -336,18 +336,20 @@ var elem = document.getElementsByClassName("prefList");
 function initSizeList(){
 var polSize = document.getElementById('polSize');
 var optElem = document.createElement("option");
-optElem.setAttribute('value', '0');
+optElem.setAttribute('value', '1em');
 optElem.innerHTML = langLbl["small"];
 polSize.appendChild(optElem);
 var optElem = document.createElement("option");
-optElem.setAttribute('value', '0');
+optElem.setAttribute('value', '1.4em');
 optElem.innerHTML = langLbl["middle"];
 polSize.appendChild(optElem);
 var optElem = document.createElement("option");
-optElem.setAttribute('value', '0');
+optElem.setAttribute('value', '2em');
 optElem.innerHTML = langLbl["large"];
 polSize.appendChild(optElem);
-alert("list");
+// <option value="1em">Petite</option>
+ //<option value="1.4em" >Moyenne</option>
+ //<option value="2em" >Grande</option>
 }
 
 function savePref(formulaire){
@@ -560,9 +562,9 @@ function checkCookie(){
 }
 
 function initPage(){
-var otext = document.getElementsByTagName("text");
 
-setLanguage(otext);
+
+setLanguage();
 setFontSize();
 //alert("Nav: " + navigator.language + "User: " + navigator.userLanguage + " Brows.: " + navigator.browserLanguage + "  Syst.: " + navigator.systemLanguage);
 userId = GetCookie("userID");
@@ -824,12 +826,16 @@ if (lang.toUpperCase().indexOf("FR-") != -1)
 	}
 }
 
-function setLanguage(otextColl){
-	
+function setLanguage(){
+var otextColl = document.getElementsByTagName("text");	
+var oinputColl = document.getElementsByTagName("input");
 initLang();
 
 for (var i = 0; i < otextColl.length; i++) {
 	initText(otextColl[i])
+}
+for (var i = 0; i < oinputColl.length; i++) {
+	//initText(otextColl[i])
 }
 
 }
@@ -969,10 +975,8 @@ else
 <div id="prefOptions">
 
 <div class="prefList">
-<label for="polSize" id="lbl1" class="prefLbl"><text id="psize">Taille de police</text></label><div class="prefVal"><select id="polSize" onchange="adjustPol(this);">
- <option value="1em">Petite</option>
- <option value="1.4em" >Moyenne</option>
- <option value="2em" >Grande</option>
+<label for="polSize" id="lbl1" class="prefLbl"><text id="psize">Taille de police</text></label><div class="prefVal">
+<select id="polSize" onchange="adjustPol(this);">
 </select></div></div>
 
 <div class="prefList">
