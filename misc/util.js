@@ -317,16 +317,16 @@ if (lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["cours"] = "Parcours&nbsp;:&nbsp;";
 		langLbl["medit"] = "&Eacute;diter";
 		langLbl["mcent"] = "Centrer";
-		langLbl["S0050"] = "Ce compte existe et est inactif. \r\nCourriel de confirmation envoyé à : %1 .\r\nVeuillez confirmer l'inscription de ce compte par le lien dans le courriel."  //" + email + "
-		langLbl["S0051"] = "Ce compte existe et est inactif avec un mot de passe différent"
-		langLbl["S0053"] = "Le compte %1 est d&eacute;j&agrave; actif."  //" + doc.ops[0].courriel + "
-		langLbl["S0052"] = "Courriel de confirmation envoyé à : %1.\r\nVeuillez confirmer votre inscription par le lien dans le courriel.  //" + doc.ops[0].courriel + "
-		langLbl["S0054"] = "Courriel de récupération du mot de passe envoyé à :" //+ email
-		langLbl["S0055"] = "Il n'existe aucun compte avec l'adresse de courriel :"// + email
-		langLbl["S0056"] = "Un compte utilise déjà cette adresse courriel."
-		langLbl["S0057"] = "Utilisateur inexistant."
-		langLbl["S0058"] = "Ce compte existe déjà."
-		langLbl["S0059"] = "Mote de passe actuel incorrect."
+		langLbl["S0050"] = "Ce compte existe et est inactif. \r\nCourriel de confirmation envoyé à : %1 .\r\nVeuillez confirmer l'inscription de ce compte par le lien dans le courriel.";  //" + email + "
+		langLbl["S0051"] = "Ce compte existe et est inactif avec un mot de passe différent";
+		langLbl["S0053"] = "Le compte %1 est d&eacute;j&agrave; actif.";  //" + doc.ops[0].courriel + "
+		langLbl["S0052"] = "Courriel de confirmation envoyé à : %1.\r\nVeuillez confirmer votre inscription par le lien dans le courriel.;  //" + doc.ops[0].courriel + "
+		langLbl["S0054"] = "Courriel de récupération du mot de passe envoyé à :"; //+ email
+		langLbl["S0055"] = "Il n'existe aucun compte avec l'adresse de courriel :"; // + email
+		langLbl["S0056"] = "Un compte utilise déjà cette adresse courriel.";
+		langLbl["S0057"] = "Utilisateur inexistant.";
+		langLbl["S0058"] = "Ce compte existe déjà.";
+		langLbl["S0059"] = "Mote de passe actuel incorrect.";
 			break;
 	  default:
 		langLbl["title"] = "Quebec's Golfs";
@@ -381,16 +381,16 @@ if (lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["cours"] = "Course&nbsp;:&nbsp;";
 		langLbl["medit"] = "Edit";
 		langLbl["mcent"] = "Center";
-		langLbl["S0050"] = "This account exists and is inactive. Email confirmation sent to: %1. \ r \ nPlease confirm the registration of this account by the link in the email."
-		langLbl["S0051"] = "This account exists and is inactive with a different password."
-		langLbl["S0053"] = "Account %1 is already active."
-		langLbl["S0052"] = "Email confirmation sent to% 1. \ R \ nPlease confirm your registration through the link in the email."
-		langLbl["S0054"] = "Courriel de récupération du mot de passe envoyé à : %1."
-		langLbl["S0055"] = "There is no account with the email address:% 1." 
-		langLbl["S0056"] = "An account already uses this email address."
-		langLbl["S0057"] = "User does not exist."
-		langLbl["S0058"] = "This account already exists."
-		langLbl["S0059"] = "Incorrect current password."
+		langLbl["S0050"] = "This account exists and is inactive. Email confirmation sent to: %1. \ r \ nPlease confirm the registration of this account by the link in the email.";
+		langLbl["S0051"] = "This account exists and is inactive with a different password.";
+		langLbl["S0053"] = "Account %1 is already active.";
+		langLbl["S0052"] = "Email confirmation sent to% 1. \ R \ nPlease confirm your registration through the link in the email.";
+		langLbl["S0054"] = "Courriel de récupération du mot de passe envoyé à : %1.";
+		langLbl["S0055"] = "There is no account with the email address:% 1." ;
+		langLbl["S0056"] = "An account already uses this email address.";
+		langLbl["S0057"] = "User does not exist.";
+		langLbl["S0058"] = "This account already exists.";
+		langLbl["S0059"] = "Incorrect current password.";
 		break;
 	}
 }
