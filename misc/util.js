@@ -317,6 +317,16 @@ if (lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["cours"] = "Parcours&nbsp;:&nbsp;";
 		langLbl["medit"] = "&Eacute;diter";
 		langLbl["mcent"] = "Centrer";
+		langLbl["S0050"] = "Ce compte existe et est inactif. \r\nCourriel de confirmation envoyé à : %1 .\r\nVeuillez confirmer l'inscription de ce compte par le lien dans le courriel."  //" + email + "
+		langLbl["S0051"] = "Ce compte existe et est inactif avec un mot de passe différent"
+		langLbl["S0053"] = "Le compte %1 est d&eacute;j&agrave; actif."  //" + doc.ops[0].courriel + "
+		langLbl["S0052"] = "Courriel de confirmation envoyé à : %1.\r\nVeuillez confirmer votre inscription par le lien dans le courriel.  //" + doc.ops[0].courriel + "
+		langLbl["S0054"] = "Courriel de récupération du mot de passe envoyé à :" //+ email
+		langLbl["S0055"] = "Il n'existe aucun compte avec l'adresse de courriel :"// + email
+		langLbl["S0056"] = "Un compte utilise déjà cette adresse courriel."
+		langLbl["S0057"] = "Utilisateur inexistant."
+		langLbl["S0058"] = "Ce compte existe déjà."
+		langLbl["S0059"] = "Mote de passe actuel incorrect."
 			break;
 	  default:
 		langLbl["title"] = "Quebec's Golfs";
@@ -371,6 +381,16 @@ if (lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["cours"] = "Course&nbsp;:&nbsp;";
 		langLbl["medit"] = "Edit";
 		langLbl["mcent"] = "Center";
+		langLbl["S0050"] = "Ce compte existe et est inactif. \r\nCourriel de confirmation envoyé à : %1 .\r\nVeuillez confirmer l'inscription de ce compte par le lien dans le courriel."  //" + email + "
+		langLbl["S0051"] = "Ce compte existe et est inactif avec un mot de passe différent"
+		langLbl["S0053"] = "Le compte %1 est d&eacute;j&agrave; actif."  //" + doc.ops[0].courriel + "
+		langLbl["S0052"] = "Courriel de confirmation envoyé à : %1.\r\nVeuillez confirmer votre inscription par le lien dans le courriel.  //" + doc.ops[0].courriel + "
+		langLbl["S0054"] = "Courriel de récupération du mot de passe envoyé à :" //+ email
+		langLbl["S0055"] = "Il n'existe aucun compte avec l'adresse de courriel :"// + email
+		langLbl["S0056"] = "Un compte utilise déjà cette adresse courriel."
+		langLbl["S0057"] = "Utilisateur inexistant."
+		langLbl["S0058"] = "Ce compte existe déjà."
+		langLbl["S0059"] = "Mote de passe actuel incorrect."
 		break;
 	}
 }
