@@ -489,7 +489,7 @@ var coll = dBase.collection('users');
 				existInactif(doc[0]);
 			}
 			if (eval(doc[0].actif) == true){
-				returnRes(res, {"code":2, message: "Ce compte existe déjà"});
+				returnRes(res, {"code":2, message: "S0058"});
 			}
 		}else{
 			insertUser();
@@ -500,9 +500,9 @@ var coll = dBase.collection('users');
  function existInactif(doc){
 	if (doc.motpass == pass){
 		sendConfMail(email, doc.Nom);
-		returnRes(res, {"code":1, message: "Ce compte existe et est inactif. \r\nCourriel de confirmation envoyé à :" + email + ".\r\nVeuillez confirmer l'inscription de ce compte par le lien dans le courriel."});
+		returnRes(res, {"code":1, message: "S0050"});
 	}else{
-		returnRes(res, {"code":3, message: "Ce compte existe et est inactif avec un mot de passe différent"});
+		returnRes(res, {"code":3, message: "S0051"});
 	}
  }  
 
@@ -514,7 +514,7 @@ function insertUser(){
 		console.log(err);
 	}else{
 		sendConfMail(doc.ops[0].courriel, doc.ops[0].motpass);
-		returnRes(res, {"code":-1, message: "Courriel de confirmation envoyé à :" + doc.ops[0].courriel + ".\r\nVeuillez confirmer votre inscription par le lien dans le courriel."});
+		returnRes(res, {"code":-1, message: "S0052"});
 		//console.log(doc.ops);
 	}
   });  
@@ -571,7 +571,7 @@ coll.find({"_id": o_id, "actif": true}).toArray(function(err, docs) {
 	if (docs.length > 0){
 		checkEmailExist(docs[0]);
 	}else{
-		returnRes(res, {resp: {"result":false, "message": "Utilisateur inexistant."} });
+		returnRes(res, {resp: {"result":false, "message": "S0057"} });
 	}
   });
 
@@ -581,7 +581,7 @@ coll.find({"_id": o_id, "actif": true}).toArray(function(err, docs) {
 	coll.find({"courriel": user, "_id": {$ne: o_id}}).toArray(function(err, docs) {
 
 		if (docs.length > 0){
-			returnRes(res, {resp: {"result":false, "message": "Un compte utilise déjà cette adresse courriel."} });
+			returnRes(res, {resp: {"result":false, "message": "S0056"} });
 		}else{
 			updUser(doc);
 		}
@@ -600,7 +600,7 @@ coll.find({"_id": o_id, "actif": true}).toArray(function(err, docs) {
 		  });
 		}
 	}else{
-		returnRes(res, {resp: {"result":false, "message": "Mote de passe actuel incorrect."} });
+		returnRes(res, {resp: {"result":false, "message": "S0059"} });
 	}  
 	}
 }
@@ -617,7 +617,7 @@ var data = (decodeURI(param.data));
   coll.find({"courriel": data}).toArray( function(err, docs) {
 	if (eval(docs[0].actif) == true ){ 
 		res.setHeader('Access-Control-Allow-Origin', '*');
-		res.end("<h1>Le compte " + docs[0].courriel + " est d&eacute;j&agrave; actif</h1>");
+		res.end("S0053");
 	}else{	
 		activateAccount(loginUser(res, docs[0].courriel, docs[0].motpass));
 	}
@@ -654,10 +654,10 @@ var coll = dBase.collection('users');
 		returnRes(res, err);
 	}else{
 		if (doc.length > 0){
-			returnRes(res, {"code":-1, message: "Courriel de récupération du mot de passe envoyé à :" + email});
+			returnRes(res, {"code":-1, message: "S0054"});
 			sendRecupPassMail(doc[0].courriel, doc[0].Nom, doc[0].motpass);
 		}else{
-			returnRes(res, {"code": 1, message: "Il n'existe aucun compte avec l'adresse de courriel :" + email});
+			returnRes(res, {"code": 1, message: "S0055"});
 		}
 	}
   });
@@ -763,14 +763,12 @@ var coll = dBase.collection('userFavoris');
 		isCourseGPS(res, clubDoc, p);
 	}
 }
-
 function isCourseGPS(res, clubDoc, ID){
 var courseID = clubDoc[0].courses[ID]._id;
 	var coll = dBase.collection('golfGPS'); 
 coll.find({"Parcours_id": courseID }).toArray(function(err, GPSdoc) {
 	addGPSend(GPSdoc);
   });
-
 function addGPSend(GPSdoc){
 	if (GPSdoc.length > 0){
 		clubDoc[0].courses[ID].GPS = true;
