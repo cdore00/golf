@@ -90,14 +90,14 @@ for (var i = 0; i < result.length; i++) {
 	var aElem = document.createElement("a");
 	aElem.setAttribute('href', 'javascript:ficheClub(\'' + result[i]._id + '\')');
 	aElem.setAttribute('class', 'itemdetail');
-	var clubCourse = ",&nbsp;&nbsp;" + result[i].courses.length + '<text class="textDesc">&nbsp;parcours,&nbsp;</text>';
+	var clubCourse = ",&nbsp;&nbsp;" + result[i].courses.length + '<text class="textDesc">&nbsp;' + langLbl["cours"] + '</text>';
 	var nT = 0;
 	for (var t = 0; t < result[i].courses.length; t++) {
 		nT += result[i].courses[t].TROUS;
 	}
-	clubCourse += "&nbsp;" + nT + '<text class="textDesc">&nbsp;trous&nbsp;</text>';
+	clubCourse += "&nbsp;" + nT + '<text class="textDesc">' + langLbl["holes"] + '&nbsp;</text>';
 	if (myPos)
-		clubCourse += '&nbsp;&nbsp;<a class="itin" target="_blank" href="ClubTrajet.html?data=' + coord[0] + '$' + coord[1] + '$' +  result[i].location.x + '$' + result[i].location.y + '$' + encodeURI(result[i].nom) +'">Trajet</a>';
+		clubCourse += '&nbsp;&nbsp;<a class="itin" target="_blank" href="ClubTrajet.html?data=' + coord[0] + '$' + coord[1] + '$' +  result[i].location.x + '$' + result[i].location.y + '$' + encodeURI(result[i].nom) +'">' + langLbl["direc"] + '</a>';
 
 	aElem.innerHTML = result[i].nom + clubCourse;
 	liElem.appendChild(aElem);
@@ -150,7 +150,7 @@ if (clubPos)
 
 <div id="topbar" class="vert">
 <div id="leftnav"><a title="Formulaire de recherche" href="index.html"><img alt="Formulaire de recherche" height="22" width="25" src="images/home22.png" /></a></div>
-<div id="chargement" class=""><div class="charge">Recherche</div><div class="charge loading"></div></div>
+<div id="chargement" class=""><div class="charge"><text id="searc"></text></div><div class="charge loading"></div></div>
 <!--<button type="button" id="rightnav" title="Taille de police" onclick="changeTaille();"><img id="imgTaille" alt="Taille de police" height="20" width="45" src="images/taille.png" /></button>// -->
 <div id="fontAdjust">
 <div class="divFont" onclick="setFontSize(0.2, this)"><div class="divFontSize">A</div><div class="fontLogo">&#8593;</div></div>
@@ -160,7 +160,7 @@ if (clubPos)
 
 
 
-<div id="duobutton"><a id="pressed" href="#">Liste</a><a id="callMap" href="golfMap.html?data=">Carte</a></div>
+<div id="duobutton"><a id="pressed" href="#"><text id="mlist"></text></a><a id="callMap" href="golfMap.html?data="><text id="mmaps"></text></a></div>
 
 
 <div id="content">

@@ -271,7 +271,7 @@ winOpen = new google.maps.InfoWindow({
 for (var i = 0; i < cData.length; i++) {
 	var contentString = '<div id="layerContent"><p><a href="ficheClub.html?data=' + cData[i]._id + '" target="_blank">' + cData[i].nom + '</a>';
 	if (intLat != 'undefined'){
-		contentString += '&nbsp;&nbsp;<a class="itin" href="javascript:showItineraire(' + cData[i].location.x + ', ' + cData[i].location.y + ',\'contentTrajet\')">Trajet</a><div id="contentTrajet" class="itinDetail"></div>'
+		contentString += '&nbsp;&nbsp;<a class="itin" href="javascript:showItineraire(' + cData[i].location.x + ', ' + cData[i].location.y + ',\'contentTrajet\')">' + langLbl["direc"] + '</a><div id="contentTrajet" class="itinDetail"></div>'
 	}
 	contentString += '</p><p>' + cData[i].adresse + ',&nbsp;' + cData[i].municipal + '</br>' + cData[i].telephone + '</p></div>';
 	var info = new google.maps.InfoWindow({
@@ -325,7 +325,7 @@ font-size: 1em !important;
 
 <div id="topbar" class="vert">
 <div id="leftnav"><a title="Formulaire de recherche" href="index.html"><img alt="Formulaire de recherche" height="22" width="25" src="images/home22.png" /></a></div>
-<div id="chargement" class=""><div class="charge">Recherche</div><div class="charge loading"></div></div>
+<div id="chargement" class=""><div class="charge"><text id="load"></text></div><div class="charge loading"></div></div>
 <!--<button type="button" id="rightnav" title="Taille de police" onclick="changeTaille();"><img id="imgTaille" alt="Taille de police" height="20" width="45" src="images/taille.png" /></button>// -->
 <div id="fontAdjust">
 <div class="divFont" onclick="setFontSize(0.2, this)"><div class="divFontSize">A</div><div class="fontLogo">&#8593;</div></div>
@@ -333,7 +333,7 @@ font-size: 1em !important;
 </div>
 </div>
 
-<div id="duobutton"><a href="listeResult.html">Liste</a><a id="pressed" href="#">Carte</a></div>
+<div id="duobutton"><a href="listeResult.html"><text id="mlist"></text></a><a id="pressed" href="#"><text id="mmaps"></text></a></div>
 
 <div id="mapZoom">
 <button class="boutonZoom" title="Zoom in" onclick="zoomMap(1); return false;">+</button>

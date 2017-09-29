@@ -123,10 +123,10 @@ var myPos = localStorage.getItem('myPos');
 if (myPos){
 	var coord = myPos.split(',');
 
-	cInfo += '&nbsp;&nbsp;<a class="itin" target="_blank" href="ClubTrajet.html?data=' + coord[0] + '$' + coord[1] + '$' +  oClubParc[0].latitude + '$' + oClubParc[0].longitude + '$' + encodeURI(oClubParc[0].nom) +'">Trajet</a>';
+	cInfo += '&nbsp;&nbsp;<a class="itin" target="_blank" href="ClubTrajet.html?data=' + coord[0] + '$' + coord[1] + '$' +  oClubParc[0].latitude + '$' + oClubParc[0].longitude + '$' + encodeURI(oClubParc[0].nom) +'">' + langLbl["direc"] + '</a>';
 	}
 if (false)
-	cInfo += '&nbsp;<a class="itin" target="_blank" href="ClubTrajet.html?Lat=">Trajet</a>';
+	cInfo += '&nbsp;<a class="itin" target="_blank" href="ClubTrajet.html?Lat=">' + langLbl["direc"] + '</a>';
 
 clubInfo.innerHTML = cInfo;
 
@@ -155,14 +155,14 @@ for (var p = 0; p < clubCourse.length; p++) {
 	if (clubCourse[p].PARCOURS != null && clubCourse[p].PARCOURS != "")
 		htmlCode += clubCourse[p].PARCOURS + "&nbsp;" 
 	
-		htmlCode += clubCourse[p].TROUS + "&nbsp;trous";
+		htmlCode += clubCourse[p].TROUS + langLbl["holes"];
 	if (clubCourse[p].DEPUIS)	
-		htmlCode += "&nbsp;depuis&nbsp;" + clubCourse[p].DEPUIS ;
-	htmlCode +=  ",&nbsp;&#224; normale&nbsp;" + clubCourse[p].NORMALE + "&nbsp;de&nbsp;" + clubCourse[p].VERGES + "&nbsp;verges&nbsp;&nbsp;";
+		htmlCode += langLbl["since"] + clubCourse[p].DEPUIS ;
+	htmlCode +=  langLbl["ccpar"] + clubCourse[p].NORMALE + ",&nbsp;" + clubCourse[p].VERGES + langLbl["cyard"];
 	if (clubCourse[p].PARCOURS != "")
 		parcoursName += " - " + clubCourse[p].PARCOURS;
 	if (clubCourse[p].GPS)
-		htmlCode += '<a class="itin" target="_blank" href="golfGPS.html?data=' + clubCourse[p]._id + '&' + clubName + parcoursName + '">Jouer</a>';
+		htmlCode += '<a class="itin" target="_blank" href="golfGPS.html?data=' + clubCourse[p]._id + '&' + clubName + parcoursName + '">' + langLbl["bplay"] + '</a>';
 htmlCode += "</li>";
 
 }
@@ -201,7 +201,7 @@ for (var p = 0; p < clubCourse.length; p++) {
 	divElem.setAttribute('id', 'p1');
 	divElem.setAttribute('class', 'cartePts');
 
-	var htmlCode = '<table class="cartePts"><tr><td  class="titre" colspan="14"><b>Parcours&nbsp;:&nbsp;' + clubCourse[p].PARCOURS + "&nbsp;" + nbrTrou + '&nbsp;trous</b></td></tr>';
+	var htmlCode = '<table class="cartePts"><tr><td  class="titre" colspan="14"><b>' + langLbl["cours"] + clubCourse[p].PARCOURS + "&nbsp;" + nbrTrou + '&nbsp;trous</b></td></tr>';
 	if(nbrTrou == 9)
 		htmlCode += '<tr class="entete"><th>Trou</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>Total</th></tr>';
 	else
@@ -254,15 +254,15 @@ chargement.style.display = "none";
 
 <div id="topbar" class="vert">
 <div id="leftnav"><a title="Formulaire de recherche" href="#" onclick="majFav('index.html');"><img alt="Formulaire de recherche" height="22" width="25" src="images/home22.png" /></a></div>
-<div id="chargement" class=""><div class="charge">Chargement</div><div class="charge loading"></div></div>
+<div id="chargement" class=""><div class="charge"><text id="load"></text></div><div class="charge loading"></div></div>
 <div id="fontAdjust">
 <div class="divFont" onclick="setFontSize(0.2, this)"><div class="divFontSize">A</div><div class="fontLogo">&#8593;</div></div>
 <div class="divFont" onclick="setFontSize(-0.2, this)"><div class="divFontSize fontSmall">A</div><div class="fontLogo">&#8595;</div></div>
 </div>
 </div>
 <div id="duobutton">
-<a href="#" onclick="majFav('listeResult.html');">Liste</a>
-<a id="mapLink" target="_blank" href="ClubMap.html?data=" onclick="majFav();">Carte</a></div>
+<a href="#" onclick="majFav('listeResult.html');"><text id="mlist"></text></a>
+<a id="mapLink" target="_blank" href="ClubMap.html?data=" onclick="majFav();"><text id="mmaps"></text></a></div>
 
 
 <div id="content">

@@ -81,11 +81,11 @@ if (!showLatLng){
 	//	alert("Set");
 	setFlag.disabled = false;
 	setFlag.style.display = 'inherit';
-	menuTxt.innerHTML = "&#10004;&nbsp;&Eacute;diter";
+	menuTxt.innerHTML = "&#10004;&nbsp;" + langLbl["medit"];
 }else{
 	showLatLng = false;
 	setFlag.style.display = 'none';
-	menuTxt.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&Eacute;diter";
+	menuTxt.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;" + langLbl["medit"];
 }
 
 closeMenu();
@@ -93,10 +93,10 @@ closeMenu();
 
 function showCenter(menuTxt){
 if (affCenter){
-	menuTxt.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;Centrer";
+	menuTxt.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;" + langLbl["mcent"];
 	affCenter = false;
 }else{
-	menuTxt.innerHTML = "&#10004;&nbsp;Centrer";
+	menuTxt.innerHTML = "&#10004;&nbsp;" + langLbl["mcent"];
 	affCenter = true;
 }
 closeMenu();
@@ -250,7 +250,7 @@ border-radius: 10px;
   
 <div id="duobutton">
 <a href="#" id="butMenu" title="Menu" onclick="showMenu();"><img id="logomenu" alt="Menu" src="images/menu.png" width="64" height="32"></a>
-<a href="#"  onclick="window.close(); return false;">Fermer</a>
+<a href="#"  onclick="window.close(); return false;"><text id="close"></text></a>
 
 	<div id="navTrou">
 	<button class="bouton-prec-suiv" onclick="trouSuivant(-1)"><img  height="18" width="13" alt="Trou pr&eacute;c&eacute;dent" src="images/prec.png" /></button>
@@ -267,8 +267,8 @@ border-radius: 10px;
 
 <div id="menuList">
 <table><tbody>
-<tr><td onclick="showHole(this);" title="&Eacute;diter la position des drapeaux.">&nbsp;&nbsp;&nbsp;&nbsp;&Eacute;diter</td></tr>
-<tr><td onclick="showCenter(this);" title="Centrage sur changement de drapeau.">&nbsp;&nbsp;&nbsp;&nbsp;Centrer</td></tr>
+<tr><td onclick="showHole(this);" title="&Eacute;diter la position des drapeaux.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="medit"></text></td></tr>
+<tr><td onclick="showCenter(this);" title="Centrage sur changement de drapeau.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mcent"></text></td></tr>
 </tbody></table>
 </div>
 

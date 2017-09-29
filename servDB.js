@@ -36,8 +36,8 @@ var MongoClient = require('mongodb').MongoClient
 var ObjectId = require('mongodb').ObjectId;
 
 // Connection URL
-//var urlDB = 'mongodb://localhost:27017/golfDB';
-var urlDB = 'mongodb://192.168.10.11:8080/golf';
+var urlDB = 'mongodb://localhost:27017/golf';
+//var urlDB = 'mongodb://192.168.10.11:8080/golf';
 var dBase;
 
 // Use connect method to connect to the server
@@ -665,6 +665,8 @@ var coll = dBase.collection('users');
 	function sendRecupPassMail(eMail, name, pass){
 		var Mdata = Mailer.formatMailPass( HOSTserv, name, eMail, pass);
 		Mailer.sendMessage( false, "Golf du Québec - Récupérer mot de passe de " + name, eMail, Mdata, "");
+		tl.logFile("Golf du Québec - Récupérer mot de passe de " + name + " : " + eMail);
+		console.log(Mdata);
 	}
 }
 
