@@ -425,7 +425,7 @@ font-size:1.2em;
 }
 
 #prefOptions, #identOptions{
-font-size: 0.8em;
+font-size: 0.7em;
 border: 3px solid #9EA0A1;
 -webkit-border-radius: 5px;
 border-radius: 5px; 
@@ -448,7 +448,7 @@ text-align:left;
 .prefVal, .prefLbl, .identLbl{
 margin: 0;
 padding: 0;
-display: inline;
+display: inline-block;
 margin-left: 3px;
 }
 
