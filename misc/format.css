@@ -448,8 +448,9 @@ text-align:left;
 .prefVal, .prefLbl, .identLbl{
 margin: 0;
 padding: 0;
-display:inline-block;
-width: 50% ;
+display: inline;
+min-width: 50%;
+margin-left: 3px;
 }
 
 .prefLbl{
@@ -719,7 +720,7 @@ text-align:center;
 { 
 
 .prefLbl{
-width: 165px ;
+/*width: 165px ;*/
 }
 
 /*#divMot, #divReg, #divCod {width:120x;}*/
