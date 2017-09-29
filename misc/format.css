@@ -425,7 +425,7 @@ font-size:1.2em;
 }
 
 #prefOptions, #identOptions{
-/*font-size: initial;*/
+font-size: 0.8em;
 border: 3px solid #9EA0A1;
 -webkit-border-radius: 5px;
 border-radius: 5px; 
