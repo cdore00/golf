@@ -1,6 +1,6 @@
 <!--
 
-var HOSTserv = "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Openshift
+var HOSTserv = "http://127.0.0.1:3000/";		//Local host
 // "http://127.0.0.1:3000/";		//Local host
 // "http://cdore.ddns.net:8080/";  // VULTR Fedora 26 Server
 // "http://192.168.2.188:8080/";  //Ubuntu workstation
@@ -119,6 +119,7 @@ if (sizeAD){
 	document.body.style.fontSize = fs + "em";
 	//SetCook( "_fontSize", fs + "em");
 }else{
+	setLanguage();
 	fs = GetCookie( "_fontSize");
 	if (!fs || fs == ""){
 		fs = document.body.style.fontSize;
@@ -254,5 +255,147 @@ function validEmail(email){
     	return false;
 }
 
+var langLbl = [];
+function initLang(){
+var lang = window.navigator.userLanguage || window.navigator.language;
+var l = "EN";
+if (lang.toUpperCase().indexOf("FR") != -1)
+	l = "FR";
+if (lang.toUpperCase().indexOf("ES") != -1)
+	l = "ES";
+	switch (l) {
+	  case "FR":
+		langLbl["title"] = "Golfs du Qu&eacute;bec";
+		langLbl["motcl"] = "Mot cl&eacute;";
+		langLbl["clubn"] = "Nom club";
+		langLbl["clubc"] = "Ville";
+		langLbl["regio"] = "R&eacute;gion";
+		langLbl["toute"] = "Toutes";
+		langLbl["proxi"] = "Proximit&eacute;";
+		langLbl["posta"] = "Code postal";
+		langLbl["locat"] = "Localisation";
+		langLbl["local"] = "Localiser";
+		langLbl["loca."] = "Localise";
+		langLbl["searc"] = "Rechercher";
+		langLbl["prefe"] = "Pr&eacute;f&eacute;rences";
+		langLbl["ident"] = "Identit&eacute;";
+		langLbl["_okok"] = "Ok";
+		langLbl["_canc"] = "Annuler";
+		langLbl["small"] = "Petite";
+		langLbl["middl"] = "Moyenne";
+		langLbl["large"] = "Grande";
+		langLbl["psize"] = "Taille de police";
+		langLbl["ldela"] = "D&eacute;lai de localisation";
+		langLbl["pplay"] = "Mes parties";
+		langLbl["macco"] = "Mon compte";
+		langLbl["niden"] = "Nouvelle identification";
+		langLbl["email"] = "Courriel";
+		langLbl["uname"] = "Nom";
+		langLbl["passw"] = "Mot de pass";
+		langLbl["npass"] = "Nouveau mot de pass";
+		langLbl["cpass"] = "Confirmer mot de passe";
+		langLbl["M0001"] = "Le mot de passe actuel est requis.";
+		langLbl["M0002"] = "Le mot de passe doit comprendre au moins 3 caractères.";
+		langLbl["M0003"] = "La confirmation du nouveau mot de passe n'est pas valide.";
+		langLbl["M0004"] = "Utilisateur ou mot de passe non valide.";
+		langLbl["M0005"] = "Mot de passe oublié?\n\rVoulez-vous récupérer votre mot de passe par courriel?";
+		langLbl["M0006"] = "Vous devez permettre l'utilisation des Cookies pour configurer vos pr&eacute;f&eacute;rences.";
+		langLbl["M0007"] = "Choisir une distance pour le code postal.";
+		langLbl["M0008"] = "Code postal non retrouv&eacute; : ";
+		langLbl["M0009"] = "L'adresse de courriel n'est pas valide.";
+		langLbl["searc"] = "Recherche";
+		langLbl["load"] = "Chargement";
+		langLbl["mlist"] = "Liste";
+		langLbl["mmaps"] = "Carte";
+		langLbl["close"] = "Fermer";
+		langLbl["direc"] = "Trajet";
+		langLbl["bplay"] = "Jouer";
+		langLbl["holes"] = "&nbsp;trous";
+		langLbl["since"] = "&nbsp;depuis&nbsp;";
+		langLbl["ccpar"] = ",&nbsp;normale&nbsp;";
+		langLbl["cyard"] = "&nbsp;verges&nbsp;&nbsp;";
+		langLbl["cours"] = "Parcours&nbsp;:&nbsp;";
+		langLbl["medit"] = "&Eacute;diter";
+		langLbl["mcent"] = "Centrer";
+			break;
+	  default:
+		langLbl["title"] = "Quebec's Golfs";
+		langLbl["motcl"] = "Key Word";
+		langLbl["clubn"] = "Club name";
+		langLbl["clubc"] = "City";
+		langLbl["regio"] = "Country";
+		langLbl["toute"] = "All";
+		langLbl["proxi"] = "Proximity";
+		langLbl["posta"] = "Postal Code";
+		langLbl["locat"] = "Location";
+		langLbl["local"] = "Locate";
+		langLbl["loca."] = "Locate";
+		langLbl["searc"] = "Search";
+		langLbl["prefe"] = "Preferences";
+		langLbl["ident"] = "Identity";
+		langLbl["_okok"] = "Ok";
+		langLbl["_canc"] = "Cancel";
+		langLbl["small"] = "Small";
+		langLbl["middl"] = "Middle";
+		langLbl["large"] = "Large";
+		langLbl["psize"] = "Font size";
+		langLbl["ldela"] = "Locate delay";
+		langLbl["pplay"] = "My games";
+		langLbl["macco"] = "My account";
+		langLbl["niden"] = "New account";
+		langLbl["email"] = "E-mail";
+		langLbl["uname"] = "Name";
+		langLbl["passw"] = "Password";
+		langLbl["npass"] = "New password";
+		langLbl["cpass"] = "Valid Password"
+		langLbl["M0001"] = "The current password is required.";
+		langLbl["M0002"] = "The password must be at least 3 characters long.";
+		langLbl["M0003"] = "The confirmation of the new password is invalid.";
+		langLbl["M0004"] = "Invalid user or password.";
+		langLbl["M0005"] = "Forgotten password? \ N \ rDo you want to recover your password by email?";
+		langLbl["M0006"] = "You must allow the use of cookies to configure your preferences.";
+		langLbl["M0007"] = "Choose a distance for the postal code.";
+		langLbl["M0008"] = "Postal code not found :";
+		langLbl["M0009"] = "The email address is invalid.";
+		langLbl["searc"] = "Searching";
+		langLbl["load"] = "Loading";
+		langLbl["mlist"] = "List";
+		langLbl["mmaps"] = "Map";
+		langLbl["close"] = "Close";
+		langLbl["direc"] = "Direction";
+		langLbl["bplay"] = "Play";
+		langLbl["holes"] = "&nbsp;holes";
+		langLbl["since"] = "&nbsp;since&nbsp;";
+		langLbl["ccpar"] = ",&nbsp;par&nbsp;";
+		langLbl["cyard"] = "&nbsp;yards&nbsp;&nbsp;";
+		langLbl["cours"] = "Course&nbsp;:&nbsp;";
+		langLbl["medit"] = "Edit";
+		langLbl["mcent"] = "Center";
+		break;
+	}
+}
+
+function setLanguage(){
+var otextColl = document.getElementsByTagName("text");	
+var oinputColl = document.getElementsByTagName("input");
+initLang();
+for (var i = 0; i < otextColl.length; i++) {
+	initText(otextColl[i])
+}
+for (var i = 0; i < oinputColl.length; i++) {
+	if (oinputColl[i].value.indexOf("_") == 0){
+		oinputColl[i].value = langLbl[oinputColl[i].value];
+	}
+}
+}
+
+function initText(oText){
+var textId = oText.id;
+textId = textId.substring(0, 5);
+if (langLbl[textId])
+	oText.innerHTML = langLbl[textId] ;
+else	
+	alert("Miss: " + textId);
+}
 
 // -->
