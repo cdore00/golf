@@ -449,16 +449,15 @@ text-align:left;
 margin: 0;
 padding: 0;
 display: inline;
-min-width: 50%;
 margin-left: 3px;
 }
 
 .prefLbl{
-/*width: 12em ;*/
+min-width: 50%;
 }
 
 .identLbl{
-/*width: 145px ;*/
+min-width: 50%;
 }
 
 .markLabels {
