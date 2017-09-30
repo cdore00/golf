@@ -36,7 +36,7 @@ var MongoClient = require('mongodb').MongoClient
 var ObjectId = require('mongodb').ObjectId;
 
 // Connection URL
-var urlDB = 'mongodb://localhost:27017/golf';
+var urlDB = 'mongodb://192.168.10.11:8080/golf';
 //var urlDB = 'mongodb://192.168.10.11:8080/golf';
 var dBase;
 
@@ -55,19 +55,20 @@ MongoClient.connect(urlDB, function(err, db) {
 	const server = http.createServer((req, res) => {
 			//debugger;
 		var url_parts = url.parse(req.url,true);
+		var param = url_parts.query;
 		var arrPath = url_parts.pathname.split("/");
 		var filePath = arrPath[arrPath.length - 1];
-		subWeb = arrPath[arrPath.length - 2] + '/';
+		//subWeb = arrPath[arrPath.length - 2] + '/';
 	if (isLog){
 		console.log(url_parts.pathname);
-		console.log(url_parts.query);
+		console.log(param);
 	}
 		if (req.method == 'POST') {
 			if (filePath == "listLog"){
 				tl.listLog2(req, res, Mailer.pass);
 			}else{
 			if (filePath == "commPic"){
-				sendImage(url_parts.query, req, res);
+				sendImage(param, req, res);
 			}else{
 				res.end();
 			}}
@@ -80,6 +81,12 @@ MongoClient.connect(urlDB, function(err, db) {
 					isLog = true;
 				console.log("Log " + isLog );
 				res.end("<h1>Log " + isLog + "</h1>");
+				break;
+			  case "listLog":
+				tl.listLog(res);
+				break;
+			  case "showLog":
+				tl.showLog(param.nam, tl.getIP(req), res);
 				break;
 			  case "identUser":
 				authUser(req, res, url_parts.query);
@@ -335,6 +342,7 @@ if (action == 0){
 }
 if (action == 1){
 	var dateTime = Date.now();
+	tl.logFile("End game: " + gID);
 	coll.update({_id:o_id}, { $set: { score_date: dateTime} }, function(err, docr) {
 		if (err) {
 			logErreur('Erreur end score _id : ');
@@ -513,9 +521,13 @@ function insertUser(){
 		returnRes(res, err);
 		console.log(err);
 	}else{
-		sendConfMail(doc.ops[0].courriel, doc.ops[0].motpass);
+		if (doc.ops[0].Nom == "")
+			var name = doc.ops[0].courriel
+		else
+			var name = doc.ops[0].Nom
+		sendConfMail(doc.ops[0].courriel, name);
 		returnRes(res, {"code":-1, message: "S0052"});
-		//console.log(doc.ops);
+		tl.logFile("Nouveau compte créé: " + doc.ops[0].courriel);
 	}
   });  
 }
@@ -561,7 +573,7 @@ var user = (decodeURI(param.cour));
 var pass = (decodeURI(param.pass));
 var Npass = (decodeURI(param.newpass));
 
-if (gID.length < 5)
+if (id.length < 5)
 	var o_id = parseInt(id);
 else	
 	var o_id = new ObjectId(id);
@@ -617,9 +629,10 @@ var data = (decodeURI(param.data));
   coll.find({"courriel": data}).toArray( function(err, docs) {
 	if (eval(docs[0].actif) == true ){ 
 		res.setHeader('Access-Control-Allow-Origin', '*');
-		res.end("S0053");
+		res.end("<h1>Le compte " + docs[0].courriel + " est d&eacute;j&agrave; actif.</h1>");
 	}else{	
 		activateAccount(loginUser(res, docs[0].courriel, docs[0].motpass));
+		tl.logFile("Nouveau compte activé: " + docs[0].courriel);
 	}
   });
 	
