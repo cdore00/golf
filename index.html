@@ -11,13 +11,13 @@
 <title>Golfs du Qu&eacute;bec</title>
 <meta content="Golf GPS, Qu&eacute;bec, Canada, Golf du Qu&eacute;bec, Clubs de golf au Qu&eacute;bec, Qu&eacute;bec golf" name="keywords" />
 <meta content="R&eacute;pertoire des clubs de golf du Qu&eacute;bec. GPS golf." name="description" />
-<!-- <link href="misc/init.css" rel="stylesheet" media="screen" type="text/css" /> // -->
+<link href="misc/init.css" rel="stylesheet" media="screen" type="text/css" />
 <link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
 
 <script type="text/javascript" src="misc/googGeo.js"></script>
 <script type="text/javascript" src="misc/util.js"></script> 
 <script type="text/javascript" src="misc/geoLocal.js"></script>
-<script type="text/javascript" src="js/config.js"></script>
+<!-- <script type="text/javascript" src="js/config.js"></script> // -->
 
     <script type="text/javascript" 
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA15nyiYmWG_0IkG9H5r4Qc8KhZxwRw_xA&sensor=false"> 
@@ -113,7 +113,7 @@ function saveAccRes(oRes){
 	if (oRes.resp.result)
 		closeAccountForm();  // close
 	else
-		alert(oRes.resp.message);
+		alert(langLbl[oRes.resp.message]);
 }
 function setIdent(){
 //prefOptions
@@ -159,7 +159,8 @@ var info = "user=" + userName + "&email=" + userCour + "&pass=" + userPass;
 }
 function validNewUser(rdata){
 	if (rdata.code){
-		alert(rdata.message);
+		var mess = langLbl[rdata.message];
+		alert(mess.replace("%1", formIdent.courUser.value));
 		if (rdata.code < 2){
 			closeAccountForm();
 		}
@@ -167,6 +168,7 @@ function validNewUser(rdata){
 		alert(rdata);
 	}
 }
+
 function closeAccountForm(){
 var accountForm = document.getElementById('accountForm');
 var modLayer = document.getElementById('modalDiv');
@@ -175,12 +177,14 @@ var authLayer = document.getElementById('authLayer');
 		modLayer.style.visibility="hidden";
 		authLayer.style.visibility="hidden";
 }
+
 function authentif(){
 var formAuth = document.getElementById('formAuth');
 var userCour = formAuth.nameUser.value;
 var userPass = formAuth.passwordUser.value;
 getInfo("identUser?user=" + userCour + "&pass=" + userPass, validUser);
 }
+
 function validUser(rep){
 var formAuth = document.getElementById('formAuth');
 var userCour = formAuth.nameUser.value;
@@ -209,9 +213,13 @@ if (rep.resp.result){
 	}
 }
 }
+
 function repMailPass(oRep){
-	alert(oRep.message);
+var formAuth = document.getElementById('formAuth');
+var mess = langLbl[oRep.message];
+	alert(mess.replace("%1", formAuth.nameUser.value));
 }
+
 function showPref(){
 var prefLayer = document.getElementById('prefLayer');
 var initLayer = document.getElementById('identLayer');
