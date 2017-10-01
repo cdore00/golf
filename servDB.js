@@ -15,7 +15,7 @@ var HOSTclient = 'https://cdore00.github.io/golf/';
 const Mailer = require('./mailer.js');
 tl = require('./tools.js');
 var infoBup = new Array();
-//var subWeb = '';
+var subWeb = '';
 //var subNod = 'nod/';
 var isLog = false;
 
@@ -36,7 +36,7 @@ var MongoClient = require('mongodb').MongoClient
 var ObjectId = require('mongodb').ObjectId;
 
 // Connection URL
-var urlDB = 'mongodb://192.168.10.11:8080/golf';
+var urlDB = 'mongodb://localhost:27017/golf';
 //var urlDB = 'mongodb://192.168.10.11:8080/golf';
 var dBase;
 
@@ -49,7 +49,14 @@ MongoClient.connect(urlDB, function(err, db) {
   //db.close();
 });
 
-
+function getSub(req){
+	var sub = "";
+	var domain = req.headers.host;
+	if (domain.indexOf("cdore.ddns.net") != -1)
+		sub = "/node";
+	
+return sub;
+}
 
 // Instantiate Web Server
 	const server = http.createServer((req, res) => {
@@ -60,6 +67,7 @@ MongoClient.connect(urlDB, function(err, db) {
 		var filePath = arrPath[arrPath.length - 1];
 		//subWeb = arrPath[arrPath.length - 2] + '/';
 	if (isLog){
+		console.log(req.headers.host);
 		console.log(url_parts.pathname);
 		console.log(param);
 	}
@@ -83,7 +91,7 @@ MongoClient.connect(urlDB, function(err, db) {
 				res.end("<h1>Log " + isLog + "</h1>");
 				break;
 			  case "listLog":
-				tl.listLog(res);
+				tl.listLog(res, getSub(req));
 				break;
 			  case "showLog":
 				tl.showLog(param.nam, tl.getIP(req), res);
@@ -181,7 +189,7 @@ MongoClient.connect(urlDB, function(err, db) {
 	
 // Start server listening request
 	server.listen(port, () => {
-		console.log('Server started on port ' + port);
+		console.log('(US/Eastern) - Server started on port ' + port);
 		tl.logFile('Server started on port ' + port);
 		Mailer.initMailer(Mailer,PARAM_DIR);  // Initialyse Mailer Object
 	});

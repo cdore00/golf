@@ -23,7 +23,7 @@ exports.getDateTime = function (dateTime){
 	intlDateTime.setUTCHours(intlDateTime.getUTCHours() + timeZoneAjust);
 	intlDateTime = dt.format(intlDateTime);
 	intlDateTime = intlDateTime.toLocaleString();
-	intlDateTime = intlDateTime.substring(0, 10);
+	intlDateTime = intlDateTime.substring(0, 19);
 	return intlDateTime;
 }
 
@@ -44,7 +44,7 @@ exports.listLog = function (res, subWeb) {
 
 	//res.statusCode = 200;
 	//res.setHeader('Content-type', 'text/html');
-	var htmlCode = '<!DOCTYPE html><html lang="en-CA"><head><meta name="viewport" content="width=device-width" /></head><body><form action="/listLog?" method="post"><input type="password" name="pass"></form></body></html>';
+	var htmlCode = '<!DOCTYPE html><html lang="en-CA"><head><meta name="viewport" content="width=device-width" /></head><body><form action="'  + subWeb + '/listLog?" method="post"><input type="password" name="pass"></form></body></html>';
 	res.write(htmlCode);
 	res.end();
 }
