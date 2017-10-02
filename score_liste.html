@@ -325,7 +325,7 @@ if (editMode){
 
 function delGame(rChilds, id){
 if (confirm("Supprimer cette partie ?\n - Date: " + rChilds[0].innerHTML + " \n - Club: " + rChilds[1].innerHTML + "\n - Score: " + rChilds[2].innerHTML)){
-	getInfo("delGame?id=" + id, showDelRes);
+	getInfo("endDelGame?data=" + id + "$0", showDelRes);
 }
 }
 

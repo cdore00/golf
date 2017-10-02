@@ -261,10 +261,10 @@ setFontSize();
 
 function initPref(){
 var locButton = document.getElementById('locDiv');
-affL = GetCookie("AffLoc");
+var affL = GetCookie("AffLoc");
+LocT = GetCookie("LocTime");
 if (affL == null || affL == 0) 
 	affL = false;
-LocT = GetCookie("LocTime");
 if (LocT == null || LocT == 0){ 
 	LocT = 5;
 	SetCook("LocTime",LocT);}
@@ -276,10 +276,13 @@ else
 //setFontSize();
 showLocalisation();
 }
+
 function initFormPref(){
 var affL = GetCookie("AffLoc");
 var polS = GetCookie("_fontSize");
 var locT = GetCookie("LocTime");
+var langP = GetCookie("langP");
+
 if (formPref.polSize.length == 0)
 	initSizeList();
 	
@@ -296,6 +299,8 @@ for (var i=0;i<formPref.locTime.length;i++){
 	if (formPref.locTime[i].value == locT)
 		formPref.locTime.selectedIndex = i;
 }
+if (langP)
+	formPref.chxLang.selectedIndex = langP;
 //formPref.locTime.selectedIndex = locT - 1;
 //adjustPol(formPref.polSize[formPref.polSize.selectedIndex]);
 }
@@ -311,10 +316,6 @@ var elem = document.getElementsByClassName("prefList");
 	for (i = 0; i < elem.length; i++) {
 		//elem[i].style.fontSize = fs;
 		}
-}
-
-function prefLang(langOpt){
-
 }
 	
 function initSizeList(){
@@ -353,11 +354,10 @@ chxLang.appendChild(optElem);
 }
 
 function savePref(formulaire){
-var formPref = document.getElementById('formPref');
-formPref.style.fontSize = "inherit";
+
 SetCook("AffLoc",formulaire.locDisplay.checked);
 SetCook("_fontSize",formulaire.polSize.value );
-//SetCook("PolSize",formulaire.polSize.value );
+SetCook("langP",formulaire.chxLang.value );
 SetCook("LocTime",formulaire.locTime.value);
 closePref();
 }
@@ -840,7 +840,7 @@ geocoder = new google.maps.Geocoder();
 
 <div class="prefList">
 <label for="chxLang" id="lbl1" class="prefLbl"><text id="langu">Langue</text></label><div class="prefVal">
-<select id="chxLang" onchange="prefLang(this);">
+<select id="chxLang">
 </select></div></div>
 
 <div class="prefList">
@@ -851,7 +851,7 @@ geocoder = new google.maps.Geocoder();
 <div class="prefList">
 <label for="locTime" id="lbl3" class="prefLbl"><text id="ldela">D&eacute;lai de localisation</text></label><div class="prefVal">
 <select id="locTime">
- <option value="0">Non</option>
+ <option value="0">No</option>
  <option value="1">1 s.</option>
  <option value="3">3 s.</option>
  <option value="5">5 s.</option> 
