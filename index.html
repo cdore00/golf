@@ -74,10 +74,12 @@ if (action == 1)
 xmlhttp.send();
 modLayer.style.visibility="visible";
 }
+
 function initAccountForm(action){
 if (action == 1)
 	getInfo("identUser?user=" + GetCookie("userMail"), initMyForm);
 }
+
 function initMyForm(oUser){
 var formIdent = document.getElementById('formIdent');
 if (oUser._id){
@@ -86,6 +88,7 @@ if (oUser._id){
 	formIdent.courUser.value = oUser.courriel;
 }
 }
+
 function saveAccount(){
 var formIdent = document.getElementById('formIdent');
 var Npass = formIdent.newPassUser.value;
@@ -109,15 +112,15 @@ if (Npass != ""){  // Change password
 		getInfo(rInfo, saveAccRes);
 	}
 }
+
 function saveAccRes(oRes){
 	if (oRes.resp.result)
 		closeAccountForm();  // close
 	else
 		alert(langLbl[oRes.resp.message]);
 }
+
 function setIdent(){
-//prefOptions
-//identOptions
 var formAuth = document.getElementById('formAuth');
 var prefLayer = document.getElementById('prefLayer');
 var identLayer = document.getElementById('identLayer');
@@ -135,8 +138,8 @@ if (!userId){
 	butGame.style.display = "block";
 	myAccount.style.display = "block";
 }
-;
 }
+
 function saveIdent(){
 var userName = formIdent.nomUser.value;
 var userCour = formIdent.courUser.value;
@@ -157,6 +160,7 @@ var info = "user=" + userName + "&email=" + userCour + "&pass=" + userPass;
 		getInfo("addUserIdent?" + info, validNewUser);
 	}
 }
+
 function validNewUser(rdata){
 	if (rdata.code){
 		var mess = langLbl[rdata.message];
@@ -202,6 +206,8 @@ if (rep.resp.result){
 	userId = rep.resp.user._id;
 	userName = rep.resp.user.Nom;
 }else{
+	userId = null;
+	setIdent();
 	DelCookie("userID");
 	alert(langLbl["M0004"]);
 	tryLog++;
@@ -223,11 +229,10 @@ var mess = langLbl[oRep.message];
 function showPref(){
 var prefLayer = document.getElementById('prefLayer');
 var initLayer = document.getElementById('identLayer');
-/*var aLink = document.getElementById('aLink');
-aLink.style.display="none";*/
 initLayer.style.visibility="hidden";
 prefLayer.style.visibility="visible";
 }
+
 function setPref(){
 var modLayer = document.getElementById('modalDiv');
 var prefLayer = document.getElementById('prefLayer');
@@ -240,19 +245,20 @@ if (checkCookie()){
 }else
 alert(langLbl["M0006"]);
 }
+
 function closePref(){
 var modLayer = document.getElementById('modalDiv');
 var prefLayer = document.getElementById('prefLayer');
 var identLayer = document.getElementById('identLayer');
 var authLayer = document.getElementById('authLayer');
-/*var aLink = document.getElementById('aLink');
-aLink.style.display="none";*/
 authLayer.style.visibility="hidden";
 identLayer.style.visibility="hidden";
 prefLayer.style.visibility="hidden";
 modLayer.style.visibility="hidden";
-initPref();
+//initPref();
+setFontSize();
 }
+
 function initPref(){
 var locButton = document.getElementById('locDiv');
 affL = GetCookie("AffLoc");
@@ -291,19 +297,30 @@ for (var i=0;i<formPref.locTime.length;i++){
 		formPref.locTime.selectedIndex = i;
 }
 //formPref.locTime.selectedIndex = locT - 1;
-adjustPol(formPref.polSize[formPref.polSize.selectedIndex]);
+//adjustPol(formPref.polSize[formPref.polSize.selectedIndex]);
 }
+
 function adjustPol(selOption){
+setFontSize(selOption.value);
+var formPref = document.getElementById('formPref');
+//formPref.style.fontSize = "inherit";
 var fs = (selOption.value);
-//var elem = document.getElementsByClassName("prefLbl");
+//formPref.style.fontSize = fs;
+
 var elem = document.getElementsByClassName("prefList");
 	for (i = 0; i < elem.length; i++) {
-		elem[i].style.fontSize = fs;
+		//elem[i].style.fontSize = fs;
 		}
+}
+
+function prefLang(langOpt){
+
 }
 	
 function initSizeList(){
 var polSize = document.getElementById('polSize');
+var chxLang = document.getElementById('chxLang');
+
 var optElem = document.createElement("option");
 optElem.setAttribute('value', '1em');
 optElem.innerHTML = langLbl["small"];
@@ -316,18 +333,35 @@ var optElem = document.createElement("option");
 optElem.setAttribute('value', '2em');
 optElem.innerHTML = langLbl["large"];
 polSize.appendChild(optElem);
-// <option value="1em">Petite</option>
- //<option value="1.4em" >Moyenne</option>
- //<option value="2em" >Grande</option>
+
+var optElem = document.createElement("option");
+optElem.setAttribute('value', '0');
+optElem.innerHTML = langLbl["defau"];
+chxLang.appendChild(optElem);
+var optElem = document.createElement("option");
+optElem.setAttribute('value', '1');
+optElem.innerHTML = "English";
+chxLang.appendChild(optElem);
+var optElem = document.createElement("option");
+optElem.setAttribute('value', '2');
+optElem.innerHTML = "Français";
+chxLang.appendChild(optElem);
+var optElem = document.createElement("option");
+optElem.setAttribute('value', '3');
+optElem.innerHTML = "Español";
+chxLang.appendChild(optElem);
 }
+
 function savePref(formulaire){
+var formPref = document.getElementById('formPref');
+formPref.style.fontSize = "inherit";
 SetCook("AffLoc",formulaire.locDisplay.checked);
 SetCook("_fontSize",formulaire.polSize.value );
 //SetCook("PolSize",formulaire.polSize.value );
 SetCook("LocTime",formulaire.locTime.value);
-setFontSize();
 closePref();
 }
+
 function setLatLng(latitude,longitude,notNew) {
 document.critere.latitude.value = parseFloat(latitude);
 document.critere.longitude.value = parseFloat(longitude);
@@ -336,6 +370,7 @@ clearGeo(true);
 if (!notNew)
 	localStorage.setItem('myPos', latitude + "," + longitude + "," + Date.now());
 }
+
 function setResult(result){
 resultLocalisation = result;
 }
@@ -802,6 +837,11 @@ geocoder = new google.maps.Geocoder();
 
 <form id="formPref">
 <div id="prefOptions">
+
+<div class="prefList">
+<label for="chxLang" id="lbl1" class="prefLbl"><text id="langu">Langue</text></label><div class="prefVal">
+<select id="chxLang" onchange="prefLang(this);">
+</select></div></div>
 
 <div class="prefList">
 <label for="polSize" id="lbl1" class="prefLbl"><text id="psize">Taille de police</text></label><div class="prefVal">
