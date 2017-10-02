@@ -1,8 +1,8 @@
 <!--
 
-var HOSTserv = "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Openshift
+var HOSTserv = "http://cdore.ddns.net/node/";  // VULTR Ubuntu Server
 // "http://127.0.0.1:3000/";		//Local host
-// "http://cdore.ddns.net:8080/";  // VULTR Fedora 26 Server
+// "http://cdore.ddns.net/node/";  // VULTR Ubuntu Server
 // "http://192.168.2.188:8080/";  //Ubuntu workstation
 //"http://127.0.0.1:3000/";
 //"https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Openshift
@@ -100,7 +100,7 @@ var oCtls = document.getElementsByClassName('divFont');
 for (i = 0; i < oCtls.length; i++) {
 	oCtls[i].style.color = "#efe";
 }
-if (sizeAD && sizeAD.indexOf("em") == -1){
+if (sizeAD && typeof sizeAD == "number"){
 	fs = eval(fs.replace("em", "")) + sizeAD; 
 	if (sizeAD > 0){
 		if (fs >= 2){
@@ -261,12 +261,17 @@ function validEmail(email){
 
 var langLbl = [];
 function initLang(){
-var lang = window.navigator.userLanguage || window.navigator.language;
-var l = "EN";
-if (lang.toUpperCase().indexOf("FR") != -1)
+var langP = GetCookie("langP");
+var l = "EN", lang = "";
+
+if (langP && langP == "0")
+	lang = window.navigator.userLanguage || window.navigator.language;
+
+if ((langP && langP == "2") || lang.toUpperCase().indexOf("FR") != -1)
 	l = "FR";
-if (lang.toUpperCase().indexOf("ES") != -1)
+if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 	l = "ES";
+
 	switch (l) {
 	  case "FR":
 		langLbl["title"] = "Golfs du Qu&eacute;bec";
