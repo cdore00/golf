@@ -100,7 +100,7 @@ var oCtls = document.getElementsByClassName('divFont');
 for (i = 0; i < oCtls.length; i++) {
 	oCtls[i].style.color = "#efe";
 }
-if (sizeAD){
+if (sizeAD && sizeAD.indexOf("em") == -1){
 	fs = eval(fs.replace("em", "")) + sizeAD; 
 	if (sizeAD > 0){
 		if (fs >= 2){
@@ -119,12 +119,16 @@ if (sizeAD){
 	document.body.style.fontSize = fs + "em";
 	//SetCook( "_fontSize", fs + "em");
 }else{
-	setLanguage();
-	fs = GetCookie( "_fontSize");
-	if (!fs || fs == ""){
-		fs = document.body.style.fontSize;
-		if (fs == "")
-			fs = "1em";
+	if (!sizeAD){
+		setLanguage();
+		fs = GetCookie( "_fontSize");
+		if (!fs || fs == ""){
+			fs = document.body.style.fontSize;
+			if (fs == "")
+				fs = "1em";
+		}
+	}else{
+		fs = sizeAD;
 	}
 	document.body.style.fontSize = fs;
 	var pageZone = document.getElementById('pageZone');
@@ -282,6 +286,8 @@ if (lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["_okok"] = "Ok";
 		langLbl["_canc"] = "Annuler";
 		langLbl["_next"] = "Parties suivantes";
+		langLbl["langu"] = "Langue";
+		langLbl["defau"] = "D&eacute;faut";
 		langLbl["small"] = "Petite";
 		langLbl["middl"] = "Moyenne";
 		langLbl["large"] = "Grande";
@@ -350,6 +356,8 @@ if (lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["_okok"] = "Ok";
 		langLbl["_canc"] = "Cancel";
 		langLbl["_next"] = "Nexts games";
+		langLbl["langu"] = "Language";
+		langLbl["defau"] = "Default";
 		langLbl["small"] = "Small";
 		langLbl["middl"] = "Middle";
 		langLbl["large"] = "Large";
