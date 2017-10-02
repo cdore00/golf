@@ -7,6 +7,8 @@ var HOSTserv = "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.o
 //"http://127.0.0.1:3000/";
 //"https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Openshift
 
+var progressBar;
+
 function is_touch_device() {
   return 'ontouchstart' in window        // works on most browsers 
       || navigator.maxTouchPoints;       // works on IE10/11 and Surface
@@ -259,8 +261,27 @@ function validEmail(email){
     	return false;
 }
 
+function showProgress(init){
+if (init)
+	progressBar.value = init;
+else
+	progressBar.value += 0.05;
+
+if (progressBar.value <= 0.9){
+	setTimeout("showProgress()", 50);
+	}
+if (progressBar.value >= 1){
+	var chargement = document.getElementById('chargement');
+	chargement.style.display = "none";
+	}
+}
+
 var langLbl = [];
 function initLang(){
+progressBar = document.getElementById("progressQ");
+if (progressBar)
+	showProgress(0);
+
 var langP = GetCookie("langP");
 var l = "EN", lang = "";
 
