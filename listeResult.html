@@ -133,8 +133,8 @@ for (var i = 0; i < result.length; i++) {
 idList = idList.substring(0, idList.length - 1 )
 localStorage.setItem('idList', idList);
 callMap.href += lat + "," + lng + "," + km + "," + idList;
-var chargement = document.getElementById('chargement');
-chargement.style.display = "none";
+
+showProgress(1);
 if (clubPos)
 	document.location = clubPos;
 }
@@ -143,6 +143,9 @@ if (clubPos)
 // -->
 </script>
 
+<style>
+
+</style>
 
 </head>
 
@@ -150,7 +153,10 @@ if (clubPos)
 
 <div id="topbar" class="vert">
 <div id="leftnav"><a title="Formulaire de recherche" href="index.html"><img alt="Formulaire de recherche" height="22" width="25" src="images/home22.png" /></a></div>
-<div id="chargement" class=""><div class="charge"><text id="searc"></text></div><div class="charge loading"></div></div>
+<div id="chargement">
+<progress id="progressQ" ></progress>
+<div class="charge"><text id="searc"></text></div><div class="charge loading"></div>
+</div>
 <!--<button type="button" id="rightnav" title="Taille de police" onclick="changeTaille();"><img id="imgTaille" alt="Taille de police" height="20" width="45" src="images/taille.png" /></button>// -->
 <div id="fontAdjust">
 <div class="divFont" onclick="setFontSize(0.2, this)"><div class="divFontSize">A</div><div class="fontLogo">&#8593;</div></div>
