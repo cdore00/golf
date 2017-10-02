@@ -288,7 +288,7 @@ var prefNbr = document.getElementById('prefNbr');
 
 if (divOptions.style.height != "0px" && divOptions.style.height != ""){
 	divOptions.style.height = "0px";
-	menuTxt.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;Options";
+	menuTxt.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;" + langLbl["mopti"];
 }else{
 	var fur = navigator.userAgent;
 	adj = prefNbr.offsetTop + prefNbr.offsetHeight - 32;
@@ -297,8 +297,7 @@ if (divOptions.style.height != "0px" && divOptions.style.height != ""){
 //alert("safari2=" + adj);
 		}
 	divOptions.style.height = adj + "px";
-	menuTxt.innerHTML = "&#10004;&nbsp;Options";
-	menuTxt.innerHTML = "&#10004;&nbsp;Options";
+	menuTxt.innerHTML = "&#10004;&nbsp;" + langLbl["mopti"];
 	}
 }
 
@@ -307,7 +306,7 @@ function editGame(menuTxt){
 				
 if (editMode){
 	if (menuTxt)
-		menuTxt.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&Eacute;diter";
+		menuTxt.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;" + langLbl["medit"];
 	editMode = false;
 	var elem = document.getElementsByClassName("tdEditOn");
 	while(elem.length > 0) {
@@ -315,7 +314,7 @@ if (editMode){
 		}
 }else{
 	if (menuTxt)
-		menuTxt.innerHTML = "&#10004;&nbsp;&Eacute;diter";
+		menuTxt.innerHTML = "&#10004;&nbsp;" + langLbl["medit"];
 	editMode = true;
 	var elem = document.getElementsByClassName("tdEdit");
 	while(elem.length > 0) {
@@ -344,7 +343,7 @@ if (oRes.ok){
 <body onload="initPage()">
 <div id="duobutton">
 <a href="#"  id="butMenu" title="Menu" onclick="showMenu()"><img id="logomenu" alt="Menu" height="32" width="64" src="images/menu.png" /></a>
-<a href="#"  onclick="window.close(); return false;">Fermer</a>
+<a href="#"  onclick="window.close(); return false;"><text id="close"></text></a>
 <!--<button type="button" id="changeTaille" title="Taille de police" onclick="changeTailleP()"><img id="imgTaille" alt="Taille de police" height="20" width="45" src="images/taille.png" /></button>// -->
 <div id="fontAdjust">
 <div class="divFont" onclick="setFontSize(0.2, this)"><div class="divFontSize">A</div><div class="fontLogo">&#8593;</div></div>
@@ -355,11 +354,11 @@ if (oRes.ok){
 <div id="menuList">
 <table><tbody>
 
-<tr><td onclick="location.reload();" title="Actualiser la page.">&nbsp;&nbsp;&nbsp;&nbsp;Actualiser</td></tr>
-<tr><td onclick="editGame(this);" title="&Eacute;diter la liste.">&nbsp;&nbsp;&nbsp;&nbsp;&Eacute;diter</td></tr>
-<tr><td onclick="showOptions(this);" title="Options de recherche.">&nbsp;&nbsp;&nbsp;&nbsp;Options</td></tr>
-<tr><td onclick="showSubmenu(this, 'inherit');" onmouseover="showSubmenu(this, 'inherit');" onmouseout="showSubmenu(this, 'none');" title="T&eacute;l&eacute;charger un fichier...">&nbsp;&nbsp;&nbsp;&nbsp;T&eacute;l&eacute;charger&nbsp;&#9658;</td></tr>
-<tr><td onclick="telGameList(0);">&nbsp;&nbsp;&nbsp;&nbsp;Annuler</td></tr>
+<tr><td onclick="location.reload();" title="Actualiser la page.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mrefr">Actualiser</text></td></tr>
+<tr><td onclick="editGame(this);" title="&Eacute;diter la liste.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="medit"></text></td></tr>
+<tr><td onclick="showOptions(this);" title="Options de recherche.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mopti">Options</text></td></tr>
+<tr><td onclick="showSubmenu(this, 'inherit');" onmouseover="showSubmenu(this, 'inherit');" onmouseout="showSubmenu(this, 'none');" title="T&eacute;l&eacute;charger un fichier...">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mdown"></text>&nbsp;&#9658;</td></tr>
+<tr><td onclick="telGameList(0);">&nbsp;&nbsp;&nbsp;&nbsp;<text id="_canc">Annuler</text></td></tr>
 </tbody></table>
 </div>
 
@@ -399,7 +398,7 @@ if (oRes.ok){
 </div>
 
 <div class="space10">
-&nbsp;<input name="nextGame" class="itin" type="button" onclick="getGameList()" value="Parties suivantes">
+&nbsp;<input name="nextGame" class="itin" type="button" onclick="getGameList()" value="_next"/>
 </div>
 
 </form>
