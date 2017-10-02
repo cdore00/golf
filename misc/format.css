@@ -227,7 +227,7 @@ background:-moz-linear-gradient(top,#3A9D23,#00bb00)}
 .favItems{background-color:#fff;border:#444444 solid 1px;overflow:hidden; overflow-y:scroll;margin:10px 10px;text-align:left;height:150px}
 
 .form{margin:5px 0 2px 0;padding:0}select,input{font-size:0.7em;padding:0}select.fulllength{width:100%}
-.bouton{font-size:0.8em; min-width:100px;
+.bouton{font-size:0.7em; min-width:100px;
 border:1px solid #ccc;
 padding: 6px;
 margin: 5px;
