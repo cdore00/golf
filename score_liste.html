@@ -11,8 +11,8 @@
 <link href="misc/golfGPS.css" rel="stylesheet" media="screen" type="text/css" />
 
 <title>Golfs du Qu&eacute;bec</title>
-<meta content="Golf, Québec, Canada, Golf du Québec, Clubs de golf au Québec, Québec golf" name="keywords" />
-<meta content="Répertoire des clubs de golf du Québec." name="description" />
+<meta content="Golf, QuÃ©bec, Canada, Golf du QuÃ©bec, Clubs de golf au QuÃ©bec, QuÃ©bec golf" name="keywords" />
+<meta content="RÃ©pertoire des clubs de golf du QuÃ©bec." name="description" />
 
 <meta name="viewport" content="initial-scale=1.0, user-scalable=no" /> 
 
@@ -324,7 +324,7 @@ if (editMode){
 }
 
 function delGame(rChilds, id){
-if (confirm("Supprimer cette partie ?\n - Date: " + rChilds[0].innerHTML + " \n - Club: " + rChilds[1].innerHTML + "\n - Score: " + rChilds[2].innerHTML)){
+if (confirm(langLbl["M0010"] + "\n - Date: " + rChilds[0].innerHTML + " \n - Club: " + rChilds[1].innerHTML + "\n - Score: " + rChilds[2].innerHTML)){
 	getInfo("endDelGame?data=" + id + "$0", showDelRes);
 }
 }
