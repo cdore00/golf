@@ -209,14 +209,14 @@ display:none;
 opacity:1.0 !important;
 position: absolute;
 top: -5px;
+cursor: pointer;
 }
 
 .bouton {min-width: 40px;}
 
 #navTrou, #hole, .bouton-prec-suiv{
-display: inline-block;
-vertical-align: text-bottom;
-    height: 32px;
+display: inline;
+	cursor: pointer;
 }  
 
 #hole{
@@ -229,7 +229,9 @@ background:transparent;
 border:0px solid;
 margin:0;
 padding:0;
-min-width:0px
+min-width:0px;
+display: inline;
+cursor: pointer;
 }
 
 #map_canvas{width:100%; height:100%;}
@@ -258,8 +260,9 @@ border-radius: 10px;
 	<button id="holeSet" class="bouton-prec-suiv" onclick="trouSuivant(-1)"><img id="imgFlag" height="20" width="16" src="images/flag.png" /></button>
 	<button id="hole" class="bouton-prec-suiv" onclick="trouSuivant(1)">1</button>
 	<button class="bouton-prec-suiv" onclick="trouSuivant(1)"><img height="18" width="13" alt="Trou suivant" src="images/suiv.png" /></button>
-	<button id="setFlag" class="bouton" title="Soumettre" onclick="setFlagCoord(this); return false;">Ok</button>
+		<button id="setFlag" class="bouton" title="Soumettre" onclick="setFlagCoord(this); return false;">Ok</button>
 	</div>
+
 <div id="fontAdjust">
 <div class="divFont" onclick="setFontSize(0.2, this)"><div class="divFontSize">A</div><div class="fontLogo">&#8593;</div></div>
 <div class="divFont" onclick="setFontSize(-0.2, this)"><div class="divFontSize fontSmall">A</div><div class="fontLogo">&#8595;</div></div>
