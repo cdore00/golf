@@ -497,22 +497,29 @@ if (touchin == true){
 function initVoice(){
 if ('speechSynthesis' in window) {
 //	msg.voice = speechSynthesis.getVoices().filter(function(voice) { return voice.name == 'Google français'; })[0];
-	msg.default= false;
-	msg.localService=false;
-	msg.lang= "fr-FR";
-	msg.name= "Google Français";
-	msg.voiceURI= "Google Français";
+	if (langSet == "FR"){
+		msg.default= false;
+		msg.localService=false;
+		msg.lang= "fr-FR";
+		msg.name= "Google Français";
+		msg.voiceURI= "Google Français";
+	}
 }else{
 	alert('Synthèse vocale non supportée par le fureteur.');
 	watchLoc = 0;}
 }
+
 function parler(laDistance){
 var time1 = new Date();
 var actTime = time1.getTime(time1);
 //alert(Math.abs(lastDist - laDistance) + '  Time=' + (actTime-lastTime) + ' lastTime= ' + lastTime + ' lastDist= ' + lastDist);
 if ( laDistance > 30 && Math.abs(laDistance - lastDist) > 10 && (actTime - lastTime > 30000 || lastTime == 1 ) ){
 	//alert(trouPar[0][trou]);
-	msg.text = laDistance + ' verges, trou ' + trou 
+	if (langSet == "FR"){
+		msg.text = laDistance + ' verges, trou ' + trou; 
+	}else{
+		msg.text = laDistance + ' yards, hole ' + trou; 
+	}
 	//+ ' Dernière distance ' + actDist ;
 	window.speechSynthesis.speak(msg);
 	lastDist = laDistance;
@@ -525,6 +532,7 @@ if (Math.abs(laDistance - actDist) > 15){
 	lastTime = actTime;
 	}
 }
+
 function initPage(){
 var titClub = document.getElementById('titClub'); 
 var changeScore = document.getElementById('changeScore'); 
@@ -532,6 +540,7 @@ var holeDist = document.getElementById('holeDist');
 holeDist.addEventListener('touchstart', startTouch, false);  // Drag and drop for mobil
 changeScore.addEventListener('touchstart', startTouch, false);  // Drag and drop for mobil
 userId = GetCookie("userID");
+setLanguage();
 if (!userId)
 	changeScore.style.visibility = "hidden";
 var data = getURLdata();
@@ -539,9 +548,9 @@ data = data.split("&");
 courseID = data[0];
 clubName = decodeURI(data[1]);
 titClub.innerHTML = clubName;
-//userId = GetCookie("userName");
 getInfo("getGolfGPS?data=" + courseID, showCourse);
 }
+
 function showCourse(oGps){
 var bloc = oGps[0].parc;
 var blocForm = document.getElementById('blocForm'); 
@@ -576,11 +585,12 @@ for (var i= 0; i < bloc.length; i++){
 		var divElem = document.createElement("div");
 		divElem.setAttribute('onclick', 'changeBloc(' + noB + ')');
 		divElem.setAttribute('class', 'B' + bloc[i].Bloc);
-		divElem.innerHTML = bloc[i].Bloc;
+		divElem.innerHTML = langLbl[bloc[i].Bloc];
 		blocForm.appendChild(divElem);
 		noB += 1;
 		}
 }
+
 	function arrB(b, n){
 		var a = b.Bloc;
 		for (var j = 1; j < n; j++) {
@@ -640,10 +650,10 @@ initialize();
 
 <div id="locForm">
 <table id="typeLocList">
-<tr><td><a href="#"; onclick="goTract(0)">Suivre</a></td></tr>
-<tr><td><a href="#"; onclick="goTract(1)">Rep&eacute;rer</a></td></tr>
-<tr><td><a href="#"; onclick="goTract(2)">Continue</a></td></tr>
-<tr><td><a id="chxParler" href="#"; onclick="goTract(3)">Parler</a></td></tr>
+<tr><td><a href="#"; onclick="goTract(0)">&nbsp;<text id="mWatc"></text></a></td></tr>
+<tr><td><a href="#"; onclick="goTract(1)">&nbsp;<text id="mLoca"></text></a></td></tr>
+<tr><td><a href="#"; onclick="goTract(2)">&nbsp;<text id="mFoll"></text></a></td></tr>
+<tr><td><a id="chxParler" href="#"; onclick="goTract(3)">&nbsp;<text id="mSpea"></text></a></td></tr>
 </table>
 </div>
 

@@ -201,16 +201,16 @@ for (var p = 0; p < clubCourse.length; p++) {
 	divElem.setAttribute('id', 'p1');
 	divElem.setAttribute('class', 'cartePts');
 
-	var htmlCode = '<table class="cartePts"><tr><td  class="titre" colspan="14"><b>' + langLbl["cours"] + clubCourse[p].PARCOURS + "&nbsp;" + nbrTrou + '&nbsp;trous</b></td></tr>';
+	var htmlCode = '<table class="cartePts"><tr><td  class="titre" colspan="14"><b>' + langLbl["cours"] + clubCourse[p].PARCOURS + "&nbsp;" + nbrTrou + langLbl["holes"] + '</b></td></tr>';
 	if(nbrTrou == 9)
 		htmlCode += '<tr class="entete"><th>Trou</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>Total</th></tr>';
 	else
-		htmlCode += '<tr class="entete"><th>Trou</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>Aller</th><td></td><td></td><td></td></tr>';
+		htmlCode += '<tr class="entete"><th>Trou</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>' + langLbl["goout"] + '</th><td></td><td></td><td></td></tr>';
 
 	
 	do{
 		var cName = 'B' + bloc[b].Bloc;
-		htmlCode += '<tr><td class="' + cName + '">' + bloc[b].Bloc + '</td>';
+		htmlCode += '<tr><td class="' + cName + '">' + langLbl[bloc[b].Bloc] + '</td>';
 		for (var i = 1; i < 10; i++) {
 			var x = "bloc[b].T" + i;
 			htmlCode += '<td class="' + cName + '">' + eval(x) + '</td>';
@@ -223,11 +223,11 @@ for (var p = 0; p < clubCourse.length; p++) {
 	} while ( bloc[b] && bloc[b].PARCOURS_ID == courseID);
 
 	if(nbrTrou == 18){
-		htmlCode += '<tr class="entete"><th>Trou</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th><th>16</th><th>17</th><th>18</th><th>Retour</th><th>Total</th><th>Eval.</th><th>Slope</th></tr>';
+		htmlCode += '<tr class="entete"><th>Trou</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th><th>16</th><th>17</th><th>18</th><th>' + langLbl["goin"] + '</th><th>Total</th><th>Eval.</th><th>Slope</th></tr>';
 		var b = nextCourse;
 		do{
 			var cName = 'B' + bloc[b].Bloc;
-			htmlCode += '<tr><td class="' + cName + '">' + bloc[b].Bloc + '</td>';
+			htmlCode += '<tr><td class="' + cName + '">' + langLbl[bloc[b].Bloc] + '</td>';
 			for (var i = 10; i < 19; i++) {
 				var x = "bloc[b].T" + i;
 				htmlCode += '<td class="' + cName + '">' + eval(x) + '</td>';
