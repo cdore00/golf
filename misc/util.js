@@ -7,7 +7,7 @@ var HOSTserv = "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.o
 //"http://127.0.0.1:3000/";
 //"https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Openshift
 
-var progressBar;
+var progressBar, langSet;
 
 function is_touch_device() {
   return 'ontouchstart' in window        // works on most browsers 
@@ -283,17 +283,17 @@ if (progressBar)
 	showProgress(0);
 
 var langP = GetCookie("langP");
-var l = "EN", lang = "";
+var langSet = "EN", lang = "";
 
 if (langP && langP == "0")
 	lang = window.navigator.userLanguage || window.navigator.language;
 
 if ((langP && langP == "2") || lang.toUpperCase().indexOf("FR") != -1)
-	l = "FR";
+	langSet = "FR";
 if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
-	l = "ES";
+	langSet = "ES";
 
-	switch (l) {
+	switch (langSet) {
 	  case "FR":
 		langLbl["title"] = "Golfs du Qu&eacute;bec";
 		langLbl["motcl"] = "Mot cl&eacute;";
@@ -353,6 +353,10 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["mrefr"] = "Actualiser";
 		langLbl["mopti"] = "Options";
 		langLbl["mdown"] = "T&eacute;l&eacute;charger";
+		langLbl["mWatc"] = "Suivre";
+		langLbl["mLoca"] = "Rep&eacute;rer";
+		langLbl["mFoll"] = "Continue";
+		langLbl["mSpea"] = "Parler";
 		langLbl["S0050"] = "Ce compte existe et est inactif. \r\nCourriel de confirmation envoyé à : %1 .\r\nVeuillez confirmer l'inscription de ce compte par le lien dans le courriel.";  //" + email + "
 		langLbl["S0051"] = "Ce compte existe et est inactif avec un mot de passe différent";
 		//langLbl["S0053"] = "Le compte %1 est d&eacute;j&agrave; actif.";  //" + doc.ops[0].courriel + "
@@ -363,6 +367,24 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["S0057"] = "Utilisateur inexistant.";
 		langLbl["S0058"] = "Ce compte existe déjà.";
 		langLbl["S0059"] = "Mote de passe actuel incorrect.";
+langLbl["Bleu"] = "Bleu";
+langLbl["Hdcp"] = "Hdcp";
+langLbl["Rouge"] = "Rouge";
+langLbl["Normale"] = "Normale";
+langLbl["Orange"] = "Orange";
+langLbl["Blanc"] = "Blanc";
+langLbl["Or"] = "Or";
+langLbl["Vert"] = "Vert";
+langLbl["Jaune"] = "Jaune";
+langLbl["Noir"] = "Noir";
+langLbl["Bronze"] = "Bronze";
+langLbl["Argent"] = "Argent";
+langLbl["Cuivre"] = "Cuivre";
+langLbl["Gris"] = "Gris";
+langLbl["Rose"] = "Rose";
+langLbl["hole"] = "Trou";
+langLbl["goout"] = "Aller";
+langLbl["goin"] = "Retour";
 			break;
 	  default:
 		langLbl["title"] = "Quebec's Golfs";
@@ -423,6 +445,10 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["mrefr"] = "Refresh";
 		langLbl["mopti"] = "Options";
 		langLbl["mdown"] = "Download";
+		langLbl["mWatc"] = "Watch";
+		langLbl["mLoca"] = "Locate";
+		langLbl["mFoll"] = "Follow";
+		langLbl["mSpea"] = "Speak";
 		langLbl["S0050"] = "This account exists and is inactive. Email confirmation sent to: %1. \r\nPlease confirm the registration of this account by the link in the email.";
 		langLbl["S0051"] = "This account exists and is inactive with a different password.";
 		langLbl["S0052"] = "Email confirmation sent to %1. \r\nPlease confirm your registration through the link in the email.";
@@ -432,6 +458,24 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["S0057"] = "User does not exist.";
 		langLbl["S0058"] = "This account already exists.";
 		langLbl["S0059"] = "Incorrect current password.";
+langLbl["Bleu"] = "Blue";
+langLbl["Hdcp"] = "Hdcp";
+langLbl["Rouge"] = "Red";
+langLbl["Normale"] = "Par";
+langLbl["Orange"] = "Orange";
+langLbl["Blanc"] = "White";
+langLbl["Or"] = "Gold";
+langLbl["Vert"] = "Green";
+langLbl["Jaune"] = "Yellow";
+langLbl["Noir"] = "Black";
+langLbl["Bronze"] = "Bronze";
+langLbl["Argent"] = "Silver";
+langLbl["Cuivre"] = "Copper";
+langLbl["Gris"] = "Grey";
+langLbl["Rose"] = "Pink";
+langLbl["hole"] = "Hole";
+langLbl["goout"] = "Out";
+langLbl["goin"] = "In";
 		break;
 	}
 }
