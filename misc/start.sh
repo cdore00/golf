@@ -3,7 +3,7 @@
 # location: /init
 FILE=start.txt
 FILE=${FILE%.*}_`date +%I:%M:%S`.${FILE#*.}
-#sudo echo $FILE
+#sudo wall $FILE
 sudo touch /home/$FILE
 sleep 40s
 sudo ip addr add 192.168.10.11/24 dev docker0
