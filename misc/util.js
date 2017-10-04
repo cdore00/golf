@@ -1,6 +1,6 @@
 <!--
 
-var HOSTserv = "https://cdore.ddns.net/node/";  // VULTR Ubuntu Server
+var HOSTserv = "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Openshift
 // "http://127.0.0.1:3000/";		//Local host
 // "https://cdore.ddns.net/node/";  // VULTR Ubuntu Server
 // "http://192.168.2.188:8080/";  //Ubuntu workstation
@@ -265,10 +265,10 @@ function showProgress(init){
 if (init)
 	progressBar.value = init;
 else
-	progressBar.value += 0.05;
+	progressBar.value += 0.005;
 
 if (progressBar.value <= 0.9){
-	setTimeout("showProgress()", 50);
+	setTimeout("showProgress()", 10);
 	}
 if (progressBar.value >= 1){
 	var chargement = document.getElementById('chargement');
