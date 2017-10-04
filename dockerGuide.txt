@@ -149,8 +149,12 @@ cd /etc/nginx/ssl
 //sudo openssl req -new -key cdore.ddns.key -out cdore.ddns.csr -sha512
 //sudo openssl x509 -req -days 3650 -in cdore.ddns.csr -signkey cdore.ddns.key -out cdore.ddns.crt -sha512
 
+sudo dnf install certbot
 sudo certbot certonly --webroot -w /var/www/example -d cdore.ddns.net
 sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+
+ONE LINE
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt
 
 FEDORA FIREWALL
 firewall-cmd --zone=public --permanent --add-port=25565/tcp
@@ -160,3 +164,29 @@ firewall-cmd --reload
 sudo firewall-cmd --list-services
 		dhcpv6-client http ssh https
 http://www.firewalld.org/documentation/man-pages/firewall-cmd.html
+
+
+LET'S ENCRYPT
+Installing Certbot
+https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-16-04
+
+DISK USAGE
+df -h --total
+
+CHANGE TIMEZONE
+With ntp.service
+cat /etc/timezone
+US/Eastern
+America/New_York
+dpkg-reconfigure tzdata
+timedatectl status
+
+docker login -u cdore00 -e cdore00@yahoo.ca -p eADQdn_Wl47pgF909jrXHtWmD-JfypzVPWk7QjCSltA 172.30.208.107:5000
+
+UBUNTU CLEAN DISK
+http://www.omgubuntu.co.uk/2016/08/5-ways-free-up-space-on-ubuntu
+sudo apt-get autoremove --purge
+sudo apt-get autoremove
+IMPORTANT
+docker volume prune -f
+

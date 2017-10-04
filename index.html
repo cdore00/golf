@@ -263,18 +263,31 @@ function initPref(){
 var locButton = document.getElementById('locDiv');
 var affL = GetCookie("AffLoc");
 LocT = GetCookie("LocTime");
-if (affL == null || affL == 0) 
+if (affL == null) 
 	affL = false;
-if (LocT == null || LocT == 0){ 
+if (LocT == null){ 
 	LocT = 5;
 	SetCook("LocTime",LocT);}
 LocT = LocT * 1000;
 if (LocT == 0)
 	locButton.style.visibility="hidden";
-else
+else{
+	var myPos = localStorage.getItem('myPos');
+	if (myPos){
+		var coord = myPos.split(',');
+		if (Date.now() - parseInt(coord[2]) > 300000 && LocT > 0){
+			localiser();
+		}else{
+			resultLocalisation = -1;
+			setLatLng(coord[0],coord[1],true);
+		}
+	}else{
+		if (LocT > 0)
+			localiser();
+	}
 	locButton.style.visibility="visible";
-//setFontSize();
-showLocalisation();
+	}
+	showLocalisation();
 }
 
 function initFormPref(){
@@ -359,6 +372,7 @@ SetCook("AffLoc",formulaire.locDisplay.checked);
 SetCook("_fontSize",formulaire.polSize.value );
 SetCook("langP",formulaire.chxLang.value );
 SetCook("LocTime",formulaire.locTime.value);
+initPref();
 closePref();
 }
 
@@ -551,20 +565,10 @@ if (userId){
 }
 initPref();
 getInfo("getRegions?", listRegions);
-var myPos = localStorage.getItem('myPos');
-if (myPos){
-	var coord = myPos.split(',');
-	if (Date.now() - parseInt(coord[2]) > 300000){
-		localiser();
-	}else{
-		resultLocalisation = -1;
-		setLatLng(coord[0],coord[1],true);
-	}
-}else{
-	localiser();
-}
+
 document.critere.Rechercher.focus();
 }
+
 function getFav(){
 var favGolfList = document.getElementById('favGolfList');
 var accountForm = document.getElementById('accountForm');
