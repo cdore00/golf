@@ -285,7 +285,7 @@ if (progressBar)
 var langP = GetCookie("langP");
 var langSet = "EN", lang = "";
 
-if (langP && langP == "0")
+if (!langP || langP == "0")
 	lang = window.navigator.userLanguage || window.navigator.language;
 
 if ((langP && langP == "2") || lang.toUpperCase().indexOf("FR") != -1)
