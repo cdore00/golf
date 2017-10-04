@@ -8,10 +8,9 @@ sudo touch /home/$FILE
 sleep 40s
 sudo ip addr add 192.168.10.11/24 dev docker0
 sleep 5
-sudo touch /home/start_mon_golf
 sudo docker start mon_golf
 sleep 15
-sudo docker start servDB
-sudo touch /home/start_servDB
+sudo docker start servDB2
+sudo docker start webServ
 
 exit 0
