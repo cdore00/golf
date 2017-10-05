@@ -10,13 +10,20 @@ echo $0
 echo $#
 echo $var1 $var2
 
-sudo curl https://cdore00.github.io/golf/$var1 >$var1
+partF="$(basename "$var1")"
+partD="$(dirname $var1)"
+
+echo $partD
+echo $partF
+
+sudo curl https://cdore00.github.io/golf/$var1 >$partF
 
 # if [ var2 != "" ]
 
 if [ -n "$var2" ]  # This time, $string1 is quoted.
 then
-  echo "String \"string1\" is not null."
+  echo "Copy file $partF to webServer:/usr/share/cdore/golf/$var1"
+  sudo docker cp $partF webServ:/usr/share/cdore/golf/$var1
 else  
   echo "String \"string1\" is null."
 fi 
