@@ -11,8 +11,8 @@
 <link href="misc/golfGPS.css" rel="stylesheet" media="screen" type="text/css" />
 
 <title>Golfs du Qu&eacute;bec</title>
-<meta content="Golf, QuÃ©bec, Canada, Golf du QuÃ©bec, Clubs de golf au QuÃ©bec, QuÃ©bec golf" name="keywords" />
-<meta content="RÃ©pertoire des clubs de golf du QuÃ©bec." name="description" />
+<meta content="Golf, Québec, Canada, Golf du Québec, Clubs de golf au Québec, Québec golf" name="keywords" />
+<meta content="Répertoire des clubs de golf du Québec." name="description" />
 
 <meta name="viewport" content="initial-scale=1.0, user-scalable=no" /> 
 
@@ -324,9 +324,9 @@ if (editMode){
 }
 
 function delGame(rChilds, id){
-if (confirm(langLbl["M0010"] + "\n - Date: " + rChilds[0].innerHTML + " \n - Club: " + rChilds[1].innerHTML + "\n - Score: " + rChilds[2].innerHTML)){
-	getInfo("endDelGame?data=" + id + "$0", showDelRes);
-}
+	if (confirm(langLbl["M0010"] + "\n - Date: " + rChilds[0].innerHTML + " \n - Club: " + rChilds[1].innerHTML + "\n - Score: " + rChilds[2].innerHTML)){
+		getInfo("endDelGame?data=" + id + "$0", showDelRes);
+	}
 }
 
 function showDelRes(oRes){
@@ -345,7 +345,7 @@ if (oRes.ok){
 <a href="#"  id="butMenu" title="Menu" onclick="showMenu()"><img id="logomenu" alt="Menu" height="32" width="64" src="images/menu.png" /></a>
 <a href="#"  onclick="window.close(); return false;"><text id="close"></text></a>
 <!--<button type="button" id="changeTaille" title="Taille de police" onclick="changeTailleP()"><img id="imgTaille" alt="Taille de police" height="20" width="45" src="images/taille.png" /></button>// -->
-<div id="fontAdjust">
+<div id="fontAdjust" class="unselectable">
 <div class="divFont" onclick="setFontSize(0.2, this)"><div class="divFontSize">A</div><div class="fontLogo">&#8593;</div></div>
 <div class="divFont" onclick="setFontSize(-0.2, this)"><div class="divFontSize fontSmall">A</div><div class="fontLogo">&#8595;</div></div>
 </div>
