@@ -27,9 +27,10 @@ sleep 5
 #sudo docker pull cdore00/mongo_golf 
 #sudo docker pull cdore00/servDB:v3
 #sudo docker pull cdore00/nginx_cd:v1
-#sudo docker run -d -p 192.168.10.11:27017 --name="mon_golf" cdore00/mongo_golf:v1
-#sudo docker run -d -p 5000:8080 --name="servDB2" cdore00/servDB:v3
-#####sudo docker run -d -p 0.0.0.0:5000:8080 --name="servDB2" cdore00/servDB:v3
+sleep 5
+#sudo docker run -d -p 192.168.10.11:8080:27017 --name="mon_golf" cdore00/mongo_golf:v2
+#sudo docker run -d -p 5000:8080 --name="servDB2" cdore00/servdb:v3
+#####sudo docker run -d -p 0.0.0.0:5000:8080 --name="servDB2" cdore00/servdb:v3
 #sudo docker run -d --network="host" --name="webServ" cdore00/nginx_cd:v1
 
 
@@ -45,12 +46,14 @@ git clone https://github.com/cdore00/golf
 #start.sh
 #startapp.service
 #sudo mkdir /etc/init
-#cp /home/serv/start.sh /etc/init/start.sh
-#cp /home/serv/startapp.service /etc/systemd/system/startapp.service
+#cp /home/golf/misc/start.sh /etc/init/start.sh
+#cp /home/golf/misc/startapp.service /etc/systemd/system/startapp.service
 
 ## Configure firewall
 #sudo ufw allow 80/tcp
 #sudo ufw allow 443/tcp
+sudo ufw allow 5000/tcp
+sudo ufw allow 8080/tcp
 
 # Enable & startapp
 #systemctl enabled startapp.service
@@ -58,3 +61,5 @@ git clone https://github.com/cdore00/golf
 # Add to crontab // Manual with command: crontab -e
 #line="15 4 * * * sudo docker exec -ti webServ /usr/bin/certbot renew > /usr/log/certweb.log"
 #(crontab -u userhere -l; echo "$line" ) | crontab -u userhere -
+
+exit 0
