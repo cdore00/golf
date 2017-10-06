@@ -38,7 +38,7 @@ sudo apt-get install git
 # Install source for server and services
 echo "--Copy from git..."
 cd /home
-git clone https://cdore00.github.io/golf
+git clone https://github.com/cdore00/golf
 #start.sh
 #startapp.service
 #sudo mkdir /etc/init
