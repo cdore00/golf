@@ -5,12 +5,16 @@
 echo "--Add the GPG key..."
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 echo "--Add the Docker repository to APT sources..."
+sleep 5
 sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 echo "--Update the package database with the Docker packages..."
+sleep 5
 sudo apt-get update
 echo "--Install Docker..."
+sleep 15
 sudo apt-get install -y docker-ce
 echo "--add 'root' to the docker group..."
+sleep 15
 sudo usermod -aG docker ${root}
 echo "--Apply the new group membership..."
 su - ${USER}
