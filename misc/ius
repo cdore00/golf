@@ -19,47 +19,4 @@ sudo usermod -aG docker ${root}
 echo "--Apply the new group membership..."
 su - ${root}
 
-# Install docker images and containers from docker.com
-echo "--Install docker images and containers from docker.com..."
-sudo ip addr add 192.168.10.11/24 dev docker0
-sudo docker login -u cdore00 -p 925045 "https://index.docker.io/v1/"
-sleep 5
-sudo docker pull cdore00/mongo_golfv2
-sudo docker pull cdore00/servdb:v3
-sudo docker pull cdore00/nginx_cd:v1
-sleep 5
-sudo docker run -d -p 192.168.10.11:8080:27017 --name="mon_golf" cdore00/mongo_golf:v2
-sudo docker run -d -p 5000:8080 --name="servDB2" cdore00/servdb:v3
-#####sudo docker run -d -p 0.0.0.0:5000:8080 --name="servDB2" cdore00/servdb:v3
-sudo docker run -d --network="host" --name="webServ" cdore00/nginx_cd:v1
-
-
-# Install git
-echo "--Install Git..."
-sudo apt-get update
-sudo apt-get install git
-
-# Install source for server and services
-echo "--Copy from git..."
-cd /home
-git clone https://github.com/cdore00/golf
-echo "--Install services..."
-sleep 5
-cp /home/golf/misc/start.sh /etc/init/start.sh
-cp /home/golf/misc/startapp.service /etc/systemd/system/startapp.service
-
-## Configure firewall
-sudo ufw allow 80/tcp
-sudo ufw allow 443/tcp
-sudo ufw allow 5000/tcp
-sudo ufw allow 8080/tcp
-#sudo ufw enable
-
-# Enable & startapp
-systemctl enable startapp.service
-
-# Add to crontab // Manual with command: crontab -e
-line="15 4 * * * sudo docker exec -ti webServ /usr/bin/certbot renew > /var/log/certweb.log"
-(crontab -u root -l; echo "$line" ) | crontab -u root -
-
 exit 0
