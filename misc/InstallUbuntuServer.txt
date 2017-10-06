@@ -20,7 +20,10 @@ echo "--Apply the new group membership..."
 su - ${USER}
 
 # Install docker images and containers from docker.com
+echo "--Install docker images and containers from docker.com..."
+#sudo ip addr add 192.168.10.11/24 dev docker0
 #sudo docker login -u cdore00 -p 925045 "https://index.docker.io/v1/"
+sleep 5
 #sudo docker pull cdore00/mongo_golf 
 #sudo docker pull cdore00/servDB:v3
 #sudo docker pull cdore00/nginx_cd:v1
