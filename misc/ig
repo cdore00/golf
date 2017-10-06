@@ -1,0 +1,5 @@
+# Install source for server and services
+echo "--Copy from git..."
+sleep 3
+cd /home
+git clone https://cdore00.github.io/golf
