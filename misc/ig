@@ -1,18 +1,10 @@
-sudo mkdir /etc/init
-cp /home/golf/misc/start.sh /etc/init/start.sh
 cp /home/golf/misc/startapp.service /etc/systemd/system/startapp.service
 
-## Configure firewall
-sudo ufw allow 80/tcp
-sudo ufw allow 443/tcp
-sudo ufw allow 5000/tcp
-sudo ufw allow 8080/tcp
-
 # Enable & startapp
-systemctl enabled startapp.service
+systemctl enable startapp.service
 
 # Add to crontab // Manual with command: crontab -e
-line="15 4 * * * sudo docker exec -ti webServ /usr/bin/certbot renew > /usr/log/certweb.log"
-(crontab -u userhere -l; echo "$line" ) | crontab -u userhere -
+#line="15 4 * * * sudo docker exec -ti webServ /usr/bin/certbot renew > /usr/log/certweb.log"
+#(crontab -u root -l; echo "$line" ) | crontab -u root -
 
 exit 0
