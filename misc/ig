@@ -1,12 +1,14 @@
 # Install docker images and containers from docker.com
 echo "--Install docker images and containers from docker.com..."
-#sudo ip addr add 192.168.10.11/24 dev docker0
-#sudo docker login -u cdore00 -p 925045 "https://index.docker.io/v1/"
+sudo ip addr add 192.168.10.11/24 dev docker0
+sudo docker login -u cdore00 -p 925045 "https://index.docker.io/v1/"
 sleep 5
-#sudo docker pull cdore00/mongo_golf 
-#sudo docker pull cdore00/servDB:v3
-#sudo docker pull cdore00/nginx_cd:v1
-#sudo docker run -d -p 192.168.10.11:27017 --name="mon_golf" cdore00/mongo_golf:v1
-#sudo docker run -d -p 5000:8080 --name="servDB2" cdore00/servDB:v3
-#####sudo docker run -d -p 0.0.0.0:5000:8080 --name="servDB2" cdore00/servDB:v3
-#sudo docker run -d --network="host" --name="webServ" cdore00/nginx_cd:v1
+sudo docker pull cdore00/mongo_golf 
+sudo docker pull cdore00/servDB:v3
+sudo docker pull cdore00/nginx_cd:v1
+sleep 15
+sudo docker run -d -p 192.168.10.11:27017 --name="mon_golf" cdore00/mongo_golf:v1
+sleep 15
+sudo docker run -d -p 5000:8080 --name="servDB2" cdore00/servDB:v3
+####sudo docker run -d -p 0.0.0.0:5000:8080 --name="servDB2" cdore00/servDB:v3
+sudo docker run -d --network="host" --name="webServ" cdore00/nginx_cd:v1
