@@ -35,5 +35,5 @@ sudo ufw allow 443/tcp
 #systemctl enabled startapp.service
 
 # Add to crontab // Manual with command: crontab -e
-echo "15 4 * * * docker exec -it webServ /usr/bin/certbot renew --quiet"
-crontab -e
+line="15 4 * * * sudo docker exec -ti webServ /usr/bin/certbot renew > /usr/log/certweb.log"
+(crontab -u userhere -l; echo "$line" ) | crontab -u userhere -
