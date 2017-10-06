@@ -1,8 +1,3 @@
-echo "--add 'root' to the docker group..."
-sleep 15
-sudo usermod -aG docker ${root}
-echo "--Apply the new group membership..."
-su - ${root}
 
 # Install docker images and containers from docker.com
 echo "--Install docker images and containers from docker.com..."
