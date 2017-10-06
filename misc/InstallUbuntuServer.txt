@@ -2,18 +2,18 @@
 
 # Install docker
 
-#echo "--Add the GPG key..."
-#curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-#echo "--Add the Docker repository to APT sources..."
-#sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-#echo "--Update the package database with the Docker packages..."
-#sudo apt-get update
-#echo "--Install Docker..."
-#sudo apt-get install -y docker-ce
-#echo "--add 'root' to the docker group..."
-#sudo usermod -aG docker ${root}
-#echo "--Apply the new group membership..."
-#su - ${USER}
+echo "--Add the GPG key..."
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+echo "--Add the Docker repository to APT sources..."
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+echo "--Update the package database with the Docker packages..."
+sudo apt-get update
+echo "--Install Docker..."
+sudo apt-get install -y docker-ce
+echo "--add 'root' to the docker group..."
+sudo usermod -aG docker ${root}
+echo "--Apply the new group membership..."
+su - ${USER}
 
 # Install docker images and containers from docker.com
 #sudo docker login -u cdore00 -p 925045 "https://index.docker.io/v1/"
@@ -27,11 +27,12 @@
 
 
 # Install git
-# sudo apt-get update
-# sudo apt-get install git
+echo "--Install Docker..."
+sudo apt-get update
+sudo apt-get install git
 
 # Install source for server and services
-#echo "--Copy from git..."
+echo "--Copy from git..."
 cd /home
 git clone https://cdore00.github.io/golf
 #start.sh
