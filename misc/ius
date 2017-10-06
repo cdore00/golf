@@ -17,7 +17,7 @@ echo "--add 'root' to the docker group..."
 sleep 15
 sudo usermod -aG docker ${root}
 echo "--Apply the new group membership..."
-su - ${USER}
+su - ${root}
 
 # Install docker images and containers from docker.com
 echo "--Install docker images and containers from docker.com..."
@@ -59,7 +59,7 @@ sudo ufw allow 8080/tcp
 systemctl enable startapp.service
 
 # Add to crontab // Manual with command: crontab -e
-#line="15 4 * * * sudo docker exec -ti webServ /usr/bin/certbot renew > /usr/log/certweb.log"
-#(crontab -u root -l; echo "$line" ) | crontab -u root -
+line="15 4 * * * sudo docker exec -ti webServ /usr/bin/certbot renew > /usr/log/certweb.log"
+(crontab -u root -l; echo "$line" ) | crontab -u root -
 
 exit 0
