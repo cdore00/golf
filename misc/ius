@@ -1,0 +1,19 @@
+# Ubuntu server installation process
+
+# Install docker
+
+echo "--Update the package database..."
+sudo apt-get update
+echo "--Install Docker..."
+sleep 15
+sudo apt install docker.io
+echo "--add 'root' to the docker group..."
+sleep 15
+sudo usermod -aG docker ${root}
+echo "--Apply the new group membership..."
+su - ${root}
+
+echo "sudo curl https://cdore00.github.io/golf/misc/ius2 >/home/ius2"
+sudo curl https://cdore00.github.io/golf/misc/ius2 >/home/ius2
+
+exit 0
