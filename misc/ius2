@@ -16,8 +16,11 @@ sudo docker pull cdore00/nginx_cd:v1
 sleep 5
 sudo docker run -d -p 192.168.10.11:8080:27017 --name="mon_golf" cdore00/mongo_golf:v2
 sudo docker run -d -p 5000:8080 --name="servDB2" cdore00/servdb:v3
-#####sudo docker run -d -p 0.0.0.0:5000:8080 --name="servDB2" cdore00/servdb:v3
 sudo docker run -d --network="host" --name="webServ" cdore00/nginx_cd:v1
+
+echo "--Restore golf database..."
+sleep 3
+sudo docker exec mon_golf /usr/bin/mongorestore -d golf /home/dump/golf
 
 # Install source for server and services
 echo "--Copy from git..."
