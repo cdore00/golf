@@ -117,7 +117,7 @@ progress::-webkit-progress-bar { background: #fff; }
 filter:progid:DXImageTransform.Microsoft.gradient(startcolorstr='#d9d9d9',endcolorstr='#666666');
 background: -ms-linear-gradient(top, #4f4f4f 0%, #888888 100%);
 background:-webkit-gradient(linear,0% 0,0% 100%,from(#d9d9d9),color-stop(3%,#d9d9d9),color-stop(97%,#666),to(#666));
-background:-moz-linear-gradient(top,#d9d9d9,#555);text-align:center};}
+background:-moz-linear-gradient(top,#ddd,#666);text-align:center};}
 #duobutton a:first-child{border:0px solid #fff;}
 
 #duobutton a{height:30px;display:inline-block;line-height:30px;margin-top:0px;font-weight:bold;overflow: hidden;text-decoration:none;color:#0022ff;}
@@ -180,12 +180,6 @@ cursor: pointer;
 .divFont{
 /*border: 1px solid blue;*/
 display: inline-block;
--webkit-user-select: none;
--khtml-user-select: none;
--moz-user-select: none;
--o-user-select: none;
-user-select: none;
-
 }
 
 .divFontSize {
@@ -245,7 +239,9 @@ background-color:#555;color:#fff;font-weight:bold}
 #okPref, #annulePref{margin: 5px 10px 0px 10px}
 
 .formrow1 {position:relative;width:98%;display:block;padding:8px 0px 0px 5px;min-height:50px;}
-#divMot, #divReg, #divCod {position:relative;float:left;clear:both;display:inline;min-width:38%;font-weight:bold;}
+#divMot, #divReg, #divCod {position:relative;float:left;clear:both;display:inline;min-width: 33%;
+text-align: right;
+margin-right: 2px;}
 .divChxChamp {position:relative;clear:both;width:100%;display:inline;float:left;right:0px;font-size:0.7em;background-color:white;}
 .inputtext {position:relative;display:inline;float:left;left:0px;right:0px;font-weight:bold;top:0px;text-align:left; height:25px}
 .inputselect {position:relative;display:inline-block;float:left;left:0px;right:0px;font-weight:bold;top:0px;text-align:left;height: 27px;}
