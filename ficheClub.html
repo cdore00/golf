@@ -135,7 +135,7 @@ if (oClubParc[0].url_ville)
 	cInfo += '<a target="_blank" href=' + oClubParc[0].url_ville + '">' + oClubParc[0].municipal + '</a>,&nbsp;';
 else
 	cInfo += oClubParc[0].municipal + ',&nbsp;';
-cInfo += oClubParc[0].codepostal2 + '&nbsp;&nbsp;';
+cInfo += oClubParc[0].codepostal2 + '&nbsp; ';
 cInfo += oClubParc[0].telephone + '&nbsp;';
 if (oClubParc[0].telephone2)
 	cInfo += ", " + oClubParc[0].telephone2;
@@ -158,7 +158,7 @@ for (var p = 0; p < clubCourse.length; p++) {
 		htmlCode += clubCourse[p].TROUS + langLbl["holes"];
 	if (clubCourse[p].DEPUIS)	
 		htmlCode += langLbl["since"] + clubCourse[p].DEPUIS ;
-	htmlCode +=  langLbl["ccpar"] + clubCourse[p].NORMALE + ",&nbsp;" + clubCourse[p].VERGES + langLbl["cyard"];
+	htmlCode +=  langLbl["ccpar"] + clubCourse[p].NORMALE + ", &nbsp;" + clubCourse[p].VERGES + langLbl["cyard"];
 	if (clubCourse[p].PARCOURS != "")
 		parcoursName += " - " + clubCourse[p].PARCOURS;
 	if (clubCourse[p].GPS)
