@@ -10,9 +10,7 @@ sudo apt install docker.io
 echo "--add 'root' to the docker group..."
 sleep 5
 sudo usermod -aG docker ${root}
-echo "--Apply the new group membership..."
 sleep 5
-su - ${root}
 
 echo "sudo curl https://cdore00.github.io/golf/misc/ius2 >/home/ius2"
 sudo curl https://cdore00.github.io/golf/misc/ius2 >/home/ius2
