@@ -46,8 +46,8 @@ systemctl enable startapp.service
 line="15 4 * * * sudo docker exec -ti webServ /usr/bin/certbot renew > /var/log/certweb.log"
 (crontab -u root -l; echo "$line" ) | crontab -u root -
 
-echo "--Apply the new group membership..."
-sleep 5
-su - ${root}
+#echo "--Apply the new group membership..."
+#sleep 5
+#su - ${root}
 
 exit 0
