@@ -6,6 +6,7 @@ echo "--Update the package database..."
 sudo apt-get update
 echo "--Install Docker..."
 sleep 5
+#sudo apt install -qq --force-yes docker.io
 sudo apt install docker.io
 #echo "--add 'root' to the docker group..."
 #sleep 5
