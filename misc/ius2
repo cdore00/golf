@@ -59,6 +59,7 @@ sudo docker cp /home/golf webServ:/usr/share/cdore
 #su - ${root}
 
 sudo echo "---------------- Check setup result ----------------"
+sleep 5
 sudo ufw status
 sudo docker ps -a
 sudo curl https://cdore.ddns.net/node/
