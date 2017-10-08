@@ -62,7 +62,7 @@ sudo echo "---------------- Check setup result ----------------"
 sudo ufw status
 sudo docker ps -a
 sudo curl https://cdore.ddns.net/node/
-sudo systemctl status appstart
+sudo systemctl status startapp
 crontab -l
 date
 
