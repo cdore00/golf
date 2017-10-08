@@ -52,11 +52,13 @@ sudo cp /usr/share/zoneinfo/${TIMEZONE} /etc/localtime   # This sets the time
 line="15 4 * * * sudo docker exec -ti webServ /usr/bin/certbot renew > /var/log/certweb.log"
 (crontab -u root -l; echo "$line" ) | crontab -u root -
 
+sudo docker cp /home/golf webServ:/usr/share/cdore
+
 #echo "--Apply the new group membership..."
 #sleep 5
 #su - ${root}
 
-echo "---------------- Check setup result "----------------"
+echo "---------------- Check setup result ----------------"
 ufw status
 sudo docker ps -a
 sudo curl https://cdore.ddns.net/node/
