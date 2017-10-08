@@ -56,4 +56,11 @@ line="15 4 * * * sudo docker exec -ti webServ /usr/bin/certbot renew > /var/log/
 #sleep 5
 #su - ${root}
 
+#echo "---------------- Check setup result "----------------"
+ufw status
+sudo docker ps -a
+sudo curl https/cdore.ddns.net/node/
+crontab -l
+date
+
 exit 0
