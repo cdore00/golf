@@ -42,7 +42,7 @@ sudo ufw enable
 # Enable & startapp
 systemctl enable startapp.service
 
-#echo "--Set timezone and set renew Cert..."
+sudo echo "--Set timezone and set renew Cert..."
 sleep 2
 TIMEZONE="Canada/Eastern"      
 sudo echo $TIMEZONE > /etc/timezone                     
