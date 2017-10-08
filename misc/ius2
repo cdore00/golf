@@ -66,5 +66,6 @@ sudo curl https://cdore.ddns.net/node/
 sudo systemctl status startapp
 crontab -l
 date
+sudo curl https://cdore.ddns.net/node/
 
 exit 0
