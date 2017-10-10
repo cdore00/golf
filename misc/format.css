@@ -240,8 +240,8 @@ background-color:#555;color:#fff;font-weight:bold}
 
 .formrow1 {position:relative;width:98%;display:block;padding:8px 0px 0px 5px;min-height:50px;}
 #divMot, #divReg, #divCod {position:relative;float:left;clear:both;display:inline;min-width: 33%;
-text-align: center;
-margin-right: 2px;}
+text-align: right;
+margin-right: 1em;}
 .divChxChamp {position:relative;clear:both;width:100%;display:inline;float:left;right:0px;font-size:0.7em;background-color:white;}
 .inputtext {position:relative;display:inline;float:left;left:0px;right:0px;font-weight:bold;top:0px;text-align:left; height:25px}
 .inputselect {position:relative;display:inline-block;float:left;left:0px;right:0px;font-weight:bold;top:0px;text-align:left;height: 27px;}
@@ -740,6 +740,8 @@ text-align:center;
 /*width: 165px ;*/
 }
 
-/*#divMot, #divReg, #divCod {width:120x;}*/
-
+#divMot, #divReg, #divCod {
+text-align: left;
+}
+	
 }
