@@ -468,14 +468,13 @@ margin: 0;
 padding: 0;
 display: inline-block;
 margin-left: 3px;
+text-align: right;
+margin-right: 1em;
 }
 
-.prefLbl{
-min-width: 50%;
-}
+.prefLbl, .identLbl{
+min-width: 33%;
 
-.identLbl{
-min-width: 50%;
 }
 
 .markLabels {
@@ -736,12 +735,12 @@ text-align:center;
 @media screen and (max-width: 540px), only screen and (min-device-width: 320px) and (max-device-width: 480px), only screen and (-moz-min-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) 
 { 
 
-.prefLbl{
-/*width: 165px ;*/
+.prefLbl, .identLbl{
+text-align: left;
 }
 
 #divMot, #divReg, #divCod {
 text-align: left;
 }
-	
+
 }
