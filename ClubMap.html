@@ -69,6 +69,7 @@ document.location = "golfGPS.html?data=" + courseID + "&" + clubName;
 
 function showHole(menuTxt){
 var setFlag = document.getElementById("setFlag");
+var navTrou = document.getElementById("navTrou");
 if (GetCookie("userRole") == "MEM")
 	return false;
 
@@ -79,6 +80,7 @@ if (!showLatLng){
 		setHole(map, holePos);
 		}
 	//	alert("Set");
+	navTrou.style.visibility = "visible";
 	setFlag.disabled = false;
 	setFlag.style.display = 'inherit';
 	menuTxt.innerHTML = "&#10004;&nbsp;" + langLbl["medit"];

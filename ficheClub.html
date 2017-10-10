@@ -180,7 +180,7 @@ var nextCourse = 0;
 
 // Course list
 var pageZone = document.getElementById('pageZone');
-
+if (bloc.length > 0){
 for (var p = 0; p < clubCourse.length; p++) {
 	var htmlCode = "";
 	var courseID = clubCourse[p]._id;
@@ -241,6 +241,7 @@ for (var p = 0; p < clubCourse.length; p++) {
 	divElem.innerHTML = htmlCode;
 	liElem.appendChild(divElem);
 	pageZone.appendChild(liElem);
+}
 }
 showProgress(1);
 }
