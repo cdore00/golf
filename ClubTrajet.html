@@ -115,23 +115,15 @@ var detailWindow = window.open('trajet.html', 'trajet');
 detailWindow.document.close();
 }
 
-function modifierTrajet(){
-var modTrajetButton = document.getElementById('modTrajet');
-var myDirect = directionsDisplay.directions.Mb
+function modifierTrajet(reqPt){
+var rPt = "directionsDisplay.directions.request." + reqPt + ".location";
+var menuList = document.getElementById('menuList');
 
-	if (modTrajetButton.innerHTML == 'Modifier'){
-		modTrajetButton.innerHTML = 'Recalcul';
-		directionsDisplay.setOptions({draggable: true});
-		map.setCenter(myDirect.destination);
-		map.setZoom(15);
-		golfMarker.setOptions({draggable: true});
-	}else{
-		modTrajetButton.innerHTML = 'Modifier'
-		calcRoute(myDirect.origin,myDirect.destination)
-		directionsDisplay.setOptions({draggable: false});
-		golfMarker.setOptions({draggable: false});
-	}
-
+	directionsDisplay.setOptions({draggable: true});
+	map.setCenter(eval(rPt));
+	map.setZoom(15);
+	golfMarker.setOptions({draggable: true});
+	menuList.style.height = "0px";
 }
 
 function initPage(){
@@ -152,22 +144,48 @@ golfPos = new google.maps.LatLng(strClubLat, strClubLng);
 initialize();
 }
 
+function showMenu(){
+var menuList = document.getElementById('menuList');
+
+if (menuList.style.height != "0px"){
+	menuList.style.height = "0px";
+}else{
+	var adj = menuList.childNodes[1].offsetHeight;
+	menuList.style.height = (adj * .75) + "pt";
+	}
+//menuOn = true;
+}
 
 	// -->
     </script> 
+<style>
+
+#butMenu{
+visibility: visible;
+}
+
+</style>
   </head>
 <body onload="initPage()"><a name="haut"></a>
   
-<div id="triButton">
-<div id="duobutton"><a href="#" onclick="window.close(); return false;">Fermer</a>
-<a id="modTrajet" href="javascript:modifierTrajet()" >Modifier</a>  
-<a href="javascript:showDetailItineraire()">D&eacute;tail</a>
+
+<div id="duobutton">
+<a href="#"  id="butMenu" title="Menu" onclick="showMenu()"><img id="logomenu" alt="Menu" height="32" width="64" src="images/menu.png" /></a>
+<a href="#" onclick="window.close(); return false;"><text id="close"></text></a>
+<a href="javascript:showDetailItineraire()"><text id="detai"></text></a>
 <div id="fontAdjust" class="unselectable">
 <div class="divFont" onclick="setFontSize(0.2, this)"><div class="divFontSize">A</div><div class="fontLogo">&#8593;</div></div>
 <div class="divFont" onclick="setFontSize(-0.2, this)"><div class="divFontSize fontSmall">A</div><div class="fontLogo">&#8595;</div></div>
 </div>
 </div>
 
+
+
+<div id="menuList">
+<table><tbody>
+<tr><td onclick="modifierTrajet('origin');" title="Modifier la position d'origine">&nbsp;&nbsp;&nbsp;&nbsp;<text id="modio"></text></td></tr>
+<tr><td onclick="modifierTrajet('destination');" title="Modifier la position de destination">&nbsp;&nbsp;&nbsp;&nbsp;<text id="modid"></text></td></tr>
+</tbody></table>
 </div>
 
 <div id="map_canvas"></div>
