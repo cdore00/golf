@@ -276,6 +276,7 @@ sudo rm /var/lib/mongodb/mongod.lock
 sudo systemctl restart mongod
 
 ACCES SERVER SHELL
+https://doc.ubuntu-fr.org/ssh
 ssh root@45.76.9.19
 COPY FILE TO SERVER
 sudo scp -r sampledb root@45.76.9.19:/home/mdump/golf
