@@ -128,7 +128,7 @@ if (sizeAD && typeof sizeAD == "number"){
 			fs = document.body.style.fontSize;
 			if (fs == ""){
 				fs = "1.4em";
-				SetCook("_fontSize",fs );
+				SetCook("_fontSize",fs);
 			}
 		}
 	}else{
