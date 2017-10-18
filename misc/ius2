@@ -9,6 +9,11 @@ cd /home
 git clone https://github.com/cdore00/golf
 git clone https://github.com/cdore00/lou
 
+# Set HOSTserv web to cdore.ddns.net
+sed -i 's/HOSTserv/bidon/g' /home/golf/misc/util.js
+printf '%s\n' 0a 'var HOSTserv = "https://cdore.ddns.net/node/";'  . w | ed -s "/home/golf/misc/util.js"
+
+
 # Install docker images and containers from docker.com
 echo " ********** Install docker images and containers from docker.com ********** "
 sudo ip addr add 192.168.10.11/24 dev docker0
