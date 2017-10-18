@@ -1,4 +1,3 @@
-<!--
 
 var HOSTserv = "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Openshift
 // "http://127.0.0.1:3000/";		//Local host
@@ -610,5 +609,3 @@ if (langLbl[textId])
 else	
 	alert("Miss: " + textId);
 }
-
-// -->
