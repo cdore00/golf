@@ -13,6 +13,8 @@ sudo curl https://cdore00.github.io/golf/misc/ius2 >/home/ius2
 sleep 2
 
 # Log to Docker.com
+echo "---"
+echo "*** Login to Docker ***"
 read -p " Docker.com Password:> " -s pass
 sudo docker login -u cdore00 -p $pass "https://index.docker.io/v1/" >/home/rep
 
