@@ -510,7 +510,8 @@ z-index: 1100;
 }
 
 #navTrou{
-visibility:hidden;
+/*visibility:hidden;*/
+cursor: pointer;
 }
 
 .boutonZoom{

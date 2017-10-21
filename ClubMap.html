@@ -80,7 +80,7 @@ if (!showLatLng){
 		setHole(map, holePos);
 		}
 	//	alert("Set");
-	navTrou.style.visibility = "visible";
+	navTrou.style.display = "inline";
 	setFlag.disabled = false;
 	setFlag.style.display = 'inherit';
 	menuTxt.innerHTML = "&#10004;&nbsp;" + langLbl["medit"];
@@ -177,7 +177,7 @@ if (isMapped){
 		trouCoord[i] = new google.maps.LatLng(trous[i].latitude, trous[i].longitude);
 	}
 	setHole(map, trouCoord[0]);
-	navTrou.style.visibility = "visible";
+	navTrou.style.display = "inline";
 }
 }
 
@@ -216,9 +216,8 @@ cursor: pointer;
 
 .bouton {min-width: 40px;}
 
-#navTrou, #hole, .bouton-prec-suiv{
+#hole, .bouton-prec-suiv{
 display: inline;
-	cursor: pointer;
 }  
 
 #hole{
@@ -254,7 +253,7 @@ border-radius: 10px;
 <body onload="initPage()"> 
   
 <div id="duobutton">
-<a href="#" id="butMenu" title="Menu" onclick="showMenu();"><img id="logomenu" alt="Menu" src="images/menu.png" width="64" height="32"></a>
+<a href="#" id="butMenu" title="Menu" onmouseover="showMenu()" onclick="showMenu();"><img id="logomenu" alt="Menu" src="images/menu.png" width="64" height="32"></a>
 <a href="#"  onclick="window.close(); return false;"><text id="close"></text></a>
 
 	<div id="navTrou">
