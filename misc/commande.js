@@ -269,7 +269,12 @@ db.system.js.save(
    }
 );
 db.loadServerScripts();
-delClub()
+delClub(666)
+
+SHUTDOWN
+$ ./mongo
+use admin
+db.shutdownServer()
 
 RESTART MONGODB
 sudo rm /var/lib/mongodb/mongod.lock
@@ -277,8 +282,54 @@ sudo systemctl restart mongod
 
 ACCES SERVER SHELL
 https://doc.ubuntu-fr.org/ssh
+ssh-copy-id -i ~/.ssh/id_rsa.pub root@45.76.9.19
+Sur serveur distant:
+cat ~/.ssh/authorized_keys
+
 ssh root@45.76.9.19
 COPY FILE TO SERVER
 sudo scp -r sampledb root@45.76.9.19:/home/mdump/golf
 
+REPLICA SET
+mongod --port 27017 --dbpath /data/db/db0 --replSet rs0
+rs.conf()
+2017-10-18T17:53:34.981-0400 E QUERY    [thread1] Error: Could not retrieve replica set config: {
+        "info" : "run rs.initiate(...) if not yet done for the set",
+        "ok" : 0,
+        "errmsg" : "no replset config has been received",
+        "code" : 94,
+"codeName" : "NotYetInitialized"}
+ rs.initiate()
+ 
+ CHANGE HOST
+ $ mongo 
+cfg = rs.conf()
+cfg.members[0].host = "<new_node_name>:27017"
+rs.reconfig(cfg) 
 
+REMOVE SERVER
+use admin
+db.shutdownServer();  //On secondary
+rs.remove("ServerC")  //On primary
+
+REMOVE replica set
+
+db.system.replset.remove({})
+
+
+SET replica set
+on slave
+mongod --port 27017 --dbpath /home/cdore/data --replSet rsg
+on primary
+mongod --port 27017 --dbpath /data/db/replica --replSet rsg
+rs.initiate({    _id : "rsg",    members: [ { _id : 0, host : "192.168.2.160:27017" } ] }) 
+rs.add("192.168.2.188:27017")
+rs.conf()
+rs.status()
+on primary and slave
+rs.slaveOk()
+
+rs.initiate({"_id" : "rsg","members":[{"_id" : 0, "host":"cdore.ddns.net:6600"} ] })
+sudo docker run -d -p 192.168.10.11:8080:27017 -p 6600:27017 -v /home:/data --name="m_golf" cdore00/mongo_golf:v2 --replSet "rsg" 
+
+ 
