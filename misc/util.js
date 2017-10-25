@@ -36,6 +36,7 @@ xhr.send();
 	}
 }
 
+
 function getURLdata(){
 var urlInfo = document.location.href;
 return decodeURI(urlInfo.substring(urlInfo.indexOf("data=") + 5));
