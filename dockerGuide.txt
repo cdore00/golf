@@ -188,5 +188,34 @@ http://www.omgubuntu.co.uk/2016/08/5-ways-free-up-space-on-ubuntu
 sudo apt-get autoremove --purge
 sudo apt-get autoremove
 IMPORTANT
-docker volume prune -f
+#docker volume prune -f  not working
+docker volume rm $(docker volume ls -qf dangling=true)
+docker volume ls -qf dangling=true | xargs -r docker volume rm
 
+SSH
+ssh-keygen -f "/home/cdore/.ssh/known_hosts" -R 45.77.155.164
+sudo ssh root@45.77.155.164
+sudo scp -r dump root@45.77.155.164:/home
+
+
+PUSH IMAGE TO OPENSHIFT
+oc login https://api.starter-us-east-1.openshift.com  // Not required at all
+oc new-app cdore00/mongo_golf:v3R
+PULL IMAGE FROM OPENSHIFT
+docker pull registry.access.redhat.com/rhscl/mongodb-32-rhel7
+
+
+OPENSHIFT LOGIN
+oc whoami -t
+sudo docker login -u cdore00@yahoo.ca -p HNu5Cn9LlQH2jR6RhzzWMClgGzDNLVWWGzd7IHbYTBI https://registry.starter-us-east-1.openshift.com
+
+OPENSHIFT Looking at the logs from the container before it went into the failed state:
+# oc logs -p hello-openshift-1-gn4x4
+
+SECURITY ACCES
+chmod a=rwx -R .
+
+CREATE YAML
+oc new-app -e MONGODB_ADMIN_PASSWORD=925045 cdore00/nodegolf -o yaml > nodegolf.yaml
+vi nodegolf.yaml
+oc create -f nodegolf.yaml
