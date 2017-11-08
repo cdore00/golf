@@ -1,5 +1,5 @@
 
-var HOSTserv = "https://golf-serv-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Openshift
+var HOSTserv = "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Openshift
 // "http://127.0.0.1:3000/";		//Local host
 // "https://cdore.ddns.net/node/";  // VULTR Ubuntu Server
 // "http://192.168.2.188:8080/";  //Ubuntu workstation
