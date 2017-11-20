@@ -19,8 +19,8 @@ echo " ********** Install docker images and containers from docker.com *********
 sudo ip addr add 192.168.10.11/24 dev docker0
 
 sleep 1
-sudo docker run -d -p 192.168.10.11:8080:27017 -p 6600:27017 -v /home:/data --name="mon_golf" cdore00/mongo_golf:v2
-sudo docker run -d -p 5000:8080 --name="servDB2" cdore00/servdb:v4
+sudo docker run -d -p 192.168.10.11:8080:27017 -p 6600:27017 -e MONGODB_ADMIN_PASSWORD=925045 -e MONGODB_USER=cdore -e MONGODB_PASSWORD=925 -e MONGODB_DATABASE=golf -v /home:/data --name="mon_golf" cdore00/mon_golf34
+sudo docker run -d -p 5000:8080 -e DATABASE_SERVICE_NAME=mongodb -e MONGODB_SERVICE=192.168.10.11 -e MONGODB_PORT=8080 -e MONGODB_ADMIN_PASSWORD=925045 -e MONGODB_USER=cdore -e MONGODB_PASSWORD=925 -e MONGODB_DATABASE=golf -v /home/cdore:/data --name="servDB2" cdore00/nodegolf
 sudo docker run -d --network="host" -v /home/lou:/usr/share/cdore/loupop -v /home/golf:/usr/share/cdore/golf --name="webServ" cdore00/nginx_cd:v3
 
 echo " ********** Restore golf database ********** "
@@ -28,10 +28,7 @@ sleep 1
 if [ -e /home/dump/golf ]
 then
     echo "/data/dump/golf"
-	sudo docker exec mon_golf /usr/bin/mongorestore -d golf /data/dump/golf
-else
-    echo "/home/dump/golf"
-	sudo docker exec mon_golf /usr/bin/mongorestore -d golf /home/dump/golf
+	sudo docker exec mon_golf /usr/bin/mongorestore -u $MONGODB_USER -p $MONGODB_PASSWORD -d golf /data/mdump/sampledb
 fi
 
 echo " ********** Install services ********** "
