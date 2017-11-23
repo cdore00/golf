@@ -18,7 +18,7 @@ printf '%s\n' 0a 'var HOSTserv = "https://cdore.ddns.net/node/";'  . w | ed -s "
 echo " ********** Install docker images and containers from docker.com ********** "
 sudo ip addr add 192.168.10.11/24 dev docker0
 
-read -p " User Name :> " -s uname
+read " User Name :> " -s uname
 read -p " User Password:> " -s upass
 read -p " Admin Password:> " -s apass
 sudo docker run -d -p 192.168.10.11:8080:27017 -p 6600:27017 -e MONGODB_ADMIN_PASSWORD=$apass -e MONGODB_USER=$uname -e MONGODB_PASSWORD=$upass -e MONGODB_DATABASE=golf -v /home:/data --name="mon_golf" cdore00/mon_golf34:v2
