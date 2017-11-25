@@ -16,10 +16,6 @@ cdore@ubuntu:~$ sudo docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
 mymongo             mongodb             df09adaf813d        14 minutes ago      359MB
 cdore00/mymongo     latest              df09adaf813d        14 minutes ago      359MB
-mongo               latest              57c67caab3d8        10 days ago         359MB
-debian              wheezy              bbd62956fac7        3 weeks ago         85.1MB
-debian              latest              a2ff708b7413        3 weeks ago         100MB
-hello-world         latest              1815c82652c0        4 weeks ago         1.84kB
 
 sudo docker push cdore00/mymongo
 
@@ -131,8 +127,9 @@ sudo dnf install docker docker-latest
 
 sudo nmap -sT -O localhost
 
+sudo ip addr add 192.168.10.11/24 dev docker0
 Fedora server essential iptables to see docker to docker IP
-iptables -I INPUT 4 -i docker0 -j ACCEPT
+sudo iptables -I INPUT 4 -i docker0 -j ACCEPT
 
 sudo qemu-img convert -f vmdk "fed26.vmdk" -O raw fed26.raw
 
@@ -194,8 +191,8 @@ docker volume ls -qf dangling=true | xargs -r docker volume rm
 
 SSH
 ssh-keygen -f "/home/cdore/.ssh/known_hosts" -R 45.77.155.164
-sudo ssh root@45.77.155.164
-sudo scp -r dump root@45.77.155.164:/home
+ssh root@45.77.155.164
+scp -r mdump root@45.77.155.164:/home
 
 
 PUSH IMAGE TO OPENSHIFT
@@ -204,10 +201,15 @@ oc new-app cdore00/mongo_golf:v3R
 PULL IMAGE FROM OPENSHIFT
 docker pull registry.access.redhat.com/rhscl/mongodb-32-rhel7
 
+oc delete all --selector app=appname
+oc create -f nodegolf.yaml
+oc new-app -e MONGODB_ADMIN_PASSWORD=925045 -e MONGODB_USER=cdore -e MONGODB_PASSWORD=925 -e MONGODB_DATABASE=golf cdore00/mon_golf34
+
 
 OPENSHIFT LOGIN
 oc whoami -t
 sudo docker login -u cdore00@yahoo.ca -p HNu5Cn9LlQH2jR6RhzzWMClgGzDNLVWWGzd7IHbYTBI https://registry.starter-us-east-1.openshift.com
+sudo docker push registry.starter-us-east-1.openshift.com/cdore00/nodegolf
 
 OPENSHIFT Looking at the logs from the container before it went into the failed state:
 # oc logs -p hello-openshift-1-gn4x4
@@ -219,3 +221,17 @@ CREATE YAML
 oc new-app -e MONGODB_ADMIN_PASSWORD=925045 cdore00/nodegolf -o yaml > nodegolf.yaml
 vi nodegolf.yaml
 oc create -f nodegolf.yaml
+
+SSH KEY
+mkdir ~/.ssh
+chmod 700 ~/.ssh
+ssh-keygen -t rsa
+or
+ssh-keygen -t rsa -b 4096
+ssh-copy-id root@45.77.155.164
+ssh root@45.77.155.164
+
+UBUNTU LOCAL DOCKER
+sudo docker run -ti -p 192.168.10.11:8080:27017 -p 6600:27017 -e MONGODB_ADMIN_PASSWORD=925045 -e MONGODB_USER=cdore -e MONGODB_PASSWORD=925 -e MONGODB_DATABASE=golf -v /home/cdore:/data --name="m_golf34" cdore00/mon_golf34
+
+sudo docker run -ti -p 192.168.2.188:8080:8080 -e DATABASE_SERVICE_NAME=mongodb -e MONGODB_SERVICE=192.168.10.11 -e MONGODB_PORT=8080 -e MONGODB_ADMIN_PASSWORD=925045 -e MONGODB_USER=cdore -e MONGODB_PASSWORD=925 -e MONGODB_DATABASE=golf -v /home/cdore:/data --name="servG" cdore00/nodegolf
