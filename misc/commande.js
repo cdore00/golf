@@ -37,13 +37,19 @@ db.dropDatabase();
 
 db.blocs.createIndex( { PARCOURS_ID: 1, _id: 1})
 
-
 db.foo.update({_id:doc._id}, {$set:{"event_ts":doc.created}});
+
+// Delete Geo lat, lng
+function delLoc(){
+    db.club.find().forEach(function(doc){
+         db.club.update({_id:doc._id}, { $unset: { location: ""} });
+    });
+};
 
 // Add Geo lat, lng
 function addLoc(){
     db.club.find().forEach(function(doc){
-         db.club.update({_id:doc._id}, {$set:{"location": {y: doc.longitude, x: doc.latitude} }});
+         db.club.update({_id:doc._id}, {$set:{"location": {type: "Point", coordinates: [ doc.longitude, doc.latitude ]} }});
     });
 };
 
