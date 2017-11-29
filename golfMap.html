@@ -260,10 +260,10 @@ getInfo("getClubList?data=" + data, initClubs);
 }
 
 function initClubs(cData){
-var maxX = cData[0].location.x;
-var minX = cData[0].location.x;
-var maxY = cData[0].location.y;
-var minY = cData[0].location.y;
+var maxX = cData[0].location.coordinates[1];
+var minX = cData[0].location.coordinates[1];
+var maxY = cData[0].location.coordinates[0];
+var minY = cData[0].location.coordinates[0];
 winOpen = new google.maps.InfoWindow({
 		content: "",
 		disableAutoPan : true
@@ -271,18 +271,18 @@ winOpen = new google.maps.InfoWindow({
 for (var i = 0; i < cData.length; i++) {
 	var contentString = '<div id="layerContent"><p><a href="ficheClub.html?data=' + cData[i]._id + '" target="_blank">' + cData[i].nom + '</a>';
 	if (intLat != 'undefined'){
-		contentString += '&nbsp;&nbsp;<a class="itin" href="javascript:showItineraire(' + cData[i].location.x + ', ' + cData[i].location.y + ',\'contentTrajet\')">' + langLbl["direc"] + '</a><div id="contentTrajet" class="itinDetail"></div>'
+		contentString += '&nbsp;&nbsp;<a class="itin" href="javascript:showItineraire(' + cData[i].location.coordinates[1] + ', ' + cData[i].location.coordinates[0] + ',\'contentTrajet\')">' + langLbl["direc"] + '</a><div id="contentTrajet" class="itinDetail"></div>'
 	}
 	contentString += '</p><p>' + cData[i].adresse + ',&nbsp;' + cData[i].municipal + '</br>' + cData[i].telephone + '</p></div>';
 	var info = new google.maps.InfoWindow({
 		content: contentString,
 		disableAutoPan : true
 	});
-	clubs[i] = [ cData[i].nom , cData[i].location.x , cData[i].location.y, i, info ];
-	maxX = Math.max(maxX, cData[i].location.x);
-	minX = Math.min(minX, cData[i].location.x);
-	maxY = Math.max(maxY, cData[i].location.y);
-	minY = Math.min(minY, cData[i].location.y);
+	clubs[i] = [ cData[i].nom , cData[i].location.coordinates[1] , cData[i].location.coordinates[0], i, info ];
+	maxX = Math.max(maxX, cData[i].location.coordinates[1]);
+	minX = Math.min(minX, cData[i].location.coordinates[1]);
+	maxY = Math.max(maxY, cData[i].location.coordinates[0]);
+	minY = Math.min(minY, cData[i].location.coordinates[0]);
 }
 if (intLat == 'undefined' || !intLat){
 	intLat = ((maxX + minX) / 2) + "";
