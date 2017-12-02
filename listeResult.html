@@ -97,7 +97,7 @@ for (var i = 0; i < result.length; i++) {
 	}
 	clubCourse += "&nbsp;" + nT + '<text class="textDesc">' + langLbl["holes"] + '&nbsp;</text>';
 	if (myPos)
-		clubCourse += '&nbsp;&nbsp;<a class="itin" target="_blank" href="ClubTrajet.html?data=' + coord[0] + '$' + coord[1] + '$' +  result[i].location.x + '$' + result[i].location.y + '$' + encodeURI(result[i].nom) +'">' + langLbl["direc"] + '</a>';
+		clubCourse += '&nbsp;&nbsp;<a class="itin" target="_blank" href="ClubTrajet.html?data=' + coord[0] + '$' + coord[1] + '$' +  result[i].location.coordinates[1] + '$' + result[i].location.coordinates[0] + '$' + encodeURI(result[i].nom) +'">' + langLbl["direc"] + '</a>';
 
 	aElem.innerHTML = result[i].nom + clubCourse;
 	liElem.appendChild(aElem);
