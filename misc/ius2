@@ -59,7 +59,7 @@ sudo cp /usr/share/zoneinfo/${TIMEZONE} /etc/localtime   # This sets the time
 line="15 4 * * * sudo docker exec webServ bash /home/checkren"
 (crontab -u root -l; echo "$line" ) | crontab -u root -
 
-sudo docker cp /home/golf webServ:/usr/share/cdore
+#sudo docker cp /home/golf webServ:/usr/share/cdore
 
 sudo echo " ********** -------------- Check setup result ----------------"
 sleep 1
