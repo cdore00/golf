@@ -60,15 +60,14 @@ line="15 4 * * * sudo docker exec webServ bash /home/checkren"
 (crontab -u root -l; echo "$line" ) | crontab -u root -
 service cron restart
 
-#sudo docker cp /home/golf webServ:/usr/share/cdore
-
 sudo echo " ********** -------------- Check setup result ----------------"
 sleep 1
 sudo ufw status
 sudo docker ps -a
 crontab -l
-date
 sudo curl https://cdore.ddns.net/node/
+date
+date
 sudo systemctl status startapp
 
 exit 0
