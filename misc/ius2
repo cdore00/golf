@@ -58,6 +58,7 @@ sudo cp /usr/share/zoneinfo/${TIMEZONE} /etc/localtime   # This sets the time
 # Add to crontab // Manual with command: crontab -e
 line="15 4 * * * sudo docker exec webServ bash /home/checkren"
 (crontab -u root -l; echo "$line" ) | crontab -u root -
+service cron restart
 
 #sudo docker cp /home/golf webServ:/usr/share/cdore
 
