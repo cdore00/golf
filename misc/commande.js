@@ -37,13 +37,19 @@ db.dropDatabase();
 
 db.blocs.createIndex( { PARCOURS_ID: 1, _id: 1})
 
-
 db.foo.update({_id:doc._id}, {$set:{"event_ts":doc.created}});
+
+// Delete Geo lat, lng
+function delLoc(){
+    db.club.find().forEach(function(doc){
+         db.club.update({_id:doc._id}, { $unset: { location: ""} });
+    });
+};
 
 // Add Geo lat, lng
 function addLoc(){
     db.club.find().forEach(function(doc){
-         db.club.update({_id:doc._id}, {$set:{"location": {y: doc.longitude, x: doc.latitude} }});
+         db.club.update({_id:doc._id}, {$set:{"location": {type: "Point", coordinates: [ doc.longitude, doc.latitude ]} }});
     });
 };
 
@@ -145,12 +151,15 @@ db.createUser({user:"tuser",pwd:"123",roles:["readWrite","dbAdmin"]})
 
 tt=db.club.find({}).sort({nom:1}).skip(10).limit(1).toArray();
 
+mongo --norc -u $MONGODB_USER -p $MONGODB_PASSWORD sampledb
 mongodump --host 192.168.2.160 --port 27017 -d golf --out mdump
 mongodump -u $MONGODB_USER -p $MONGODB_PASSWORD -d sampledb --out mdump
+mongorestore -u $MONGODB_USER -p $MONGODB_PASSWORD -d sampledb mdump/golf
 mongorestore -d golf mdump/golf
 
 mongoexport --db=golf --collection=regions --type csv --fieldFile fields.txt --out reg.txt
 mongoimport --db golf --collection parcours --jsonArray --file parcours.json 
+mongo --norc -u $MONGODB_USER -p $MONGODB_PASSWORD sampledb
 
 COPY DIR
 oc cp mongodb-1-ck6bk:/tmp/bup /data/bup
@@ -279,6 +288,9 @@ db.shutdownServer()
 RESTART MONGODB
 sudo rm /var/lib/mongodb/mongod.lock
 sudo systemctl restart mongod
+or
+sudo chown -R mongodb:mongodb /var/run/mongodb
+sudo chown -R mongodb:mongodb /var/lib/mongodb
 
 ACCES SERVER SHELL
 https://doc.ubuntu-fr.org/ssh
@@ -313,7 +325,6 @@ db.shutdownServer();  //On secondary
 rs.remove("ServerC")  //On primary
 
 REMOVE replica set
-
 db.system.replset.remove({})
 
 
