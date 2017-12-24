@@ -1,14 +1,4 @@
 
-<<<<<<< HEAD
-var "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Openshift
-// "http://127.0.0.1:3000/";		//Portable Windows 10 Local host Node JS v6.10.0
-// "http://192.168.2.188:3000/";    //Ubuntu workstation 16.04
-// "http://192.168.2.195:8080/";    //Ubuntu workstation 16.04 docker 1.12.6 Node JS v4.2.3  MongoDB server v3.4.9
-// "http://192.168.2.190:8080/";    //Fedora workstation 26 Mongo 3.2.16 docker 1.13.1 Node JS v4.2.3 MongoDB server v3.4.6
-
-// "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Openshift default docker Node Js -v 6.11.3
-// "https://golf-serv-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Openshift mon docker Node Js -v 4.2.3 et MongoDB server v3.4.9
-=======
 var HOSTserv = "https://nodegolf-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Openshift mon_golf34
 // "http://127.0.0.1:3000/";		//Portable Windows 10 Local host Node JS v6.10.0
 // "http://192.168.2.188:3000/";    //Ubuntu workstation 16.04
@@ -16,7 +6,6 @@ var HOSTserv = "https://nodegolf-cd-serv.1d35.starter-us-east-1.openshiftapps.co
 // "http://192.168.2.190:8080/";    //Fedora workstation 26 Mongo 3.2.16 docker 1.13.1 Node JS v4.2.3 MongoDB server v3.4.6
 // "https://nodegolf-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Openshift mon_golf34
 // "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Openshift default docker Node Js -v 6.11.3
->>>>>>> 05a1232d970b5ec845814cdcdee5a74b16d32092
 // "https://cdore.ddns.net/node/";  // VULTR Ubuntu Server 16.04 docker 1.12.6
 
 var progressBar, langSet;
@@ -349,7 +338,7 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["M0005"] = "Mot de passe oublié? \n\rVoulez-vous récupérer votre mot de passe par courriel?";
 		langLbl["M0006"] = "Vous devez permettre l'utilisation des Cookies pour configurer vos pr&eacute;f&eacute;rences.";
 		langLbl["M0007"] = "Choisir une distance pour le code postal.";
-		langLbl["M0008"] = "Code postal non retrouvé : ";
+		langLbl["M0008"] = "Code postal non retrouv&eacute; : ";
 		langLbl["M0009"] = "L'adresse de courriel n'est pas valide.";
 		langLbl["M0010"] = "Supprimer cette partie?";
 		langLbl["searc"] = "Recherche";

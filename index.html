@@ -374,7 +374,6 @@ SetCook("langP",formulaire.chxLang.value );
 SetCook("LocTime",formulaire.locTime.value);
 initPref();
 closePref();
-
 }
 
 function setLatLng(latitude,longitude,notNew) {
@@ -746,7 +745,7 @@ geocoder = new google.maps.Geocoder();
 <div id="logoHome"><a title="Réinitialiser la recherche" href="index.html?data=clear"><img alt="home" src="images/golf.png" width="25" height="25"></a></div>
 <div id="titre"><text id="title">Golfs du Qu&eacute;bec</text></div>
 <!--<div id="rightnav"> <a title="R&eacute;initialiser la recherche" href="index.html?data=clear"><img alt="home" height="25" width="25" src="images/home25.png" /></a> </div>// -->
-<div id="fontAdjust" class="unselectable">
+<div id="fontAdjust">
 <div class="divFont" onclick="setFontSize(0.2, this)"><div class="divFontSize">A</div><div class="fontLogo">&#8593;</div></div>
 <div class="divFont" onclick="setFontSize(-0.2, this)"><div class="divFontSize fontSmall">A</div><div class="fontLogo">&#8595;</div></div>
 </div>
@@ -765,7 +764,7 @@ geocoder = new google.maps.Geocoder();
 			  <div class="formrow1" >
 			  <div id="divMot"><label for="Mots"><text id="motcl">Mot cl&eacute; </text></label></div>
 			  <div class="mlinediv">
-				<div class="divChxChamp"><input id="checkNom" type="checkbox" checked value="Nom"/><label for="checkNom">&nbsp;<text id="clubn">Nom du club</text></label>&nbsp;&nbsp;<input id="checkVille" type="checkbox" checked value="Ville"/><label for="checkVille">&nbsp;<text id="clubc">Ville</text></label></div>
+				<div class="divChxChamp"><input id="checkNom" type="checkbox" checked value="Nom"><label for="checkNom">&nbsp;<text id="clubn">Nom du club</text></label>&nbsp;&nbsp;<input id="checkVille" type="checkbox" checked value="Ville"><label for="checkVille">&nbsp;<text id="clubc">Ville</text></label></div>
 			    
 			    <div id="inputtextmot"><input id="Mots" class="inputtext" type="text" size="16" maxlength="50" value=""/></div>
 			  </div>
@@ -887,12 +886,12 @@ geocoder = new google.maps.Geocoder();
 
 <div class="prefList">
 <label for="nameUser" id="lbl1" class="identLbl"><text id="email">Courriel</text></label><div class="prefVal">
-<input id="nameUser" type="text" size="15" maxlength="50"/>
+<input id="nameUser" type="text" size="15" maxlength="50">
 </div></div>
 
 <div class="prefList">
 <label for="passwordUser" id="lbl1" class="identLbl"><text id="passw">Mot de passe</text></label><div class="prefVal">
-<input id="passwordUser" type="password" size="15" maxlength="50"/>
+<input id="passwordUser" type="password" size="15" maxlength="50">
 </div></div>
 
 <div id="aLink" class="prefList">
