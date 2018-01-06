@@ -33,7 +33,7 @@ xhr.send();
 	function affNoRep(){
 		var eBod = document.getElementsByTagName('body')[0];
 		var divErr = document.createElement("div");
-		divErr.innerHTML = "Pas de réponse: " + HOSTserv;
+		divErr.innerHTML = "Pas de r&eacute;ponse: " + HOSTserv;
 		eBod.insertBefore(divErr, eBod.firstChild);
 	}
 }
@@ -335,7 +335,7 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["M0002"] = "Le mot de passe doit comprendre au moins 3 caractères.";
 		langLbl["M0003"] = "La confirmation du nouveau mot de passe n'est pas valide.";
 		langLbl["M0004"] = "Utilisateur ou mot de passe non valide.";
-		langLbl["M0005"] = "Mot de passe oublié? \n\rVoulez-vous récupérer votre mot de passe par courriel?";
+		langLbl["M0005"] = "Mot de passe oubli&eacute;? \n\rVoulez-vous r&eacute;cup&eacute;rer votre mot de passe par courriel?";
 		langLbl["M0006"] = "Vous devez permettre l'utilisation des Cookies pour configurer vos pr&eacute;f&eacute;rences.";
 		langLbl["M0007"] = "Choisir une distance pour le code postal.";
 		langLbl["M0008"] = "Code postal non retrouv&eacute; : ";
@@ -365,15 +365,15 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["mLoca"] = "Rep&eacute;rer";
 		langLbl["mFoll"] = "Continue";
 		langLbl["mSpea"] = "Parler";
-		langLbl["S0050"] = "Ce compte existe et est inactif. \r\nCourriel de confirmation envoyé à : %1 .\r\nVeuillez confirmer l'inscription de ce compte par le lien dans le courriel.";  //" + email + "
-		langLbl["S0051"] = "Ce compte existe et est inactif avec un mot de passe différent";
+		langLbl["S0050"] = "Ce compte existe et est inactif. \r\nCourriel de confirmation envoy&eacute; &agrave; : %1 .\r\nVeuillez confirmer l'inscription de ce compte par le lien dans le courriel.";  //" + email + "
+		langLbl["S0051"] = "Ce compte existe et est inactif avec un mot de passe diff&eacute;rent";
 		//langLbl["S0053"] = "Le compte %1 est d&eacute;j&agrave; actif.";  //" + doc.ops[0].courriel + "
-		langLbl["S0052"] = "Courriel de confirmation envoyé à : %1.\r\nVeuillez confirmer votre inscription par le lien dans le courriel.";  //" + doc.ops[0].courriel + "
-		langLbl["S0054"] = "Courriel de récupération du mot de passe envoyé à : %1"; //+ email
+		langLbl["S0052"] = "Courriel de confirmation envoy&eacute; &agrave; : %1.\r\nVeuillez confirmer votre inscription par le lien dans le courriel.";  //" + doc.ops[0].courriel + "
+		langLbl["S0054"] = "Courriel de r&eacute;cup&eacute;ration du mot de passe envoy&eacute; &agrave; : %1"; //+ email
 		langLbl["S0055"] = "Il n'existe aucun compte avec l'adresse de courriel : %1"; // + email
-		langLbl["S0056"] = "Un compte utilise déjà cette adresse courriel.";
+		langLbl["S0056"] = "Un compte utilise d&eacute;j&agrave; cette adresse courriel.";
 		langLbl["S0057"] = "Utilisateur inexistant.";
-		langLbl["S0058"] = "Ce compte existe déjà.";
+		langLbl["S0058"] = "Ce compte existe d&eacute;j&agrave;.";
 		langLbl["S0059"] = "Mote de passe actuel incorrect.";
 		
 		langLbl["Bleu"] = "Bleu";
