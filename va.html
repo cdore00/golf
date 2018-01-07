@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
+
+<title>Valeur actualis&eacute;e</title>
+<meta content="Valeur pr&eacute;sente, Calcul de la valeur pr&eacute;sente, Valeur actualisée" name="keywords" />
+<meta content="Calcul de la valeur pr&eacute;sente." name="description" />
+<link href="misc/init.css" rel="stylesheet" media="screen" type="text/css" />
+<link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
+
+<script type="text/javascript" src="misc/util.js"></script> 
+
+<script type="text/javascript" language="Javascript">
+<!-- 
+var theForm = null;
+
+function calculVA(){
+var Vact, Vint, Van, nbrAn;
+
+Vact = theForm.valAct.value;
+Vint = theForm.valInt.value;
+Vint = Vint / 100;
+Van = theForm.valAn.value;
+nbrAn = theForm.valNan.value;
+
+var VF = Vact * Math.pow( (1+Vint) ,(Van/nbrAn));
+VF = Math.round(VF * 100) / 100;
+theForm.valFut.value = VF;
+//alert("Ok");
+}
+
+function initPage(){
+theForm = document.getElementById("critere");
+//alert("Ok");
+document.body.style.fontSize = "1em";
+theForm.valAct.focus();
+
+}
+
+// -->
+</script>
+
+<style>
+
+.inputtext{
+text-align: center;
+
+}
+sup {
+    vertical-align: super;
+}
+</style>
+
+</head>
+
+<body onload="initPage()">
+
+<script type="text/javascript" language="Javascript">
+<!--
+// -->
+</script>
+
+<div id="topbar" class="vert">
+
+<div id="titre"><text id="title">Valeur actualis&eacute;e</text></div>
+<div id="fontAdjust">
+<div class="divFont" onclick="setFontSize(0.2, this)"><div class="divFontSize">A</div><div class="fontLogo">&#8593;</div></div>
+<div class="divFont" onclick="setFontSize(-0.2, this)"><div class="divFontSize fontSmall">A</div><div class="fontLogo">&#8595;</div></div>
+</div>
+</div>
+
+<div id="content">
+<ul id="pageZone" class="pageitem" style="visibility: visible;">
+<li class="listitem">
+
+	<form id="critere" action="javascript:void(0);">
+	<div class="formrow1">
+	<table class="cartePts">
+		<tbody id="gameList">
+		<tr><th colspan=5><b>VF = VA x I<sup><sup>A/N</sup></sup></b></th></tr>
+		<tr><th>VA</th><th>I</th><th>A</th><th>N</th><th>VF</th></tr>
+		<tr><th>Valeur actuelle</th><th>Intérêt %</th><th>Années</th><th>Nombre d'années</th><th>Valeur future</th></tr>
+		<tr>
+		<td><input id="valAct" class="inputtext" type="text" maxlength="10" value="100" onchange="calculVA()" onfocus="this.select();"/></td>
+		<td><input id="valInt" class="inputtext" type="text" maxlength="10" value="10" onchange="calculVA()" onfocus="this.select();"/></td>
+		<td><input id="valAn"  class="inputtext" type="text" maxlength="10" value="1" onchange="calculVA()" onfocus="this.select();"/></td>
+		<td><input id="valNan" class="inputtext" type="text" maxlength="10" value="1" onchange="calculVA()" onfocus="this.select();"/></td>
+		<td><input id="valFut" class="inputtext" type="text" maxlength="10" value="110" onblur="initPage()" onfocus="this.select();"/></td>
+		</tr>
+		</tbody>
+	</table>
+	</div>
+	</form>	
+</li>
+</ul>
+</div>
+	
+<div id="bottombar" class="vert">
+
+</div>
+
+<div id="copyright">
+<a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2017</a>
+</div>
+
+</body>
+</html>
