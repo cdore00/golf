@@ -35,7 +35,9 @@ theForm.valFut.value = VF;
 function initPage(){
 theForm = document.getElementById("critere");
 //alert("Ok");
-document.body.style.fontSize = "1em";
+if (document.body.style.fontSize == "")
+	document.body.style.fontSize = "1em";
+
 theForm.valAct.focus();
 
 }
