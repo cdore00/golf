@@ -17,27 +17,38 @@
 <!-- 
 var theForm = null;
 
-function calculVA(){
-var Vact, Vint, Van, nbrAn;
+function calculVA(cInt){
+var Vact, Vint, Van, nbrAn, Vfut;
 
 Vact = theForm.valAct.value;
 Vint = theForm.valInt.value;
 Vint = Vint / 100;
 Van = theForm.valAn.value;
-nbrAn = theForm.valNan.value;
+nbrAn = eval(theForm.valNan.value);
+Vfut = theForm.valFut.value;
 
-var VF = Vact * Math.pow( (1+Vint) ,(Van/nbrAn));
-VF = Math.round(VF * 100) / 100;
-theForm.valFut.value = VF;
+if (cInt){
+	var Vint = Vfut / Vact;
+	Vint = Math.pow( Vint , ( 1 / Van * nbrAn ) );
+	Vint = Math.round((Vint - 1) * 10000);
+	theForm.valInt.value = Vint / 100;
+}else{
+	var VF = Vact * Math.pow( (1+Vint) ,(Van/nbrAn));
+	VF = Math.round(VF * 100) / 100;
+	theForm.valFut.value = VF;
+}
+
 //alert("Ok");
 }
 
-function initPage(){
+function initPage(cInt){
 theForm = document.getElementById("critere");
 //alert("Ok");
 if (document.body.style.fontSize == "")
 	document.body.style.fontSize = "1em";
-
+if (cInt)
+	calculVA(cInt);
+	
 theForm.valAct.focus();
 
 }
@@ -46,7 +57,9 @@ theForm.valAct.focus();
 </script>
 
 <style>
-
+th{
+text-align: right;
+}
 .inputtext{
 text-align: center;
 
@@ -82,16 +95,18 @@ sup {
 	<div class="formrow1">
 	<table class="cartePts">
 		<tbody id="gameList">
-		<tr><th colspan=5><b>VF = VA x I<sup><sup>A/N</sup></sup></b></th></tr>
-		<tr><th>VA</th><th>I</th><th>A</th><th>N</th><th>VF</th></tr>
-		<tr><th>Valeur actuelle</th><th>Intérêt %</th><th>Années</th><th>Nombre d'années</th><th>Valeur future</th></tr>
-		<tr>
-		<td><input id="valAct" class="inputtext" type="text" maxlength="10" value="100" onchange="calculVA()" onfocus="this.select();"/></td>
-		<td><input id="valInt" class="inputtext" type="text" maxlength="10" value="10" onchange="calculVA()" onfocus="this.select();"/></td>
-		<td><input id="valAn"  class="inputtext" type="text" maxlength="10" value="1" onchange="calculVA()" onfocus="this.select();"/></td>
-		<td><input id="valNan" class="inputtext" type="text" maxlength="10" value="1" onchange="calculVA()" onfocus="this.select();"/></td>
-		<td><input id="valFut" class="inputtext" type="text" maxlength="10" value="110" onblur="initPage()" onfocus="this.select();"/></td>
-		</tr>
+		<tr><th colspan=3><b>VF = VA x ( 1 + I )<sup><sup>A/N</sup></sup></b></th></tr>
+		<tr><th>VA</th><th>Valeur&nbsp;actuelle</th>
+		<td><input id="valAct" class="inputtext" type="text" maxlength="10" value="100" onchange="calculVA()" onfocus="this.select();"/></td></tr>
+		<tr><th>I</th><th>Intérêt %</th>
+		<td><input id="valInt" class="inputtext" type="text" maxlength="10" value="10" onchange="calculVA()" onfocus="this.select();"/></td></tr>
+		<tr><th>A</th><th>Années</th>
+		<td><input id="valAn"  class="inputtext" type="text" maxlength="10" value="1" onchange="calculVA()" onfocus="this.select();"/></td></tr>
+		<tr><th>N</th><th>Nombre&nbsp;d'années</th>
+		<td><input id="valNan" class="inputtext" type="text" maxlength="10" value="1" onchange="calculVA()" onfocus="this.select();"/></td></tr>
+		<tr><th>VF</th><th>Valeur future</th>
+		<td><input id="valFut" class="inputtext" type="text" maxlength="10" value="110" onchange="calculVA(true)" onblur="initPage(true)" onfocus="this.select();"/></td></tr>
+		
 		</tbody>
 	</table>
 	</div>
