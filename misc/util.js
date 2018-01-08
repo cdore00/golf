@@ -341,6 +341,16 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["M0008"] = "Code postal non retrouv&eacute; : ";
 		langLbl["M0009"] = "L'adresse de courriel n'est pas valide.";
 		langLbl["M0010"] = "Supprimer cette partie?";
+		langLbl["I0001"] = "&nbsp;&#224; moins de ";
+		langLbl["I0002"] = "&nbsp;kilom&#232;tres du code postal &#171;&nbsp;";
+		langLbl["I0003"] = "&nbsp;dans la r&eacute;gion &#171;";
+		langLbl["I00ET"] = "&nbsp;ET";
+		langLbl["Iou00"] = "o&#249; &#171;";
+		langLbl["I0004"] = "&#187; est contenu dans le ";
+		langLbl["I0005"] = "&nbsp;ou le nom de la ville du club ";
+		langLbl["I0006"] = "&nbsp;le nom de la ville du club ";
+		langLbl["I0007"] = " nom du club de golf";
+		
 		langLbl["searc"] = "Recherche";
 		langLbl["load"] = "Chargement";
 		langLbl["mlist"] = "Liste";
@@ -438,6 +448,16 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["M0008"] = "Código postal no encontrado:";
 		langLbl["M0009"] = "La dirección de correo electrónico es inválida.";
 		langLbl["M0010"] = "¿Eliminar esa puntuación?";
+		langLbl["I0001"] = "&nbsp;a menos de ";
+		langLbl["I0002"] = "&nbsp;kilómetros del código postal&nbsp;&#171;&nbsp;";
+		langLbl["I0003"] = "&nbsp;en la región &#171;";
+		langLbl["I00ET"] = "&nbsp;ET";
+		langLbl["Iou00"] = "donde &#171;";
+		langLbl["I0004"] = "&#187; figura en el ";
+		langLbl["I0005"] = "&nbsp;o en el nombre de la ciudad del club ";
+		langLbl["I0006"] = "&nbsp;el nombre de la ciudad del club ";
+		langLbl["I0007"] = " nombre del club de golf";
+	//1 clubes, donde «alb» figura en el nombre del club de golf o en el nombre de la ciudad del club Y en la región «Québec» Y a menos de 10 kilómetros del código postal «G1R 1X9».	
 		langLbl["searc"] = "Buscando";
 		langLbl["load"] = "Cargando";
 		langLbl["mlist"] = "Lista";
@@ -471,7 +491,6 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["S0057"] = "El usuario no existe.";
 		langLbl["S0058"] = "Esta cuenta ya existe.";
 		langLbl["S0059"] = "Contraseña actual incorrecta.";
-		
 		langLbl["Bleu"] = "Azul";
 		langLbl["Hdcp"] = "Hdcp";
 		langLbl["Rouge"] = "Rojo";
@@ -534,6 +553,16 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["M0008"] = "Postal code not found :";
 		langLbl["M0009"] = "The email address is invalid.";
 		langLbl["M0010"] = "Delete that score?";
+		langLbl["I0001"] = "&nbsp;within ";
+		langLbl["I0002"] = "&nbsp;kilometers of the postal code &#171;&nbsp;";		
+		langLbl["I0003"] = "&nbsp;in the region &#171;";
+		langLbl["I00ET"] = "&nbsp;AND";
+		langLbl["Iou00"] = "where &#171;";
+		langLbl["I0004"] = "&#187; is contained in the ";
+		langLbl["I0005"] = "&nbsp;or the name of the city of the club ";
+		langLbl["I0006"] = "&nbsp;the name of the city of the club ";
+		langLbl["I0007"] = " name of the golf club";
+
 		langLbl["searc"] = "Searching";
 		langLbl["load"] = "Loading";
 		langLbl["mlist"] = "List";

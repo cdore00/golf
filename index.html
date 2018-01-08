@@ -645,13 +645,13 @@ var URLresult = "listeResult.html?data=";
 clearContext();
 var mess = "";
 if (formCrit.Mots.value != ""){
-	mess += "o&#249; &#171;" + formCrit.Mots.value + "&#187; est contenu dans le ";
+	mess += langLbl["Iou00"] + formCrit.Mots.value + langLbl["I0004"];
 	if (formCrit.checkNom.checked){
 		URLresult += "qn=";
 		URLresult += encodeURI(formCrit.Mots.value) + "&";
-		mess += " nom du club de golf";
+		mess += langLbl["I0007"];
 		if (formCrit.checkVille.checked)
-			mess += "&nbsp;ou le nom de la ville du club ";
+			mess += langLbl["I0005"];
 	}else{
 		URLresult += "qn=xxxxx&";
 	}	
@@ -659,18 +659,18 @@ if (formCrit.Mots.value != ""){
 		URLresult += "qv=";
 		URLresult += encodeURI(formCrit.Mots.value)  + "&";
 		if (!formCrit.checkNom.checked)
-			mess += "&nbsp;le nom de la ville du club ";
+			mess += langLbl["I0006"];
 	}else{
 		URLresult += "qv=xxxxx&";
 	}	
 	localStorage.setItem('motsCleContext', formCrit.Mots.value);
-	mess += " ET";
+	mess += langLbl["I00ET"];
 }
 if (formCrit.IdRegion.value != 0){
 	URLresult += "qr=";
 	localStorage.setItem('regionIdContext', formCrit.IdRegion.selectedIndex);
 	localStorage.setItem('regionContext', formCrit.IdRegion.options[formCrit.IdRegion.selectedIndex].innerHTML);
-	mess += "&nbsp;dans la r&eacute;gion &#171;" + formCrit.IdRegion.options[formCrit.IdRegion.selectedIndex].innerHTML + "&#187;&nbsp;ET";
+	mess += langLbl["I0003"] + formCrit.IdRegion.options[formCrit.IdRegion.selectedIndex].innerHTML + "&#187;" + langLbl["I00ET"] ;
 	URLresult += formCrit.IdRegion.value + "&";
 }
 	
@@ -682,14 +682,14 @@ if (formCrit.codePostal.value != ""){
 		localStorage.setItem('cpDist', formCrit.kiloM.selectedIndex);
 		if (formCrit.codePostal.value != ""){
 			  localStorage.setItem('cpContext', formCrit.codePostal.value);
-			mess += "&nbsp;&#224; moins de " + formCrit.kiloM.value + "&nbsp;kilom&#232;tres du code postal &#171;&nbsp;" + formCrit.codePostal.value + "&nbsp;&#187; ET";
+			mess += langLbl["I0001"] + formCrit.kiloM.value + langLbl["I0002"] + formCrit.codePostal.value + "&nbsp;&#187;" + langLbl["I00ET"];
 			mess = mess.substring(0, mess.length - 3);
 			localStorage.setItem('message', " clubs, " + mess + ".");
 			codeAddress(formCrit.codePostal.value , (formCrit.kiloM.value * 1000) + 1000, URLresult );
 			return false;
 		}else{
 			URLresult += "qlt=" + formCrit.longitude.value + "&qln=" + formCrit.latitude.value + "&qd=" + (formCrit.kiloM.value * 1000 * 1.05) + "&";
-			mess += "&nbsp;&#224; moins de " + formCrit.kiloM.value + "&nbsp;kilom&#232;tres d'o&#249; vous &#234;tes ET";
+			mess += "&nbsp;&#224; moins de " + formCrit.kiloM.value + "&nbsp;kilom&#232;tres d'o&#249; vous &#234;tes" + langLbl["I00ET"];
 		}
 	}
 }
