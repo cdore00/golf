@@ -23,7 +23,7 @@ read -p " User Password:> " upass
 read -p " Admin Password:> " apass
 sudo docker run -d -p 192.168.10.11:8080:27017 -p 6600:27017 -e MONGODB_ADMIN_PASSWORD=$apass -e MONGODB_USER=$uname -e MONGODB_PASSWORD=$upass -e MONGODB_DATABASE=golf -v /home:/data --name="mon_golf" cdore00/mon_golf34:v3
 sudo docker run -d -p 5000:8080 -e DATABASE_SERVICE_NAME=mongodb -e MONGODB_SERVICE=192.168.10.11 -e MONGODB_PORT=8080 -e MONGODB_ADMIN_PASSWORD=$apass -e MONGODB_USER=$uname -e MONGODB_PASSWORD=$upass -e MONGODB_DATABASE=golf -v /home/cdore:/data --name="servDB2" cdore00/nodegolf:v2
-sudo docker run -d --network="host" -v /home:/data -v /home/lou:/usr/share/cdore/loupop -v /home/golf:/usr/share/cdore/golf --name="webServ" cdore00/nginx_cd:v4
+sudo docker run -d --network="host" -v /home:/data -v /home/lou:/usr/share/cdore/loupop -v /home/golf:/usr/share/cdore/golf --name="webServ" cdore00/nginx_cd:v5
 
 echo " ********** Restore golf database ********** "
 sleep 1
