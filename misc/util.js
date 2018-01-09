@@ -410,10 +410,10 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["motcl"] = "Palabra clave";
 		langLbl["clubn"] = "Nombre del club";
 		langLbl["clubc"] = "Ciudad";
-		langLbl["regio"] = "Región";
+		langLbl["regio"] = "Regi&oacute;n";
 		langLbl["toute"] = "Todas";
 		langLbl["proxi"] = "Proximidad";
-		langLbl["posta"] = "Código postal";
+		langLbl["posta"] = "C&oacute;digo postal";
 		langLbl["locat"] = "Ubicación";
 		langLbl["local"] = "Localizar";
 		langLbl["loca."] = "Localiza";
@@ -433,7 +433,7 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["pplay"] = "Mis juegos";
 		langLbl["macco"] = "Mi cuenta";
 		langLbl["niden"] = "Nueva cuenta";
-		langLbl["email"] = "Correo electrónico";
+		langLbl["email"] = "Correo electr&oacute;nico";
 		langLbl["uname"] = "Nombre";
 		langLbl["passw"] = "Contraseña";
 		langLbl["npass"] = "Nueva contraseña";
@@ -442,28 +442,28 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["M0002"] = "La contraseña debe tener al menos 3 caracteres.";
 		langLbl["M0003"] = "La confirmación de la nueva contraseña no es válida.";
 		langLbl["M0004"] = "Usuario o contraseña no válidos.";
-		langLbl["M0005"] = "¿Contraseña olvidada? \ n \ r¿Quiere recuperar su contraseña por correo electrónico?";
+		langLbl["M0005"] = "¿Contraseña olvidada? \n\r¿Quiere recuperar su contraseña por correo electrónico?";
 		langLbl["M0006"] = "Debe permitir el uso de cookies para configurar sus preferencias.";
-		langLbl["M0007"] = "Elija una distancia para el código postal.";
+		langLbl["M0007"] = "Elija una distancia para el c&oacute;digo postal.";
 		langLbl["M0008"] = "Código postal no encontrado:";
 		langLbl["M0009"] = "La dirección de correo electrónico es inválida.";
 		langLbl["M0010"] = "¿Eliminar esa puntuación?";
 		langLbl["I0001"] = "&nbsp;a menos de ";
-		langLbl["I0002"] = "&nbsp;kilómetros del código postal&nbsp;&#171;&nbsp;";
-		langLbl["I0003"] = "&nbsp;en la región &#171;";
+		langLbl["I0002"] = "&nbsp;kil&oacute;metros del c&oacute;digo postal&nbsp;&#171;&nbsp;";
+		langLbl["I0003"] = "&nbsp;en la regi&oacute;n &#171;";
 		langLbl["I00ET"] = "&nbsp;ET";
 		langLbl["Iou00"] = "donde &#171;";
 		langLbl["I0004"] = "&#187; figura en el ";
 		langLbl["I0005"] = "&nbsp;o en el nombre de la ciudad del club ";
 		langLbl["I0006"] = "&nbsp;el nombre de la ciudad del club ";
 		langLbl["I0007"] = " nombre del club de golf";
-	//1 clubes, donde «alb» figura en el nombre del club de golf o en el nombre de la ciudad del club Y en la región «Québec» Y a menos de 10 kilómetros del código postal «G1R 1X9».	
+	
 		langLbl["searc"] = "Buscando";
 		langLbl["load"] = "Cargando";
 		langLbl["mlist"] = "Lista";
 		langLbl["mmaps"] = "Mapa";
 		langLbl["close"] = "Cerca";
-		langLbl["direc"] = "Dirección";
+		langLbl["direc"] = "Direcci&oacute;n";
 		langLbl["bplay"] = "Jugar";
 		langLbl["holes"] = "&nbsp;agujeros";
 		langLbl["since"] = "&nbsp;ya que&nbsp;";
