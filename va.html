@@ -51,27 +51,27 @@ if (cInt){
 	var VF = Vact * Math.pow( (1+Vint) ,(nbrAn/Van));
 	VF = Math.round(VF * 100) / 100;
 	theForm.valFut.value = VF;
+	setTimeout(function() {
+		pussTab(fut)
+	}, 100);
 }
-//fut.fireEvent("onkeydown");
-var evt = document.createEvent("HTMLEvents");
-var evt = new Event('keydown');
 
-//evt.initEvent("keydown", false, true);
+}
+
+function pussTab(oInput){
+oInput.focus();
 theForm.valAct.focus();
-
 var e = new Event("keydown");
-  e.key="5";    // just enter the char you want to send 
-  e.keyCode=e.key.charCodeAt(0);
- // e.keyCode=9;
+  //e.key="Tab";    // just enter the char you want to send 
+  //e.keyCode=e.key.charCodeAt(0);
+  e.keyCode=9;
   e.which=e.keyCode;
   e.altKey=false;
   e.ctrlKey=true;
   e.shiftKey=false;
   e.metaKey=false;
   e.bubbles=true;
-//  document.dispatchEvent(e);
-theForm.valAct.dispatchEvent(e);
-fut.dispatchEvent(e);
+  oInput.dispatchEvent(e);
 }
 
 function initPage(cInt){
@@ -115,9 +115,7 @@ input {
 label {
   display: block;
 }
-div {
-  margin: 0 0 1rem 0;
-}
+
 </style>
 
 </head>

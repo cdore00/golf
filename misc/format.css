@@ -1,5 +1,7 @@
 ﻿html { height: 100% } 
 
+@charset "UTF-8";
+
 body{
 position:relative;
 margin:0;-webkit-text-size-adjust:none;
@@ -205,7 +207,8 @@ display: flex;
     font-size: 0.7em ;
 }
 
-#content{width:100%;position:relative;min-height:200px;height:auto;z-index:0;overflow:hidden;filter:progid:DXImageTransform.Microsoft.gradient(startcolorstr='#3A9D23',endcolorstr='#00bb00');
+#content{width:100%;position:relative;min-height:200px;height:auto;z-index:0;overflow:hidden;
+filter:progid:DXImageTransform.Microsoft.gradient(startcolorstr='#3A9D23',endcolorstr='#00bb00');
 background: -ms-linear-gradient(top, #3A9D23 0%, #00bb00 100%);
 background:-webkit-gradient(linear,0% 0,0% 100%,from(#3A9D23),to(#00bb00));
 background:-moz-linear-gradient(top,#3A9D23,#00bb00)}
