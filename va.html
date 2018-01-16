@@ -14,6 +14,25 @@
 <script type="text/javascript" src="misc/util.js"></script> 
 <script type="text/javascript" src="misc/cleave.js"></script>
 
+<style>
+th{
+text-align: right;
+}
+.inputtext{
+text-align: center;
+}
+sup {
+    vertical-align: super;
+}
+
+input {
+  font-family: monospace;
+}
+label {
+  display: block;
+}
+
+</style>
 <script type="text/javascript" language="Javascript">
 <!-- 
 var theForm = null;
@@ -95,28 +114,28 @@ var cleaveNumeral = new Cleave('.input-fut', {
 
 }
 
+function otest(){
+
+alert("ok = " + myO.tot(2));
+}
+
+var obj = function(a, b){
+	this.valA = a;
+	this.valB = b;
+	this.tot = function (c){
+		var d = 1;
+		if (c)
+			d = c;
+		
+		return (this.valA + this.valB) * d;
+	}
+}
+
+var myO = new obj(2,1);
+
 // -->
 </script>
 
-<style>
-th{
-text-align: right;
-}
-.inputtext{
-text-align: center;
-}
-sup {
-    vertical-align: super;
-}
-
-input {
-  font-family: monospace;
-}
-label {
-  display: block;
-}
-
-</style>
 
 </head>
 
@@ -163,7 +182,9 @@ label {
 </li>
 </ul>
 </div>
-	
+
+<button onclick="otest()">Test</button>
+
 <div id="bottombar" class="vert">
 
 </div>
