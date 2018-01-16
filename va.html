@@ -70,7 +70,7 @@ if (cInt){
 	}, 100);
 }
 
-listCas.upd(new listCas.Cas(theForm.valAct.value, theForm.valInt.value, theForm.valAn.value, 1, 110));
+listCas.upd(new listCas.Cas(theForm.valAct.value, theForm.valInt.value, theForm.valAn.value, theForm.valNan.value, theForm.valFut.value));
 }
 
 function pussTab(oInput){
@@ -154,6 +154,7 @@ oListe = document.getElementById("tableCas");
 
 if (oSimul.style.display=="" || oSimul.style.display=="block"){
 	oSimul.style.display="none";
+	buildTable(oListe);
 	oListe.style.display="block";
 }else{
 	oSimul.style.display="block";
@@ -162,10 +163,34 @@ if (oSimul.style.display=="" || oSimul.style.display=="block"){
 
 }
 
+function buildTable(oListe){
+var tblList = document.getElementById("tblList");
+if (tblList)
+	tblList.parentNode.removeChild(tblList);
+
+var tblElem = document.createElement("table");
+tblElem.setAttribute('id', 'tblList');
+var theadElem = document.createElement("thead");
+var tbodyElem = document.createElement("tbody");
+tblElem.appendChild(theadElem);
+tblElem.appendChild(tbodyElem);
+
+var trElem = document.createElement("tr");
+trElem.innerHTML = '<th class="tblSelect">VA</th><th class="tblSelect">t%</th><th class="tblSelect">per</th><th class="tblSelect">Ans</th><th class="tblSelect">VF</th><th class="tblSelect"></th>';
+theadElem.appendChild(trElem);
+
+var trElem = document.createElement("tr");
+trElem.innerHTML = '<td class="tblSelect">100</td><td class="tblSelect">10</td><td class="tblSelect">1</td><td class="tblSelect">1</td><td class="tblSelect">110</td><td class="tblSelect"></td>';
+tbodyElem.appendChild(trElem);
+
+oListe.appendChild(tblElem);
+
+}
+
 // Liste globale des cas
 var listCas = new lCas();
 ajouterCas();
-listCas.upd(new listCas.Cas(101, 10, 1, 1, 110), true);
+//listCas.upd(new listCas.Cas(101, 10, 1, 1, 110), true);
 
 // -->
 </script>
