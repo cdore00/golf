@@ -8,7 +8,6 @@
 <title>Valeur actualis&eacute;e</title>
 <meta content="Valeur pr&eacute;sente, Calcul de la valeur pr&eacute;sente, Valeur actualisée" name="keywords" />
 <meta content="Calcul de la valeur pr&eacute;sente." name="description" />
-<link href="misc/init.css" rel="stylesheet" media="screen" type="text/css" />
 <link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
 
 <script type="text/javascript" src="misc/util.js"></script> 
@@ -24,23 +23,28 @@ text-align: center;
 sup {
     vertical-align: super;
 }
-
 input {
   font-family: monospace;
 }
 label {
   display: block;
 }
-
+#bottombar {
+    text-align: center;
+	}
+.formrow1 {
+    min-height: inherit;
+}
 </style>
 <script type="text/javascript" language="Javascript">
 <!-- 
 var theForm = null;
+var oSimul;
+
 function calculVA(cInt){
 var Vact, Vint, Van, nbrAn, Vfut;
 var lblAn = document.getElementById("parAn");
 var fut = document.getElementById("valFut");
-
 Vact = theForm.valAct.value;
 Vact = Vact.replace(/,/g , "");
 Vint = theForm.valInt.value;
@@ -50,17 +54,8 @@ nbrAn = eval(theForm.valNan.value);
 Vfut = theForm.valFut.value;
 Vfut = Vfut.replace(/,/g , "");
 
-if (Van == 1){
-	lblAn.innerHTML = "par année";
-}else{
-	if (Van < 1){
-		var nMois = Van / ( 1 / 12);
-		nMois = Math.round(nMois * 1000);
-		lblAn.innerHTML = "chaque " + (nMois / 1000) + " mois";
-	}else{
-		lblAn.innerHTML = "chaque " + Van + " ans";
-	}
-}
+lblAn.innerHTML = listCas.lbla(Van);
+
 if (cInt){
 	var Vint = Vfut / Vact;
 	Vint = Math.pow( Vint , ( 1 / nbrAn * Van ) );
@@ -75,6 +70,7 @@ if (cInt){
 	}, 100);
 }
 
+listCas.upd(new listCas.Cas(theForm.valAct.value, theForm.valInt.value, theForm.valAn.value, 1, 110));
 }
 
 function pussTab(oInput){
@@ -92,7 +88,6 @@ var e = new Event("keydown");
   e.bubbles=true;
   oInput.dispatchEvent(e);
 }
-
 function initPage(cInt){
 theForm = document.getElementById("critere");
 //alert("Ok");
@@ -102,7 +97,6 @@ if (cInt)
 	calculVA(cInt);
 	
 theForm.valAct.focus();
-
 var cleaveNumeral = new Cleave('.input-numeral', {
     numeral: true,
     numeralThousandsGroupStyle: 'thousand'
@@ -111,27 +105,67 @@ var cleaveNumeral = new Cleave('.input-fut', {
     numeral: true,
     numeralThousandsGroupStyle: 'thousand'
 });
-
 }
-
 function otest(){
-
 alert("ok = " + myO.tot(2));
 }
 
-var obj = function(a, b){
-	this.valA = a;
-	this.valB = b;
-	this.tot = function (c){
-		var d = 1;
-		if (c)
-			d = c;
-		
-		return (this.valA + this.valB) * d;
+var lCas = function(){
+	this.liste = [];
+	this.iCas = 0;
+	this.upd = function (oC, add){
+		if (add)
+			i = this.liste.length;
+		this.liste[i] = oC;
+		this.iCas = i;
+		return i;
 	}
+	this.lbla = function(Van){
+		if (Van == 1){
+			return "par année";
+		}else{
+			if (Van < 1){
+				var nMois = Van / ( 1 / 12);
+				nMois = Math.round(nMois * 1000);
+				return "chaque " + (nMois / 1000) + " mois";
+			}else{
+				return "chaque " + Van + " ans";
+			}
+		}	
+	}
+	this.Cas = function(VA, t, a, N, VF){
+		this.VA = VA;
+		this.t = t;
+		this.a = a;
+		this.N = N;
+		this.VF = VF;
+		return this;
+	}
+	
 }
 
-var myO = new obj(2,1);
+function ajouterCas(){
+listCas.upd(new listCas.Cas(100, 10, 1, 1, 110), true);
+}
+
+function listeSimul(){
+oSimul = document.getElementById("tableSimul");
+oListe = document.getElementById("tableCas");
+
+if (oSimul.style.display=="" || oSimul.style.display=="block"){
+	oSimul.style.display="none";
+	oListe.style.display="block";
+}else{
+	oSimul.style.display="block";
+	oListe.style.display="none";
+}
+
+}
+
+// Liste globale des cas
+var listCas = new lCas();
+ajouterCas();
+listCas.upd(new listCas.Cas(101, 10, 1, 1, 110), true);
 
 // -->
 </script>
@@ -160,7 +194,7 @@ var myO = new obj(2,1);
 <li class="listitem">
 
 	<form id="critere" action="javascript:void(0);">
-	<div class="formrow1">
+	<div id="tableSimul" class="formrow1">
 	<table class="cartePts">
 		<tbody id="gameList">
 		<tr><th colspan=3><b>VF = VA x ( 1 + t )<sup><sup>N/a</sup></sup></b></th></tr>
@@ -174,19 +208,22 @@ var myO = new obj(2,1);
 		<td><input id="valNan" class="inputtext" type="text" maxlength="10" value="1" onchange="calculVA()" onfocus="this.select();"/></td></tr>
 		<tr><th>VF</th><th>Valeur future</th>
 		<td><input id="valFut" class="inputtext input-fut" type="text" maxlength="10" value="110" onchange="calculVA(true)" onblur="initPage(true)" onfocus="this.select();"/></td></tr>
-		
 		</tbody>
 	</table>
+	</div>
+	<div id="tableCas" class="formrow1">
+	
 	</div>
 	</form>	
 </li>
 </ul>
+
 </div>
 
-<button onclick="otest()">Test</button>
+
 
 <div id="bottombar" class="vert">
-
+<button onclick="ajouterCas()">Ajouter</button><button onclick="listeSimul()">Lister</button>
 </div>
 
 <div id="copyright">
