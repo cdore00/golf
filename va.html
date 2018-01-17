@@ -123,14 +123,14 @@ var lCas = function(){
 	}
 	this.lbla = function(Van){
 		if (Van == 1){
-			return "par année";
+			return "par&nbsp;an";
 		}else{
 			if (Van < 1){
 				var nMois = Van / ( 1 / 12);
 				nMois = Math.round(nMois * 1000);
-				return "chaque " + (nMois / 1000) + " mois";
+				return "par&nbsp;" + (nMois / 1000) + "&nbsp;mois";
 			}else{
-				return "chaque " + Van + " ans";
+				return "par&nbsp;" + Van + "&nbsp;ans";
 			}
 		}	
 	}
@@ -178,12 +178,14 @@ tblElem.appendChild(theadElem);
 tblElem.appendChild(tbodyElem);
 
 var trElem = document.createElement("tr");
-trElem.innerHTML = '<th class="tblSelect">VA</th><th class="tblSelect">t%</th><th class="tblSelect">per</th><th class="tblSelect">Ans</th><th class="tblSelect">VF</th><th class="tblSelect"></th>';
+trElem.innerHTML = '<th class="tblSelect">VA</th><th class="tblSelect">t</th><th class="tblSelect">per</th><th class="tblSelect">Ans</th><th class="tblSelect">VF</th><th class="tblSelect"></th>';
 theadElem.appendChild(trElem);
 
-var trElem = document.createElement("tr");
-trElem.innerHTML = '<td class="tblSelect">100</td><td class="tblSelect">10</td><td class="tblSelect">1</td><td class="tblSelect">1</td><td class="tblSelect">110</td><td class="tblSelect"></td>';
-tbodyElem.appendChild(trElem);
+for (var i = 0; i < listCas.liste.length; i++) {
+	var trElem = document.createElement("tr");
+	trElem.innerHTML = '<td class="tblSelect">' + listCas.liste[i].VA + '</td><td class="tblSelect">' + listCas.liste[i].t + '&nbsp;%</td><td class="tblSelect">' + listCas.lbla(eval(listCas.liste[i].a)) + '</td><td class="tblSelect">' + listCas.liste[i].N + '</td><td class="tblSelect">' + listCas.liste[i].VF + '</td><td class="tblSelect"></td>';
+	tbodyElem.appendChild(trElem);
+}
 
 oListe.appendChild(tblElem);
 
