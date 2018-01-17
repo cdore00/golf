@@ -114,6 +114,7 @@ var lCas = function(){
 	this.liste = [];
 	this.iCas = 0;
 	this.upd = function (oC, add){
+		var i = this.iCas;
 		if (add)
 			i = this.liste.length;
 		this.liste[i] = oC;
@@ -170,6 +171,7 @@ if (tblList)
 
 var tblElem = document.createElement("table");
 tblElem.setAttribute('id', 'tblList');
+tblElem.setAttribute('class', 'cartePts');
 var theadElem = document.createElement("thead");
 var tbodyElem = document.createElement("tbody");
 tblElem.appendChild(theadElem);
@@ -222,7 +224,7 @@ ajouterCas();
 	<div id="tableSimul" class="formrow1">
 	<table class="cartePts">
 		<tbody id="gameList">
-		<tr><th colspan=3><b>VF = VA x ( 1 + t )<sup><sup>N/a</sup></sup></b></th></tr>
+		<tr><th colspan=3><b>VA x ( 1 + t )<sup><sup>N/a</sup></sup> = VF</b></th></tr>
 		<tr><th>VA</th><th>Valeur&nbsp;actuelle</th>
 		<td><input id="valAct" class="inputtext input-numeral" type="text" maxlength="10" value="100" onchange="calculVA()" onfocus="this.select();"/></td></tr>
 		<tr><th>t</th><th>Intérêt %</th>
