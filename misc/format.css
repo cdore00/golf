@@ -639,8 +639,8 @@ margin:10px;
 text-align:center;
 }
 	
-.rowNorm { background-color: #ccc }
-.rowOver { background-color: #999 }
+.rowNorm { background-color: #ccc ;cursor:default}
+.rowOver { background-color: #999 ;cursor:default}
 
 .unselectable {
 	-moz-user-select: none;

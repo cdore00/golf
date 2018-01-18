@@ -31,15 +31,26 @@ label {
 }
 #bottombar {
     text-align: center;
-	}
+}
 .formrow1 {
     min-height: inherit;
+	text-align: center;
+
+}
+#bgListe{
+display: none;
+}
+table.cartePts {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
 }
 </style>
 <script type="text/javascript" language="Javascript">
 <!-- 
 var theForm = null;
 var oSimul;
+var rowSel;
 
 function calculVA(cInt){
 var Vact, Vint, Van, nbrAn, Vfut;
@@ -53,9 +64,7 @@ Van = eval(theForm.valAn.value);
 nbrAn = eval(theForm.valNan.value);
 Vfut = theForm.valFut.value;
 Vfut = Vfut.replace(/,/g , "");
-
 lblAn.innerHTML = listCas.lbla(Van);
-
 if (cInt){
 	var Vint = Vfut / Vact;
 	Vint = Math.pow( Vint , ( 1 / nbrAn * Van ) );
@@ -69,7 +78,6 @@ if (cInt){
 		pussTab(fut)
 	}, 100);
 }
-
 listCas.upd(new listCas.Cas(theForm.valAct.value, theForm.valInt.value, theForm.valAn.value, theForm.valNan.value, theForm.valFut.value));
 }
 
@@ -88,8 +96,11 @@ var e = new Event("keydown");
   e.bubbles=true;
   oInput.dispatchEvent(e);
 }
+
 function initPage(cInt){
 theForm = document.getElementById("critere");
+
+document.body.style.fontSize = localStorage.getItem('fontSize');
 //alert("Ok");
 if (document.body.style.fontSize == "")
 	document.body.style.fontSize = "1em";
@@ -105,11 +116,10 @@ var cleaveNumeral = new Cleave('.input-fut', {
     numeral: true,
     numeralThousandsGroupStyle: 'thousand'
 });
-}
-function otest(){
-alert("ok = " + myO.tot(2));
+ 
 }
 
+// List object
 var lCas = function(){
 	this.liste = [];
 	this.iCas = 0;
@@ -145,30 +155,49 @@ var lCas = function(){
 	
 }
 
-function ajouterCas(){
+function ajouterCas(oRow){
 listCas.upd(new listCas.Cas(100, 10, 1, 1, 110), true);
 }
 
-function listeSimul(){
+function listeSimul(oRow){
 oSimul = document.getElementById("tableSimul");
-oListe = document.getElementById("tableCas");
+oListe = document.getElementById("tableListe");
+bgSimul= document.getElementById("bgSimul");
+bgListe= document.getElementById("bgListe");
 
 if (oSimul.style.display=="" || oSimul.style.display=="block"){
+	var h = oSimul.offsetHeight;
 	oSimul.style.display="none";
+	bgSimul.style.display="none";
+	bgListe.style.display="inherit";
 	buildTable(oListe);
 	oListe.style.display="block";
+	oListe.style.minHeight = (h-8) + 'px';
 }else{
 	oSimul.style.display="block";
 	oListe.style.display="none";
+	initSimul();
+	bgSimul.style.display="inherit";
+	bgListe.style.display="none";
+}
 }
 
+function initSimul(){
+var lblAn = document.getElementById("parAn");
+var rIndex = rowSel.rowIndex;
+theForm.valAct.value = rowSel.childNodes[0].innerText;
+theForm.valInt.value = listCas.liste[rIndex-1].t;
+var Van = listCas.liste[rIndex-1].a;
+theForm.valAn.value  = Van;
+theForm.valNan.value = listCas.liste[rIndex-1].N;
+theForm.valFut.value = rowSel.childNodes[4].innerText;
+lblAn.innerHTML = listCas.lbla(eval(Van));
 }
 
 function buildTable(oListe){
 var tblList = document.getElementById("tblList");
 if (tblList)
 	tblList.parentNode.removeChild(tblList);
-
 var tblElem = document.createElement("table");
 tblElem.setAttribute('id', 'tblList');
 tblElem.setAttribute('class', 'cartePts');
@@ -176,26 +205,39 @@ var theadElem = document.createElement("thead");
 var tbodyElem = document.createElement("tbody");
 tblElem.appendChild(theadElem);
 tblElem.appendChild(tbodyElem);
-
 var trElem = document.createElement("tr");
+//onmouseover="this.className='rowOver'"
 trElem.innerHTML = '<th class="tblSelect">VA</th><th class="tblSelect">t</th><th class="tblSelect">per</th><th class="tblSelect">Ans</th><th class="tblSelect">VF</th><th class="tblSelect"></th>';
 theadElem.appendChild(trElem);
-
 for (var i = 0; i < listCas.liste.length; i++) {
 	var trElem = document.createElement("tr");
+	trElem.setAttribute('onclick', 'selRow(this)');
 	trElem.innerHTML = '<td class="tblSelect">' + listCas.liste[i].VA + '</td><td class="tblSelect">' + listCas.liste[i].t + '&nbsp;%</td><td class="tblSelect">' + listCas.lbla(eval(listCas.liste[i].a)) + '</td><td class="tblSelect">' + listCas.liste[i].N + '</td><td class="tblSelect">' + listCas.liste[i].VF + '</td><td class="tblSelect"></td>';
 	tbodyElem.appendChild(trElem);
 }
-
 oListe.appendChild(tblElem);
+}
 
+function deleteCas(oRow){
+
+}
+
+function selRow(oRow){
+if (rowSel)
+	rowSel.className = 'rowNorm'
+oRow.className='rowOver';
+rowSel = oRow;
+}
+
+function chFontSize(varSize, oTool){
+setFontSize(varSize, oTool);
+localStorage.setItem('fontSize', document.body.style.fontSize);
 }
 
 // Liste globale des cas
 var listCas = new lCas();
 ajouterCas();
 //listCas.upd(new listCas.Cas(101, 10, 1, 1, 110), true);
-
 // -->
 </script>
 
@@ -213,8 +255,8 @@ ajouterCas();
 
 <div id="titre"><text id="title">Valeur actualis&eacute;e</text></div>
 <div id="fontAdjust">
-<div class="divFont" onclick="setFontSize(0.2, this)"><div class="divFontSize">A</div><div class="fontLogo">&#8593;</div></div>
-<div class="divFont" onclick="setFontSize(-0.2, this)"><div class="divFontSize fontSmall">A</div><div class="fontLogo">&#8595;</div></div>
+<div class="divFont" onclick="chFontSize(0.2, this)"><div class="divFontSize">A</div><div class="fontLogo">&#8593;</div></div>
+<div class="divFont" onclick="chFontSize(-0.2, this)"><div class="divFontSize fontSmall">A</div><div class="fontLogo">&#8595;</div></div>
 </div>
 </div>
 
@@ -240,7 +282,7 @@ ajouterCas();
 		</tbody>
 	</table>
 	</div>
-	<div id="tableCas" class="formrow1">
+	<div id="tableListe" class="formrow1">
 	
 	</div>
 	</form>	
@@ -249,12 +291,14 @@ ajouterCas();
 
 </div>
 
-
-
 <div id="bottombar" class="vert">
-<button onclick="ajouterCas()">Ajouter</button><button onclick="listeSimul()">Lister</button>
+<div id="bgSimul">
+<button class="bouton" onclick="ajouterCas(this)">Ajouter</button><button class="bouton" onclick="listeSimul(this)">Lister</button>
 </div>
-
+<div id="bgListe">
+<button class="bouton" onclick="deleteCas(this)">Supprimer</button><button class="bouton" onclick="listeSimul(this)">Modifier</button>
+</div>
+</div>
 <div id="copyright">
 <a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2017</a>
 </div>
