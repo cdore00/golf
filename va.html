@@ -56,6 +56,9 @@ function calculVA(cInt){
 var Vact, Vint, Van, nbrAn, Vfut;
 var lblAn = document.getElementById("parAn");
 var fut = document.getElementById("valFut");
+if (!cInt)
+	var oFoc = document.activeElement;
+
 Vact = theForm.valAct.value;
 Vact = Vact.replace(/,/g , "");
 Vint = theForm.valInt.value;
@@ -70,12 +73,16 @@ if (cInt){
 	Vint = Math.pow( Vint , ( 1 / nbrAn * Van ) );
 	Vint = Math.round((Vint - 1) * 10000);
 	theForm.valInt.value = Vint / 100;
+	if (oFoc)
+		oFoc.focus();
 }else{
 	var VF = Vact * Math.pow( (1+Vint) ,(nbrAn/Van));
 	VF = Math.round(VF * 100) / 100;
 	theForm.valFut.value = VF;
+	//theForm.valAct.focus();
 	setTimeout(function() {
-		pussTab(fut)
+		pussTab(fut);
+		oFoc.focus();
 	}, 100);
 }
 listCas.upd(new listCas.Cas(theForm.valAct.value, theForm.valInt.value, theForm.valAn.value, theForm.valNan.value, theForm.valFut.value));
@@ -122,14 +129,20 @@ var cleaveNumeral = new Cleave('.input-fut', {
 // List object
 var lCas = function(){
 	this.liste = [];
-	this.iCas = 0;
+	this.iCas = 0;  // Selected index
 	this.upd = function (oC, add){
 		var i = this.iCas;
 		if (add)
 			i = this.liste.length;
+		else
+			i = this.iCas;
 		this.liste[i] = oC;
 		this.iCas = i;
 		return i;
+	}
+	this.del = function(){
+		this.liste.splice(this.iCas, 1);
+		this.iCas = 0;
 	}
 	this.lbla = function(Van){
 		if (Van == 1){
@@ -155,11 +168,7 @@ var lCas = function(){
 	
 }
 
-function ajouterCas(oRow){
-listCas.upd(new listCas.Cas(100, 10, 1, 1, 110), true);
-}
-
-function listeSimul(oRow){
+function listeSimul(){
 oSimul = document.getElementById("tableSimul");
 oListe = document.getElementById("tableListe");
 bgSimul= document.getElementById("bgSimul");
@@ -182,15 +191,21 @@ if (oSimul.style.display=="" || oSimul.style.display=="block"){
 }
 }
 
-function initSimul(){
+function initSimul(isNew){
 var lblAn = document.getElementById("parAn");
-var rIndex = rowSel.rowIndex;
-theForm.valAct.value = rowSel.childNodes[0].innerText;
-theForm.valInt.value = listCas.liste[rIndex-1].t;
-var Van = listCas.liste[rIndex-1].a;
+var rIndex = listCas.iCas;
+
+if (isNew){
+	theForm.valAct.value = listCas.liste[rIndex].VA;
+	theForm.valFut.value = listCas.liste[rIndex].VF;
+}else{
+	theForm.valAct.value = rowSel.childNodes[0].innerText;
+	theForm.valFut.value = rowSel.childNodes[4].innerText;
+}
+theForm.valInt.value = listCas.liste[rIndex].t;
+var Van = listCas.liste[rIndex].a;
 theForm.valAn.value  = Van;
-theForm.valNan.value = listCas.liste[rIndex-1].N;
-theForm.valFut.value = rowSel.childNodes[4].innerText;
+theForm.valNan.value = listCas.liste[rIndex].N;
 lblAn.innerHTML = listCas.lbla(eval(Van));
 }
 
@@ -207,26 +222,42 @@ tblElem.appendChild(theadElem);
 tblElem.appendChild(tbodyElem);
 var trElem = document.createElement("tr");
 //onmouseover="this.className='rowOver'"
-trElem.innerHTML = '<th class="tblSelect">VA</th><th class="tblSelect">t</th><th class="tblSelect">per</th><th class="tblSelect">Ans</th><th class="tblSelect">VF</th><th class="tblSelect"></th>';
+trElem.innerHTML = '<th class="tblSelect">VA</th><th class="tblSelect">t</th><th class="tblSelect">per</th><th class="tblSelect">Ans</th><th class="tblSelect">VF</th>';
 theadElem.appendChild(trElem);
 for (var i = 0; i < listCas.liste.length; i++) {
 	var trElem = document.createElement("tr");
+	if (listCas.iCas == i){
+		trElem.setAttribute('class', 'rowOver');
+		rowSel = trElem;
+		}
 	trElem.setAttribute('onclick', 'selRow(this)');
-	trElem.innerHTML = '<td class="tblSelect">' + listCas.liste[i].VA + '</td><td class="tblSelect">' + listCas.liste[i].t + '&nbsp;%</td><td class="tblSelect">' + listCas.lbla(eval(listCas.liste[i].a)) + '</td><td class="tblSelect">' + listCas.liste[i].N + '</td><td class="tblSelect">' + listCas.liste[i].VF + '</td><td class="tblSelect"></td>';
+	trElem.innerHTML = '<td class="tblSelect">' + listCas.liste[i].VA + '</td><td class="tblSelect">' + listCas.liste[i].t + '&nbsp;%</td><td class="tblSelect">' + listCas.lbla(eval(listCas.liste[i].a)) + '</td><td class="tblSelect">' + listCas.liste[i].N + '</td><td class="tblSelect">' + listCas.liste[i].VF + '</td>';
 	tbodyElem.appendChild(trElem);
 }
 oListe.appendChild(tblElem);
 }
 
-function deleteCas(oRow){
+function deleteCas(){
+if (listCas.liste.length > 1){
+	var oTB = rowSel.parentNode;
+	rowSel.parentNode.removeChild(rowSel);
+	oTB.childNodes[0].className = 'rowOver';
+	listCas.del();
+}else
+	alert("Il doit rester un cas au minimum");
+}
 
+function ajouterCas(){
+listCas.upd(new listCas.Cas(100, 10, 1, 1, 110), true);
+initSimul(true);
 }
 
 function selRow(oRow){
 if (rowSel)
-	rowSel.className = 'rowNorm'
+	rowSel.className = 'rowNorm';
 oRow.className='rowOver';
 rowSel = oRow;
+listCas.iCas = rowSel.rowIndex - 1;
 }
 
 function chFontSize(varSize, oTool){
@@ -278,7 +309,7 @@ ajouterCas();
 		<tr><th>N</th><th>Nombre&nbsp;d'années</th>
 		<td><input id="valNan" class="inputtext" type="text" maxlength="10" value="1" onchange="calculVA()" onfocus="this.select();"/></td></tr>
 		<tr><th>VF</th><th>Valeur future</th>
-		<td><input id="valFut" class="inputtext input-fut" type="text" maxlength="10" value="110" onchange="calculVA(true)" onblur="initPage(true)" onfocus="this.select();"/></td></tr>
+		<td><input id="valFut" class="inputtext input-fut" type="text" maxlength="10" value="110" onchange="calculVA(true)"  onblur="initPage(true)" onfocus="this.select();"/></td></tr>
 		</tbody>
 	</table>
 	</div>
@@ -293,10 +324,10 @@ ajouterCas();
 
 <div id="bottombar" class="vert">
 <div id="bgSimul">
-<button class="bouton" onclick="ajouterCas(this)">Ajouter</button><button class="bouton" onclick="listeSimul(this)">Lister</button>
+<button class="bouton" onclick="ajouterCas()">Ajouter</button><button class="bouton" onclick="listeSimul()">Lister</button>
 </div>
 <div id="bgListe">
-<button class="bouton" onclick="deleteCas(this)">Supprimer</button><button class="bouton" onclick="listeSimul(this)">Modifier</button>
+<button class="bouton" onclick="deleteCas()">Supprimer</button><button class="bouton" onclick="listeSimul()">Modifier</button>
 </div>
 </div>
 <div id="copyright">
