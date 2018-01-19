@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -79,34 +80,15 @@ if (cInt){
 	var VF = Vact * Math.pow( (1+Vint) ,(nbrAn/Van));
 	VF = Math.round(VF * 100) / 100;
 	theForm.valFut.value = VF;
-	//theForm.valAct.focus();
-	setTimeout(function() {
-		pussTab(fut);
-		oFoc.focus();
-	}, 100);
+	var cleaveNumeralVF = initCleave('.input-fut');
+	oFoc.focus();
 }
 listCas.upd(new listCas.Cas(theForm.valAct.value, theForm.valInt.value, theForm.valAn.value, theForm.valNan.value, theForm.valFut.value));
 }
 
-function pussTab(oInput){
-oInput.focus();
-theForm.valAct.focus();
-var e = new Event("keydown");
-  //e.key="Tab";    // just enter the char you want to send 
-  //e.keyCode=e.key.charCodeAt(0);
-  e.keyCode=9;
-  e.which=e.keyCode;
-  e.altKey=false;
-  e.ctrlKey=true;
-  e.shiftKey=false;
-  e.metaKey=false;
-  e.bubbles=true;
-  oInput.dispatchEvent(e);
-}
-
 function initPage(cInt){
 theForm = document.getElementById("critere");
-
+ajouterCas();
 document.body.style.fontSize = localStorage.getItem('fontSize');
 //alert("Ok");
 if (document.body.style.fontSize == "")
@@ -115,18 +97,19 @@ if (cInt)
 	calculVA(cInt);
 	
 theForm.valAct.focus();
-var cleaveNumeral = new Cleave('.input-numeral', {
-    numeral: true,
-    numeralThousandsGroupStyle: 'thousand'
-});
-var cleaveNumeral = new Cleave('.input-fut', {
-    numeral: true,
-    numeralThousandsGroupStyle: 'thousand'
-});
+var cleaveNumeralVA = initCleave('.input-numeral');
+var cleaveNumeralVF = initCleave('.input-fut');
  
 }
 
-// List object
+function initCleave(className){
+	return new Cleave(className, {
+		numeral: true,
+		numeralThousandsGroupStyle: 'thousand'
+	});
+}
+
+// Case list object constructor
 var lCas = function(){
 	this.liste = [];
 	this.iCas = 0;  // Selected index
@@ -165,7 +148,6 @@ var lCas = function(){
 		this.VF = VF;
 		return this;
 	}
-	
 }
 
 function listeSimul(){
@@ -221,7 +203,6 @@ var tbodyElem = document.createElement("tbody");
 tblElem.appendChild(theadElem);
 tblElem.appendChild(tbodyElem);
 var trElem = document.createElement("tr");
-//onmouseover="this.className='rowOver'"
 trElem.innerHTML = '<th class="tblSelect">VA</th><th class="tblSelect">t</th><th class="tblSelect">per</th><th class="tblSelect">Ans</th><th class="tblSelect">VF</th>';
 theadElem.appendChild(trElem);
 for (var i = 0; i < listCas.liste.length; i++) {
@@ -265,10 +246,24 @@ setFontSize(varSize, oTool);
 localStorage.setItem('fontSize', document.body.style.fontSize);
 }
 
-// Liste globale des cas
+function allowDrop(ev) {
+    ev.preventDefault();
+}
+
+function drag(ev) {
+    ev.dataTransfer.setData("text", ev.target.id);
+}
+
+function drop(ev) {
+    ev.preventDefault();
+    var data = ev.dataTransfer.getData("text");
+        //ev.target.appendChild(document.getElementById(data));
+	var x = 1;
+}
+
+// Objet liste globale des cas
 var listCas = new lCas();
-ajouterCas();
-//listCas.upd(new listCas.Cas(101, 10, 1, 1, 110), true);
+
 // -->
 </script>
 
@@ -309,9 +304,10 @@ ajouterCas();
 		<tr><th>N</th><th>Nombre&nbsp;d'années</th>
 		<td><input id="valNan" class="inputtext" type="text" maxlength="10" value="1" onchange="calculVA()" onfocus="this.select();"/></td></tr>
 		<tr><th>VF</th><th>Valeur future</th>
-		<td><input id="valFut" class="inputtext input-fut" type="text" maxlength="10" value="110" onchange="calculVA(true)"  onblur="initPage(true)" onfocus="this.select();"/></td></tr>
+		<td><input id="valFut" class="inputtext input-fut" type="text" maxlength="10" value="110" onchange="calculVA(true)" onfocus="this.select();"/></td></tr>
 		</tbody>
 	</table>
+<!-- 	onblur="initPage(true)" //-->
 	</div>
 	<div id="tableListe" class="formrow1">
 	
