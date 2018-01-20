@@ -17,14 +17,13 @@
 th{
 text-align: right;
 }
-.inputtext{
-text-align: center;
-}
 sup {
     vertical-align: super;
 }
 input {
-  font-family: monospace;
+  font-size: 1em;
+  text-align: center;
+  font-weight: bold;
 }
 label {
   display: block;
@@ -139,9 +138,9 @@ var lCas = function(){
 		}	
 	}
 	this.reorder = function (iFrom, iTo){
-		var tmp = this.liste;
-		var oFrom = tmp.splice(iFrom, 1);
-		tmp.splice(iTo, 0, oFrom[0]);
+		//var tmp = this.liste;
+		var oFrom = this.liste.splice(iFrom, 1);
+		this.liste.splice(iTo, 0, oFrom[0]);
 		this.iCas = iTo;
 	}
 	this.Cas = function(Ti, VA, t, a, N, VF){
@@ -209,7 +208,7 @@ var tbodyElem = document.createElement("tbody");
 tblElem.appendChild(theadElem);
 tblElem.appendChild(tbodyElem);
 var trElem = document.createElement("tr");
-trElem.innerHTML = '<th class="tblSelect">Titre</th><th class="tblSelect">VA</th><th class="tblSelect">t</th><th class="tblSelect">per</th><th class="tblSelect">Ans</th><th class="tblSelect">VF</th>';
+trElem.innerHTML = '<th class="tblSelect">Titre</th><th class="tblSelect">VA</th><th class="tblSelect">taux</th><th class="tblSelect">par</th><th class="tblSelect">Ans</th><th class="tblSelect">VF</th>';
 theadElem.appendChild(trElem);
 for (var i = 0; i < listCas.liste.length; i++) {
 	var trElem = document.createElement("tr");
@@ -317,17 +316,17 @@ var listCas = new lCas();
 		<tbody id="gameList">
 		<tr><th colspan=3><b>VA x ( 1 + t )<sup><sup>N/a</sup></sup> = VF</b></th></tr>
 		<tr><th></th><th>Titre</th>
-		<td><input id="valTitle" class="inputtext" type="text" maxlength="50" value="Titre" onchange="calculVA()" onfocus="this.select();"/></td></tr>
+		<td><input id="valTitle" type="text" size="11" maxlength="50" value="Titre" onchange="calculVA()" onfocus="this.select();"/></td></tr>
 		<tr><th>VA</th><th>Valeur&nbsp;actuelle</th>
-		<td><input id="valAct" class="inputtext input-numeral" type="text" maxlength="10" value="100" onchange="calculVA()" onfocus="this.select();"/></td></tr>
+		<td><input id="valAct" class="input-numeral" type="text" size="11" maxlength="10" value="100" onchange="calculVA()" onfocus="this.select();"/></td></tr>
 		<tr><th>t</th><th>Intérêt %</th>
-		<td><input id="valInt" class="inputtext" type="text" maxlength="10" value="10" onchange="calculVA()" onfocus="this.select();"/></td></tr>
+		<td><input id="valInt" class="" type="text" size="11" maxlength="10" value="10" onchange="calculVA()" onfocus="this.select();"/></td></tr>
 		<tr><th>a</th><th id="parAn">par année</th>
-		<td><input id="valAn"  class="inputtext" type="text" maxlength="10" value="1" onchange="calculVA()" onfocus="this.select();"/></td></tr>
+		<td><input id="valAn"  class="" type="text" size="11" maxlength="10" value="1" onchange="calculVA()" onfocus="this.select();"/></td></tr>
 		<tr><th>N</th><th>Nombre&nbsp;d'années</th>
-		<td><input id="valNan" class="inputtext" type="text" maxlength="10" value="1" onchange="calculVA()" onfocus="this.select();"/></td></tr>
+		<td><input id="valNan" class="" type="text" size="11" maxlength="10" value="1" onchange="calculVA()" onfocus="this.select();"/></td></tr>
 		<tr><th>VF</th><th>Valeur future</th>
-		<td><input id="valFut" class="inputtext input-fut" type="text" maxlength="10" value="110" onchange="calculVA(true)" onfocus="this.select();"/></td></tr>
+		<td><input id="valFut" class="input-fut" type="text" size="11" maxlength="10" value="110" onchange="calculVA(true)" onfocus="this.select();"/></td></tr>
 		</tbody>
 	</table>
 <!-- 	onblur="initPage(true)" //-->
