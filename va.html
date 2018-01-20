@@ -299,8 +299,8 @@ otest.value=ev.target.offsetTop;
 function moveTouch(event) {
     var touch = event.targetTouches[0];
     // Place element where the finger is
-    this.style.left = touch.pageX-this.parentElement.offsetLeft-offSetX + 'px';
-    this.style.top = touch.pageY-this.parentElement.offsetTop-offSetY + 'px';
+    this.style.left = touch.pageX-offSetX + 'px';
+    this.style.top = touch.pageY-offSetY + 'px';
     event.preventDefault();
 }
 
@@ -382,7 +382,7 @@ var otest = document.getElementById("otest");
 </div>
 <div id="copyright">
 <a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2017</a>
-<input id="otest" value="obj" />
+<input id="otest" value="obj2" />
 </div>
 
 </body>
