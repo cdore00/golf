@@ -14,6 +14,9 @@
 <script type="text/javascript" src="misc/cleave.js"></script>
 
 <style>
+tr{
+background-color: #ccc;
+}
 th{
 text-align: right;
 }
@@ -222,8 +225,8 @@ for (var i = 0; i < listCas.liste.length; i++) {
 	trElem.setAttribute('ondragover', 'allowDrop(event)');
 	trElem.setAttribute('draggable', 'true');
 	trElem.setAttribute('ondragstart', 'drag(event)');
-	
-	trElem.innerHTML = '<td class="tblSelect">' + listCas.liste[i].Ti + '</td><td class="tblSelect">' + listCas.liste[i].VA + '</td><td class="tblSelect">' + listCas.liste[i].t + '&nbsp;%</td><td class="tblSelect">' + listCas.lbla(eval(listCas.liste[i].a)) + '</td><td class="tblSelect">' + listCas.liste[i].N + '</td><td class="tblSelect">' + listCas.liste[i].VF + '</td>';
+	trElem.addEventListener('touchstart', startTouch, false);
+	trElem.innerHTML = '<td class="tblSelect">' + listCas.liste[i].Ti + '</td><td class="tblSelect">' + listCas.liste[i].VA + '</td><td class="tblSelect">' + listCas.liste[i].t + '&nbsp;%</td><td class="tblSelect">' + listCas.lbla(eval(listCas.liste[i].a)).replace("par","") + '</td><td class="tblSelect">' + listCas.liste[i].N + '</td><td class="tblSelect">' + listCas.liste[i].VF + '</td>';
 	tbodyElem.appendChild(trElem);
 }
 oListe.appendChild(tblElem);
@@ -274,6 +277,35 @@ function drop(ev) {
 	reorder(data.slice(3), oTar.id.slice(3));
 }
 
+// Drag & drop with touch event for mobil
+var offSetX = 0;
+var offSetY = 0;
+function startTouch(event) {
+	var touch = event.targetTouches[0];
+	offSetX = touch.pageX-this.parentElement.offsetLeft;
+	offSetY = touch.pageY-this.parentElement.offsetTop;
+	this.addEventListener('touchmove', moveTouch, false);
+	this.addEventListener('touchend', endTouch, false);
+	otest.value=this.offsetTop;
+}
+
+function endTouch(ev) {   //Drop DIV
+
+ev.target.style.top = "0px";
+ev.target.style.left = "0px";
+otest.value=ev.target.offsetTop;
+}
+
+function moveTouch(event) {
+    var touch = event.targetTouches[0];
+    // Place element where the finger is
+    this.style.left = touch.pageX-this.parentElement.offsetLeft-offSetX + 'px';
+    this.style.top = touch.pageY-this.parentElement.offsetTop-offSetY + 'px';
+    event.preventDefault();
+}
+
+// END  Functions for Drag and drop
+
 function reorder(iDrag, iTar){
 oListe = document.getElementById("tableListe");
 listCas.reorder(iDrag, iTar);
@@ -283,7 +315,7 @@ buildTable(oListe);
 
 // Objet liste globale des cas
 var listCas = new lCas();
-
+var otest = document.getElementById("otest");
 // -->
 </script>
 
@@ -350,6 +382,7 @@ var listCas = new lCas();
 </div>
 <div id="copyright">
 <a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2017</a>
+<input id="otest" value="obj" />
 </div>
 
 </body>
