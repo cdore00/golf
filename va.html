@@ -248,7 +248,6 @@ for (var i = 0; i < listCas.liste.length; i++) {
 	tbodyElem.appendChild(trElem);
 }
 oListe.appendChild(tblElem);
-otest.value="obj";
 }
 
 function deleteCas(){
@@ -288,21 +287,12 @@ function drag(ev) {
 }
 
 function drop(ev) {
-var mess="";
-var tbElm = document.getElementById("tbElm");
-for (var i = 0; i < tbElm.childNodes.length; i++) {
-	mess+= i + "-" + tbElm.childNodes[i].offsetTop + " ";
-	
-}
-
     ev.preventDefault();
     var data = ev.dataTransfer.getData("text");
 	oTar = ev.target;
 	if (oTar.tagName != "TR")
 		oTar = oTar.parentNode;
-var tbElm = document.getElementById(data);
-mess+= " O=" + tbElm.offsetTop + "x" + (tbElm.offsetTop+tbElm.offsetHeight);
-otest.value=mess;
+
 	reorder(data.slice(3), oTar.id.slice(3));
 }
 
@@ -330,29 +320,28 @@ var h = ev.target.offsetHeight;
 var t = ev.target.offsetTop, b = ev.target.offsetTop + h;
 var tbElm = document.getElementById("tbElm");
 for (var i = 0; i < tbElm.childNodes.length; i++) {
-	mess+= i + "-" + tbElm.childNodes[i].offsetTop + " ";
+	//mess+= i + "-" + tbElm.childNodes[i].offsetTop + " ";
 	if (t<=(tbElm.childNodes[i].offsetTop+h) && b>=(tbElm.childNodes[i].offsetTop+h))
 		sel = i;
 }
-mess+= " O=" + ev.target.offsetTop;
-//ev.target.style.top = "0px";
-//ev.target.style.left = "0px";
-otest.value= "f=" + ev.target.id.slice(3) + "s=" + sel + " & " + mess;
+//mess+= " O=" + ev.target.offsetTop;
+//otest.value= "f=" + ev.target.id.slice(3) + "s=" + sel + " & " + mess;
 if (sel != "")
 	reorder(ev.target.id.slice(3), sel);
 }
 
 function moveTouch(event) {
+    event.preventDefault();
     var touch = event.targetTouches[0];
     // Place element where the finger is
     this.style.left = touch.pageX-offSetX + 'px';
     this.style.top = touch.pageY-offSetY + 'px';
-    event.preventDefault();
 }
 
 // END  Functions for Drag and drop
 
 function reorder(iDrag, iTar){
+otest.value= "f=" + iDrag + " t=" + iTar;
 oListe = document.getElementById("tableListe");
 listCas.reorder(iDrag, iTar);
 buildTable(oListe);
@@ -441,7 +430,7 @@ var listCas = new lCas();
 </div>
 <div id="copyright">
 <a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2017</a>
-<input id="otest" value="obj 5" />
+<input id="otest" value="obj 7" />
 <input id="otestx" value="x" />
 </div>
 
