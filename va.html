@@ -103,6 +103,8 @@ theForm.valAct.focus();
 var cleaveNumeralVA = initCleave('.input-numeral');
 var cleaveNumeralVF = initCleave('.input-fut');
  
+ 
+		var otest = document.getElementById("otest");
 }
 
 function initCleave(className){
@@ -211,6 +213,7 @@ tblElem.setAttribute('id', 'tblList');
 tblElem.setAttribute('class', 'cartePts');
 var theadElem = document.createElement("thead");
 var tbodyElem = document.createElement("tbody");
+tbodyElem.setAttribute('id', 'tbElm');
 tblElem.appendChild(theadElem);
 tblElem.appendChild(tbodyElem);
 var trElem = document.createElement("tr");
@@ -283,11 +286,19 @@ function drag(ev) {
 }
 
 function drop(ev) {
+var mess="";
+var tbElm = document.getElementById("tbElm");
+for (var i = 0; i < tbElm.childNodes.length; i++) {
+	mess+= i + "-" + tbElm.childNodes[i].offsetTop + " ";
+}
+otest.value=mess;
+//55
     ev.preventDefault();
     var data = ev.dataTransfer.getData("text");
 	oTar = ev.target;
 	if (oTar.tagName != "TR")
 		oTar = oTar.parentNode;
+
 	reorder(data.slice(3), oTar.id.slice(3));
 }
 
@@ -330,7 +341,7 @@ buildTable(oListe);
 
 // Objet liste globale des cas
 var listCas = new lCas();
-var otest = document.getElementById("otest");
+
 // -->
 </script>
 
