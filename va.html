@@ -319,7 +319,7 @@ function startTouch(event) {
 	this.addEventListener('touchend', endTouch, false);
 	var p= posObj(this);
 	otest.value=this.offsetTop + " t=" + touch.pageY + " y=" + p.y;
-	otest.value=this.offsetLeft + " t=" + touch.pageX + " x=" + p.x;
+	otestx.value=this.offsetLeft + " t=" + touch.pageX + " x=" + p.x;
 }
 
 function endTouch(ev) {   //Drop DIV
@@ -428,7 +428,7 @@ var listCas = new lCas();
 </div>
 <div id="copyright">
 <a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2017</a>
-<input id="otest" value="obj8" />
+<input id="otest" value="obj9" />
 <input id="otestx" value="x" />
 </div>
 
