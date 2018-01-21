@@ -292,15 +292,17 @@ var mess="";
 var tbElm = document.getElementById("tbElm");
 for (var i = 0; i < tbElm.childNodes.length; i++) {
 	mess+= i + "-" + tbElm.childNodes[i].offsetTop + " ";
+	
 }
-otest.value=mess;
-//55
+
     ev.preventDefault();
     var data = ev.dataTransfer.getData("text");
 	oTar = ev.target;
 	if (oTar.tagName != "TR")
 		oTar = oTar.parentNode;
-
+var tbElm = document.getElementById("tbElm");
+mess+= " O=" + tbElm.offsetTop;
+otest.value=mess;
 	reorder(data.slice(3), oTar.id.slice(3));
 }
 
@@ -323,10 +325,16 @@ function startTouch(event) {
 }
 
 function endTouch(ev) {   //Drop DIV
-
+var mess="";
+var tbElm = document.getElementById("tbElm");
+for (var i = 0; i < tbElm.childNodes.length; i++) {
+	mess+= i + "-" + tbElm.childNodes[i].offsetTop + " ";
+	
+}
+mess+= " O=" + ev.target.offsetTop;
 //ev.target.style.top = "0px";
 //ev.target.style.left = "0px";
-otest.value=ev.target.offsetTop;
+otest.value=mess;
 }
 
 function moveTouch(event) {
@@ -428,7 +436,7 @@ var listCas = new lCas();
 </div>
 <div id="copyright">
 <a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2017</a>
-<input id="otest" value="obj9" />
+<input id="otest" value="obj 1" />
 <input id="otestx" value="x" />
 </div>
 
