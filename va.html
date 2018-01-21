@@ -105,7 +105,7 @@ var cleaveNumeralVF = initCleave('.input-fut');
  
  
 		var otest = document.getElementById("otest");
-		var otestx = document.getElementById("otestx");
+		//var otestx = document.getElementById("otestx");
 }
 
 function initCleave(className){
@@ -149,7 +149,10 @@ var lCas = function(){
 	this.reorder = function (iFrom, iTo){
 		//var tmp = this.liste;
 		var oFrom = this.liste.splice(iFrom, 1);
-		this.liste.splice(iTo, 0, oFrom[0]);
+		if (iTo == "0")
+			this.liste = oFrom.concat(this.liste);
+		else
+			this.liste.splice(iTo, 0, oFrom[0]);
 		this.iCas = iTo;
 	}
 	this.Cas = function(Ti, VA, t, a, N, VF){
@@ -290,8 +293,9 @@ function drop(ev) {
     ev.preventDefault();
     var data = ev.dataTransfer.getData("text");
 	oTar = ev.target;
-	if (oTar.tagName != "TR")
-		oTar = oTar.parentNode;
+	if (oTar.tagName != "DIV")
+		if (oTar.tagName != "TR")
+			oTar = oTar.parentNode;
 
 	reorder(data.slice(3), oTar.id.slice(3));
 }
@@ -311,7 +315,7 @@ function startTouch(event) {
 	this.addEventListener('touchend', endTouch, false);
 	var p= posObj(this);
 	otest.value=this.offsetTop + " t=" + touch.pageY + " y=" + p.y;
-	otestx.value=this.offsetLeft + " t=" + touch.pageX + " x=" + p.x;
+	//otestx.value=this.offsetLeft + " t=" + touch.pageX + " x=" + p.x;
 }
 
 function endTouch(ev) {   //Drop DIV
@@ -430,8 +434,8 @@ var listCas = new lCas();
 </div>
 <div id="copyright">
 <a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2017</a>
-<input id="otest" value="obj 7" />
-<input id="otestx" value="x" />
+<input id="otest" value="obj 1" />
+<!-- <input id="otestx" value="x" />//-->
 </div>
 
 </body>
