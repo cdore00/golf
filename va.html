@@ -235,7 +235,7 @@ for (var i = 0; i < listCas.liste.length; i++) {
 	tdElem.setAttribute('class', 'tblSelect');
 	var divElem = document.createElement("div");
 	divElem.setAttribute('id', 'div' + i);
-	divElem.setAttribute('class', 'ddiv');
+	//divElem.setAttribute('class', 'ddiv');
 	divElem.addEventListener('touchstart', startTouch, false);
 	divElem.innerHTML = listCas.liste[i].Ti;
 	tdElem.appendChild(divElem);
@@ -300,6 +300,7 @@ function startTouch(event) {
 	offSetY = touch.pageY-this.parentElement.offsetTop;
 	this.addEventListener('touchmove', moveTouch, false);
 	this.addEventListener('touchend', endTouch, false);
+	this.classList.add("ddiv");
 	otest.value=this.offsetTop;
 }
 
@@ -396,7 +397,7 @@ var otest = document.getElementById("otest");
 </div>
 <div id="copyright">
 <a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2017</a>
-<input id="otest" value="obj4" />
+<input id="otest" value="obj5" />
 </div>
 
 </body>
