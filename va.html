@@ -105,6 +105,7 @@ var cleaveNumeralVF = initCleave('.input-fut');
  
  
 		var otest = document.getElementById("otest");
+		var otestx = document.getElementById("otestx");
 }
 
 function initCleave(className){
@@ -312,11 +313,12 @@ function startTouch(event) {
 	//offSetX = touch.pageX-this.parentElement.offsetLeft;
 	//offSetY = touch.pageY-this.parentElement.offsetTop;
 	offSetX = touch.pageX-this.offsetLeft;
-	offSetY = touch.pageY-this.offsetTop-34;
+	offSetY = touch.pageY-this.offsetTop;
 	this.addEventListener('touchmove', moveTouch, false);
 	this.addEventListener('touchend', endTouch, false);
 	this.classList.add("ddiv");
-	otest.value=this.offsetTop + " y=" + p.y;
+	otest.value=this.offsetTop + " t=" + touch.pageY + " y=" + p.y;
+	otest.value=this.offsetLeft + " t=" + touch.pageX + " x=" + p.x;
 }
 
 function endTouch(ev) {   //Drop DIV
@@ -425,7 +427,8 @@ var listCas = new lCas();
 </div>
 <div id="copyright">
 <a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2017</a>
-<input id="otest" value="obj6" />
+<input id="otest" value="obj7" />
+<input id="otestx" value="x" />
 </div>
 
 </body>
