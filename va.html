@@ -247,6 +247,7 @@ for (var i = 0; i < listCas.liste.length; i++) {
 	tbodyElem.appendChild(trElem);
 }
 oListe.appendChild(tblElem);
+otest.value="obj";
 }
 
 function deleteCas(){
@@ -306,13 +307,16 @@ otest.value=mess;
 var offSetX = 0;
 var offSetY = 0;
 function startTouch(event) {
+	var p= posObj(this);
 	var touch = event.targetTouches[0];
-	offSetX = touch.pageX-this.parentElement.offsetLeft;
-	offSetY = touch.pageY-this.parentElement.offsetTop;
+	//offSetX = touch.pageX-this.parentElement.offsetLeft;
+	//offSetY = touch.pageY-this.parentElement.offsetTop;
+	offSetX = touch.pageX-this.offsetLeft;
+	offSetY = touch.pageY-this.offsetTop-34;
 	this.addEventListener('touchmove', moveTouch, false);
 	this.addEventListener('touchend', endTouch, false);
 	this.classList.add("ddiv");
-	otest.value=this.offsetTop;
+	otest.value=this.offsetTop + " y=" + p.y;
 }
 
 function endTouch(ev) {   //Drop DIV
@@ -338,6 +342,19 @@ listCas.reorder(iDrag, iTar);
 buildTable(oListe);
 //alert(iDrag + " to " + iTar);
 }
+
+function posObj(htmlelement){  // Return object position in screen
+var e = htmlelement; 
+var offset = {x:0,y:0}; 
+while (e) 
+{ 
+    offset.x += e.offsetLeft; 
+    offset.y += e.offsetTop; 
+    e = e.offsetParent; 
+} 
+return (offset);
+}
+
 
 // Objet liste globale des cas
 var listCas = new lCas();
@@ -408,7 +425,7 @@ var listCas = new lCas();
 </div>
 <div id="copyright">
 <a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2017</a>
-<input id="otest" value="obj5" />
+<input id="otest" value="obj6" />
 </div>
 
 </body>
