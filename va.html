@@ -300,8 +300,8 @@ for (var i = 0; i < tbElm.childNodes.length; i++) {
 	oTar = ev.target;
 	if (oTar.tagName != "TR")
 		oTar = oTar.parentNode;
-var tbElm = document.getElementById("tbElm");
-mess+= " O=" + tbElm.offsetTop;
+var tbElm = document.getElementById(data);
+mess+= " O=" + tbElm.offsetTop + "x" + (tbElm.offsetTop+tbElm.offsetHeight);
 otest.value=mess;
 	reorder(data.slice(3), oTar.id.slice(3));
 }
@@ -325,16 +325,19 @@ function startTouch(event) {
 }
 
 function endTouch(ev) {   //Drop DIV
-var mess="";
+var mess="", sel = "";
+var h = ev.target.offsetHeight;
+var t = ev.target.offsetTop, b = ev.target.offsetTop + h;
 var tbElm = document.getElementById("tbElm");
 for (var i = 0; i < tbElm.childNodes.length; i++) {
 	mess+= i + "-" + tbElm.childNodes[i].offsetTop + " ";
-	
+	if (t<=(tbElm.childNodes[i].offsetTop+h) && b>=(tbElm.childNodes[i].offsetTop+h))
+		sel = i;
 }
 mess+= " O=" + ev.target.offsetTop;
 //ev.target.style.top = "0px";
 //ev.target.style.left = "0px";
-otest.value=mess;
+otest.value= "s=" + sel + " & " + mess;
 }
 
 function moveTouch(event) {
@@ -436,7 +439,7 @@ var listCas = new lCas();
 </div>
 <div id="copyright">
 <a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2017</a>
-<input id="otest" value="obj 1" />
+<input id="otest" value="obj 2" />
 <input id="otestx" value="x" />
 </div>
 
