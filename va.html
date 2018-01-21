@@ -338,6 +338,8 @@ mess+= " O=" + ev.target.offsetTop;
 //ev.target.style.top = "0px";
 //ev.target.style.left = "0px";
 otest.value= "f=" + ev.target.id.slice(3) + "s=" + sel + " & " + mess;
+if (sel != "")
+	reorder(ev.target.id.slice(3), sel);
 }
 
 function moveTouch(event) {
@@ -439,7 +441,7 @@ var listCas = new lCas();
 </div>
 <div id="copyright">
 <a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2017</a>
-<input id="otest" value="obj 3" />
+<input id="otest" value="obj 4" />
 <input id="otestx" value="x" />
 </div>
 
