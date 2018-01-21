@@ -308,7 +308,8 @@ otest.value=mess;
 var offSetX = 0;
 var offSetY = 0;
 function startTouch(event) {
-	var p= posObj(this);
+	this.classList.add("ddiv");
+
 	var touch = event.targetTouches[0];
 	//offSetX = touch.pageX-this.parentElement.offsetLeft;
 	//offSetY = touch.pageY-this.parentElement.offsetTop;
@@ -316,7 +317,7 @@ function startTouch(event) {
 	offSetY = touch.pageY-this.offsetTop;
 	this.addEventListener('touchmove', moveTouch, false);
 	this.addEventListener('touchend', endTouch, false);
-	this.classList.add("ddiv");
+	var p= posObj(this);
 	otest.value=this.offsetTop + " t=" + touch.pageY + " y=" + p.y;
 	otest.value=this.offsetLeft + " t=" + touch.pageX + " x=" + p.x;
 }
@@ -427,7 +428,7 @@ var listCas = new lCas();
 </div>
 <div id="copyright">
 <a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2017</a>
-<input id="otest" value="obj7" />
+<input id="otest" value="obj8" />
 <input id="otestx" value="x" />
 </div>
 
