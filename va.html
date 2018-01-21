@@ -14,6 +14,9 @@
 <script type="text/javascript" src="misc/cleave.js"></script>
 
 <style>
+.ddiv{
+position: absolute;
+}
 tr{
 background-color: #ccc;
 }
@@ -233,6 +236,7 @@ for (var i = 0; i < listCas.liste.length; i++) {
 	tdElem.setAttribute('class', 'tblSelect');
 	var divElem = document.createElement("div");
 	divElem.setAttribute('id', 'div' + i);
+	divElem.setAttribute('class', 'ddiv');
 	divElem.addEventListener('touchstart', startTouch, false);
 	divElem.innerHTML = listCas.liste[i].Ti;
 	tdElem.appendChild(divElem);
@@ -393,7 +397,7 @@ var otest = document.getElementById("otest");
 </div>
 <div id="copyright">
 <a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2017</a>
-<input id="otest" value="obj2" />
+<input id="otest" value="obj3" />
 </div>
 
 </body>
