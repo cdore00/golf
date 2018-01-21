@@ -225,8 +225,19 @@ for (var i = 0; i < listCas.liste.length; i++) {
 	trElem.setAttribute('ondragover', 'allowDrop(event)');
 	trElem.setAttribute('draggable', 'true');
 	trElem.setAttribute('ondragstart', 'drag(event)');
-	trElem.addEventListener('touchstart', startTouch, false);
-	trElem.innerHTML = '<td class="tblSelect">' + listCas.liste[i].Ti + '</td><td class="tblSelect">' + listCas.liste[i].VA + '</td><td class="tblSelect">' + listCas.liste[i].t + '&nbsp;%</td><td class="tblSelect">' + listCas.lbla(eval(listCas.liste[i].a)).replace("par","") + '</td><td class="tblSelect">' + listCas.liste[i].N + '</td><td class="tblSelect">' + listCas.liste[i].VF + '</td>';
+	
+	//<td class="tblSelect">' + listCas.liste[i].Ti + '</td>
+	trElem.innerHTML = '<td class="tblSelect">' + listCas.liste[i].VA + '</td><td class="tblSelect">' + listCas.liste[i].t + '&nbsp;%</td><td class="tblSelect">' + listCas.lbla(eval(listCas.liste[i].a)).replace("par","") + '</td><td class="tblSelect">' + listCas.liste[i].N + '</td><td class="tblSelect">' + listCas.liste[i].VF + '</td>';
+	
+	var tdElem = document.createElement("td");
+	tdElem.setAttribute('class', 'tblSelect');
+	var divElem = document.createElement("div");
+	divElem.setAttribute('id', 'div' + i);
+	divElem.addEventListener('touchstart', startTouch, false);
+	divElem.innerHTML = listCas.liste[i].Ti;
+	tdElem.appendChild(divElem);
+	trElem.insertBefore(tdElem, trElem.firstChild);
+	
 	tbodyElem.appendChild(trElem);
 }
 oListe.appendChild(tblElem);
