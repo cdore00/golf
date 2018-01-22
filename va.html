@@ -346,7 +346,7 @@ function reorder(iDrag, iTar){
 otestx.value = "f=" + iDrag + " t=" + iTar;
 var oListe = document.getElementById("tableListe");
 if (iTar === "")
-	alert(iTar);
+	iTar = iDrag;
 listCas.reorder(iDrag, iTar);
 buildTable(oListe);
 //alert(iDrag + " to " + iTar);
@@ -434,7 +434,7 @@ var listCas = new lCas();
 </div>
 <div id="copyright">
 <a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2017</a>
-<input id="otest" value="obj 666" />
+<input id="otest" value="obj 6" />
 <input id="otestx" value="x" />
 </div>
 
