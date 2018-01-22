@@ -329,9 +329,11 @@ for (var i = 0; i < tbElm.childNodes.length; i++) {
 		sel = i;
 }
 //mess+= " O=" + ev.target.offsetTop;
-otest.value= "f=" + ev.target.id.slice(3) + "s=" + sel + " & " + mess;
+var f = ev.target.id.slice(3);
+otest.value= "f=" + f + "s=" + sel;   // + " & " + mess;
+otestx.value="";
 if (sel != "")
-	reorder(ev.target.id.slice(3), sel);
+	reorder(f, sel);
 }
 
 function moveTouch(event) {
@@ -434,7 +436,7 @@ var listCas = new lCas();
 </div>
 <div id="copyright">
 <a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2017</a>
-<input id="otest" value="obj 2" />
+<input id="otest" value="obj 3" />
 <input id="otestx" value="x" />
 </div>
 
