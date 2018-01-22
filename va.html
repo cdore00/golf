@@ -149,9 +149,6 @@ var lCas = function(){
 	this.reorder = function (iFrom, iTo){
 		//var tmp = this.liste;
 		var oFrom = this.liste.splice(iFrom, 1);
-		if (iTo == "0")
-			this.liste = oFrom.concat(this.liste);
-		else
 			this.liste.splice(iTo, 0, oFrom[0]);
 		this.iCas = iTo;
 	}
@@ -324,16 +321,15 @@ var h = ev.target.offsetHeight;
 var t = ev.target.offsetTop, b = ev.target.offsetTop + h;
 var tbElm = document.getElementById("tbElm");
 for (var i = 0; i < tbElm.childNodes.length; i++) {
-	//mess+= i + "-" + tbElm.childNodes[i].offsetTop + " ";
 	if (t<=(tbElm.childNodes[i].offsetTop+h) && b>=(tbElm.childNodes[i].offsetTop+h))
 		sel = i;
 }
-//mess+= " O=" + ev.target.offsetTop;
+
 var f = ev.target.id.slice(3);
-otest.value= "f=" + f + "s=" + sel;   // + " & " + mess;
+otest.value= "f=" + f + "s=" + sel; 
 otestx.value="";
 //if (sel != "")
-	reorder(f, sel);
+	reorder(ev.target.id.slice(3), sel);
 }
 
 function moveTouch(event) {
@@ -437,7 +433,7 @@ var listCas = new lCas();
 </div>
 <div id="copyright">
 <a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2017</a>
-<input id="otest" value="obj 4" />
+<input id="otest" value="obj 5" />
 <input id="otestx" value="x" />
 </div>
 
