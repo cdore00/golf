@@ -224,7 +224,8 @@ for (var i = 0; i < listCas.liste.length; i++) {
 		trElem.setAttribute('class', 'rowOver');
 		rowSel = trElem;
 		}
-	trElem.setAttribute('onclick', 'selRow(this)');
+	trElem.setAttribute('onclick', 'selRow(this)'); 
+	trElem.setAttribute('ondblclick', 'listeSimul()');
 	trElem.setAttribute('ondrop', 'drop(event)');
 	trElem.setAttribute('ondragover', 'allowDrop(event)');
 	trElem.setAttribute('draggable', 'true');
@@ -420,7 +421,7 @@ var listCas = new lCas();
 </div>
 </div>
 <div id="copyright">
-<a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2017</a>
+Copyright &copy; 2018
 </div>
 
 </body>
