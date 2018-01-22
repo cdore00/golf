@@ -345,7 +345,7 @@ function moveTouch(event) {
 function reorder(iDrag, iTar){
 otestx.value = "f=" + iDrag + " t=" + iTar;
 var oListe = document.getElementById("tableListe");
-if (iTar == "")
+if (iTar === "")
 	alert(iTar);
 listCas.reorder(iDrag, iTar);
 buildTable(oListe);
@@ -434,7 +434,7 @@ var listCas = new lCas();
 </div>
 <div id="copyright">
 <a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2017</a>
-<input id="otest" value="obj 66" />
+<input id="otest" value="obj 666" />
 <input id="otestx" value="x" />
 </div>
 
