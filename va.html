@@ -105,7 +105,7 @@ var cleaveNumeralVF = initCleave('.input-fut');
  
  
 		var otest = document.getElementById("otest");
-		//var otestx = document.getElementById("otestx");
+		var otestx = document.getElementById("otestx");
 }
 
 function initCleave(className){
@@ -329,7 +329,7 @@ for (var i = 0; i < tbElm.childNodes.length; i++) {
 		sel = i;
 }
 //mess+= " O=" + ev.target.offsetTop;
-//otest.value= "f=" + ev.target.id.slice(3) + "s=" + sel + " & " + mess;
+otest.value= "f=" + ev.target.id.slice(3) + "s=" + sel + " & " + mess;
 if (sel != "")
 	reorder(ev.target.id.slice(3), sel);
 }
@@ -345,7 +345,7 @@ function moveTouch(event) {
 // END  Functions for Drag and drop
 
 function reorder(iDrag, iTar){
-otest.value= "f=" + iDrag + " t=" + iTar;
+otestx.value= "f=" + iDrag + " t=" + iTar;
 oListe = document.getElementById("tableListe");
 listCas.reorder(iDrag, iTar);
 buildTable(oListe);
@@ -434,8 +434,8 @@ var listCas = new lCas();
 </div>
 <div id="copyright">
 <a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2017</a>
-<input id="otest" value="obj 1" />
-<!-- <input id="otestx" value="x" />//-->
+<input id="otest" value="obj 2" />
+<input id="otestx" value="x" />
 </div>
 
 </body>
