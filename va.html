@@ -103,9 +103,6 @@ theForm.valAct.focus();
 var cleaveNumeralVA = initCleave('.input-numeral');
 var cleaveNumeralVF = initCleave('.input-fut');
  
- 
-		var otest = document.getElementById("otest");
-		var otestx = document.getElementById("otestx");
 }
 
 function initCleave(className){
@@ -302,19 +299,15 @@ var offSetX = 0;
 var offSetY = 0;
 function startTouch(event) {
 	this.classList.add("ddiv");
-
 	var touch = event.targetTouches[0];
 	offSetX = touch.pageX-this.offsetLeft;
 	offSetY = touch.pageY-this.offsetTop;
 	this.addEventListener('touchmove', moveTouch, false);
 	this.addEventListener('touchend', endTouch, false);
-	var p= posObj(this);
-	//otest.value=this.offsetTop + " t=" + touch.pageY + " y=" + p.y;
-	//otestx.value=this.offsetLeft + " t=" + touch.pageX + " x=" + p.x;
 }
 
 function endTouch(ev) {   //Drop DIV
-var mess="", sel = "";
+var sel = "";
 var h = ev.target.offsetHeight;
 var t = ev.target.offsetTop, b = ev.target.offsetTop + h;
 var tbElm = document.getElementById("tbElm");
@@ -339,7 +332,6 @@ function moveTouch(event) {
 // END  Functions for Drag and drop
 
 function reorder(iDrag, iTar){
-//otestx.value = "f=" + iDrag + " t=" + iTar;
 var oListe = document.getElementById("tableListe");
 if (iTar === "")
 	iTar = iDrag;
@@ -429,8 +421,6 @@ var listCas = new lCas();
 </div>
 <div id="copyright">
 <a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2017</a>
-<input id="otest" value="obj 7" />
-<input id="otestx" value="x" />
 </div>
 
 </body>
