@@ -91,14 +91,15 @@ listCas.upd(new listCas.Cas(theForm.valTitle.value, theForm.valAct.value, theFor
 
 function initPage(cInt){
 theForm = document.getElementById("critere");
-ajouterCas();
+
 document.body.style.fontSize = localStorage.getItem('fontSize');
 //alert("Ok");
 if (document.body.style.fontSize == "")
 	document.body.style.fontSize = "1em";
-if (cInt)
-	calculVA(cInt);
-	
+//if (cInt)
+//	calculVA(cInt);
+
+listCas.loadStorage();
 theForm.valAct.focus();
 var cleaveNumeralVA = initCleave('.input-numeral');
 var cleaveNumeralVF = initCleave('.input-fut');
@@ -116,6 +117,7 @@ function initCleave(className){
 var lCas = function(){
 	this.liste = [];
 	this.iCas = 0;  // Selected index
+	this.storageName = "VAstorage";
 	this.upd = function (oC, add){
 		var i = this.iCas;
 		if (add)
@@ -124,6 +126,7 @@ var lCas = function(){
 			i = this.iCas;
 		this.liste[i] = oC;
 		this.iCas = i;
+		this.saveStorage();
 		return i;
 	}
 	this.del = function(){
@@ -146,7 +149,7 @@ var lCas = function(){
 	this.reorder = function (iFrom, iTo){
 		//var tmp = this.liste;
 		var oFrom = this.liste.splice(iFrom, 1);
-			this.liste.splice(iTo, 0, oFrom[0]);
+		this.liste.splice(iTo, 0, oFrom[0]);
 		this.iCas = iTo;
 	}
 	this.Cas = function(Ti, VA, t, a, N, VF){
@@ -157,6 +160,20 @@ var lCas = function(){
 		this.N = N;
 		this.VF = VF;
 		return this;
+	}
+	this.saveStorage = function (){
+		var data = [ this.iCas, this.liste ];
+		localStorage.setItem(this.storageName, JSON.stringify(data) );
+	}
+	this.loadStorage = function (){
+		var data = localStorage.getItem(this.storageName);
+		if (data){
+			data = JSON.parse(data);
+			this.iCas = data[0];
+			this.liste = data[1];
+			initSimul(true);
+		}else
+			ajouterCas();
 	}
 }
 
