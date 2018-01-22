@@ -253,6 +253,7 @@ if (listCas.liste.length > 1){
 	var oTB = rowSel.parentNode;
 	rowSel.parentNode.removeChild(rowSel);
 	oTB.childNodes[0].className = 'rowOver';
+	rowSel = oTB.childNodes[0];
 	listCas.del();
 }else
 	alert("Il doit rester un cas au minimum");
