@@ -132,6 +132,7 @@ var lCas = function(){
 	this.del = function(){
 		this.liste.splice(this.iCas, 1);
 		this.iCas = 0;
+		this.saveStorage();
 	}
 	this.lbla = function(Van){
 		if (Van == 1){
@@ -151,6 +152,7 @@ var lCas = function(){
 		var oFrom = this.liste.splice(iFrom, 1);
 		this.liste.splice(iTo, 0, oFrom[0]);
 		this.iCas = iTo;
+		this.saveStorage();
 	}
 	this.Cas = function(Ti, VA, t, a, N, VF){
 		this.Ti = Ti;
@@ -171,9 +173,9 @@ var lCas = function(){
 			data = JSON.parse(data);
 			this.iCas = data[0];
 			this.liste = data[1];
-			initSimul(true);
+			initSimul(true);  // External function
 		}else
-			ajouterCas();
+			ajouterCas();  // External function
 	}
 }
 
@@ -287,6 +289,7 @@ if (rowSel)
 oRow.className='rowOver';
 rowSel = oRow;
 listCas.iCas = rowSel.rowIndex - 1;
+listCas.saveStorage();
 }
 
 function chFontSize(varSize, oTool){
