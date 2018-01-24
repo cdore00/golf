@@ -49,12 +49,22 @@ table.cartePts {
     margin-left: auto;
     margin-right: auto;
 }
+#butMenu{
+position: absolute;
+visibility: inherit;
+left: 0px;
+top: 5px;
+}
+#txtJSON, #txtHTML{
+display: none;
+}
 </style>
 <script type="text/javascript" language="Javascript">
 <!-- 
 var theForm = null;
 var oSimul;
 var rowSel;
+var iHist = null;
 
 function calculVA(cInt){
 var Vact, Vint, Van, nbrAn, Vfut;
@@ -116,10 +126,12 @@ function initCleave(className){
 // Case list object constructor
 var lCas = function(){
 	this.liste = [];
+	this.hist = [];
 	this.iCas = 0;  // Selected index
 	this.storageName = "VAstorage";
 	this.upd = function (oC, add){
 		var i = this.iCas;
+		this.hist[this.hist.length] = [ this.iCas, this.liste.slice(0) ];
 		if (add)
 			i = this.liste.length;
 		else
@@ -171,25 +183,34 @@ var lCas = function(){
 		var data = localStorage.getItem(this.storageName);
 		if (data){
 			data = JSON.parse(data);
-			this.iCas = data[0];
-			this.liste = data[1];
-			initSimul(true);  // External function
+			this.loadData(data);
 		}else
 			ajouterCas();  // External function
+	}
+	this.loadData = function (data){
+		
+		this.iCas = data[0];
+		this.liste = data[1];
+		this.hist[this.hist.length] = [ data[0], data[1] ];
+		initSimul(true);  // External function
 	}
 }
 
 function listeSimul(){
-oSimul = document.getElementById("tableSimul");
-oListe = document.getElementById("tableListe");
-bgSimul= document.getElementById("bgSimul");
-bgListe= document.getElementById("bgListe");
+var oSimul = document.getElementById("tableSimul");
+var oListe = document.getElementById("tableListe");
+var bgSimul = document.getElementById("bgSimul");
+var bgListe = document.getElementById("bgListe");
+var rHTML = document.getElementById("rHTML");
+var rJSON = document.getElementById("rJSON");
 
 if (oSimul.style.display=="" || oSimul.style.display=="block"){
 	var h = oSimul.offsetHeight;
 	oSimul.style.display="none";
 	bgSimul.style.display="none";
 	bgListe.style.display="inherit";
+	rHTML.style.display="inherit";
+	rJSON.style.display="inherit";
 	buildTable(oListe);
 	oListe.style.display="block";
 	oListe.style.minHeight = (h-8) + 'px';
@@ -199,6 +220,8 @@ if (oSimul.style.display=="" || oSimul.style.display=="block"){
 	initSimul();
 	bgSimul.style.display="inherit";
 	bgListe.style.display="none";
+	rHTML.style.display="none";
+	rJSON.style.display="none";
 }
 }
 
@@ -373,6 +396,52 @@ while (e)
 return (offset);
 }
 
+function showMenu(toClose){
+var menuList = document.getElementById("menuList");
+
+if (menuList.style.height != "0px"){
+	menuList.style.height = "0px";
+	var txtJSON = document.getElementById("txtJSON");
+	var txtHTML = document.getElementById("txtHTML");
+	txtJSON.style.display = "none";
+	txtHTML.style.display = "none";
+}else if(!toClose){
+	var adj = menuList.childNodes[1].offsetHeight;
+	menuList.style.height = (adj * .75) + "pt";
+	}
+menuOn = true;
+}
+
+function copierListe(typ){
+	if (typ =="HTML"){
+		var txtHTML = document.getElementById("txtHTML");
+		txtHTML.style.display = "inherit";
+		var tblList = document.getElementById("tblList");
+		txtHTML.value = tblList.outerHTML;
+		txtHTML.select();
+	}
+	if (typ =="JSON"){
+		var txtJSON = document.getElementById("txtJSON");
+		txtJSON.style.display = "inherit";
+		txtJSON.value = JSON.stringify(listCas.liste);
+		txtJSON.select();
+	}
+document.execCommand('copy');
+}
+
+function showHist(pm){
+
+if (iHist == null){
+	iHist = listCas.hist.length - 1;
+}
+iHist = iHist + pm;
+if (iHist >= 0 && iHist <= listCas.hist.length - 1){
+	listCas.loadData(listCas.hist[iHist]);
+	
+}
+
+//alert(pm);
+}
 
 // Objet liste globale des cas
 var listCas = new lCas();
@@ -391,6 +460,7 @@ var listCas = new lCas();
 </script>
 
 <div id="topbar" class="vert">
+<a href="#" id="butMenu" title="Menu" onmouseover="showMenu()" onclick="showMenu()"><img id="logomenu" alt="Menu" src="images/menu.png" width="64" height="32"></a>
 
 <div id="titre"><text id="title">Valeur actualis&eacute;e</text></div>
 <div id="fontAdjust">
@@ -399,12 +469,22 @@ var listCas = new lCas();
 </div>
 </div>
 
-<div id="content">
+<div id="menuList">
+<table><tbody>
+<tr><td onclick="showHist(-1);" title="Annuler la dernière modification">&nbsp;&nbsp;&nbsp;&nbsp;Annuler</td></tr>
+<tr><td onclick="showHist(1);" title="Rétablir la dernière modification">&nbsp;&nbsp;&nbsp;&nbsp;Rétablir</td></tr>
+<tr id="rHTML"><td onclick="copierListe('HTML');" title="Copier la liste en HTML">&nbsp;&nbsp;&nbsp;&nbsp;Copier HTML<input id="txtHTML" type="text" onfocus="this.select();"/></td></tr>
+<tr id="rJSON"><td onclick="copierListe('JSON');" title="Copier la liste en JSON">&nbsp;&nbsp;&nbsp;&nbsp;Copier JSON<input id="txtJSON" type="text" onfocus="this.select();"/></td></tr>
+</tbody></table>
+</div>
+
+
+<div id="content" onmouseover="showMenu(true)">
 <ul id="pageZone" class="pageitem" style="visibility: visible;">
 <li class="listitem">
 
 	<form id="critere" action="javascript:void(0);">
-	<div id="tableSimul" class="formrow1">
+	<div id="tableSimul" class="formrow1" onmouseover="showMenu(true)">
 	<table class="cartePts">
 		<tbody id="gameList">
 		<tr><th colspan=3><b>VA x ( 1 + t )<sup><sup>N/a</sup></sup> = VF</b></th></tr>
@@ -424,7 +504,7 @@ var listCas = new lCas();
 	</table>
 <!-- 	onblur="initPage(true)" //-->
 	</div>
-	<div id="tableListe" class="formrow1">
+	<div id="tableListe" class="formrow1" onmouseover="showMenu(true)">
 	
 	</div>
 	</form>	
