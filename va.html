@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
+
+<title>Valeur actualis&eacute;e</title>
+<meta content="Valeur pr&eacute;sente, Calcul de la valeur pr&eacute;sente, Valeur actualisée" name="keywords" />
+<meta content="Calcul de la valeur pr&eacute;sente." name="description" />
+<link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
+
+<script type="text/javascript" src="misc/util.js"></script> 
+<script type="text/javascript" src="misc/cleave.js"></script>
+
+<style>
+.ddiv{
+position: absolute;
+}
+tr{
+background-color: #ccc;
+}
+th{
+text-align: right;
+}
+sup {
+    vertical-align: super;
+}
+input {
+  font-size: 1em;
+  text-align: center;
+  font-weight: bold;
+}
+label {
+  display: block;
+}
+#bottombar {
+    text-align: center;
+}
+.formrow1 {
+    min-height: inherit;
+	text-align: center;
+}
+#bgListe{
+display: none;
+}
+table.cartePts {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+#butMenu{
+position: absolute;
+visibility: inherit;
+left: 0px;
+top: 5px;
+}
+#txtJSON, #txtHTML{
+display: none;
+}
+</style>
+<script type="text/javascript" language="Javascript">
+<!-- 
+var theForm = null;
+var oSimul;
+var rowSel;
+var iHist = null;
+
+function calculVA(cInt){
+var Vact, Vint, Van, nbrAn, Vfut;
+var lblAn = document.getElementById("parAn");
+var fut = document.getElementById("valFut");
+if (!cInt)
+	var oFoc = document.activeElement;
+
+Vact = theForm.valAct.value;
+Vact = Vact.replace(/,/g , "");
+Vint = theForm.valInt.value;
+Vint = Vint / 100;
+Van = eval(theForm.valAn.value);
+nbrAn = eval(theForm.valNan.value);
+Vfut = theForm.valFut.value;
+Vfut = Vfut.replace(/,/g , "");
+lblAn.innerHTML = listCas.lbla(Van);
+if (cInt){
+	var Vint = Vfut / Vact;
+	Vint = Math.pow( Vint , ( 1 / nbrAn * Van ) );
+	Vint = Math.round((Vint - 1) * 10000);
+	theForm.valInt.value = Vint / 100;
+	if (oFoc)
+		oFoc.focus();
+}else{
+	var VF = Vact * Math.pow( (1+Vint) ,(nbrAn/Van));
+	VF = Math.round(VF * 100) / 100;
+	theForm.valFut.value = VF;
+	var cleaveNumeralVF = initCleave('.input-fut');
+	oFoc.focus();
+}
+listCas.upd(new listCas.Cas(theForm.valTitle.value, theForm.valAct.value, theForm.valInt.value, theForm.valAn.value, theForm.valNan.value, theForm.valFut.value));
+}
+
+function initPage(cInt){
+theForm = document.getElementById("critere");
+
+document.body.style.fontSize = localStorage.getItem('fontSize');
+//alert("Ok");
+if (document.body.style.fontSize == "")
+	document.body.style.fontSize = "1em";
+//if (cInt)
+//	calculVA(cInt);
+
+listCas.loadStorage();
+theForm.valAct.focus();
+var cleaveNumeralVA = initCleave('.input-numeral');
+var cleaveNumeralVF = initCleave('.input-fut');
+ 
+}
+
+function initCleave(className){
+	return new Cleave(className, {
+		numeral: true,
+		numeralThousandsGroupStyle: 'thousand'
+	});
+}
+
+// Case list object constructor
+var lCas = function(){
+	this.liste = [];
+	this.hist = [];
+	this.iCas = 0;  // Selected index
+	this.storageName = "VAstorage";
+	this.upd = function (oC, add){
+		var i = this.iCas;
+		this.hist[this.hist.length] = [ this.iCas, this.liste.slice(0) ];
+		if (add)
+			i = this.liste.length;
+		else
+			i = this.iCas;
+		this.liste[i] = oC;
+		this.iCas = i;
+		this.saveStorage();
+		return i;
+	}
+	this.del = function(){
+		this.liste.splice(this.iCas, 1);
+		this.iCas = 0;
+		this.saveStorage();
+	}
+	this.lbla = function(Van){
+		if (Van == 1){
+			return "par&nbsp;an";
+		}else{
+			if (Van < 1){
+				var nMois = Van / ( 1 / 12);
+				nMois = Math.round(nMois * 1000);
+				return "par&nbsp;" + (nMois / 1000) + "&nbsp;mois";
+			}else{
+				return "par&nbsp;" + Van + "&nbsp;ans";
+			}
+		}	
+	}
+	this.reorder = function (iFrom, iTo){
+		//var tmp = this.liste;
+		var oFrom = this.liste.splice(iFrom, 1);
+		this.liste.splice(iTo, 0, oFrom[0]);
+		this.iCas = iTo;
+		this.saveStorage();
+	}
+	this.Cas = function(Ti, VA, t, a, N, VF){
+		this.Ti = Ti;
+		this.VA = VA;
+		this.t = t;
+		this.a = a;
+		this.N = N;
+		this.VF = VF;
+		return this;
+	}
+	this.saveStorage = function (){
+		var data = [ this.iCas, this.liste ];
+		localStorage.setItem(this.storageName, JSON.stringify(data) );
+	}
+	this.loadStorage = function (){
+		var data = localStorage.getItem(this.storageName);
+		if (data){
+			data = JSON.parse(data);
+			this.loadData(data);
+		}else
+			ajouterCas();  // External function
+	}
+	this.loadData = function (data){
+		
+		this.iCas = data[0];
+		this.liste = data[1];
+		this.hist[this.hist.length] = [ data[0], data[1] ];
+		initSimul(true);  // External function
+	}
+}
+
+function listeSimul(){
+var oSimul = document.getElementById("tableSimul");
+var oListe = document.getElementById("tableListe");
+var bgSimul = document.getElementById("bgSimul");
+var bgListe = document.getElementById("bgListe");
+var rHTML = document.getElementById("rHTML");
+var rJSON = document.getElementById("rJSON");
+
+if (oSimul.style.display=="" || oSimul.style.display=="block"){
+	var h = oSimul.offsetHeight;
+	oSimul.style.display="none";
+	bgSimul.style.display="none";
+	bgListe.style.display="inherit";
+	rHTML.style.display="inherit";
+	rJSON.style.display="inherit";
+	buildTable(oListe);
+	oListe.style.display="block";
+	oListe.style.minHeight = (h-8) + 'px';
+}else{
+	oSimul.style.display="block";
+	oListe.style.display="none";
+	initSimul();
+	bgSimul.style.display="inherit";
+	bgListe.style.display="none";
+	rHTML.style.display="none";
+	rJSON.style.display="none";
+}
+}
+
+function initSimul(isNew){
+var lblAn = document.getElementById("parAn");
+var rIndex = listCas.iCas;
+
+theForm.valTitle.value = listCas.liste[rIndex].Ti;
+if (isNew){
+	theForm.valAct.value = listCas.liste[rIndex].VA;
+	theForm.valFut.value = listCas.liste[rIndex].VF;
+}else{
+	theForm.valAct.value = rowSel.childNodes[1].innerText;
+	theForm.valFut.value = rowSel.childNodes[5].innerText;
+}
+theForm.valInt.value = listCas.liste[rIndex].t;
+var Van = listCas.liste[rIndex].a;
+theForm.valAn.value  = Van;
+theForm.valNan.value = listCas.liste[rIndex].N;
+lblAn.innerHTML = listCas.lbla(eval(Van));
+}
+
+function buildTable(oListe){
+var tblList = document.getElementById("tblList");
+if (tblList)
+	tblList.parentNode.removeChild(tblList);
+var tblElem = document.createElement("table");
+tblElem.setAttribute('id', 'tblList');
+tblElem.setAttribute('class', 'cartePts');
+var theadElem = document.createElement("thead");
+var tbodyElem = document.createElement("tbody");
+tbodyElem.setAttribute('id', 'tbElm');
+tblElem.appendChild(theadElem);
+tblElem.appendChild(tbodyElem);
+var trElem = document.createElement("tr");
+trElem.innerHTML = '<th class="tblSelect">Titre</th><th class="tblSelect">VA</th><th class="tblSelect">taux</th><th class="tblSelect">par</th><th class="tblSelect">Ans</th><th class="tblSelect">VF</th>';
+theadElem.appendChild(trElem);
+for (var i = 0; i < listCas.liste.length; i++) {
+	var trElem = document.createElement("tr");
+	trElem.setAttribute('id', 'row' + i);
+	if (listCas.iCas == i){
+		trElem.setAttribute('class', 'rowOver');
+		rowSel = trElem;
+		}
+	trElem.setAttribute('onclick', 'selRow(this)'); 
+	trElem.setAttribute('ondblclick', 'listeSimul()');
+	trElem.setAttribute('ondrop', 'drop(event)');
+	trElem.setAttribute('ondragover', 'allowDrop(event)');
+	trElem.setAttribute('draggable', 'true');
+	trElem.setAttribute('ondragstart', 'drag(event)');
+	//<td class="tblSelect">' + listCas.liste[i].Ti + '</td>
+	trElem.innerHTML = '<td class="tblSelect">' + listCas.liste[i].VA + '</td><td class="tblSelect">' + listCas.liste[i].t + '&nbsp;%</td><td class="tblSelect">' + listCas.lbla(eval(listCas.liste[i].a)).replace("par","") + '</td><td class="tblSelect">' + listCas.liste[i].N + '</td><td class="tblSelect">' + listCas.liste[i].VF + '</td>';
+
+	var tdElem = document.createElement("td");
+	tdElem.setAttribute('class', 'tblSelect');
+	var divElem = document.createElement("div");
+	divElem.setAttribute('id', 'div' + i);
+	//divElem.setAttribute('class', 'ddiv');
+	divElem.addEventListener('touchstart', startTouch, false);
+	divElem.innerHTML = listCas.liste[i].Ti;
+	tdElem.appendChild(divElem);
+	trElem.insertBefore(tdElem, trElem.firstChild);
+	
+	tbodyElem.appendChild(trElem);
+}
+oListe.appendChild(tblElem);
+}
+
+function deleteCas(){
+if (listCas.liste.length > 1){
+	var oTB = rowSel.parentNode;
+	rowSel.parentNode.removeChild(rowSel);
+	oTB.childNodes[0].className = 'rowOver';
+	rowSel = oTB.childNodes[0];
+	listCas.del();
+}else
+	alert("Il doit rester un cas au minimum");
+}
+
+function ajouterCas(){
+listCas.upd(new listCas.Cas("Titre", 100, 10, 1, 1, 110), true);
+initSimul(true);
+}
+
+function selRow(oRow){
+if (rowSel)
+	rowSel.className = 'rowNorm';
+oRow.className='rowOver';
+rowSel = oRow;
+listCas.iCas = rowSel.rowIndex - 1;
+listCas.saveStorage();
+}
+
+function chFontSize(varSize, oTool){
+setFontSize(varSize, oTool);
+localStorage.setItem('fontSize', document.body.style.fontSize);
+}
+
+function allowDrop(ev) {
+    ev.preventDefault();
+}
+
+function drag(ev) {
+    ev.dataTransfer.setData("text", ev.target.id);
+}
+
+function drop(ev) {
+    ev.preventDefault();
+    var data = ev.dataTransfer.getData("text");
+	oTar = ev.target;
+	if (oTar.tagName != "DIV")
+		if (oTar.tagName != "TR")
+			oTar = oTar.parentNode;
+
+	reorder(data.slice(3), oTar.id.slice(3));
+}
+
+// Drag & drop with touch event for mobil
+var offSetX = 0;
+var offSetY = 0;
+function startTouch(event) {
+	this.classList.add("ddiv");
+	var touch = event.targetTouches[0];
+	offSetX = touch.pageX-this.offsetLeft;
+	offSetY = touch.pageY-this.offsetTop;
+	this.addEventListener('touchmove', moveTouch, false);
+	this.addEventListener('touchend', endTouch, false);
+}
+
+function endTouch(ev) {   //Drop DIV
+var sel = "";
+var h = ev.target.offsetHeight;
+var t = ev.target.offsetTop, b = ev.target.offsetTop + h;
+var tbElm = document.getElementById("tbElm");
+for (var i = 0; i < tbElm.childNodes.length; i++) {
+	if (t<=(tbElm.childNodes[i].offsetTop+h) && b>=(tbElm.childNodes[i].offsetTop+h))
+		sel = i;
+}
+
+var f = ev.target.id.slice(3);
+//otest.value= "f=" + f + "s=" + sel; 
+//otestx.value="";
+reorder(ev.target.id.slice(3), sel);
+}
+
+function moveTouch(event) {
+    var touch = event.targetTouches[0];
+    this.style.left = touch.pageX-offSetX + 'px';
+    this.style.top = touch.pageY-offSetY + 'px';
+	event.preventDefault();
+}
+
+// END  Functions for Drag and drop
+
+function reorder(iDrag, iTar){
+var oListe = document.getElementById("tableListe");
+if (iTar === "")
+	iTar = iDrag;
+listCas.reorder(iDrag, iTar);
+buildTable(oListe);
+}
+
+function posObj(htmlelement){  // Return object position in screen
+var e = htmlelement; 
+var offset = {x:0,y:0}; 
+while (e) 
+{ 
+    offset.x += e.offsetLeft; 
+    offset.y += e.offsetTop; 
+    e = e.offsetParent; 
+} 
+return (offset);
+}
+
+function showMenu(toClose){
+var menuList = document.getElementById("menuList");
+
+if (menuList.style.height != "0px"){
+	menuList.style.height = "0px";
+	var txtJSON = document.getElementById("txtJSON");
+	var txtHTML = document.getElementById("txtHTML");
+	txtJSON.style.display = "none";
+	txtHTML.style.display = "none";
+}else if(!toClose){
+	var adj = menuList.childNodes[1].offsetHeight;
+	menuList.style.height = (adj * .75) + "pt";
+	}
+menuOn = true;
+}
+
+function copierListe(typ){
+	if (typ =="HTML"){
+		var txtHTML = document.getElementById("txtHTML");
+		txtHTML.style.display = "inherit";
+		var tblList = document.getElementById("tblList");
+		txtHTML.value = tblList.outerHTML;
+		txtHTML.select();
+	}
+	if (typ =="JSON"){
+		var txtJSON = document.getElementById("txtJSON");
+		txtJSON.style.display = "inherit";
+		txtJSON.value = JSON.stringify(listCas.liste);
+		txtJSON.select();
+	}
+document.execCommand('copy');
+}
+
+function showHist(pm){
+
+if (iHist == null){
+	iHist = listCas.hist.length - 1;
+}
+iHist = iHist + pm;
+if (iHist >= 0 && iHist <= listCas.hist.length - 1){
+	listCas.loadData(listCas.hist[iHist]);
+	
+}
+
+//alert(pm);
+}
+
+// Objet liste globale des cas
+var listCas = new lCas();
+
+// -->
+</script>
+
+
+</head>
+
+<body onload="initPage()">
+
+<script type="text/javascript" language="Javascript">
+<!--
+// -->
+</script>
+
+<div id="topbar" class="vert">
+<a href="#" id="butMenu" title="Menu" onmouseover="showMenu()" onclick="showMenu()"><img id="logomenu" alt="Menu" src="images/menu.png" width="64" height="32"></a>
+
+<div id="titre"><text id="title">Valeur actualis&eacute;e</text></div>
+<div id="fontAdjust">
+<div class="divFont" onclick="chFontSize(0.2, this)"><div class="divFontSize">A</div><div class="fontLogo">&#8593;</div></div>
+<div class="divFont" onclick="chFontSize(-0.2, this)"><div class="divFontSize fontSmall">A</div><div class="fontLogo">&#8595;</div></div>
+</div>
+</div>
+
+<div id="menuList">
+<table><tbody>
+<tr><td onclick="showHist(-1);" title="Annuler la dernière modification">&nbsp;&nbsp;&nbsp;&nbsp;Annuler</td></tr>
+<tr><td onclick="showHist(1);" title="Rétablir la dernière modification">&nbsp;&nbsp;&nbsp;&nbsp;Rétablir</td></tr>
+<tr id="rHTML"><td onclick="copierListe('HTML');" title="Copier la liste en HTML">&nbsp;&nbsp;&nbsp;&nbsp;Copier HTML<input id="txtHTML" type="text" onfocus="this.select();"/></td></tr>
+<tr id="rJSON"><td onclick="copierListe('JSON');" title="Copier la liste en JSON">&nbsp;&nbsp;&nbsp;&nbsp;Copier JSON<input id="txtJSON" type="text" onfocus="this.select();"/></td></tr>
+</tbody></table>
+</div>
+
+
+<div id="content" onmouseover="showMenu(true)">
+<ul id="pageZone" class="pageitem" style="visibility: visible;">
+<li class="listitem">
+
+	<form id="critere" action="javascript:void(0);">
+	<div id="tableSimul" class="formrow1" onmouseover="showMenu(true)">
+	<table class="cartePts">
+		<tbody id="gameList">
+		<tr><th colspan=3><b>VA x ( 1 + t )<sup><sup>N/a</sup></sup> = VF</b></th></tr>
+		<tr><th></th><th>Titre</th>
+		<td><input id="valTitle" type="text" size="11" maxlength="50" value="Titre" onchange="calculVA()" onfocus="this.select();"/></td></tr>
+		<tr><th>VA</th><th>Valeur&nbsp;actuelle</th>
+		<td><input id="valAct" class="input-numeral" type="text" size="11" maxlength="10" value="100" onchange="calculVA()" onfocus="this.select();"/></td></tr>
+		<tr><th>t</th><th>Intérêt %</th>
+		<td><input id="valInt" class="" type="text" size="11" maxlength="10" value="10" onchange="calculVA()" onfocus="this.select();"/></td></tr>
+		<tr><th>a</th><th id="parAn">par année</th>
+		<td><input id="valAn"  class="" type="text" size="11" maxlength="10" value="1" onchange="calculVA()" onfocus="this.select();"/></td></tr>
+		<tr><th>N</th><th>Nombre&nbsp;d'années</th>
+		<td><input id="valNan" class="" type="text" size="11" maxlength="10" value="1" onchange="calculVA()" onfocus="this.select();"/></td></tr>
+		<tr><th>VF</th><th>Valeur future</th>
+		<td><input id="valFut" class="input-fut" type="text" size="11" maxlength="10" value="110" onchange="calculVA(true)" onfocus="this.select();"/></td></tr>
+		</tbody>
+	</table>
+<!-- 	onblur="initPage(true)" //-->
+	</div>
+	<div id="tableListe" class="formrow1" onmouseover="showMenu(true)">
+	
+	</div>
+	</form>	
+</li>
+</ul>
+
+</div>
+
+<div id="bottombar" class="vert">
+<div id="bgSimul">
+<button class="bouton" onclick="ajouterCas()">Ajouter</button><button class="bouton" onclick="listeSimul()">Lister</button>
+</div>
+<div id="bgListe">
+<button class="bouton" onclick="deleteCas()">Supprimer</button><button class="bouton" onclick="listeSimul()">Modifier</button>
+</div>
+</div>
+<div id="copyright">
+Copyright &copy; 2018
+</div>
+
+</body>
+</html>
