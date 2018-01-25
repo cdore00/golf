@@ -23,13 +23,34 @@ background-color: #ccc;
 th{
 text-align: right;
 }
-sup {
+#menuList td{
+padding: 0px !important;
+padding-left: 0px !important;
+display: flex;
+}
+sup{
     vertical-align: super;
 }
-input {
+input{
   font-size: 1em;
   text-align: center;
   font-weight: bold;
+}
+input:disabled {
+    color: #bbb;
+	background: #eee !important ;
+}
+.inputButton{
+border: 0px;
+width: 100%;
+height: 100%;
+background-color: transparent;
+text-align: left;
+padding: 5px;
+}
+.inputButton:hover{
+background: #999 ;
+cursor: pointer;
 }
 label {
   display: block;
@@ -101,19 +122,31 @@ listCas.upd(new listCas.Cas(theForm.valTitle.value, theForm.valAct.value, theFor
 
 function initPage(cInt){
 theForm = document.getElementById("critere");
+displayCopy("none", "none");
 
 document.body.style.fontSize = localStorage.getItem('fontSize');
-//alert("Ok");
+
 if (document.body.style.fontSize == "")
 	document.body.style.fontSize = "1em";
-//if (cInt)
-//	calculVA(cInt);
 
 listCas.loadStorage();
 theForm.valAct.focus();
 var cleaveNumeralVA = initCleave('.input-numeral');
 var cleaveNumeralVF = initCleave('.input-fut');
  
+}
+
+function displayCopy(dOpt, dTxt){
+	var rHTML = document.getElementById("rHTML");
+	var rJSON = document.getElementById("rJSON");
+	var txtHTML = document.getElementById("txtHTML");
+	var txtJSON = document.getElementById("txtJSON");
+	txtHTML.style.display = dTxt;
+	txtJSON.style.display = dTxt;
+	if (dOpt){
+	rHTML.style.display = dOpt;
+	rJSON.style.display = dOpt;
+	}
 }
 
 function initCleave(className){
@@ -131,13 +164,13 @@ var lCas = function(){
 	this.storageName = "VAstorage";
 	this.upd = function (oC, add){
 		var i = this.iCas;
-		this.hist[this.hist.length] = [ this.iCas, this.liste.slice(0) ];
 		if (add)
 			i = this.liste.length;
 		else
 			i = this.iCas;
 		this.liste[i] = oC;
 		this.iCas = i;
+		this.addToHist();
 		this.saveStorage();
 		return i;
 	}
@@ -187,12 +220,18 @@ var lCas = function(){
 		}else
 			ajouterCas();  // External function
 	}
-	this.loadData = function (data){
-		
+	this.loadData = function (data, fromHisto){
 		this.iCas = data[0];
 		this.liste = data[1];
-		this.hist[this.hist.length] = [ data[0], data[1] ];
+		if (!fromHisto)
+			this.addToHist();
 		initSimul(true);  // External function
+	}
+	this.addToHist = function (){
+		this.hist[this.hist.length] = [ this.iCas, this.liste.slice(0) ];
+		if (iHist != null)
+			this.hist.splice(iHist+1, this.hist.length);
+		iHist = null;
 	}
 }
 
@@ -401,15 +440,12 @@ var menuList = document.getElementById("menuList");
 
 if (menuList.style.height != "0px"){
 	menuList.style.height = "0px";
-	var txtJSON = document.getElementById("txtJSON");
-	var txtHTML = document.getElementById("txtHTML");
-	txtJSON.style.display = "none";
-	txtHTML.style.display = "none";
+
+		displayCopy(false, "none");
 }else if(!toClose){
 	var adj = menuList.childNodes[1].offsetHeight;
 	menuList.style.height = (adj * .75) + "pt";
 	}
-menuOn = true;
 }
 
 function copierListe(typ){
@@ -430,16 +466,26 @@ document.execCommand('copy');
 }
 
 function showHist(pm){
+var histAnn = document.getElementById("histAnn");
+var histRet = document.getElementById("histRet");
+histAnn.disabled = false;
+histRet.disabled = false;
 
 if (iHist == null){
 	iHist = listCas.hist.length - 1;
 }
 iHist = iHist + pm;
 if (iHist >= 0 && iHist <= listCas.hist.length - 1){
-	listCas.loadData(listCas.hist[iHist]);
-	
+	listCas.loadData(listCas.hist[iHist], true);
 }
-
+if (iHist < 0){
+	iHist = 0;
+	histAnn.disabled = true;
+}
+if (iHist == listCas.hist.length){
+	iHist = listCas.hist.length - 1;
+	histRet.disabled = true;
+}
 //alert(pm);
 }
 
@@ -471,10 +517,10 @@ var listCas = new lCas();
 
 <div id="menuList">
 <table><tbody>
-<tr><td onclick="showHist(-1);" title="Annuler la dernière modification">&nbsp;&nbsp;&nbsp;&nbsp;Annuler</td></tr>
-<tr><td onclick="showHist(1);" title="Rétablir la dernière modification">&nbsp;&nbsp;&nbsp;&nbsp;Rétablir</td></tr>
-<tr id="rHTML"><td onclick="copierListe('HTML');" title="Copier la liste en HTML">&nbsp;&nbsp;&nbsp;&nbsp;Copier HTML<input id="txtHTML" type="text" onfocus="this.select();"/></td></tr>
-<tr id="rJSON"><td onclick="copierListe('JSON');" title="Copier la liste en JSON">&nbsp;&nbsp;&nbsp;&nbsp;Copier JSON<input id="txtJSON" type="text" onfocus="this.select();"/></td></tr>
+<tr><td><input id="histAnn" class="inputButton" type="button" onclick="showHist(-1);" value="&nbsp;&nbsp;&nbsp;&nbsp;Annuler" title="Annuler la dernière modification"/></td></tr>
+<tr><td><input id="histRet" class="inputButton" type="button" onclick="showHist(1);" value="&nbsp;&nbsp;&nbsp;&nbsp;Rétablir" title="Rétablir la dernière modification"/></td></tr>
+<tr id="rHTML"><td><input class="inputButton" type="button" onclick="copierListe('HTML');" value="&nbsp;&nbsp;&nbsp;&nbsp;Copier HTML" title="Copier la liste en HTML"/><input id="txtHTML" type="text"/></td></tr>
+<tr id="rJSON"><td><input class="inputButton" type="button" onclick="copierListe('JSON');" value="&nbsp;&nbsp;&nbsp;&nbsp;Copier JSON" title="Copier la liste en JSON"/><input id="txtJSON" type="text"/></td></tr>
 </tbody></table>
 </div>
 
