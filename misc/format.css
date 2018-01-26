@@ -94,8 +94,8 @@ progress::-webkit-progress-value { background: #00A4AC; }
 progress::-webkit-progress-bar { background: #fff; }  
 
 /* vert gazon; 3A9D23*/
-#topbar{height:34px; text-align:center;}
-#bottombar{display:block;height: auto; min-height:32px}
+#topbar{min-height:34px; text-align:center;}
+#bottombar{display:block;height: auto; min-height:34px}
 #topbar.vert{background-color:#3A9D23;filter:progid:DXImageTransform.Microsoft.gradient(startcolorstr='#3A9D23',endcolorstr='#3A9D23')}
 #bottombar.vert{background-color:#00bb00;filter:progid:DXImageTransform.Microsoft.gradient(startcolorstr='#00bb00',endcolorstr='#00bb00')}
 
