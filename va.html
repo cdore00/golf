@@ -129,11 +129,12 @@ document.body.style.fontSize = localStorage.getItem('fontSize');
 if (document.body.style.fontSize == "")
 	document.body.style.fontSize = "1em";
 
-listCas.loadStorage();
+if (!listCas.loadStorage())
+	ajouterCas(); 
+initSimul(true); 
 theForm.valAct.focus();
 var cleaveNumeralVA = initCleave('.input-numeral');
 var cleaveNumeralVF = initCleave('.input-fut');
- 
 }
 
 function displayCopy(dOpt, dTxt){
@@ -160,7 +161,7 @@ function initCleave(className){
 var lCas = function(){
 	this.liste = [];
 	this.hist = [];
-	this.iCas = 0;  // Selected index
+	this.iCas = 0;  // Selected list item index
 	this.storageName = "VAstorage";
 	this.upd = function (oC, add){
 		var i = this.iCas;
@@ -214,15 +215,15 @@ var lCas = function(){
 		if (data){
 			data = JSON.parse(data);
 			this.loadData(data);
+			return true;
 		}else
-			ajouterCas();  // External function
+			return false;
 	}
 	this.loadData = function (data, fromHisto){
 		this.iCas = data[0];
 		this.liste = data[1];
 		if (!fromHisto)
 			this.addToHist();
-		initSimul(true);  // External function
 	}
 	this.addToHist = function (){
 		if (iHist != null)
@@ -308,7 +309,6 @@ for (var i = 0; i < listCas.liste.length; i++) {
 	trElem.setAttribute('ondragover', 'allowDrop(event)');
 	trElem.setAttribute('draggable', 'true');
 	trElem.setAttribute('ondragstart', 'drag(event)');
-	//<td class="tblSelect">' + listCas.liste[i].Ti + '</td>
 	trElem.innerHTML = '<td class="tblSelect">' + listCas.liste[i].VA + '</td><td class="tblSelect">' + listCas.liste[i].t + '&nbsp;%</td><td class="tblSelect">' + listCas.lbla(eval(listCas.liste[i].a)).replace("par","") + '</td><td class="tblSelect">' + listCas.liste[i].N + '</td><td class="tblSelect">' + listCas.liste[i].VF + '</td>';
 
 	var tdElem = document.createElement("td");
@@ -420,25 +420,12 @@ listCas.reorder(iDrag, iTar);
 buildTable(oListe);
 }
 
-function posObj(htmlelement){  // Return object position in screen
-var e = htmlelement; 
-var offset = {x:0,y:0}; 
-while (e) 
-{ 
-    offset.x += e.offsetLeft; 
-    offset.y += e.offsetTop; 
-    e = e.offsetParent; 
-} 
-return (offset);
-}
-
 function showMenu(toClose){
 var menuList = document.getElementById("menuList");
 
 if (menuList.style.height != "0px"){
 	menuList.style.height = "0px";
-
-		displayCopy(false, "none");
+	displayCopy(false, "none");
 }else if(!toClose){
 	var adj = menuList.childNodes[1].offsetHeight;
 	menuList.style.height = (adj * .75) + "pt";
@@ -474,6 +461,8 @@ if (iHist == null){
 iHist = iHist + pm;
 if (iHist >= 0 && iHist <= listCas.hist.length - 1){
 	listCas.loadData(JSON.parse(JSON.stringify(listCas.hist[iHist])), true);
+	initSimul(true);  // External function
+	buildTable(document.getElementById("tableListe"));
 }
 if (iHist < 0){
 	iHist = 0;
