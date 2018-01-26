@@ -166,8 +166,6 @@ var lCas = function(){
 		var i = this.iCas;
 		if (add)
 			i = this.liste.length;
-		else
-			i = this.iCas;
 		this.liste[i] = oC;
 		this.iCas = i;
 		this.addToHist();
@@ -193,7 +191,6 @@ var lCas = function(){
 		}	
 	}
 	this.reorder = function (iFrom, iTo){
-		//var tmp = this.liste;
 		var oFrom = this.liste.splice(iFrom, 1);
 		this.liste.splice(iTo, 0, oFrom[0]);
 		this.iCas = iTo;
@@ -228,9 +225,9 @@ var lCas = function(){
 		initSimul(true);  // External function
 	}
 	this.addToHist = function (){
-		this.hist[this.hist.length] = [ this.iCas, this.liste.slice(0) ];
 		if (iHist != null)
-			this.hist.splice(iHist+1, this.hist.length);
+			this.hist.splice(iHist+1, this.hist.length-iHist-1);
+		this.hist[this.hist.length] = [ this.iCas, this.liste.slice(0) ];
 		iHist = null;
 	}
 }
@@ -476,7 +473,7 @@ if (iHist == null){
 }
 iHist = iHist + pm;
 if (iHist >= 0 && iHist <= listCas.hist.length - 1){
-	listCas.loadData(listCas.hist[iHist], true);
+	listCas.loadData(JSON.parse(JSON.stringify(listCas.hist[iHist])), true);
 }
 if (iHist < 0){
 	iHist = 0;
