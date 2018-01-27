@@ -155,7 +155,7 @@ position: absolute;
 background: #eee;
 overflow: hidden;
 height: 0px;
-transition: height 0.4s ease-in-out;
+transition: width 0.4s, height 0.4s, transform 2s, ease-in-out;
 z-index: 1000;
 }
 
@@ -354,6 +354,41 @@ box-shadow: 1px 1px 1px #ccccdd, 2px 2px 2px #aaaaaa inset;
 
 .itinDetail{visibility:hidden;}
 
+/* Class tooltip to show input message */
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 7em;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 130%;
+    opacity: 1;
+}
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #999 transparent transparent transparent;
+}
+.hideTooltip{
+    opacity: 0;
+    transition: opacity 3s;
+}
+
+
+/* ID tooltip for text location */
  #tooltip {
    position:absolute;
    visibility:hidden;

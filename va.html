@@ -34,6 +34,8 @@ display: flex;
 #butMenu{
 position: relative !important;
 display: flex;
+visibility: inherit;
+top: 5px;
 }
 sup{
     vertical-align: super;
@@ -76,12 +78,8 @@ table.cartePts {
     margin-left: auto;
     margin-right: auto;
 }
-#butMenu{
-position: absolute;
-visibility: inherit;
-left: 0px;
-top: 5px;
-}
+
+
 
 </style>
 <script type="text/javascript" language="Javascript">
@@ -436,7 +434,10 @@ if (menuList.style.height != "0px"){
 	}
 }
 
-function copierListe(typ){
+function copierListe(typ, tooltyp){
+var myTooltip = document.getElementById(tooltyp);
+var myTooltipText = document.getElementById(tooltyp + "Text");
+myTooltip.className = "tooltip";
 	if (typ =="HTML"){
 		var txtHTML = document.getElementById("txtHTML");
 		txtHTML.style.display = "inherit";
@@ -451,6 +452,10 @@ function copierListe(typ){
 		txtJSON.select();
 	}
 document.execCommand('copy');
+myTooltip.style.visibility = "visible";
+myTooltipText.style.visibility = "visible";
+myTooltip.classList.add("hideTooltip");
+myTooltipText.classList.add("hideTooltip");
 }
 
 function showHist(pm){
@@ -510,8 +515,8 @@ var listCas = new lCas();
 <table><tbody>
 <tr><td><input id="histAnn" class="inputButton" type="button" onclick="showHist(-1);" value="&nbsp;&nbsp;&nbsp;&nbsp;Annuler" title="Annuler la dernière modification"/></td></tr>
 <tr><td><input id="histRet" class="inputButton" type="button" onclick="showHist(1);" value="&nbsp;&nbsp;&nbsp;&nbsp;Rétablir" title="Rétablir la dernière modification"/></td></tr>
-<tr id="rHTML"><td><input class="inputButton" type="button" onclick="copierListe('HTML');" value="&nbsp;&nbsp;&nbsp;&nbsp;Copier HTML" title="Copier la liste en HTML"/><input id="txtHTML" type="text"/></td></tr>
-<tr id="rJSON"><td><input class="inputButton" type="button" onclick="copierListe('JSON');" value="&nbsp;&nbsp;&nbsp;&nbsp;Copier JSON" title="Copier la liste en JSON"/><input id="txtJSON" type="text"/></td></tr>
+<tr id="rHTML"><td><input class="inputButton" type="button" onclick="copierListe('HTML', 'myTooltip1');" value="&nbsp;&nbsp;&nbsp;&nbsp;Copier HTML" title="Copier la liste en HTML"/><div class="tooltip" id="myTooltip1"><span class="tooltiptext" id="myTooltip1Text">Copié au presse-papier</span></div><input id="txtHTML" type="text"></input></td></tr>
+<tr id="rJSON"><td><input class="inputButton" type="button" onclick="copierListe('JSON', 'myTooltip2');" value="&nbsp;&nbsp;&nbsp;&nbsp;Copier JSON" title="Copier la liste en JSON"/><div class="tooltip" id="myTooltip2"><span class="tooltiptext" id="myTooltip2Text">Copié au presse-papier</span></div><input id="txtJSON" type="text"/></td></tr>
 </tbody></table>
 </div>
 
