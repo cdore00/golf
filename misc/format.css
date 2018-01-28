@@ -360,7 +360,7 @@ box-shadow: 1px 1px 1px #ccccdd, 2px 2px 2px #aaaaaa inset;
     display: inline-block;
 }
 .tooltip .tooltiptext {
-    visibility: hidden;
+   /* visibility: hidden;*/
     width: 7em;
     background-color: #555;
     color: #fff;
@@ -378,7 +378,7 @@ box-shadow: 1px 1px 1px #ccccdd, 2px 2px 2px #aaaaaa inset;
     top: 100%;
     left: 50%;
     margin-left: -5px;
-    border-width: 5px;
+    border-width: 10px;
     border-style: solid;
     border-color: #999 transparent transparent transparent;
 }

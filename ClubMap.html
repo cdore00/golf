@@ -107,14 +107,15 @@ closeMenu();
 function setFlagCoord(butObj){
 var flagLatLng = holeMarker.getPosition();
 var divCoor = document.getElementById("divCoor");
+var tipCoorTxt = document.getElementById("divCoorTxt");
 
-divCoor.innerHTML = "&nbsp;<b>Lat.: </b>" + flagLatLng.lat() + "&nbsp;</br>&nbsp;<b>Long.: </b>" + flagLatLng.lng();
+document.getElementById("divCoorTxt").innerHTML = "&nbsp;<b>Lat.: </b>" + flagLatLng.lat() + "&nbsp;</br>&nbsp;<b>Lng.: </b>" + flagLatLng.lng();
 divCoor.style.visibility = 'visible';
 if (isMapped){
 	var data = courseID + "$" + trou + "$" + flagLatLng.lat() + "$" + flagLatLng.lng() + "$0$0";
 	trouCoord[trou - 1] = new google.maps.LatLng(flagLatLng.lat(), flagLatLng.lng());
 	getInfo("setGolfGPS?data=" + data);
-	butObj.disabled = true;
+	//butObj.disabled = true;
 }else{
 	var data = courseID + "$" + trou + "$" + flagLatLng.lat() + "$" + flagLatLng.lng() + "$" + nbrTrous + "$" + clubID;
 	getInfo("setGolfGPS?data=" + data, initPage);
@@ -126,7 +127,7 @@ fadeOut("divCoor",100);
 
 function trouSuivant(p_m){
 var butObj = document.getElementById("setFlag");
-butObj.disabled = false;
+//butObj.disabled = false;
 
 trou = trou + p_m;
 if (trou > nbrTrous)
@@ -237,14 +238,29 @@ cursor: pointer;
 
 #map_canvas{width:100%; height:100%;}
 
-#divCoor{
-position: absolute;
-top: 35px;
-left: 50%;
-background:white;
+.tipCoor2{
 visibility:hidden;
-border: buttonhighlight 4px inset;
-border-radius: 10px;
+}
+.tipCoor .tipCoorTxt{
+	position: absolute;
+	top: 50px;
+	left: 41%;
+	background:white;
+	/*visibility:hidden;*/
+	padding: 5px;
+	background-color: #eee;
+	border-radius: 6px;
+}
+
+.tipCoor .tipCoorTxt::after {
+    content: "";
+    position: absolute;
+    top: -0.8em;
+    left: 5em;
+    margin-left: -5px;
+    border-width: 10px;
+    border-style: solid;
+    border-color: transparent transparent #fff transparent;
 }
 
 </style>
@@ -286,7 +302,7 @@ border-radius: 10px;
 <!--<button id="setFlag2" class="boutonZoom" title="Soumettre" onclick="setFlagCoord(this); return false;">Ok</button>// -->
 </div>
 
-<div id="divCoor"></div>
+<div id="divCoor" class="tipCoor"><span id="divCoorTxt" class="tipCoorTxt">test coordonnées</span></div>
 
 
   </body> 
