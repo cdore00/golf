@@ -93,7 +93,7 @@ return false;
 this.zoomRestart = function (lat1, lat2, lng1, lng2) {
 	var dist, dimMeter;
 	clearTimeout(this.timeOutPos);
-	this.objCercle.setRadius(0);
+	//this.objCercle.setRadius(0);
 	
 	dist = Math.sqrt( Math.pow(lat1 - lat2 ,2) + Math.pow(lng1 - lng2 ,2) );
 	dimMeter = Math.ceil((dist/0.0144)*1000);
@@ -233,7 +233,7 @@ winOpen=oInfo[4];
 function incrementer(rayon){
 	
 	if(rayon > myC.dimZero){
-		myC.objCercle.setRadius(rayon);
+		//myC.objCercle.setRadius(rayon);
 		rayon=rayon-myC.ajout;
 		myC.timeOutPos = setTimeout('incrementer(' + rayon + ')',myC.delai);
 	}else{
