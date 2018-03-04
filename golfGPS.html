@@ -281,6 +281,7 @@ var chxPiquetDist = document.getElementById('chxPiqDist');
 	piquetDist.style.left = bPiq.offsetLeft + "px";
 	piquetDist.style.visibility="visible";
 	clicListener = google.maps.event.addListener(map, 'click', addLatLng);
+	chxPiqDist(piquetDist);
   }
 }
 function addLatLng(event) {
