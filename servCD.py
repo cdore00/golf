@@ -1,15 +1,17 @@
 #!/usr/bin/env python
 #C:\Users\cdore\AppData\Local\Programs\Python\Python36-32
 
-import pdb
+#import pdb
 #; pdb.set_trace()
 import sys, os, io, time, re, csv, urllib.parse, urllib.request
+#, http.cookies
 import smtplib
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from cgi import parse_header, parse_multipart
 from socket import gethostname, gethostbyname 
 from urllib.parse import urlparse, parse_qs
+from http.cookies import SimpleCookie
 from sys import argv
 from datetime import datetime
 from email.mime.multipart import MIMEMultipart
@@ -18,6 +20,8 @@ MAIL_USER = 'charles.dore@nexio.com'
 
 #import requests as req
 #from io import BytesIO
+
+cookie = SimpleCookie()
 
 def millis():
    """ returns the elapsed milliseconds (1970/1/1) since now """
@@ -89,7 +93,7 @@ class golfHTTPServer(BaseHTTPRequestHandler):
 			self.send_header('Content-type','text/html')
 			self.send_header('Access-Control-Allow-Origin', '*')
 			#  Set cookie
-			#self.send_header('Set-Cookie','superBig=zag;max-age=31536000')
+			self.send_header('Set-Cookie','superBig=zag;max-age=31536000')
 			self.end_headers()
 			# Write content as utf-8 data
 			self.wfile.write(bytes(mess, "utf8"))
@@ -115,7 +119,10 @@ class golfHTTPServer(BaseHTTPRequestHandler):
 		content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
 		post_data = self.rfile.read(content_length) # <--- Gets the data itself
 
-
+		cook =  self.headers["Cookie"]
+		print('Cookies2= ' + str(cook))
+		#pdb.set_trace()
+		
 		# Send message back to client
 		query_components = parse_qs(urlparse(self.path).query)
 		if not query_components:
@@ -139,7 +146,7 @@ def case_Func(fName, param, self):
 	elif fName == "confInsc":
 		return(confInsc(param))
 	elif fName == "identUser":
-		return(authUser(param))
+		return(authUser(param, self))
 	elif fName == "getPass":
 		return(getPass(param))
 	elif fName == "saveUser":
@@ -172,7 +179,7 @@ def case_Func(fName, param, self):
 	elif fName == "getGameTab":
 		return(getGameTab(param))
 	elif fName == "endDelGame":
-		return(endDelGame(param))
+		return(endDelGame(param, self))
 	elif fName == "updateGame":
 		return(updateGame(param))
 	elif fName == "getGolfGPS":
@@ -200,7 +207,7 @@ def ose(self):
 	log_Info('oseFunct')
 
 	return(logPass)
-	
+
 def getID(strID):
 	if len(strID) < 5:
 		return int(strID)
@@ -211,6 +218,22 @@ def cursorTOdict(doc):
 	strCur = dumps(doc)
 	jsonCur = loads(strCur)
 	return dict(jsonCur[0])
+	
+def checkSession(self):
+	""" Session ID check for user"""
+	strCook =  self.headers["Cookie"]
+	if strCook and 'sessID' in strCook and 'userID' in strCook:
+		cookie.load(strCook)
+		sID = cookie['sessID'].value
+		uID = getID(cookie['userID'].value)
+		coll = data.users
+		doc = coll.find({"_id": uID, "sessID": sID}, ["_id"])
+		if doc.count() > 0:
+			return True
+		else:
+			return False
+	else:
+		return False
 
 def addUserIdent(param):
 	""" To add new user account """
@@ -271,7 +294,6 @@ def confInsc(param):
 	
 def getPass(param):
 	""" Recover password by email """
-	#pdb.set_trace()
 	if param:
 		if param.get("data"):
 			email = param["data"][0]
@@ -286,16 +308,32 @@ def getPass(param):
 	else:
 		return dumps({'resp': {"result": 0} })	# No param
 	
-def authUser(param):
+def authUser(param, self):
 	""" To Authenticate & return user info to modify """
-	#pdb.set_trace()
+	def writeCook(mess, sessID):
+		self.send_response(200)
+		self.send_header('Content-type','text/html')
+		self.send_header('Access-Control-Allow-Origin', '*')
+		#  Set cookie
+		cookInfo = 'sessID=' + sessID + ';max-age=31536000'
+		self.send_header('Set-Cookie', cookInfo)
+		self.end_headers()
+		# Write content as utf-8 data
+		self.wfile.write(bytes(mess, "utf8"))
+		return	
+	
 	if param:
 		if param.get("user"):
 			user = param["user"][0]
 			
 			coll = data.users
 			doc = coll.find({"courriel": user, "actif": True}, ["_id","Nom", "courriel", "motpass", "niveau"])
-			#pdb.set_trace()
+			
+			def setSessID(mess):
+				sessID = str(ObjectId())
+				res = coll.update({"courriel": user}, { "$set": {"sessID": sessID}})
+				writeCook(mess, sessID)
+				
 			if doc.count() == 0:
 				return dumps({'resp': {"result": 0} })	# Authenticate fail
 			else:
@@ -307,7 +345,8 @@ def authUser(param):
 					del dic['motpass']
 					docs = {"resp": {"result":True, "user": dic} }
 					res = dumps(docs)	# Authenticated
-					return res
+					setSessID(res)
+					return False
 				else:
 					return dumps({'resp': {"result": 0} })	# Authenticate fail
 			else:
@@ -514,7 +553,7 @@ def getClubParcTrous(param):
 
 			coll = data.club
 			doc = coll.find({"_id": clubID }, ["_id","nom", "courses", "latitude", "longitude"])
-			#pdb.set_trace()
+
 			if doc.count() > 0:
 				coll = data.golfGPS
 				docs = coll.find({"Parcours_id": courseID }).sort("trou")
@@ -546,7 +585,6 @@ def setGolfGPS(param):
 				docr = coll.update({ 'Parcours_id': courseId, 'trou': trou }, { '$set': {'Parcours_id': courseId, 'trou': trou, 'latitude': lat, 'longitude': lng } },  upsert=True )
 				return dumps(docr)
 			else:
-				#pdb.set_trace()
 				for i in range(toInit):
 					holeNo = i + 1
 					#print(holeNo)
@@ -603,7 +641,7 @@ def getGameList(param, self):
 			coll = data.score
 			
 			def addCur(doc):
-				#pdb.set_trace()
+				
 				for x in doc:
 					if intTele != 2:  # If Not JSON then convert millisecond to date and ObjectId
 						ts = x['score_date'] / 1000
@@ -650,7 +688,7 @@ def getGameList(param, self):
 def getGameTab(param):
 	if param:
 		if param.get("data"):
-			#pdb.set_trace()
+			
 			gID = getID(param["data"][0])
 
 			def getBloc(doc):
@@ -665,8 +703,9 @@ def getGameTab(param):
 			doc = coll.find({"_id":gID})
 			if doc.count() > 0:
 				doc = cursorTOdict(doc)
-				ts = doc['score_date'] / 1000
-				doc['score_date'] = datetime.fromtimestamp(ts).strftime('%Y-%m-%d')
+				if doc['score_date'] != None:
+					ts = doc['score_date'] / 1000
+					doc['score_date'] = datetime.fromtimestamp(ts).strftime('%Y-%m-%d')
 						
 				return(getBloc(doc))
 	
@@ -674,7 +713,7 @@ def getGameTab(param):
 		return dumps({'resp': {"result": 0} })	# No param
 		
 
-def endDelGame(param):
+def endDelGame(param, self):
 	if param:
 		if param.get("data"):
 			param = param["data"][0]
@@ -682,19 +721,21 @@ def endDelGame(param):
 			gID = para[0]
 			o_id = getID(gID)
 			action = int(para[1])
-			res = {"n":0,"ok":0}
+			resErr = '{"n":0,"ok":0, "message":'
 			
 			coll = data.score
+			if checkSession(self):
+				if action == 0:	# Delete game
+				   res = coll.remove({"_id":o_id})
 
-			if action == 0:	# Delete game
-			   res = coll.remove({"_id":o_id})
-
-			if action == 1:
-				dateTime = int(millis())
-				log_Info("End game: " + gID)
-				res = coll.update({"_id":o_id}, { "$set": { "score_date": dateTime} })
-			  
-			return dumps(res)
+				if action == 1:  # End Game
+					dateTime = int(millis())
+					log_Info("End game: " + gID)
+					res = coll.update({"_id":o_id}, { "$set": { "score_date": dateTime} })
+				return dumps(res)
+			else: 
+				resErr += "\"S0061\"}" if action == 0 else "\"S0060\"}"
+				return (resErr)
 	else:
 		return dumps({'resp': {"result": 0} })	# No param
 		
@@ -751,7 +792,9 @@ def getGame(param, userID = False, parcID = False):
 		coll = data.score
 		#pdb.set_trace()
 		doc = coll.find({ "USER_ID": user, "PARCOURS_ID": parc, "score_date": None })
-		return dumps(doc) 
+		cur = cursorTOdict(doc)
+		cur['_id'] = str(cur['_id'])
+		return dumps([cur]) 
 
 	if param:
 		if param.get("data"):
@@ -928,5 +971,3 @@ if __name__ == "__main__":
 	else:
 		run()
 
-
-    
