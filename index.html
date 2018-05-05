@@ -77,7 +77,7 @@ modLayer.style.visibility="visible";
 
 function initAccountForm(action){
 if (action == 1)
-	getInfo("identUser?user=" + GetCookie("userMail"), initMyForm);
+	getInfo("identUser?user=" + GetCookie("userMail") + "&action=1", initMyForm);
 }
 
 function initMyForm(oUser){

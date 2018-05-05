@@ -6,9 +6,11 @@ var HOSTserv = "https://nodegolf-cd-serv.1d35.starter-us-east-1.openshiftapps.co
 // "http://192.168.2.190:8080/";    //Fedora workstation 26 Mongo 3.2.16 docker 1.13.1 Node JS v4.2.3 MongoDB server v3.4.6
 // "https://nodegolf-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Openshift mon_golf34
 // "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Openshift default docker Node Js -v 6.11.3
-// "https://cdore.ddns.net/node/";  // VULTR Ubuntu Server 16.04 docker 1.12.6
+// "https://cdore.ddns.net/node/";  // VULTR Ubuntu Server 16.04 docker Node Js -v 6.11.3
+// "https://cdore.ddns.net/pyt/";  // VULTR Ubuntu Server 16.04 docker Python 3.6.4
 
 var progressBar, langSet;
+var THCall = "GET";
 
 function is_touch_device() {
   return 'ontouchstart' in window        // works on most browsers 
@@ -18,6 +20,9 @@ function is_touch_device() {
 var isTouchDevice = is_touch_device();
 
 function getInfo(path, callback){
+var dat = new FormData();
+dat.append('info', path);
+
 var xhr=new XMLHttpRequest();
   xhr.onloadend = function() {
     var text = xhr.responseText;
@@ -27,8 +32,9 @@ var xhr=new XMLHttpRequest();
 	if (callback)
 		callback(data);
   };
-xhr.open("GET", HOSTserv + path ,true);
-xhr.send();
+xhr.open(THCall, HOSTserv + path ,true);
+//xhr.withCredentials = true;
+xhr.send(dat);
 
 	function affNoRep(){
 		var eBod = document.getElementsByTagName('body')[0];
@@ -385,6 +391,8 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["S0057"] = "Utilisateur inexistant.";
 		langLbl["S0058"] = "Ce compte existe déjà.";
 		langLbl["S0059"] = "Mote de passe actuel incorrect.";
+		langLbl["S0060"] = "Vous devez vous authentifier pour terminer la partie.";
+		langLbl["S0061"] = "Vous devez vous authentifier pour supprimer la partie.";
 		
 		langLbl["Bleu"] = "Bleu";
 		langLbl["Hdcp"] = "Hdcp";
@@ -491,6 +499,9 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["S0057"] = "El usuario no existe.";
 		langLbl["S0058"] = "Esta cuenta ya existe.";
 		langLbl["S0059"] = "Contraseña actual incorrecta.";
+		langLbl["S0060"] = "Debes autenticarte para completar el juego.";
+		langLbl["S0061"] = "Debes autenticarte para eliminar el juego.";
+		
 		langLbl["Bleu"] = "Azul";
 		langLbl["Hdcp"] = "Hdcp";
 		langLbl["Rouge"] = "Rojo";
@@ -596,6 +607,8 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["S0057"] = "User does not exist.";
 		langLbl["S0058"] = "This account already exists.";
 		langLbl["S0059"] = "Incorrect current password.";
+		langLbl["S0060"] = "You must authenticate to complete the game.";
+		langLbl["S0061"] = "You must authenticate to remove the game.";
 		
 		langLbl["Bleu"] = "Blue";
 		langLbl["Hdcp"] = "Hdcp";

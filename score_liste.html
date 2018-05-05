@@ -333,7 +333,10 @@ function showDelRes(oRes){
 if (oRes.ok){
 	getGameList(false, 99);
 }else{
-	alert(oRes);
+	if (oRes.message)
+		alert(langLbl[oRes.message]);
+	else
+		alert("Erreur");
 }
 }
 

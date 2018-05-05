@@ -46,9 +46,10 @@ if (conf){
 }
 
 function closePage(oRes){
+	if (!oRes.ok && oRes.message)
+		alert(langLbl[oRes.message]);
 	window.close();
 }
-
 
 function initPage(){
 
