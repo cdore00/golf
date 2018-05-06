@@ -1,5 +1,5 @@
 
-var HOSTserv = "https://nodegolf-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Openshift mon_golf34
+var HOSTserv = "http://127.0.0.1:3000/";		//Portable Windows 10 Local host Node JS v6.10.0
 // "http://127.0.0.1:3000/";		//Portable Windows 10 Local host Node JS v6.10.0
 // "http://192.168.2.195:3000/";    //Ubuntu workstation 16.04
 // "http://192.168.2.195:8080/";    //Ubuntu workstation 16.04 docker 1.12.6 Node JS v4.2.3  MongoDB server v3.4.9
@@ -10,7 +10,8 @@ var HOSTserv = "https://nodegolf-cd-serv.1d35.starter-us-east-1.openshiftapps.co
 // "https://cdore.ddns.net/pyt/";  // VULTR Ubuntu Server 16.04 docker Python 3.6.4
 
 var progressBar, langSet;
-var THCall = "GET";
+var THCall = "POST";
+var tryLog = 0;
 
 function is_touch_device() {
   return 'ontouchstart' in window        // works on most browsers 
@@ -286,6 +287,83 @@ if (progressBar.value >= 1){
 	}
 }
 
+function authentif(){
+var formAuth = document.getElementById('formAuth');
+var userCour = formAuth.nameUser.value;
+var userPass = formAuth.passwordUser.value;
+getInfo("identUser?user=" + userCour + "&pass=" + userPass, validUser);
+}
+
+function validUser(rep){
+var formAuth = document.getElementById('formAuth');
+var userCour = formAuth.nameUser.value;
+if (rep.resp.result){
+	var modalDiv = document.getElementById('modalDiv');
+	var identLayer = document.getElementById('identLayer');
+	var authLayer = document.getElementById('authLayer');
+	modalDiv.style.visibility="hidden";
+	authLayer.style.visibility="hidden";
+	identLayer.style.display="none";
+	SetCook("userID",rep.resp.user._id + "");
+	SetCook("userName",rep.resp.user.Nom);
+	SetCook("userMail",rep.resp.user.courriel);
+	SetCook("userRole",rep.resp.user.niveau);
+	userId = rep.resp.user._id;
+	userName = rep.resp.user.Nom;
+
+}else{
+	userId = null;
+	setIdent();
+	DelCookie("userID");
+	alert(langLbl["M0004"]);
+	tryLog++;
+	if (tryLog > 2){
+		if (confirm(langLbl["M0005"])) {
+			getInfo("getPass?data=" + formAuth.nameUser.value , repMailPass);
+		}
+	}
+}
+	identified();
+}
+
+function repMailPass(oRep){
+var formAuth = document.getElementById('formAuth');
+var mess = langLbl[oRep.message];
+	alert(mess.replace("%1", formAuth.nameUser.value));
+}
+
+
+function authentifier(){
+var authLayer = document.getElementById('authLayer');
+var userMail = GetCookie("userMail");
+
+var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onloadend = function() {
+    authLayer.innerHTML = xmlhttp.responseText;
+	  setLanguage();
+	  if (userMail){
+		 var nameUser = document.getElementById('nameUser');
+		 nameUser.value = userMail;
+	  }
+	 authLayer.style.visibility="visible";
+  }
+
+xmlhttp.open("GET","authentifier.html",false);
+xmlhttp.send();
+
+}
+
+function closeAuthent(){
+	var modalDiv = document.getElementById('modalDiv');
+	var authLayer = document.getElementById('authLayer');
+	var identLayer = document.getElementById('identLayer');
+	
+	modalDiv.style.visibility="hidden";
+	authLayer.style.visibility="hidden";
+	identLayer.style.visibility="hidden";
+}
+
+
 var langLbl = [];
 function initLang(){
 progressBar = document.getElementById("progressQ");
@@ -332,6 +410,7 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["pplay"] = "Mes parties";
 		langLbl["macco"] = "Mon compte";
 		langLbl["niden"] = "Nouvelle identification";
+		langLbl["aiden"] = "Authentification";
 		langLbl["email"] = "Courriel";
 		langLbl["uname"] = "Nom";
 		langLbl["passw"] = "Mot de passe";
@@ -441,6 +520,7 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["pplay"] = "Mis juegos";
 		langLbl["macco"] = "Mi cuenta";
 		langLbl["niden"] = "Nueva cuenta";
+		langLbl["aiden"] = "Autenticaci&oacute;n";
 		langLbl["email"] = "Correo electr&oacute;nico";
 		langLbl["uname"] = "Nombre";
 		langLbl["passw"] = "Contraseña";
@@ -549,6 +629,7 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["pplay"] = "My games";
 		langLbl["macco"] = "My account";
 		langLbl["niden"] = "New account";
+		langLbl["aiden"] = "Authentication";
 		langLbl["email"] = "E-mail";
 		langLbl["uname"] = "Name";
 		langLbl["passw"] = "Password";

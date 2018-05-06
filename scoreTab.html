@@ -23,6 +23,17 @@
 #gameBut{
 visibility:hidden;
 }
+
+#authLayer{ 
+    background: transparent;
+    border: none;
+	font-size: 1em;
+}
+
+#identLayer{
+display: inherit;
+}
+
 </style>
 
 <script type="text/javascript"> 
@@ -46,9 +57,22 @@ if (conf){
 }
 
 function closePage(oRes){
-	if (!oRes.ok && oRes.message)
+	if (!oRes.ok && oRes.message){
+		var modLayer = document.getElementById('modalDiv');
 		alert(langLbl[oRes.message]);
-	window.close();
+		authentifier();
+		modLayer.style.visibility="visible";
+	}else{
+		window.close();
+	}
+}
+
+function setIdent(){
+
+}
+
+function identified(){
+
 }
 
 function initPage(){
@@ -310,4 +334,13 @@ x=1;
 </div>
 
 </form>
+
+
+<div id="modalDiv"></div>
+<div id="authLayer">
+<!--
+<div id="divLoad"><img id="imgLoad" alt="Chargement en cours..." height="64" width="64" src="images/loading.gif" /></div>
+// -->
+</div>
+
 </body>

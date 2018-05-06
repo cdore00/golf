@@ -107,6 +107,7 @@ progress::-webkit-progress-bar { background: #fff; }
 #rightnav2{top:0px}
 #rightbutton{position:relative;float:right;top:-5px;right:15px}
 #leftbutton{margin-top:-5px;left:15px; visibility:hidden}
+#aLink{visibility:hidden}
 #rightbuttonItem{position:relative;clear:both;float:right;top:16px;right:5px;font-size:12px;font-weight:bold;text-align:left}
 #message, #messageErreur {position:relative;display:block;width:85%;left:10px;color:#222222;font-weight:bold;padding-bottom:5px}
 #messageErreur{color:#FF3333;text-decoration:blink}
@@ -247,8 +248,8 @@ cursor:pointer}
 text-align: right;
 margin-right: 1em;}
 .divChxChamp {position:relative;clear:both;width:100%;display:inline;float:left;right:0px;font-size:0.7em;background-color:white;}
-.inputtext {position:relative;display:inline;float:left;left:0px;right:0px;font-weight:bold;top:0px;text-align:left; height:25px}
-.inputselect {position:relative;display:inline-block;float:left;left:0px;right:0px;font-weight:bold;top:0px;text-align:left;height: 27px;}
+.inputtext {position:relative;display:inline;left:0px;right:0px;font-weight:bold;top:0px;text-align:left; height:25px}
+.inputselect {position:relative;display:inline-block;left:0px;right:0px;font-weight:bold;top:0px;text-align:left;height: 27px;}
 .inpSelSW{width: 4.7em;}
 .mlinediv{display: inline-block;}
 .olinediv{float: left;}
@@ -472,6 +473,8 @@ z-index: 1500;
 }
 
 #identLayer{
+display: none;
+visibility:visible;
 z-index: 1501;
 }
 

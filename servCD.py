@@ -38,7 +38,7 @@ LOG_DIR =os.getcwd() + '/log'
 if not os.path.exists(LOG_DIR):
 	os.makedirs(LOG_DIR)
 LOG_FILE = LOG_DIR + '/' + str(int(millis())) + '.log'
-print(LOG_DIR)
+
 global logPass 
 logPass = ""
 if os.getenv('PINFO') is not None:
@@ -142,50 +142,50 @@ def case_Func(fName, param, self):
 	elif fName == "listLog":
 		return(listLog(param))
 	elif fName == "addUserIdent":
-		return(addUserIdent(param))
+		return(addUserIdent(param, self))
 	elif fName == "confInsc":
-		return(confInsc(param))
+		return(confInsc(param, self))
 	elif fName == "identUser":
 		return(authUser(param, self))
 	elif fName == "getPass":
-		return(getPass(param))
+		return(getPass(param, self))
 	elif fName == "saveUser":
-		return(saveUser(param))
+		return(saveUser(param, self))
 	elif fName == "showLog":
 		return(showLog(param))
 	elif fName == "getRegions":
 		print("getRegionsOk")
 		return(getRegionList())
 	elif fName == "getFav":
-		return(getFav(param))
+		return(getFav(param, self))
 	elif fName == "updateFav":
 		return(updateFav(param, self))		
 	elif fName == "searchResult":
-		return(searchResult(param))
+		return(searchResult(param, self))
 	elif fName == "getClubList":
-		return(getClubList(param))
+		return(getClubList(param, self))
 	elif fName == "getClubParc":
 		return(getClubParc(param, self))
 	elif fName == "getBloc":
-		return(getBloc(param))
+		return(getBloc(param, self))
 	elif fName == "getClubParcTrous":
-		return(getClubParcTrous(param))
+		return(getClubParcTrous(param, self))
 	elif fName == "setGolfGPS":
-		return(setGolfGPS(param))
+		return(setGolfGPS(param, self))
 	elif fName == "countUserGame":
-		return(countUserGame(param))
+		return(countUserGame(param, self))
 	elif fName == "getGameList":
 		return(getGameList(param, self));
 	elif fName == "getGameTab":
-		return(getGameTab(param))
+		return(getGameTab(param, self))
 	elif fName == "endDelGame":
 		return(endDelGame(param, self))
 	elif fName == "updateGame":
-		return(updateGame(param))
+		return(updateGame(param, self))
 	elif fName == "getGolfGPS":
-		return(getGolfGPS(param))
+		return(getGolfGPS(param, self))
 	elif fName == "getGame":
-		return(getGame(param))
+		return(getGame(param, self))
 	else:
 		return("DB server2" + str(param))
 
@@ -235,166 +235,187 @@ def checkSession(self):
 	else:
 		return False
 
-def addUserIdent(param):
+def addUserIdent(param, self):
 	""" To add new user account """
-	if param.get("email") and param.get("pass"):
-		email = param["email"][0]
-		passw = param["pass"][0]
-		user = ""
-		if param.get("user"):
-			user = param["user"][0]
+	try:
+		if param.get("email") and param.get("pass"):
+			email = param["email"][0]
+			passw = param["pass"][0]
+			user = ""
+			if param.get("user"):
+				user = param["user"][0]
 
-		coll = data.users
-		docs = coll.find({"courriel": email})
-		#pdb.set_trace()
-		if docs.count() > 0:
-			doc = cursorTOdict(docs)
-			if doc['actif'] == False:
-				if doc['motpass'] == passw:
-					sendConfMail( HOSTclient + "confInsc?data=" + email , email, doc['Nom'])
-					return dumps({"code":1, "message": "S0050"})	#existInactif(doc)
-				else:
-					return dumps({"code":3, "message": "S0051"})
-			if doc['actif'] == True:
-				return dumps({"code":2, "message": "S0058"})
-		else:
-			res = coll.insert_one({"Nom": user , "courriel": email, "motpass": passw , "niveau": "MEM", "actif": False}, {"new":True})
-
-			name = user
-			if name == "":
-				name = email
-			#"http://localhost/confInsc?data=" +
-			sendConfMail( HOSTclient + "confInsc?data=" + email , email, name)
-			log_Info("Nouveau compte créé: " + email)
-			return dumps({"code":-1, "message": "S0052"})
-	else:
-		return dumps({'ok': 0})	# No param
-
-def confInsc(param):
-	""" To Confirm new account"""
-	if param.get("data"):
-		user = param["data"][0]
-		coll = data.users
-		docs = coll.find({"courriel": user})
-		if docs[0]['actif'] == True:
-			return ("<h1>Le compte " + docs[0]['courriel'] + " est d&eacute;j&agrave; actif.</h1>")
-		else:
-			#activateAccount(loginUser(res, docs[0].courriel, docs[0].motpass))
-			res = coll.update({"courriel": user}, { "$set": {"actif": True}})
-			log_Info("Nouveau compte activé: " + docs[0]['courriel'])
-			redir = """<html><head><script type="text/javascript" language="Javascript">function initPage(){var cliURL = "%s",user = "%s",pass = "%s";document.location.href = cliURL + "login.html?data=" + user + "$pass$" + pass;}</script></head><body onload="initPage()"><h1>Confirmation en cours...</h1></body></html>""" % (HOSTclient, docs[0]['courriel'], docs[0]['motpass'])
-			return redir
-	else:	
-		return("Confirm" + str(param))		
-	
-def getPass(param):
-	""" Recover password by email """
-	if param.get("data"):
-		email = param["data"][0]
-		coll = data.users
-		docs = coll.find({"courriel": email, "actif": True})
-		if docs.count() > 0:
-			sendRecupPassMail(docs[0]['courriel'], docs[0]['Nom'], docs[0]['motpass']);
-			return dumps({"code":-1, "message": "S0054"})
-		else:
-			return dumps({"code": 1, "message": "S0055"})
-	else:
-		return dumps({'ok': 0})	# No param
-	
-def authUser(param, self):
-	""" To Authenticate & return user info to modify """
-	def writeCook(mess, sessID):
-		self.send_response(200)
-		self.send_header('Content-type','text/html')
-		self.send_header('Access-Control-Allow-Origin', '*')
-		#  Set cookie
-		cookInfo = 'sessID=' + sessID + ';max-age=31536000'
-		self.send_header('Set-Cookie', cookInfo)
-		self.end_headers()
-		# Write content as utf-8 data
-		self.wfile.write(bytes(mess, "utf8"))
-		return	
-	
-	if param:
-		if param.get("user"):
-			user = param["user"][0]
-			
 			coll = data.users
-			doc = coll.find({"courriel": user, "actif": True}, ["_id","Nom", "courriel", "motpass", "niveau"])
-			
-			def setSessID(mess):
-				sessID = str(ObjectId())
-				res = coll.update({"courriel": user}, { "$set": {"sessID": sessID}})
-				writeCook(mess, sessID)
-				
-			if doc.count() == 0:
-				return dumps({'resp': {"result": 0} })	# Authenticate fail
-			else:
-				dic = cursorTOdict(doc)
-				dic['_id'] = str(dic['_id'])
-			if param.get("pass"):
-				passw = param["pass"][0]
-				if str(dic['motpass']) == passw:
-					del dic['motpass']
-					docs = {"resp": {"result":True, "user": dic} }
-					res = dumps(docs)	# Authenticated
-					setSessID(res)
-					return False
-				else:
-					return dumps({'resp': {"result": 0} })	# Authenticate fail
-			else:
-				del dic['motpass']
-				return dumps(dic)  # To modifiy
-		else:
-			return dumps({'resp': {"result": 0} })	# User is empty
-	else:
-		return dumps({'ok': 0})	# No param
-
-def saveUser(param):
-	""" To modify user account info"""
-	if param.get("cour") and param.get("pass") and param.get("id"):
-		user = param["cour"][0]
-		passw = param["pass"][0]
-		id = param["id"][0]
-		name = param["name"][0]
-
-		coll = data.users
-		
-		def updUser(doc):
-			if str(doc['motpass']) == passw:
-				if param.get("newpass"):
-					Npass = param["newpass"][0]
-					coll.update({"_id": o_id, "actif": True}, { "$set": {'Nom': name, 'courriel': user, 'motpass': Npass } })
-				else:
-					coll.update({"_id": o_id, "actif": True}, { "$set": {'Nom': name, 'courriel': user} })
-				return dumps({"resp": {"result":True} })
-			else:
-				return dumps({"resp": {"result":False, "message": "S0059"} }) # Invalid password
-		
-		def checkEmailExist(doc):
-			docs = coll.find({"courriel": user, "_id": {"$ne": o_id}})
+			docs = coll.find({"courriel": email})
+			#pdb.set_trace()
 			if docs.count() > 0:
-				return dumps({"resp": {"result":False, "message": "S0056"} }) # The new email allredy exist
+				doc = cursorTOdict(docs)
+				if doc['actif'] == False:
+					if doc['motpass'] == passw:
+						sendConfMail( HOSTclient + "confInsc?data=" + email , email, doc['Nom'])
+						return dumps({"code":1, "message": "S0050"})	#existInactif(doc)
+					else:
+						return dumps({"code":3, "message": "S0051"})
+				if doc['actif'] == True:
+					return dumps({"code":2, "message": "S0058"})
 			else:
-				return updUser(doc)
-		
-		if len(id) < 5:
-			o_id = int(id)
-		else:	
-			o_id = ObjectId(id)
-		
-		docs = coll.find({"_id": o_id, "actif": True})
-		
-		if docs.count() > 0:
-			dic = cursorTOdict(docs)
-			return checkEmailExist(dic);
+				res = coll.insert_one({"Nom": user , "courriel": email, "motpass": passw , "niveau": "MEM", "actif": False}, {"new":True})
+
+				name = user
+				if name == "":
+					name = email
+				#"http://localhost/confInsc?data=" +
+				sendConfMail( HOSTclient + "confInsc?data=" + email , email, name)
+				log_Info("Nouveau compte créé: " + email)
+				return dumps({"code":-1, "message": "S0052"})
 		else:
-			return dumps({resp: {"result":False, "message": "S0057"} }) # The new email allredy exist
-	
-		return dumps({ })	# modified
-	else:
-		return dumps({'ok': 0})	# No param
-	
+			return dumps({'ok': 0})	# No param
+	except:
+		log_Info(self.path + " ERROR: " + sys.exc_info()[0] + " ; " + str(sys.exc_info()[1]))
+		
+def confInsc(param, self):
+	""" To Confirm new account"""
+	try:
+		if param.get("data"):
+			user = param["data"][0]
+			coll = data.users
+			docs = coll.find({"courriel": user})
+			if docs[0]['actif'] == True:
+				return ("<h1>Le compte " + docs[0]['courriel'] + " est d&eacute;j&agrave; actif.</h1>")
+			else:
+				#activateAccount(loginUser(res, docs[0].courriel, docs[0].motpass))
+				res = coll.update({"courriel": user}, { "$set": {"actif": True}})
+				log_Info("Nouveau compte activé: " + docs[0]['courriel'])
+				redir = """<html><head><script type="text/javascript" language="Javascript">function initPage(){var cliURL = "%s",user = "%s",pass = "%s";document.location.href = cliURL + "login.html?data=" + user + "$pass$" + pass;}</script></head><body onload="initPage()"><h1>Confirmation en cours...</h1></body></html>""" % (HOSTclient, docs[0]['courriel'], docs[0]['motpass'])
+				return redir
+		else:	
+			return("Confirm" + str(param))		
+	except:
+		log_Info(self.path + " ERROR: " + sys.exc_info()[0] + " ; " + str(sys.exc_info()[1]))
+		
+def getPass(param, self):
+	""" Recover password by email """
+	try:
+		if param.get("data"):
+			email = param["data"][0]
+			coll = data.users
+			docs = coll.find({"courriel": email, "actif": True})
+			if docs.count() > 0:
+				sendRecupPassMail(docs[0]['courriel'], docs[0]['Nom'], docs[0]['motpass']);
+				return dumps({"code":-1, "message": "S0054"})
+			else:
+				return dumps({"code": 1, "message": "S0055"})
+		else:
+			return dumps({'ok': 0})	# No param
+	except:
+		log_Info(self.path + " ERROR: " + sys.exc_info()[0] + " ; " + str(sys.exc_info()[1]))
+		
+def authUser(param, self):
+	""" To Authenticate or return user info to modify """
+	#pdb.set_trace()
+	try:
+		def writeCook(mess, sessID):
+			self.send_response(200)
+			self.send_header('Content-type','text/html')
+			self.send_header('Access-Control-Allow-Origin', '*')
+			#  Set cookie
+			cookInfo = 'sessID=' + sessID + ';max-age=31536000'
+			self.send_header('Set-Cookie', cookInfo)
+			self.end_headers()
+			# Write content as utf-8 data
+			self.wfile.write(bytes(mess, "utf8"))
+			return	
+		
+		if param:
+			if not isinstance(param, (list)) and param.get("user"):
+				user = param["user"][0]
+				
+				coll = data.users
+				doc = coll.find({"courriel": user, "actif": True}, ["_id","Nom", "courriel", "motpass", "niveau"])
+				
+				def setSessID(mess):
+					sessID = str(ObjectId())
+					res = coll.update({"courriel": user}, { "$set": {"sessID": sessID}})
+					writeCook(mess, sessID)
+					
+				if doc.count() == 0:
+					return dumps({'resp': {"result": 0} })	# Authenticate fail
+				else:
+					dic = cursorTOdict(doc)
+					dic['_id'] = str(dic['_id'])
+				if param.get("pass") and not isinstance(param, (list)):
+					passw = param["pass"][0]
+					if str(dic['motpass']) == passw:
+						del dic['motpass']
+						docs = {"resp": {"result":True, "user": dic} }
+						res = dumps(docs)	# Authenticated
+						setSessID(res)
+						return False
+					else:
+						return dumps({'resp': {"result": 0} })	# Authenticate fail
+				else:
+					#pdb.set_trace()
+					if param.get("action"):
+						action = param["action"][0]
+						if action == "1":	# To modifiy account
+							del dic['motpass']
+							return dumps(dic)  # To modifiy
+					else:
+						return dumps({'resp': {"result": 0} })	# Authenticate fail password empty
+			else:
+				return dumps({'resp': {"result": 0} })	# User is empty
+		else:
+			return dumps({'resp': {"result": 0} })	# No param
+	except:
+		log_Info(self.path + " ERROR: " + sys.exc_info()[0] + " ; " + str(sys.exc_info()[1]))
+		
+def saveUser(param, self):
+	""" To modify user account info"""
+	try:
+		if param.get("cour") and param.get("pass") and param.get("id"):
+			user = param["cour"][0]
+			passw = param["pass"][0]
+			id = param["id"][0]
+			name = param["name"][0]
+
+			coll = data.users
+			
+			def updUser(doc):
+				if str(doc['motpass']) == passw:
+					if param.get("newpass"):
+						Npass = param["newpass"][0]
+						coll.update({"_id": o_id, "actif": True}, { "$set": {'Nom': name, 'courriel': user, 'motpass': Npass } })
+					else:
+						coll.update({"_id": o_id, "actif": True}, { "$set": {'Nom': name, 'courriel': user} })
+					return dumps({"resp": {"result":True} })
+				else:
+					return dumps({"resp": {"result":False, "message": "S0059"} }) # Invalid password
+			
+			def checkEmailExist(doc):
+				docs = coll.find({"courriel": user, "_id": {"$ne": o_id}})
+				if docs.count() > 0:
+					return dumps({"resp": {"result":False, "message": "S0056"} }) # The new email allredy exist
+				else:
+					return updUser(doc)
+			
+			if len(id) < 5:
+				o_id = int(id)
+			else:	
+				o_id = ObjectId(id)
+			
+			docs = coll.find({"_id": o_id, "actif": True})
+			
+			if docs.count() > 0:
+				dic = cursorTOdict(docs)
+				return checkEmailExist(dic);
+			else:
+				return dumps({resp: {"result":False, "message": "S0057"} }) # The new email allredy exist
+		
+			return dumps({ })	# modified
+		else:
+			return dumps({'ok': 0})	# No param
+	except:
+		log_Info(self.path + " ERROR: " + sys.exc_info()[0] + " ; " + str(sys.exc_info()[1]))	
 
 def getRegionList():
 	col = data.regions
@@ -402,58 +423,64 @@ def getRegionList():
 	res = dumps(docs)
 	return res
 	
-def searchResult(param):
+def searchResult(param, self):
 	#print(str(param))
-	if param.get("qn"):
-		qNom = param["qn"][0]
-		qVille = param["qv"][0]
-	if param.get("qr"):
-		qReg = int(param["qr"][0])
-	if param.get("qd"):
-		dist = float(param["qd"][0])
-		lng = float(param["qlt"][0])
-		lat = float(param["qln"][0])
-	qT = []
-	col = data.club
-	
-	if 'qNom' in locals():
-		regxN = re.compile(qNom, re.IGNORECASE)
-		regxV = re.compile(qVille, re.IGNORECASE)
-		q1 = {"$or": [ {"nom": {"$regex": regxN } } , {"municipal": {"$regex": regxV} } ]}
-		qT.append(q1)
-	
-	if 'qReg' in locals():
-		q2 = {'region': qReg}
-		qT.append(q2)
-
-	if 'dist' in locals():
-		q3 = {"location": { "$near" : {"$geometry": { "type": "Point",  "coordinates": [ lng , lat ] }, "$maxDistance": dist }}};
-		qT.append(q3)
+	try:
+		if param.get("qn"):
+			qNom = param["qn"][0]
+			qVille = param["qv"][0]
+		if param.get("qr"):
+			qReg = int(param["qr"][0])
+		if param.get("qd"):
+			dist = float(param["qd"][0])
+			lng = float(param["qlt"][0])
+			lat = float(param["qln"][0])
+		qT = []
+		col = data.club
 		
-	query = { "$and": qT }
-	docs = col.find(query).sort("nom")
-	res = dumps(docs)
-	return res
-
-def getFav(param):
-	if param.get("data"):
-		userID = getID(param["data"][0])
-		coll = data.userFavoris
-		docs = coll.find({"USER_ID": userID}, ["CLUB_ID"])
+		if 'qNom' in locals():
+			regxN = re.compile(qNom, re.IGNORECASE)
+			regxV = re.compile(qVille, re.IGNORECASE)
+			q1 = {"$or": [ {"nom": {"$regex": regxN } } , {"municipal": {"$regex": regxV} } ]}
+			qT.append(q1)
 		
-		def getClubNameList(clubList):
-			coll = data.club
-			favDocs = coll.find({"_id":{"$in": clubList }},["_id","nom"]).sort("nom")
-			return dumps(favDocs)
-		
-		ids = []
-		for x in docs:
-			ids.append(x['CLUB_ID'])			
+		if 'qReg' in locals():
+			q2 = {'region': qReg}
+			qT.append(q2)
 
-		return getClubNameList(ids)
-	else:
-		return dumps({'ok': 0})	# No param		
-	
+		if 'dist' in locals():
+			q3 = {"location": { "$near" : {"$geometry": { "type": "Point",  "coordinates": [ lng , lat ] }, "$maxDistance": dist }}};
+			qT.append(q3)
+			
+		query = { "$and": qT }
+		docs = col.find(query).sort("nom")
+		res = dumps(docs)
+		return res
+	except:
+		log_Info(self.path + " ERROR: " + sys.exc_info()[0] + " ; " + str(sys.exc_info()[1]))
+
+def getFav(param, self):
+	try:
+		if param.get("data"):
+			userID = getID(param["data"][0])
+			coll = data.userFavoris
+			docs = coll.find({"USER_ID": userID}, ["CLUB_ID"])
+			
+			def getClubNameList(clubList):
+				coll = data.club
+				favDocs = coll.find({"_id":{"$in": clubList }},["_id","nom"]).sort("nom")
+				return dumps(favDocs)
+			
+			ids = []
+			for x in docs:
+				ids.append(x['CLUB_ID'])			
+
+			return getClubNameList(ids)
+		else:
+			return dumps({'ok': 0})	# No param		
+	except:
+		log_Info(self.path + " ERROR: " + sys.exc_info()[0] + " ; " + str(sys.exc_info()[1]))
+		
 def updateFav(param, self):
 	""" Add club to user favorite list"""
 	try:
@@ -479,11 +506,11 @@ def updateFav(param, self):
 		else:
 			return dumps({'ok': 0})	# No param	
 	except:
-		log_Info(self.path + " ERROR: " + str(sys.exc_info()[1]))
-		print("INATTENDU error:" , sys.exc_info()[0] )
+		log_Info(self.path + " ERROR: " + sys.exc_info()[0] + " ; " + str(sys.exc_info()[1]))
+		#print("INATTENDU error:" , sys.exc_info()[0] )
 		
 			
-def getClubList(param):
+def getClubList(param, self):
 	""" To get clubs list info"""
 	if param.get("data"):
 		clubList = param["data"][0]
@@ -528,267 +555,293 @@ def getClubParc(param, self):
 		log_Info(self.path + " ERROR: " + str(sys.exc_info()[1]))
 		print("INATTENDU error:" , sys.exc_info()[0] )
 		
-def getBloc(param):
-	if param.get("data"):
-		blocList = param["data"][0]
-		ids = [int(x) for x in blocList.split("$")]
-		coll = data.blocs 
-		docs = coll.find({"PARCOURS_ID":{"$in": ids }}).sort("PARCOURS_ID")
-		return dumps(docs)
-	else:
-		return dumps({'ok': 0})	# No param
-		
-def getClubParcTrous(param):
-	if param.get("data"):
-		param = param["data"][0]
-		ids = [int(x) for x in param.split("$")]
-		clubID = ids[0]
-		courseID = ids[1]
-
-		coll = data.club
-		doc = coll.find({"_id": clubID }, ["_id","nom", "courses", "latitude", "longitude"])
-
-		if doc.count() > 0:
-			coll = data.golfGPS
-			docs = coll.find({"Parcours_id": courseID }).sort("trou")
-			if docs.count() > 0:
-				dic = cursorTOdict(doc)
-				res = [dic]				
-				res[0]['trous'] = docs
-				return dumps(res)
-			else:
-				return dumps(doc)
-
-	else:
-		return dumps({'ok': 0})	# No param
-
-def setGolfGPS(param):
-	if param.get("data"):
-		param = param["data"][0]
-		para = [x for x in param.split("$")]
-		courseId = int(para[0])
-		trou = int(para[1])
-		lat = float(para[2])
-		lng = float(para[3])
-		toInit = int(para[4])
-		clubId = int(para[5])
-		
-		coll = data.golfGPS
-		if toInit == 0:
-			docr = coll.update({ 'Parcours_id': courseId, 'trou': trou }, { '$set': {'Parcours_id': courseId, 'trou': trou, 'latitude': lat, 'longitude': lng } },  upsert=True )
-			return dumps(docr)
+def getBloc(param, self):
+	try:	
+		if param.get("data"):
+			blocList = param["data"][0]
+			ids = [int(x) for x in blocList.split("$")]
+			coll = data.blocs 
+			docs = coll.find({"PARCOURS_ID":{"$in": ids }}).sort("PARCOURS_ID")
+			return dumps(docs)
 		else:
-			for i in range(toInit):
-				holeNo = i + 1
-				#print(holeNo)
-				resp = coll.update({ 'Parcours_id': courseId, 'trou': holeNo }, { '$set': {'Parcours_id': courseId, 'trou': holeNo, 'latitude': lat, 'longitude': lng } },  upsert=True)
-				if holeNo == toInit:
-					coll = data.parcours
-					pRep = coll.update({"_id":courseId}, {"$set":{"GPS": True }})
-					pa = coll.find({'CLUB_ID': clubId})
-					strCur = dumps(pa)
-					cur = loads(strCur)
-					coll = data.club
-					res = coll.update({'_id': clubId}, {'$set':{"courses": cur }})
+			return dumps({'ok': 0})	# No param
+	except:
+		log_Info(self.path + " ERROR: " + sys.exc_info()[0] + " ; " + str(sys.exc_info()[1]))	
+		
+def getClubParcTrous(param, self):
+	try:
+		if param.get("data"):
+			param = param["data"][0]
+			ids = [int(x) for x in param.split("$")]
+			clubID = ids[0]
+			courseID = ids[1]
+
+			coll = data.club
+			doc = coll.find({"_id": clubID }, ["_id","nom", "courses", "latitude", "longitude"])
+
+			if doc.count() > 0:
+				coll = data.golfGPS
+				docs = coll.find({"Parcours_id": courseID }).sort("trou")
+				if docs.count() > 0:
+					dic = cursorTOdict(doc)
+					res = [dic]				
+					res[0]['trous'] = docs
 					return dumps(res)
-	else:
-		return dumps({'ok': 0})	# No param
-		
-def countUserGame(param):
-	if param.get("data"):
-		param = param["data"][0]
-		para = [x for x in param.split("$")]
-		user = int(para[0])
-		is18 = int(para[1])
+				else:
+					return dumps(doc)
 
-		coll = data.score
-
-		if (is18 == 18):
-			count = coll.find({"USER_ID": user, "T18": { "$exists": True, "$nin": [ 0 ] }}).count()
-			return (str(count))
 		else:
-			count = coll.find({"USER_ID": user, "$or":[{"T18":0},{"T18":None}]  } ).count()
-			return (str(count))
-	else:
-		return dumps({'ok': 0})	# No param
+			return dumps({'ok': 0})	# No param
+	except:
+		log_Info(self.path + " ERROR: " + sys.exc_info()[0] + " ; " + str(sys.exc_info()[1]))
+
+def setGolfGPS(param, self):
+	try:
+		if param.get("data"):
+			param = param["data"][0]
+			para = [x for x in param.split("$")]
+			courseId = int(para[0])
+			trou = int(para[1])
+			lat = float(para[2])
+			lng = float(para[3])
+			toInit = int(para[4])
+			clubId = int(para[5])
+			
+			coll = data.golfGPS
+			if toInit == 0:
+				docr = coll.update({ 'Parcours_id': courseId, 'trou': trou }, { '$set': {'Parcours_id': courseId, 'trou': trou, 'latitude': lat, 'longitude': lng } },  upsert=True )
+				return dumps(docr)
+			else:
+				for i in range(toInit):
+					holeNo = i + 1
+					#print(holeNo)
+					resp = coll.update({ 'Parcours_id': courseId, 'trou': holeNo }, { '$set': {'Parcours_id': courseId, 'trou': holeNo, 'latitude': lat, 'longitude': lng } },  upsert=True)
+					if holeNo == toInit:
+						coll = data.parcours
+						pRep = coll.update({"_id":courseId}, {"$set":{"GPS": True }})
+						pa = coll.find({'CLUB_ID': clubId})
+						strCur = dumps(pa)
+						cur = loads(strCur)
+						coll = data.club
+						res = coll.update({'_id': clubId}, {'$set':{"courses": cur }})
+						return dumps(res)
+		else:
+			return dumps({'ok': 0})	# No param
+	except:
+		log_Info(self.path + " ERROR: " + sys.exc_info()[0] + " ; " + str(sys.exc_info()[1]))
 		
+def countUserGame(param, self):
+	try:
+		if param.get("data"):
+			param = param["data"][0]
+			para = [x for x in param.split("$")]
+			user = int(para[0])
+			is18 = int(para[1])
+
+			coll = data.score
+
+			if (is18 == 18):
+				count = coll.find({"USER_ID": user, "T18": { "$exists": True, "$nin": [ 0 ] }}).count()
+				return (str(count))
+			else:
+				count = coll.find({"USER_ID": user, "$or":[{"T18":0},{"T18":None}]  } ).count()
+				return (str(count))
+		else:
+			return dumps({'ok': 0})	# No param
+	except:
+		log_Info(self.path + " ERROR: " + sys.exc_info()[0] + " ; " + str(sys.exc_info()[1]))		
 		
 def getGameList(param, self):
 	"""Return game list result """
-	if param.get("user"):
-		user = int(param["user"][0])
-		skip = int(param["skip"][0])
-		limit = int(param["limit"][0])
-		is18 = int(param["is18"][0])
-		intDate = int(param["date"][0])
-		if param.get("tele"):
-			intTele = int(param["tele"][0])
-		else:
-			intTele = 0
-		if intDate == 0:   # ou 0 ???
-			intDate = 9999999999999
-
-		cur = []
-		coll = data.score
-		
-		def addCur(doc):
-			
-			for x in doc:
-				if intTele != 2:  # If Not JSON then convert millisecond to date and ObjectId
-					ts = x['score_date'] / 1000
-					x['score_date'] = datetime.fromtimestamp(ts).strftime('%Y-%m-%d')
-					x['_id'] = str(x['_id'])
-				cur.append(x)
-			
-			if (intTele > 0):
-				self.send_response(200)
-				self.send_header('Content-type','text/html')
-				self.send_header('Access-Control-Allow-Origin', '*')
-				if (intTele == 2):	# JSON file
-					self.send_header('Content-disposition', 'attachment; filename=myScore.json')
-					self.end_headers()
-					self.wfile.write(bytes(dumps(cur), "utf8"))
-				if (intTele == 1):	# CSV file
-					outFile = io.StringIO()
-					output = csv.writer(outFile)
-					output.writerow(cur[0].keys())	#Column names
-					for x in cur:
-						output.writerow(x.values())
-
-					contents = outFile.getvalue()
-					outFile.close()
-					self.send_header('Content-disposition', 'attachment; filename=myScore.csv')
-					self.end_headers()
-					self.wfile.write(bytes(contents, "utf8"))
-				return False
+	try:
+		if param.get("user"):
+			user = int(param["user"][0])
+			skip = int(param["skip"][0])
+			limit = int(param["limit"][0])
+			is18 = int(param["is18"][0])
+			intDate = int(param["date"][0])
+			if param.get("tele"):
+				intTele = int(param["tele"][0])
 			else:
-				return dumps(cur)
-			
-		if is18 == 18:
-			doc = coll.find({"USER_ID": user, "score_date": {"$lt":intDate}, "T18": { "$exists": True, "$nin": [ 0 ] } }).sort("score_date",-1).skip(skip).limit(limit)
-		else:
-			doc = coll.find({"USER_ID": user, "score_date": {"$lt":intDate}, "$or":[{"T18":0},{"T18":None}]  } ).sort("score_date",-1).skip(skip).limit(limit)			
-		
-		#docs = cursorTOdict(doc)
-		return addCur(doc)
-		
-		#return str(intDate)
-	else:
-		return dumps({'ok': 0})	# No param
-	
-def getGameTab(param):
-	if param.get("data"):
-		
-		gID = getID(param["data"][0])
+				intTele = 0
+			if intDate == 0:   # ou 0 ???
+				intDate = 9999999999999
 
-		def getBloc(doc):
-			coll = data.blocs
-			blocs = coll.find({"PARCOURS_ID": doc['PARCOURS_ID'] })
-			for x in blocs:
-				if x['Bloc'] == "Normale":
-					doc['par'] = x
-			return dumps([doc]) 
+			cur = []
+			coll = data.score
+			
+			def addCur(doc):
+				
+				for x in doc:
+					if intTele != 2:  # If Not JSON then convert millisecond to date and ObjectId
+						ts = x['score_date'] / 1000
+						x['score_date'] = datetime.fromtimestamp(ts).strftime('%Y-%m-%d')
+						x['_id'] = str(x['_id'])
+					cur.append(x)
+				
+				if (intTele > 0):
+					self.send_response(200)
+					self.send_header('Content-type','text/html')
+					self.send_header('Access-Control-Allow-Origin', '*')
+					if (intTele == 2):	# JSON file
+						self.send_header('Content-disposition', 'attachment; filename=myScore.json')
+						self.end_headers()
+						self.wfile.write(bytes(dumps(cur), "utf8"))
+					if (intTele == 1):	# CSV file
+						outFile = io.StringIO()
+						output = csv.writer(outFile)
+						output.writerow(cur[0].keys())	#Column names
+						for x in cur:
+							output.writerow(x.values())
+
+						contents = outFile.getvalue()
+						outFile.close()
+						self.send_header('Content-disposition', 'attachment; filename=myScore.csv')
+						self.end_headers()
+						self.wfile.write(bytes(contents, "utf8"))
+					return False
+				else:
+					return dumps(cur)
+				
+			if is18 == 18:
+				doc = coll.find({"USER_ID": user, "score_date": {"$lt":intDate}, "T18": { "$exists": True, "$nin": [ 0 ] } }).sort("score_date",-1).skip(skip).limit(limit)
+			else:
+				doc = coll.find({"USER_ID": user, "score_date": {"$lt":intDate}, "$or":[{"T18":0},{"T18":None}]  } ).sort("score_date",-1).skip(skip).limit(limit)			
+			
+			#docs = cursorTOdict(doc)
+			return addCur(doc)
+			
+			#return str(intDate)
+		else:
+			return dumps({'ok': 0})	# No param
+	except:
+		log_Info(self.path + " ERROR: " + sys.exc_info()[0] + " ; " + str(sys.exc_info()[1]))
 		
-		coll = data.score
-		doc = coll.find({"_id":gID})
-		if doc.count() > 0:
-			doc = cursorTOdict(doc)
-			if doc['score_date'] != None:
-				ts = doc['score_date'] / 1000
-				doc['score_date'] = datetime.fromtimestamp(ts).strftime('%Y-%m-%d')
-					
-			return(getBloc(doc))
-	else:
-		return dumps({'ok': 0})	# No param
-		
+def getGameTab(param, self):
+	try:
+		if param.get("data"):
+			
+			gID = getID(param["data"][0])
+
+			def getBloc(doc):
+				coll = data.blocs
+				blocs = coll.find({"PARCOURS_ID": doc['PARCOURS_ID'] })
+				for x in blocs:
+					if x['Bloc'] == "Normale":
+						doc['par'] = x
+				return dumps([doc]) 
+			
+			coll = data.score
+			doc = coll.find({"_id":gID})
+			if doc.count() > 0:
+				doc = cursorTOdict(doc)
+				if doc['score_date'] != None:
+					ts = doc['score_date'] / 1000
+					doc['score_date'] = datetime.fromtimestamp(ts).strftime('%Y-%m-%d')
+						
+				return(getBloc(doc))
+		else:
+			return dumps({'ok': 0})	# No param
+	except:
+		log_Info(self.path + " ERROR: " + sys.exc_info()[0] + " ; " + str(sys.exc_info()[1]))		
 
 def endDelGame(param, self):
-	if param.get("data"):
-		param = param["data"][0]
-		para = [x for x in param.split("$")]
-		gID = para[0]
-		o_id = getID(gID)
-		action = int(para[1])
-		resErr = '{"n":0,"ok":0, "message":'
+	try:
+		if param.get("data"):
+			param = param["data"][0]
+			para = [x for x in param.split("$")]
+			gID = para[0]
+			o_id = getID(gID)
+			action = int(para[1])
+			resErr = '{"n":0,"ok":0, "message":'
+			
+			coll = data.score
+			if checkSession(self):
+				if action == 0:	# Delete game
+				   res = coll.remove({"_id":o_id})
+
+				if action == 1:  # End Game
+					dateTime = int(millis())
+					log_Info("End game: " + gID)
+					res = coll.update({"_id":o_id}, { "$set": { "score_date": dateTime} })
+				return dumps(res)
+			else: 
+				resErr += "\"S0061\"}" if action == 0 else "\"S0060\"}"
+				return (resErr)
+		else:
+			return dumps({'ok': 0})	# No param
+	except:
+		log_Info(self.path + " ERROR: " + sys.exc_info()[0] + " ; " + str(sys.exc_info()[1]))
 		
-		coll = data.score
-		if checkSession(self):
-			if action == 0:	# Delete game
-			   res = coll.remove({"_id":o_id})
+def updateGame(param, self):
+	try:
+		if param.get("data"):
+			param = param["data"][0]
+			para = [x for x in param.split("$")]
+			user = int(para[0])
+			parc = int(para[1])
+			hole = int(para[2])
+			stroke = int(para[3])
+			put = int(para[4])
+			lost = int(para[5])
+			name = (para[6])
+			
+			Tno = "T" + str(hole)
+			Pno = "P" + str(hole)
+			Lno = "L" + str(hole)
 
-			if action == 1:  # End Game
-				dateTime = int(millis())
-				log_Info("End game: " + gID)
-				res = coll.update({"_id":o_id}, { "$set": { "score_date": dateTime} })
-			return dumps(res)
-		else: 
-			resErr += "\"S0061\"}" if action == 0 else "\"S0060\"}"
-			return (resErr)
-	else:
-		return dumps({'ok': 0})	# No param
+			coll = data.score
+
+			res = coll.update({ "USER_ID": user, "PARCOURS_ID": parc, "score_date": None }, { "$set": {"USER_ID": user, "PARCOURS_ID": parc, "score_date": None, Tno: stroke, Pno: put, Lno: lost, "name": name} },  upsert=True)
+			
+			return getGame(None, self, userID = user, parcID = parc)
+		else:
+			return dumps({'ok': 0})	# No param
+	except:
+		log_Info(self.path + " ERROR: " + sys.exc_info()[0] + " ; " + str(sys.exc_info()[1]))
 		
-def updateGame(param):
-	if param.get("data"):
-		param = param["data"][0]
-		para = [x for x in param.split("$")]
-		user = int(para[0])
-		parc = int(para[1])
-		hole = int(para[2])
-		stroke = int(para[3])
-		put = int(para[4])
-		lost = int(para[5])
-		name = (para[6])
+def getGolfGPS(param, self):
+	try:
+		if param.get("data"):
+			courseID = int(param["data"][0])
+			coll = data.golfGPS
+			
+			def getBlocGPS(gData):
+				coll = data.blocs
+				doc = coll.find({"PARCOURS_ID": courseID })
+				Pdoc =dumps(gData)
+				Pdoc=loads(Pdoc)
+				Pdoc[0]['parc'] = doc
+				return dumps(Pdoc)
+
+			doc = coll.find({"Parcours_id": courseID }).sort("trou")
+
+			return getBlocGPS(doc)
+		else:
+			return dumps({'ok': 0})	# No param
+	except:
+		log_Info(self.path + " ERROR: " + sys.exc_info()[0] + " ; " + str(sys.exc_info()[1]))
 		
-		Tno = "T" + str(hole)
-		Pno = "P" + str(hole)
-		Lno = "L" + str(hole)
-
-		coll = data.score
-
-		res = coll.update({ "USER_ID": user, "PARCOURS_ID": parc, "score_date": None }, { "$set": {"USER_ID": user, "PARCOURS_ID": parc, "score_date": None, Tno: stroke, Pno: put, Lno: lost, "name": name} },  upsert=True)
-		
-		return getGame(None, userID = user, parcID = parc)
-	else:
-		return dumps({'ok': 0})	# No param
-		
-def getGolfGPS(param):
-	if param.get("data"):
-		courseID = int(param["data"][0])
-		coll = data.golfGPS
-		
-		def getBlocGPS(gData):
-			coll = data.blocs
-			doc = coll.find({"PARCOURS_ID": courseID })
-			Pdoc =dumps(gData)
-			Pdoc=loads(Pdoc)
-			Pdoc[0]['parc'] = doc
-			return dumps(Pdoc)
-
-		doc = coll.find({"Parcours_id": courseID }).sort("trou")
-
-		return getBlocGPS(doc)
-	else:
-		return dumps({'ok': 0})	# No param
-	
-def getGame(param, userID = False, parcID = False):
-	
-	def getG(user, parc):
-		coll = data.score
-		#pdb.set_trace()
-		doc = coll.find({ "USER_ID": user, "PARCOURS_ID": parc, "score_date": None })
-		cur = cursorTOdict(doc)
-		cur['_id'] = str(cur['_id'])
-		return dumps([cur]) 
-
-	if param.get("data"):
-		param = param["data"][0]
-		para = [x for x in param.split("$")]
-		user = int(para[0])
-		parc = int(para[1])
-		return getG(user, parc)
-	else:
-		return getG(userID, parcID)
-
+def getGame(param, self, userID = False, parcID = False):
+	try:
+		def getG(user, parc):
+			coll = data.score
+			#pdb.set_trace()
+			doc = coll.find({ "USER_ID": user, "PARCOURS_ID": parc, "score_date": None })
+			cur = cursorTOdict(doc)
+			cur['_id'] = str(cur['_id'])
+			return dumps([cur]) 
+		if param:
+			if param.get("data"):
+				param = param["data"][0]
+				para = [x for x in param.split("$")]
+				user = int(para[0])
+				parc = int(para[1])
+				return getG(user, parc)
+		else:
+			return getG(userID, parcID)
+	except:
+		log_Info(self.path + " ERROR: " + sys.exc_info()[0] + " ; " + str(sys.exc_info()[1]))
 
 # Manage logs
 
@@ -804,11 +857,8 @@ def listLog(param):
 	""" For typing password """
 	if param:
 		#print("call=" + str(param))
-		#print("type=" + str(type(param)))
 		res = dict(param)
 		passw = ""
-		print("pass=" + logPass)
-		print("passW=" + res["pass"])
 		if "pass" in res:
 			passw = res["pass"]
 		if logPass == passw:

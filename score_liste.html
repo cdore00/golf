@@ -25,8 +25,6 @@ overflow: hidden;
 transition: height 0.4s ease-in-out;
 }
 
-
-
 #butMenu{
 visibility: visible;
 }
@@ -38,6 +36,16 @@ display: none;
 
 .tdEditOn{
 width: 1% !important;
+}
+
+#authLayer{ 
+    background: transparent;
+    border: none;
+	font-size: 1em;
+}
+
+#identLayer{
+display: inherit;
 }
 
 </style>
@@ -333,11 +341,22 @@ function showDelRes(oRes){
 if (oRes.ok){
 	getGameList(false, 99);
 }else{
-	if (oRes.message)
+	if (oRes.message){
+		var modLayer = document.getElementById('modalDiv');
 		alert(langLbl[oRes.message]);
-	else
+		authentifier();
+		modLayer.style.visibility="visible";		
+	}else
 		alert("Erreur");
 }
+}
+
+function setIdent(){
+
+}
+
+function identified(){
+
 }
 
 // -->
@@ -406,4 +425,12 @@ if (oRes.ok){
 
 </form>
 &nbsp;
+
+<div id="modalDiv"></div>
+<div id="authLayer">
+<!--
+<div id="divLoad"><img id="imgLoad" alt="Chargement en cours..." height="64" width="64" src="images/loading.gif" /></div>
+// -->
+</div>
+
 </body>

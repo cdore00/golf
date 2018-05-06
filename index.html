@@ -31,7 +31,7 @@ var watchId = null;
 var locTimer;
 var resultLocalisation = 1000;
 var affL, LocT;
-var tryLog = 0;
+
 //var HOSTserv = "http://127.0.0.1:3000/";
 // "http://192.168.2.188:8080/";
 // "http://127.0.0.1:3000/";
@@ -128,7 +128,7 @@ var newIdent = document.getElementById('newIdent');
 var butGame = document.getElementById('butGame');
 var myAccount = document.getElementById('myAccount');
 prefLayer.style.visibility="hidden";
-identLayer.style.visibility="visible";
+identLayer.style.display="inherit";
 if (!userId){
 	newIdent.style.display = "block";
 	butGame.style.display = "none";
@@ -161,6 +161,20 @@ var info = "user=" + userName + "&email=" + userCour + "&pass=" + userPass;
 	}
 }
 
+function identified(){
+	var leftbutton = document.getElementById('leftbutton');
+	var aLink = document.getElementById('aLink');
+	
+	userId = GetCookie("userID");
+	if (userId){
+		leftbutton.style.visibility="visible";
+		aLink.style.visibility="visible";
+	}else{
+		leftbutton.style.visibility="hidden";
+		aLink.style.visibility="hidden";
+	}
+}
+
 function validNewUser(rdata){
 	if (rdata.code){
 		var mess = langLbl[rdata.message];
@@ -182,54 +196,11 @@ var authLayer = document.getElementById('authLayer');
 		authLayer.style.visibility="hidden";
 }
 
-function authentif(){
-var formAuth = document.getElementById('formAuth');
-var userCour = formAuth.nameUser.value;
-var userPass = formAuth.passwordUser.value;
-getInfo("identUser?user=" + userCour + "&pass=" + userPass, validUser);
-}
-
-function validUser(rep){
-var formAuth = document.getElementById('formAuth');
-var userCour = formAuth.nameUser.value;
-if (rep.resp.result){
-	var modalDiv = document.getElementById('modalDiv');
-	var identLayer = document.getElementById('identLayer');
-	var leftbutton = document.getElementById('leftbutton');
-	leftbutton.style.visibility="visible";
-	modalDiv.style.visibility="hidden";
-	identLayer.style.visibility="hidden";
-	SetCook("userID",rep.resp.user._id + "");
-	SetCook("userName",rep.resp.user.Nom);
-	SetCook("userMail",rep.resp.user.courriel);
-	SetCook("userRole",rep.resp.user.niveau);
-	userId = rep.resp.user._id;
-	userName = rep.resp.user.Nom;
-}else{
-	userId = null;
-	setIdent();
-	DelCookie("userID");
-	alert(langLbl["M0004"]);
-	tryLog++;
-	if (tryLog > 3){
-		if (confirm(langLbl["M0005"])) {
-			//alert("Oui");
-			getInfo("getPass?data=" + formAuth.nameUser.value , repMailPass);
-		}
-	}
-}
-}
-
-function repMailPass(oRep){
-var formAuth = document.getElementById('formAuth');
-var mess = langLbl[oRep.message];
-	alert(mess.replace("%1", formAuth.nameUser.value));
-}
 
 function showPref(){
 var prefLayer = document.getElementById('prefLayer');
-var initLayer = document.getElementById('identLayer');
-initLayer.style.visibility="hidden";
+var identLayer = document.getElementById('identLayer');
+identLayer.style.display="none";
 prefLayer.style.visibility="visible";
 }
 
@@ -252,7 +223,7 @@ var prefLayer = document.getElementById('prefLayer');
 var identLayer = document.getElementById('identLayer');
 var authLayer = document.getElementById('authLayer');
 authLayer.style.visibility="hidden";
-identLayer.style.visibility="hidden";
+identLayer.style.display="none";
 prefLayer.style.visibility="hidden";
 modLayer.style.visibility="hidden";
 //initPref();
@@ -550,19 +521,16 @@ function checkCookie(){
 function initPage(){
 
 setFontSize();
-//alert("Nav: " + navigator.language + "User: " + navigator.userLanguage + " Brows.: " + navigator.browserLanguage + "  Syst.: " + navigator.systemLanguage);
-userId = GetCookie("userID");
-//userName = GetCookie("userName");
+
 var data = getURLdata();
 if (data == "clear"){
 	clearContext();
 	localStorage.removeItem('myPos');
 }
 //console.log("initPage");
-if (userId){
-	var leftbutton = document.getElementById('leftbutton');
-	leftbutton.style.visibility="visible";
-}
+
+identified();
+
 initPref();
 getInfo("getRegions?", listRegions);
 
