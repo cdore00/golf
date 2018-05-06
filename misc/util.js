@@ -10,7 +10,7 @@ var HOSTserv = "https://pytgolf-cd-serv.1d35.starter-us-east-1.openshiftapps.com
 // "https://cdore.ddns.net/pyt/";  // VULTR Ubuntu Server 16.04 docker Python 3.6.4
 
 var progressBar, langSet;
-var THCall = "GET";
+var THCall = "POST";
 var tryLog = 0;
 
 function is_touch_device() {
