@@ -34,7 +34,7 @@ var xhr=new XMLHttpRequest();
 		callback(data);
   };
 xhr.open(THCall, HOSTserv + path ,true);
-//xhr.withCredentials = true;
+xhr.withCredentials = true;
 xhr.send(dat);
 
 	function affNoRep(){
