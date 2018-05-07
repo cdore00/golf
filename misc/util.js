@@ -35,7 +35,8 @@ var xhr=new XMLHttpRequest();
 		callback(data);
   };
 xhr.open(THCall, HOSTserv + path ,true);
-//xhr.withCredentials = true;
+if (HOSTserv != "http://127.0.0.1:3000/")
+	xhr.withCredentials = true;
 xhr.send(dat);
 
 	function affNoRep(){
