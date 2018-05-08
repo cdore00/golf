@@ -473,15 +473,22 @@ z-index: 1500;
 }
 
 #identLayer{
-display: none;
+display: inherit;
 visibility:visible;
 z-index: 1501;
 }
 
 #authLayer{
 min-height: 200px;
-z-index: 1502;
-font-size:1.2em;
+z-index: 1502; 
+    background: transparent;
+    border: none;
+	font-size: 1em;
+}
+
+.winLayer{
+background: #eee !important;
+border: 3px solid #3A9D23 !important;
 }
 
 #prefOptions, #identOptions{

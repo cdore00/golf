@@ -697,6 +697,11 @@ geocoder = new google.maps.Geocoder();
     width: 98%;
 	margin-top: 75px;
 }
+
+#identLayer{
+display: none;
+}
+
 </style>
 
 </head>
@@ -876,7 +881,7 @@ geocoder = new google.maps.Geocoder();
 </form>
 </div>
 
-<div id="authLayer">
+<div id="authLayer" class="winLayer">
 <div id="divLoad"><img id="imgLoad" alt="Chargement en cours..." height="64" width="64" src="images/loading.gif" /></div>
 </div>
 <!--<div id="tooltip"></div>  // -->
