@@ -114,16 +114,27 @@ divCoor.style.visibility = 'visible';
 if (isMapped){
 	var data = courseID + "$" + trou + "$" + flagLatLng.lat() + "$" + flagLatLng.lng() + "$0$0";
 	trouCoord[trou - 1] = new google.maps.LatLng(flagLatLng.lat(), flagLatLng.lng());
-	getInfo("setGolfGPS?data=" + data);
+	getInfo("setGolfGPS?data=" + data, evalResp);
 	//butObj.disabled = true;
 }else{
 	var data = courseID + "$" + trou + "$" + flagLatLng.lat() + "$" + flagLatLng.lng() + "$" + nbrTrous + "$" + clubID;
-	getInfo("setGolfGPS?data=" + data, initPage);
+	getInfo("setGolfGPS?data=" + data, evalResp);
 }
 fadeOut("divCoor",100);
 //alert(trou + ' Lat: ' + flagLatLng.lat() + ' Lng: ' + flagLatLng.lng());
 }
 
+function evalResp(oRes){
+	if (!oRes.ok && oRes.message){
+		var modLayer = document.getElementById('modalDiv');
+		alert(langLbl[oRes.message]);
+		authentifier();
+		modLayer.style.visibility="visible";
+	}else{
+		if (!isMapped)
+			initPage();
+	}
+}
 
 function trouSuivant(p_m){
 var butObj = document.getElementById("setFlag");
@@ -138,7 +149,7 @@ if (trou == 0)
 afficheTrou(trou);
 }
 
-function initPage(resp){
+function initPage(){
 var butMenu = document.getElementById("butMenu");
 if ( GetCookie("userRole") != "MEM")
 	butMenu.style.visibility = "visible";
@@ -198,6 +209,15 @@ function closeMenu(){
 	var menuList = document.getElementById('menuList');
 	menuList.style.height = "0px";
 }
+
+function setIdent(){
+
+}
+
+function identified(){
+
+}
+
 
 	// -->
 </script> 
@@ -308,6 +328,12 @@ visibility: hidden;
 
 <div id="divCoor" class="tipCoor"><span id="divCoorTxt" class="tipCoorTxt"></span></div>
 
+<div id="modalDiv"></div>
+<div id="authLayer">
+<!--
+<div id="divLoad"><img id="imgLoad" alt="Chargement en cours..." height="64" width="64" src="images/loading.gif" /></div>
+// -->
+</div>
 
   </body> 
 </html>
