@@ -163,15 +163,21 @@ var info = "user=" + userName + "&email=" + userCour + "&pass=" + userPass;
 
 function identified(){
 	var leftbutton = document.getElementById('leftbutton');
-	var aLink = document.getElementById('aLink');
+	var newIdent = document.getElementById('newIdent');
+	var butGame = document.getElementById('butGame');
+	var myAccount = document.getElementById('myAccount');
 	
 	userId = GetCookie("userID");
 	if (userId){
 		leftbutton.style.visibility="visible";
-		aLink.style.visibility="visible";
+		butGame.style.visibility="visible";
+		myAccount.style.visibility="visible";
+		newIdent.style.visibility="hidden";
 	}else{
 		leftbutton.style.visibility="hidden";
-		aLink.style.visibility="hidden";
+		butGame.style.visibility="hidden";
+		myAccount.style.visibility="hidden";
+		newIdent.style.visibility="visible";
 	}
 }
 
@@ -518,6 +524,7 @@ function checkCookie(){
     }
     return (cookieEnabled)?true:false;
 }
+
 function initPage(){
 
 setFontSize();
