@@ -151,11 +151,14 @@ afficheTrou(trou);
 
 function initPage(){
 var butMenu = document.getElementById("butMenu");
+var trEdit = document.getElementById("trEdit");
 if ( GetCookie("userRole") != "MEM")
 	butMenu.style.visibility = "visible";
 
 setFontSize();
 userId = GetCookie("userID");
+if (userId)
+	trEdit.style.display = "contents";
 var data = getURLdata();
 var ids = data.split('$');
 clubID = parseInt(ids[0]);
@@ -287,6 +290,10 @@ visibility:hidden;
 visibility: hidden;
 }
 
+#trEdit{
+display:none;
+}
+
 </style>
 
 </head>
@@ -312,7 +319,7 @@ visibility: hidden;
 
 <div id="menuList">
 <table><tbody>
-<tr><td onclick="showHole(this);" title="&Eacute;diter la position des drapeaux.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="medit"></text></td></tr>
+<tr id="trEdit"><td onclick="showHole(this);" title="&Eacute;diter la position des drapeaux.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="medit"></text></td></tr>
 <tr><td onclick="showCenter(this);" title="Centrage sur changement de drapeau.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mcent"></text></td></tr>
 </tbody></table>
 </div>

@@ -542,8 +542,8 @@ holeDist.addEventListener('touchstart', startTouch, false);  // Drag and drop fo
 changeScore.addEventListener('touchstart', startTouch, false);  // Drag and drop for mobil
 userId = GetCookie("userID");
 setLanguage();
-if (!userId)
-	changeScore.style.visibility = "hidden";
+if (userId)
+	changeScore.style.visibility = "visible";
 var data = getURLdata();
 data = data.split("&");
 courseID = data[0];

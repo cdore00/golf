@@ -1,5 +1,5 @@
 
-var HOSTserv = "https://pytgolf-cd-serv.1d35.starter-us-east-1.openshiftapps.com/"
+var HOSTserv = "http://127.0.0.1:3000/";  // VULTR Ubuntu Server 16.04 docker Python 3.6.4
 // "http://127.0.0.1:3000/";		//Portable Windows 10 Local host Node JS v6.10.0
 // "http://192.168.2.195:3000/";    //Ubuntu workstation 16.04
 // "http://192.168.2.195:8080/";    //Ubuntu workstation 16.04 docker 1.12.6 Node JS v4.2.3  MongoDB server v3.4.9
@@ -27,14 +27,14 @@ var dat = new FormData();
 dat.append('info', path);
 
 var xhr=new XMLHttpRequest();
-  xhr.onloadend = function() {
-    var text = xhr.responseText;
+	xhr.onloadend = function() {
+	var text = xhr.responseText;
 	if (text == "")
 		affNoRep();
 	var data=JSON.parse(text);
 	if (callback)
 		callback(data);
-  };
+	};
 xhr.open(THCall, HOSTserv + path ,true);
 if (HOSTserv != "http://127.0.0.1:3000/")
 	xhr.withCredentials = true;
@@ -43,7 +43,7 @@ xhr.send(dat);
 	function affNoRep(){
 		var eBod = document.getElementsByTagName('body')[0];
 		var divErr = document.createElement("div");
-		divErr.innerHTML = "Pas de réponse: " + HOSTserv;
+		divErr.innerHTML = HOSTserv;
 		eBod.insertBefore(divErr, eBod.firstChild);
 	}
 }
@@ -475,8 +475,7 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["S0059"] = "Mote de passe actuel incorrect.";
 		langLbl["S0060"] = "Vous devez vous authentifier pour terminer la partie.";
 		langLbl["S0061"] = "Vous devez vous authentifier pour supprimer la partie.";
-		langLbl["S0062"] = "Vous devez vous authentifier pour sauvegarder.";
-		
+		langLbl["S0062"] = "Vous devez être authentifié administrateur pour sauvegarder.";
 		
 		langLbl["Bleu"] = "Bleu";
 		langLbl["Hdcp"] = "Hdcp";
@@ -586,7 +585,7 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["S0059"] = "Contraseña actual incorrecta.";
 		langLbl["S0060"] = "Debes autenticarte para completar el juego.";
 		langLbl["S0061"] = "Debes autenticarte para eliminar el juego.";
-		langLbl["S0062"] = "Debes autenticarte para guardar.";
+		langLbl["S0062"] = "Debe ser administrador autenticado para guardar.";
 		
 		langLbl["Bleu"] = "Azul";
 		langLbl["Hdcp"] = "Hdcp";
@@ -696,7 +695,7 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["S0059"] = "Incorrect current password.";
 		langLbl["S0060"] = "You must authenticate to complete the game.";
 		langLbl["S0061"] = "You must authenticate to remove the game.";
-		langLbl["S0062"] = "You must authenticate to save.";
+		langLbl["S0062"] = "You must be authenticated administrator to save.";
 		
 		langLbl["Bleu"] = "Blue";
 		langLbl["Hdcp"] = "Hdcp";

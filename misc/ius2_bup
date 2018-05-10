@@ -18,20 +18,19 @@ printf '%s\n' 0a 'var HOSTserv = "https://cdore.ddns.net/node/";'  . w | ed -s "
 echo " ********** Install docker images and containers from docker.com ********** "
 sudo ip addr add 192.168.10.11/24 dev docker0
 
-sleep 1
-sudo docker run -d -p 192.168.10.11:8080:27017 -p 6600:27017 -v /home:/data --name="mon_golf" cdore00/mongo_golf:v2
-sudo docker run -d -p 5000:8080 --name="servDB2" cdore00/servdb:v4
-sudo docker run -d --network="host" -v /home/lou:/usr/share/cdore/loupop -v /home/golf:/usr/share/cdore/golf --name="webServ" cdore00/nginx_cd:v3
+read -p " MongoDB User Name :> " uname
+read -p " User Password:> " upass
+read -p " Admin Password:> " apass
+sudo docker run -d -p 192.168.10.11:8080:27017 -p 6600:27017 -e MONGODB_ADMIN_PASSWORD=$apass -e MONGODB_USER=$uname -e MONGODB_PASSWORD=$upass -e MONGODB_DATABASE=golf -v /home:/data --name="mon_golf" cdore00/mon_golf34:v3
+sudo docker run -d -p 5000:8080 -e DATABASE_SERVICE_NAME=mongodb -e MONGODB_SERVICE=192.168.10.11 -e MONGODB_PORT=8080 -e MONGODB_ADMIN_PASSWORD=$apass -e MONGODB_USER=$uname -e MONGODB_PASSWORD=$upass -e MONGODB_DATABASE=golf -v /home/cdore:/data --name="servDB2" cdore00/nodegolf:v2
+sudo docker run -d --network="host" -v /home:/data -v /home/lou:/usr/share/cdore/loupop -v /home/golf:/usr/share/cdore/golf --name="webServ" cdore00/nginx_cd:v5
 
 echo " ********** Restore golf database ********** "
 sleep 1
-if [ -e /home/dump/golf ]
+if [ -e /home/mdump/sampledb ]
 then
-    echo "/data/dump/golf"
-	sudo docker exec mon_golf /usr/bin/mongorestore -d golf /data/dump/golf
-else
-    echo "/home/dump/golf"
-	sudo docker exec mon_golf /usr/bin/mongorestore -d golf /home/dump/golf
+    echo "/data/mdump/sampledb"
+	sudo docker exec mon_golf bash /home/upddb
 fi
 
 echo " ********** Install services ********** "
@@ -44,6 +43,8 @@ sudo ufw allow 22/tcp
 sudo ufw allow 80/tcp
 sudo ufw allow 443/tcp
 sudo ufw allow 5000/tcp
+sudo ufw allow 5500/tcp
+sudo ufw allow 5550/tcp
 sudo ufw allow 8080/tcp
 ufw --force enable
 
@@ -57,19 +58,18 @@ sudo echo $TIMEZONE > /etc/timezone
 sudo cp /usr/share/zoneinfo/${TIMEZONE} /etc/localtime   # This sets the time
 
 # Add to crontab // Manual with command: crontab -e
-line="15 4 * * * sudo docker exec -ti webServ /usr/bin/certbot renew > /var/log/certweb.log"
+line="15 4 * * * sudo docker exec webServ bash /home/checkren"
 (crontab -u root -l; echo "$line" ) | crontab -u root -
-
-sudo docker cp /home/golf webServ:/usr/share/cdore
+service cron restart
 
 sudo echo " ********** -------------- Check setup result ----------------"
 sleep 1
 sudo ufw status
 sudo docker ps -a
-#sudo curl https://cdore.ddns.net/node/
-sudo systemctl status startapp
 crontab -l
-date
 sudo curl https://cdore.ddns.net/node/
+date
+date
+sudo systemctl status startapp
 
 exit 0

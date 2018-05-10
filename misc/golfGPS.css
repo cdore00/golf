@@ -42,13 +42,10 @@ text-align:center;
 min-height:1.2em
 }
 
-#holeDist, #changeScore{
+#holeDist{
 /*font-size:1em;*/
 top:2em;
 visibility:visible;
-}
-
-#holeDist{
 left:0.8em;
 z-index: 1004;
 }
@@ -58,6 +55,7 @@ font-size:1em;
 top:2.5em;
 left:4em;
 z-index: 1007;
+visibility:hidden;
 }
 
 #piquetDist{
