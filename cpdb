@@ -1,0 +1,17 @@
+#wget "https://github.com/openshift/origin/releases/download/v3.9.0/openshift-origin-client-tools-v3.9.0-191fece-linux-64bit.tar.gz"
+#tar -xvzf openshift-origin-client-tools-v3.9.0-191fece-linux-64bit.tar.gz
+#oc login https://api.starter-us-east-1.openshift.com:443
+#
+
+# Dump openshift DB
+/home/bin/oc exec mongolf34-5-6kkmz bash /tmp/dumpdb
+
+sleep 5
+# Copy dump to /home
+/home/bin/oc cp mongolf34-5-6kkmz:/tmp/mdump /home/mdump
+
+sleep 5
+# Update DB in container mon_golf
+docker exec mon_golf bash /home/upddb
+
+exit 0
