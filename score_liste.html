@@ -86,6 +86,10 @@ userId = GetCookie("userID");
 var data = getURLdata();
 
 initCount();
+
+if (eval(localStorage.getItem('optOpen')))
+	showOptions(document.getElementById('menuOpt'));
+
 }
 
 function initCount(){
@@ -280,25 +284,36 @@ if (menuOn){
 }
 }
 
-function showOptions(menuTxt){
+function showOptions(menuOpt){
 var divOptions = document.getElementById('divOptions');
-var prefNbr = document.getElementById('prefNbr');
 
 if (divOptions.style.height != "0px" && divOptions.style.height != ""){
 	divOptions.style.height = "0px";
-	menuTxt.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;" + langLbl["mopti"];
+	menuOpt.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;" + langLbl["mopti"];
+	localStorage.setItem('optOpen', 'false');
 }else{
+	menuOpt.innerHTML = "&#10004;&nbsp;" + langLbl["mopti"];
+	localStorage.setItem('optOpen', 'true');
+	adjDivOpt(divOptions)
+	}
+}
+
+function adjDivOpt(divOptions){
+var prefNbr = document.getElementById('prefNbr');
+var adj = prefNbr.offsetTop + prefNbr.offsetHeight - 32;
+if (divOptions && (divOptions.style.height == "0px" || divOptions.style.height == "")){
 	var fur = navigator.userAgent;
-	adj = prefNbr.offsetTop + prefNbr.offsetHeight - 32;
 	if(fur.indexOf('Safari') != -1){
 		//adj = (adj + 20);
 //alert("safari2=" + adj);
 		}
-	divOptions.style.height = adj + "px";
-	menuTxt.innerHTML = "&#10004;&nbsp;" + langLbl["mopti"];
-	}
+	divOptions.style.height = adj + "px";	
+}else{
+	var divOptions = document.getElementById('divOptions');
+	if (divOptions && divOptions.style.height != "0px" && divOptions.style.height != "")
+		divOptions.style.height = adj + "px";	
 }
-
+}
 
 function editGame(menuTxt){
 				
@@ -349,6 +364,13 @@ function identified(){
 
 }
 
+function resizeImg(fs){
+var refImg = document.getElementById('refImg');
+
+refImg.width = fs * 17;
+adjDivOpt();
+}
+
 // -->
 </script> 
 </head>
@@ -368,7 +390,7 @@ function identified(){
 
 <tr><td onclick="location.reload();" title="Actualiser la page.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mrefr">Actualiser</text></td></tr>
 <tr><td onclick="editGame(this);" title="&Eacute;diter la liste.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="medit"></text></td></tr>
-<tr><td onclick="showOptions(this);" title="Options de recherche.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mopti">Options</text></td></tr>
+<tr><td id="menuOpt" onclick="showOptions(this);" title="Options de recherche.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mopti">Options</text></td></tr>
 <tr><td onclick="showSubmenu(this, 'inherit');" onmouseover="showSubmenu(this, 'inherit');" onmouseout="showSubmenu(this, 'none');" title="T&eacute;l&eacute;charger un fichier...">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mdown"></text>&nbsp;&#9658;</td></tr>
 <tr><td onclick="telGameList(0);">&nbsp;&nbsp;&nbsp;&nbsp;<text id="_canc">Annuler</text></td></tr>
 </tbody></table>
@@ -398,13 +420,14 @@ function identified(){
   <option value="100" >100 parties</option>
 </select>
 <input id="prefNb" type"text" size="3" value="10"/>
+<button class="itin" onclick="location.reload();"><img id="refImg" alt="Refresh" width="24" src="images/refresh.png" /></button>
 </div>
 </div>
 
 <div id="p1" name="p1" class="unselectable">
 	<table class="cartePts">
 	<tbody id="gameList">
-<div id="divLoad"><img id="imgLoad" alt="Chargement en cours..." height="64" width="64" src="images/loading.gif" /></div>
+<div id="divLoad"><img id="imgLoad" alt="Chargement en cours..." height="1em" width="1em" src="images/loading.gif" /></div>
 	</tbody>
 	</table>
 </div>

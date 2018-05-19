@@ -131,26 +131,31 @@ if (sizeAD && typeof sizeAD == "number"){
 		}
 	}
 	document.body.style.fontSize = fs + "em";
-	//SetCook( "_fontSize", fs + "em");
+	//SetCook( "_fontSize", fs );
 }else{
 	if (!sizeAD){
 		setLanguage();
-		fs = GetCookie( "_fontSize");
+		fs = eval(GetCookie( "_fontSize"));
 		if (!fs || fs == ""){
 			fs = document.body.style.fontSize;
 			if (fs == ""){
-				fs = "1.4em";
+				fs = "1.4";
 				SetCook("_fontSize",fs);
 			}
 		}
 	}else{
 		fs = sizeAD;
 	}
-	document.body.style.fontSize = fs;
+	document.body.style.fontSize = fs + "em";
 	var pageZone = document.getElementById('pageZone');
 	if (pageZone)
 		pageZone.style.visibility = "visible";
 }
+resizeImg(fs);
+}
+
+function resizeImg(fs){
+	//alert(fs)
 }
 
 
