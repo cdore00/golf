@@ -65,6 +65,10 @@ var skip = 0;
 var gameCount = 0;
 var limit= 0;
 var localWindow=null;
+var sortColl = -1;  // Row number to sort
+var sortOrder = 1;  // Sort ascending = 1 descending = -1
+var sortArray = []; // Grid record sorted
+var arrParc = [];
 
 function show_score(gameID, clubName){
 if (!editMode){
@@ -99,10 +103,19 @@ var nbrTrous = parseInt(formPref.prefTrous.value);
 getInfo("countUserGame?data=" + userId + "$" + nbrTrous, getGameList);
 }
 
+function identParc(parcNo){
+return arrParc.find(function(element) {
+  return element._id.parcours == parcNo;
+});
+}
 
 function getGameList(oCount, tel){
 var formPref = document.getElementById('formPref');
 var divLoad = document.getElementById('divLoad');
+var selParc = document.getElementById('selParc');
+
+if (selParc && selParc.selectedIndex != 0)
+	var parc = identParc(selParc.options[selParc.selectedIndex].value);
 
 closeMenu();
 divLoad.style.top = ( divLoad.parentElement.offsetHeight + divLoad.parentElement.offsetTop - 100 ) + "px";
@@ -120,11 +133,21 @@ if (!date)
 	date = 0;
 var nbrTrous = parseInt(formPref.prefTrous.value);
 var actLimit = limit;
-limit= parseInt(formPref.prefNb.value);
+	
+limit = parseInt(formPref.prefNb.value);
+if (!limit)
+	limit = parseInt(formPref.prefNbr.value);
 
-if (oCount){
-	gameCount = oCount;
+if (oCount){	//Initialyse game count
+	if ( typeof oCount == "object"){
+		gameCount = oCount.count;
+		addSelParc(oCount.group);
+		arrParc = oCount.group;
+	}else{
+		gameCount = oCount;
+	}
 	skip = 0;
+	adjDivOpt();
 }else{
 	if (!tel)
 		skip += actLimit ;
@@ -154,6 +177,24 @@ if (!tel || tel == 99){
 	}
 }
 
+function addSelParc(oGroup){
+var divOptions = document.getElementById('divOptions');
+var optStr = '<option value="" >Tous les clubs</option>';
+var selElem = document.createElement("select");
+selElem.setAttribute('id', 'selParc');
+
+oGroup.sort(function(a, b) {
+    return a._id.name > b._id.name;
+});
+
+for (var i = 0; i < oGroup.length; i++) {
+	optStr += '<option value="' + oGroup[i]._id.parcours + '" >' + oGroup[i]._id.name + ' (' + oGroup[i].count + ')</option>';
+}
+selElem.innerHTML = optStr;
+divOptions.insertBefore(selElem, divOptions.firstChild);
+
+}
+
 
 function calcScore(oScore){
 var tot = 0;
@@ -172,26 +213,68 @@ if (option > 0){
 }
 
 function showGameList(scoreData){
-var gameList = document.getElementById('gameList');
-
-stopLoad();
-var listTot = 0, nbrGame = 0;
-//coupTot = coupTot + orecordset("score")
-
-var Tcode = '<tr><th>Date</th><th>Club</th><th>Score</th><th class="tdEdit"></th></tr>';
-var arrHDP = new Array();
 
 for (var i = 0; i < scoreData.length; i++) {
-	var scoreID = scoreData[i]._id;
-	var courseName = scoreData[i].name;
-	Tcode += '<tr class="norm" ontouchstart="this.className=\'rowOver\'" ontouchend="this.className=\'rowNorm\'" onmouseover="this.className=\'rowOver\'" onmouseout="this.className=\'rowNorm\'" onclick="show_score(\'' + scoreID + '\',' + '\'' + courseName + '\');">';
 	var gt = calcScore(scoreData[i]);
+	sortArray[i] = [ (scoreData[i].score_date) , scoreData[i].name , gt, scoreData[i]._id ];
+}
+stopLoad();
+sortTable(0);
+}
+
+function sortTable(noCol){  // Sort table game list
+var gameList = document.getElementById('gameList');
+//var selForm = document.getElementById('selForm');
+var sortTitle, sortCar;
+var listTot = 0, nbrGame = 0;
+
+var gl = gameList.childNodes.length
+for (var i = 0; i < gl; i++){
+	gameList.childNodes[0].parentNode.removeChild(gameList.childNodes[0]);
+}
+
+if (sortColl == noCol) 
+	sortOrder *= -1; 
+else
+	if (noCol == 0)
+		sortOrder = -1;
+	else
+		sortOrder = 1;
+
+sortColl = noCol;
+if (sortOrder == 1){
+	sortArray.sort(sortAsc);
+	sortCar = "&#9650;";
+	}
+else{
+	sortArray.sort(sortDes);
+	sortCar = "&#9660;";
+	}
+	
+var theadElem = document.createElement("thead");
+var tbodyElem = document.createElement("tbody");
+gameList.appendChild(theadElem);
+gameList.appendChild(tbodyElem);
+
+var thElem = document.createElement("tr");
+thElem.setAttribute('title', 'Click to sort');
+thElem.innerHTML = '<th onclick="sortTable(0)">Date</th><th onclick="sortTable(1)">Club</th><th onclick="sortTable(2)">Score</th><th   class="tdEdit"></th>';
+theadElem.appendChild(thElem);
+
+var arrHDP = [];
+var Tcode = "";
+for (var i = 0; i < sortArray.length; i++) {
+	var scoreID = sortArray[i][3];
+	var scoreDate = sortArray[i][0];
+	var courseName = sortArray[i][1];
+	var gt = sortArray[i][2];
+	Tcode += '<tr class="norm" ontouchstart="this.className=\'rowOver\'" ontouchend="this.className=\'rowNorm\'" onmouseover="this.className=\'rowOver\'" onmouseout="this.className=\'rowNorm\'" onclick="show_score(\'' + scoreID + '\',' + '\'' + courseName + '\');">';
 	arrHDP[arrHDP.length] = gt;
 	listTot += gt;
 	nbrGame += 1;
-	Tcode += '<td>' + (scoreData[i].score_date) + '</td><td>' + scoreData[i].name + '</td><td>' + gt + '</td>';
-	Tcode += '<td class="tdEdit"><img onclick="delGame(this.parentNode.parentNode.childNodes,\'' + scoreID + '\')" height="16" width="16" src="images/delete.png" /></td></tr>'
-//'<td><%=orecordset("Sdate")%></td><td><%=orecordset("nom")%></td><td><%=orecordset("score")%></td></tr>';
+	Tcode += '<td>' + scoreDate + '</td><td>' + courseName + '</td><td>' + gt + '</td>';
+	Tcode += '<td class="tdEdit"><img onclick="delGame(this.parentNode.parentNode.childNodes,\'' + scoreID + '\')" height="16" width="16"  src="images/delete.png" /></td></tr>';
+	//sortArray[i] = [ scoreID , (scoreData[i].score_date) , courseName , gt ];
 }
 
 if (i == 20)
@@ -200,16 +283,46 @@ else
 	var hdp = "";
 
 Tcode += '<tr><td><strong>' + hdp + '</strong></td><td><strong>' + nbrGame + '&nbsp;parties</strong></td><td><strong>Moy.: ' + (Math.round(listTot/limit*10) /10 ) + '</strong></td><td class="tdEdit"></td></tr>';
+	
+tbodyElem.innerHTML = Tcode;
 
-//'<tr><td><strong>Moyenne</strong></td><td><strong><%=i%>&nbsp;parties</strong></td><td><strong><%=round(coupTot/i,1)%></strong></td></tr>';
-
-gameList.innerHTML = Tcode;
+	switch(noCol) {
+		case 0:
+			sortTitle = "Date";
+			break;
+		case 1:
+			sortTitle = "Club";
+			break;
+		case 2:
+			sortTitle = "Score";
+			break;
+	} 
+	thElem.childNodes[noCol].innerHTML = sortTitle + '<span class="sortInd">' + sortCar + '</span>';	
 
 if (editMode){
 	editMode = false;
 	editGame(false);
+}	
 }
 
+
+
+function sortAsc(a, b) {
+    if (a[sortColl] === b[sortColl]) {
+        return 0;
+    }
+    else {
+        return (a[sortColl] < b[sortColl]) ? -1 : 1;
+    }
+}
+
+function sortDes(a, b) {
+    if (a[sortColl] === b[sortColl]) {
+        return 0;
+    }
+    else {
+        return (a[sortColl] < b[sortColl]) ? 1 : -1;
+    }
 }
 
 function stopLoad(){
@@ -425,11 +538,10 @@ adjDivOpt();
 </div>
 
 <div id="p1" name="p1" class="unselectable">
-	<table class="cartePts">
-	<tbody id="gameList">
-<div id="divLoad"><img id="imgLoad" alt="Chargement en cours..." height="1em" width="1em" src="images/loading.gif" /></div>
-	</tbody>
+	<table id="gameList" class="cartePts">
+
 	</table>
+	<div id="divLoad"><img id="imgLoad" alt="Chargement en cours..." height="1em" width="1em" src="images/loading.gif" /></div>
 </div>
 
 <div class="space10">
