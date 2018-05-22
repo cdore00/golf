@@ -11,7 +11,9 @@ height: 100%;
 margin: 0; 
 padding: 0;
 font-size:0.9em;
-background:#FFF;-webkit-touch-callout:none}
+background:#FFF;-webkit-touch-callout:none;
+background: rgb(238, 238, 238);
+}
 
 element.style {
     font-size: 100%;
@@ -23,6 +25,10 @@ html, body, form, fieldset, p, div, h1, h2, h3, h4, h5, h6 {
 
 .gm-style .gm-style-iw{
 	/*font-size:0.9em;*/
+}
+
+input, select{
+	background-color: #f8fff8;
 }
 
 .center{
@@ -219,9 +225,9 @@ background:-moz-linear-gradient(top,#3A9D23,#00bb00)}
 	visibility: hidden;
 }
 
-.pageitem{-webkit-border-radius:8px;background-color:#fff;border:#444444 solid 1px;overflow:auto;padding:1px;padding-bottom:5px;position:relative;display:block;margin:10px 8px;list-style:none;border-radius: 20px;}
+.pageitem{-webkit-border-radius:8px;background-color:#f0f0f0;border:#444444 solid 1px;overflow:auto;padding:1px;padding-bottom:5px;position:relative;display:block;margin:10px 8px;list-style:none;border-radius: 20px;}
 
-.favItems{background-color:#fff;border:#444444 solid 1px;overflow:hidden; overflow-y:scroll;margin:10px 10px;text-align:left;height:150px}
+.favItems{background-color:#f0f0f0;border:#444444 solid 1px;overflow:hidden; overflow-y:scroll;margin:10px 10px;text-align:left;height:150px}
 
 .form{margin:5px 0 2px 0;padding:0}select,input{font-size:0.7em;padding:0}select.fulllength{width:100%}
 .bouton{font-size:0.7em; min-width:100px;
@@ -236,7 +242,7 @@ box-shadow: 1px 1px 1px #ccccdd, 2px 2px 2px #aaaaaa inset;
    -moz-box-shadow: 1px 1px 1px rgba(0,0,0,0.5),
    inset 2px 2px 2px rgba(255,255,255,0.75);
 border-radius:40px;
-background-color:#777;color:#fff;font-weight:bold;
+background-color:#777;color:#eee;font-weight:bold;
 cursor:pointer}
 
 #Rechercher{display: inline-block;position: relative;float: right;}
@@ -246,7 +252,7 @@ cursor:pointer}
 #divMot, #divReg, #divCod {position:relative;float:left;clear:both;display:inline;min-width: 33%;
 text-align: right;
 margin-right: 1em;}
-.divChxChamp {position:relative;clear:both;width:100%;display:inline;float:left;right:0px;font-size:0.7em;background-color:white;}
+.divChxChamp {position:relative;clear:both;width:100%;display:inline;float:left;right:0px;font-size:0.7em;}
 .inputtext {position:relative;display:inline;left:0px;right:0px;font-weight:bold;top:0px;text-align:left; height:25px}
 .inputselect {position:relative;display:inline-block;left:0px;right:0px;font-weight:bold;top:0px;text-align:left;height: 27px;}
 .inpSelSW{width: 4.7em;}
@@ -304,8 +310,8 @@ position: relative;
 	right:0px;
 }
 
-#copyright{color:#ccf;font-size: 0.8em;position:relative;top:0px;text-align:center; font-weight:bold; width: 100%;font-variant: small-caps;}
-#copyright a{color:#ccf;text-decoration:none}
+#copyright{color:#aba;font-size: 0.8em;position:relative;top:0px;text-align:center; font-weight:bold; width: 100%;font-variant: small-caps;}
+#copyright a{color:#aba;text-decoration:none}
 
 #favIcon{
 position: relative;
@@ -363,7 +369,7 @@ box-shadow: 1px 1px 1px #ccccdd, 2px 2px 2px #aaaaaa inset;
    /* visibility: hidden;*/
     width: 7em;
     background-color: #777;
-    color: #fff;
+    color: #eee;
     text-align: center;
     border-radius: 6px;
     padding: 5px;
@@ -427,7 +433,7 @@ padding-top: 5px
 .adp-substep {padding-left:11px;vertical-align: top;text-align: left;font-size: 0.8em}
 .adp-text {padding-left:5px;text-align: left}
 
-.detailTrajet{text-align:center;color:#fff;font-size:1.5em;font-weight:bold;text-decoration:none}
+.detailTrajet{text-align:center;color:#eee;font-size:1.5em;font-weight:bold;text-decoration:none}
 
 #modalDiv{ 
 visibility:hidden;
@@ -459,7 +465,7 @@ left: 0px;
 margin: 1.5%;
 margin-top: 10%;
 width: 96%;
-background: #eee;
+background: #f0f0f0;
 border: 3px solid #3A9D23;
 -webkit-border-radius: 20px;
 border-radius: 20px; 
@@ -595,8 +601,8 @@ width:40px;
 
 #onglets li.active, #onglets li.active a{
 	color: #000;
-    border-bottom: 2px solid #eee;
-    background-color: #eee;
+    border-bottom: 2px solid #f0f0f0;
+    background-color: #f0f0f0;
 }
 
 #onglets a{

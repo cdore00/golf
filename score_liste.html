@@ -17,12 +17,14 @@
 <meta name="viewport" content="initial-scale=1.0, user-scalable=no" /> 
 
 <style>
+
 table.cartePts tr:focus, tr:active{color: #FF3333}
 
 #divOptions{
 height: 0px;
 overflow: hidden;
 transition: height 0.4s ease-in-out;
+background: rgb(238, 238, 238);
 }
 
 #butMenu{
@@ -63,12 +65,14 @@ if (isTouchDevice){
 var userId;
 var skip = 0;
 var gameCount = 0;
+var totGame = 0;
 var limit= 0;
 var localWindow=null;
 var sortColl = -1;  // Row number to sort
 var sortOrder = 1;  // Sort ascending = 1 descending = -1
 var sortArray = []; // Grid record sorted
 var arrParc = [];
+var parcIndex = 0, parcNo = 0;
 
 function show_score(gameID, clubName){
 if (!editMode){
@@ -79,6 +83,11 @@ if (!editMode){
 }
 
 function initPage(){
+var formPref = document.getElementById('formPref');
+formPref.prefNbr.selectedIndex = 2;
+formPref.prefTrous.selectedIndex = 0;
+formPref.prefNb.value = "";
+
 var p1 = document.getElementById('p1');
 p1.addEventListener("mouseover", function() {
     closeMenu();
@@ -114,41 +123,59 @@ var formPref = document.getElementById('formPref');
 var divLoad = document.getElementById('divLoad');
 var selParc = document.getElementById('selParc');
 
-if (selParc && selParc.selectedIndex != 0)
-	var parc = identParc(selParc.options[selParc.selectedIndex].value);
-
 closeMenu();
 divLoad.style.top = ( divLoad.parentElement.offsetHeight + divLoad.parentElement.offsetTop - 100 ) + "px";
 divLoad.style.display = "inherit";
-
 var sh = document.styleSheets[0];
 var Wait_on="* {cursor: wait !important}";
 sh.insertRule(Wait_on, 0);
 
-localStorage.setItem('gameListPrefTrous', formPref.prefTrous.selectedIndex);
-localStorage.setItem('gameListPrefNbr', formPref.prefNbr.selectedIndex);
+if (selParc && selParc.selectedIndex != parcIndex){
+	if (selParc.selectedIndex == 0){
+		gameCount = totGame;
+		parcNo = 0;
+		parcIndex =	0;	
+	}else{
+		var parc = identParc(selParc.options[selParc.selectedIndex].value);
+		gameCount = parc.count;
+		parcNo = parc._id.parcours;
+		parcIndex = selParc.selectedIndex;
+	}//skip =0;
+}
+	
+//localStorage.setItem('gameListPrefTrous', formPref.prefTrous.selectedIndex);
+//localStorage.setItem('gameListPrefNbr', formPref.prefNbr.selectedIndex);
 
 var date = Date.parse(formPref.prefDate.value);
 if (!date)
 	date = 0;
 var nbrTrous = parseInt(formPref.prefTrous.value);
-var actLimit = limit;
-	
+
 limit = parseInt(formPref.prefNb.value);
 if (!limit)
 	limit = parseInt(formPref.prefNbr.value);
+	
+var actLimit = limit;
 
-if (oCount){	//Initialyse game count
+if (oCount){	//Initialyze game count
 	if ( typeof oCount == "object"){
-		gameCount = oCount.count;
+		totGame = oCount.count;
+		if (selParc)
+			selParc.parentNode.removeChild(selParc);
 		addSelParc(oCount.group);
 		arrParc = oCount.group;
+		adjDivOpt();
+		gameCount = totGame;
 	}else{
-		gameCount = oCount;
+		if (oCount != -1){
+			totGame = oCount;
+			gameCount = totGame;
+		}else{
+			skip += actLimit ;
+		}
 	}
 	skip = 0;
-	adjDivOpt();
-}else{
+}else{	// Next games
 	if (!tel)
 		skip += actLimit ;
 }
@@ -169,12 +196,13 @@ if (!tel || tel == 99){
 		noGame.length = 0;
 		showGameList(noGame);
 	}else
-		getInfo("getGameList?user=" + userId + "&skip=" + skip + "&limit=" + limit + "&is18=" + nbrTrous  + "&date=" + date, showGameList);
+		getInfo("getGameList?user=" + userId + "&parc=" + parcNo + "&skip=" + skip + "&limit=" + limit + "&is18=" + nbrTrous  + "&date=" + date, showGameList);
 }else{
 	var param = ("getGameList?user=" + userId + "&skip=" + skip + "&limit=" + limit + "&is18=" + nbrTrous  + "&date=" + date + "&tele=" + tel);
 	document.location.href = HOSTserv + param;
 	stopLoad();
 	}
+
 }
 
 function addSelParc(oGroup){
@@ -213,7 +241,7 @@ if (option > 0){
 }
 
 function showGameList(scoreData){
-
+sortArray = [];
 for (var i = 0; i < scoreData.length; i++) {
 	var gt = calcScore(scoreData[i]);
 	sortArray[i] = [ (scoreData[i].score_date) , scoreData[i].name , gt, scoreData[i]._id ];
@@ -222,7 +250,7 @@ stopLoad();
 sortTable(0);
 }
 
-function sortTable(noCol){  // Sort table game list
+function sortTable(noCol, colObj){  // Sort table game list
 var gameList = document.getElementById('gameList');
 //var selForm = document.getElementById('selForm');
 var sortTitle, sortCar;
@@ -233,9 +261,10 @@ for (var i = 0; i < gl; i++){
 	gameList.childNodes[0].parentNode.removeChild(gameList.childNodes[0]);
 }
 
-if (sortColl == noCol) 
-	sortOrder *= -1; 
-else
+if (sortColl == noCol){
+	if (colObj)
+		sortOrder *= -1; 
+}else
 	if (noCol == 0)
 		sortOrder = -1;
 	else
@@ -258,7 +287,7 @@ gameList.appendChild(tbodyElem);
 
 var thElem = document.createElement("tr");
 thElem.setAttribute('title', 'Click to sort');
-thElem.innerHTML = '<th onclick="sortTable(0)">Date</th><th onclick="sortTable(1)">Club</th><th onclick="sortTable(2)">Score</th><th   class="tdEdit"></th>';
+thElem.innerHTML = '<th onclick="sortTable(0, this)">Date</th><th onclick="sortTable(1, this)">Club</th><th onclick="sortTable(2, this)">Score</th><th   class="tdEdit"></th>';
 theadElem.appendChild(thElem);
 
 var arrHDP = [];
@@ -304,8 +333,6 @@ if (editMode){
 	editGame(false);
 }	
 }
-
-
 
 function sortAsc(a, b) {
     if (a[sortColl] === b[sortColl]) {
@@ -533,7 +560,7 @@ adjDivOpt();
   <option value="100" >100 parties</option>
 </select>
 <input id="prefNb" type"text" size="3" value="10"/>
-<button class="itin" onclick="location.reload();"><img id="refImg" alt="Refresh" width="24" src="images/refresh.png" /></button>
+<button class="itin" onclick="getGameList(-1);"><img id="refImg" alt="Refresh" width="24" src="images/refresh.png" /></button>
 </div>
 </div>
 
@@ -549,7 +576,9 @@ adjDivOpt();
 </div>
 
 </form>
-&nbsp;
+<div id="copyright">
+<a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2018</a>
+</div>
 
 <div id="modalDiv"></div>
 <div id="authLayer">
