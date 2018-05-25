@@ -113,9 +113,9 @@ var nbrTrous = parseInt(formPref.prefTrous.value);
 getInfo("countUserGame?data=" + userId + "$" + nbrTrous, getGameList);
 }
 
-function identParc(parcNo){
+function identParc(pn){
 return arrParc.find(function(element) {
-  return element._id.parcours == parcNo;
+  return element._id.parcours == pn;
 });
 }
 
@@ -188,6 +188,8 @@ if (date) // If date then start to date
 	skip = 0;
 alert(parcNo);
 if (!tel || tel == 99){
+	if (!parcNo)
+		parcNo = 0;
 	if (tel == 99){
 		limit--;
 		gameCount--;
