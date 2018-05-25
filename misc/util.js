@@ -38,7 +38,6 @@ var xhr=new XMLHttpRequest();
 xhr.open(THCall, HOSTserv + path ,true);
 if (HOSTserv != "http://127.0.0.1:3000/")
 	xhr.withCredentials = true;
-alert(xhr.withCredentials + path);
 xhr.send(dat);
 
 	function affNoRep(){

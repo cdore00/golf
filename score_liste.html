@@ -131,6 +131,7 @@ var Wait_on="* {cursor: wait !important}";
 sh.insertRule(Wait_on, 0);
 
 if (selParc && selParc.selectedIndex != parcIndex){
+	alert("sel=" + selParc.selectedIndex)
 	if (selParc.selectedIndex == 0){
 		gameCount = totGame;
 		parcNo = 0;
@@ -207,7 +208,7 @@ if (!tel || tel == 99){
 
 function addSelParc(oGroup){
 var divOptions = document.getElementById('divOptions');
-var optStr = '<option value="" >Tous les clubs</option>';
+var optStr = '<option value="0" selected>Tous les clubs</option>';
 var selElem = document.createElement("select");
 selElem.setAttribute('id', 'selParc');
 
