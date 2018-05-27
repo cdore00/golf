@@ -163,9 +163,7 @@ font-size:0.8em;
 font-weight:bold;
 background-color: #eee;
 border:1px solid #aaa;
-margin:0;
-padding:0;
-margin-left:2px;
+padding-right: 5px;
 text-align:left;
 text-decoration:none;
 }
