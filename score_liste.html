@@ -74,6 +74,7 @@ var sortArray = []; // Grid record sorted
 var arrParc = [];
 var parcIndex = 0;
 var parcNo = 0;
+var nbrTrous;
 
 function show_score(gameID, clubName){
 if (!editMode){
@@ -108,7 +109,7 @@ if (eval(localStorage.getItem('optOpen')))
 
 function initCount(){
 var formPref = document.getElementById('formPref');
-var nbrTrous = parseInt(formPref.prefTrous.value);
+nbrTrous = parseInt(formPref.prefTrous.value);
 
 getInfo("countUserGame?data=" + userId + "$" + nbrTrous, getGameList);
 }
@@ -150,8 +151,8 @@ if (selParc && selParc.selectedIndex != parcIndex){
 var date = Date.parse(formPref.prefDate.value);
 if (!date)
 	date = 0;
-var nbrTrous = parseInt(formPref.prefTrous.value);
 
+nbrTrous = parseInt(formPref.prefTrous.value);
 limit = parseInt(formPref.prefNb.value);
 if (!limit)
 	limit = parseInt(formPref.prefNbr.value);
@@ -229,7 +230,7 @@ divOptions.insertBefore(selElem, divOptions.firstChild);
 
 function calcScore(oScore){
 var tot = 0;
-for (var i = 1; i < 19; i++) {
+for (var i = 1; i <= nbrTrous; i++) {
 	tot += (eval("oScore.T" + i));
 }
 
