@@ -38,7 +38,7 @@ var xhr=new XMLHttpRequest();
 xhr.open(THCall, HOSTserv + path ,true);
 if (HOSTserv != "http://127.0.0.1:3000/")
 	xhr.withCredentials = true;
-xhr.send(dat);
+xhr.send();
 
 	function affNoRep(){
 		var eBod = document.getElementsByTagName('body')[0];
