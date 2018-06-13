@@ -296,7 +296,7 @@ if (langP)
 }
 
 function adjustPol(selOption){
-setFontSize(eval(selOption.value));
+setFontSize(selOption.value);
 var formPref = document.getElementById('formPref');
 //formPref.style.fontSize = "inherit";
 var fs = (selOption.value);
@@ -861,18 +861,17 @@ display: none;
   </ul>
 </div>
 
-<form id="formAuth" autocomplete="off">
+<form id="formAuth">
 <div id="identOptions">
 
 <div class="prefList">
 <label for="nameUser" id="lbl1" class="identLbl"><text id="email">Courriel</text></label><div class="prefVal">
-<input id="nameUser" type="email" autocomplete="on" size="15" maxlength="50"/>
+<input id="nameUser" type="text" size="15" maxlength="50">
 </div></div>
 
 <div class="prefList">
 <label for="passwordUser" id="lbl1" class="identLbl"><text id="passw">Mot de passe</text></label><div class="prefVal">
-<input id="passwordUser" type="password" size="15" autocorrect="off" autocapitalize="off" autocomplete="off" maxlength="50"  readonly 
-    onfocus="this.removeAttribute('readonly');"/>
+<input id="passwordUser" type="password" size="15" maxlength="50">
 </div></div>
 
 <div id="aLink" class="prefList">
