@@ -296,7 +296,7 @@ if (langP)
 }
 
 function adjustPol(selOption){
-setFontSize(eval(selOption.value));
+setFontSize(selOption.value);
 var formPref = document.getElementById('formPref');
 //formPref.style.fontSize = "inherit";
 var fs = (selOption.value);
@@ -313,15 +313,15 @@ var polSize = document.getElementById('polSize');
 var chxLang = document.getElementById('chxLang');
 
 var optElem = document.createElement("option");
-optElem.setAttribute('value', '1');
+optElem.setAttribute('value', '1em');
 optElem.innerHTML = langLbl["small"];
 polSize.appendChild(optElem);
 var optElem = document.createElement("option");
-optElem.setAttribute('value', '1.4');
+optElem.setAttribute('value', '1.4em');
 optElem.innerHTML = langLbl["middl"];
 polSize.appendChild(optElem);
 var optElem = document.createElement("option");
-optElem.setAttribute('value', '2');
+optElem.setAttribute('value', '2em');
 optElem.innerHTML = langLbl["large"];
 polSize.appendChild(optElem);
 

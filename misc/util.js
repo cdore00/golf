@@ -115,8 +115,8 @@ for (i = 0; i < oCtls.length; i++) {
 	oCtls[i].style.color = "#efe";
 }
 if (sizeAD && typeof sizeAD == "number"){
-	//fs = eval(fs.replace("em", "")) + sizeAD; 
-	fs = sizeAD; 
+	fs = eval(fs.replace("em", "")) + sizeAD; 
+	//fs = sizeAD; 
 	if (sizeAD > 0){
 		if (fs >= 2){
 			fs = 2;
@@ -136,18 +136,19 @@ if (sizeAD && typeof sizeAD == "number"){
 }else{
 	if (!sizeAD){
 		setLanguage();
-		fs = eval(GetCookie( "_fontSize"));
+		fs = (GetCookie( "_fontSize"));
 		if (!fs || fs == ""){
 			fs = document.body.style.fontSize;
 			if (fs == ""){
-				fs = "1.4";
+				fs = "1.4em";
 				SetCook("_fontSize",fs);
 			}
 		}
+		document.body.style.fontSize = fs ;
 	}else{
-		fs = sizeAD;
+		document.body.style.fontSize = sizeAD;
 	}
-	document.body.style.fontSize = fs + "em";
+	//document.body.style.fontSize = fs + "em";
 	var pageZone = document.getElementById('pageZone');
 	if (pageZone)
 		pageZone.style.visibility = "visible";
