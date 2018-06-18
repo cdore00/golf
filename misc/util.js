@@ -115,7 +115,7 @@ for (i = 0; i < oCtls.length; i++) {
 	oCtls[i].style.color = "#efe";
 }
 if (sizeAD && typeof sizeAD == "number"){
-	fs = eval(fs.replace("em", "")) + sizeAD; 
+	fs = eval(fs.replace("em", "")) + sizeAD;
 	//fs = sizeAD; 
 	if (sizeAD > 0){
 		if (fs >= 2){
