@@ -153,7 +153,7 @@ if (sizeAD && typeof sizeAD == "number"){
 	if (pageZone)
 		pageZone.style.visibility = "visible";
 }
-resizeImg(fs);
+resizeImg(eval(fs.replace("em", "")));
 }
 
 function resizeImg(fs){
