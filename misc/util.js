@@ -115,8 +115,7 @@ for (i = 0; i < oCtls.length; i++) {
 	oCtls[i].style.color = "#efe";
 }
 if (sizeAD && oIncDec){
-	fs = eval(fs.replace("em", "")) + sizeAD;
-	//fs = sizeAD; 
+	fs = eval(fs.replace("em", "")) + sizeAD; 
 	if (sizeAD > 0){
 		if (fs >= 2){
 			fs = 2;
@@ -131,7 +130,6 @@ if (sizeAD && oIncDec){
 				oIncDec.style.color = "#555";
 		}
 	}
-	//document.body.style.fontSize = fs + "em";
 	//SetCook( "_fontSize", fs );
 }else{
 	if (!sizeAD){
@@ -144,19 +142,16 @@ if (sizeAD && oIncDec){
 				SetCook("_fontSize",fs);
 			}
 		}
-		//document.body.style.fontSize = fs + "em";
 	}else{
-		//document.body.style.fontSize = sizeAD;
 		fs = sizeAD;
 	}
 	//document.body.style.fontSize = fs + "em";
 	var pageZone = document.getElementById('pageZone');
-
 }
 resizeImg(fs);
-	if (pageZone)
-		pageZone.style.visibility = "visible";
 document.body.style.fontSize = fs + "em";	
+if (pageZone)
+	pageZone.style.visibility = "visible";
 }
 
 function resizeImg(fs){
