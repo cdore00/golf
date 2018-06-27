@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
+<meta name="format-detection" content="telephone=yes" />
+
+<link rel="shortcut icon" type="image/x-icon" href="images/golf.png">
+<link rel="shortcut icon" type="image/x-icon" href="images/golf.png?">
+<title>Golfs du Qu&eacute;bec</title>
+<meta content="Golf GPS, Qu&eacute;bec, Canada, Golf du Qu&eacute;bec, Clubs de golf au Qu&eacute;bec, Qu&eacute;bec golf" name="keywords" />
+<meta content="R&eacute;pertoire des clubs de golf du Qu&eacute;bec. GPS golf." name="description" />
+
+<link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
+
+<script type="text/javascript" src="misc/util.js"></script>
+<script type="text/javascript" language="Javascript">
+<!--
+
+var userId;
+var clubID;
+var courseIDdef;
+var clubName;
+var clubCourse;
+var favChange = false;
+var goURL;
+
+if (document.images)
+{
+ favOn= new Image(30,30);
+ favOn.src="images/favoris.png";  
+
+ favOff= new Image(30,30);
+ favOff.src="images/favorisOff.png";
+}
+
+function changeFav(objImg){
+
+if (favChange)
+	favChange = false;
+else
+	favChange = true;
+
+if (objImg.src.indexOf("Off") !=  -1)
+	objImg.src = favOn.src;
+else
+	objImg.src = favOff.src;
+}
+
+
+function majFav(nextURL){
+var action;
+var imgStat = document.getElementById('favIcon');
+
+goURL = nextURL;
+
+if (favChange){
+	if (imgStat.src.indexOf("Off") !=  -1)
+		action=0;  //deleteAction
+	else
+		action=1;  //addAction
+		
+	if (nextURL)
+		getInfo("updateFav?data=" + clubID + "$" + userId + "$" + action, changeURL);
+	else
+		getInfo("updateFav?data=" + clubID + "$" + userId + "$" + action);
+}else
+if (nextURL)
+	changeURL();
+	
+}
+
+function changeURL(oRep){
+document.location.href = goURL;
+}
+
+function initPage(){
+var butMenu = document.getElementById("butMenu");
+//var trEdit = document.getElementById("trEdit");
+if ( GetCookie("userRole") != "MEM")
+	butMenu.style.visibility = "visible";
+	
+var data = getURLdata();
+
+setFontSize();
+
+clubID = parseInt(data);
+userId = GetCookie("userID");
+
+getInfo("getClubParc?data=" + clubID + "$" + userId, showClub);
+
+}
+
+function showMenu(){
+var menuList = document.getElementById('menuList');
+
+if (menuList.style.height != "0px" && menuList.style.height != ""){
+	menuList.style.height = "0px";
+}else{
+	var adj = menuList.childNodes[1].offsetHeight;
+	menuList.style.height = (adj * .75) + "pt";
+	}
+//menuOn = true;
+}
+
+function closeMenu(){
+	var menuList = document.getElementById('menuList');
+	menuList.style.height = "0px";
+}
+
+function editClub(currentClub){
+
+}
+
+
+function showClub(oClubParc){
+var clubForm = document.getElementById('clubForm');
+
+clubForm.FclubName.value = oClubParc[0].nom;
+clubForm.Faddress.value = oClubParc[0].adresse;
+clubForm.Fville.value = oClubParc[0].municipal;
+clubForm.Fcopep.value = oClubParc[0].codepostal2;
+
+var clubInfo = document.getElementById('clubInfo');
+var clubDetail = document.getElementById('clubDetail');
+var mapLink = document.getElementById('mapLink');
+var CourseList = "";
+
+clubCourse = (oClubParc[0].courses);
+courseIDdef = oClubParc[0].courses[0]._id;
+mapLink.href += clubID + "$" + courseIDdef;
+
+for (var i = 0; i < clubCourse.length; i++) {
+	CourseList += clubCourse[i]._id + "$";
+}
+CourseList = CourseList.substring(0, CourseList.length - 1 );
+getInfo("getBloc?data=" + CourseList, showBlock);
+
+clubName = oClubParc[0].nom;
+var cInfo = 'Club:&nbsp;';
+if (oClubParc[0].url_club)
+	cInfo += '<a target="_blank" href=' + oClubParc[0].url_club + '>' + oClubParc[0].nom + '</a>&nbsp;';
+else
+	cInfo += oClubParc[0].nom + '&nbsp;';
+if (oClubParc[0].prive)
+	cInfo += '&nbsp;(Priv&eacute;)&nbsp;';
+if (userId){
+	if (oClubParc[0].isFavorite){
+		cInfo += '<img id="favIcon" onclick="changeFav(this)" alt="Favoris" width="30" height="30" src="images/favoris.png" />&nbsp;';
+	}else{
+		cInfo += '<img id="favIcon" onclick="changeFav(this)" alt="Favoris" width="30" height="30" src="images/favorisOff.png" />&nbsp;';
+	}
+}
+var myPos = localStorage.getItem('myPos');
+if (myPos){
+	var coord = myPos.split(',');
+
+	cInfo += '&nbsp;&nbsp;<a class="itin" target="_blank" href="ClubTrajet.html?data=' + coord[0] + '$' + coord[1] + '$' +  oClubParc[0].latitude + '$' + oClubParc[0].longitude + '$' + encodeURI(oClubParc[0].nom) +'">' + langLbl["direc"] + '</a>';
+	}
+if (false)
+	cInfo += '&nbsp;<a class="itin" target="_blank" href="ClubTrajet.html?Lat=">' + langLbl["direc"] + '</a>';
+
+clubInfo.innerHTML = cInfo;
+
+var cInfo = oClubParc[0].adresse + ',&nbsp;';
+if (oClubParc[0].url_ville)
+	cInfo += '<a target="_blank" href=' + oClubParc[0].url_ville + '">' + oClubParc[0].municipal + '</a>,&nbsp;';
+else
+	cInfo += oClubParc[0].municipal + ',&nbsp;';
+cInfo += oClubParc[0].codepostal2 + '&nbsp; ';
+cInfo += oClubParc[0].telephone + '&nbsp;';
+if (oClubParc[0].telephone2)
+	cInfo += ", " + oClubParc[0].telephone2;
+if (oClubParc[0].telephone3)
+	cInfo += ", " + oClubParc[0].telephone3;
+	
+clubDetail.innerHTML = cInfo;
+
+var pageZone = document.getElementById('pageZone');
+
+	var htmlCode = "<ul>";
+for (var p = 0; p < clubCourse.length; p++) {
+	htmlCode += "<li>";
+	var parcoursName = "";
+	if (clubCourse[p].POINTS == "E")
+		htmlCode += "Ex&eacute;cutif,&nbsp;";
+	if (clubCourse[p].PARCOURS != null && clubCourse[p].PARCOURS != "")
+		htmlCode += clubCourse[p].PARCOURS + "&nbsp;" 
+	
+		htmlCode += clubCourse[p].TROUS + langLbl["holes"];
+	if (clubCourse[p].DEPUIS)	
+		htmlCode += langLbl["since"] + clubCourse[p].DEPUIS ;
+	htmlCode +=  langLbl["ccpar"] + clubCourse[p].NORMALE + ", &nbsp;" + clubCourse[p].VERGES + langLbl["cyard"];
+	if (clubCourse[p].PARCOURS != "")
+		parcoursName += " - " + clubCourse[p].PARCOURS;
+	if (clubCourse[p].GPS)
+		htmlCode += '<a class="itin" target="_blank" href="golfGPS.html?data=' + clubCourse[p]._id + '&' + clubName + parcoursName + '">' + langLbl["bplay"] + '</a>';
+htmlCode += "</li>";
+
+}
+htmlCode += "</ul>";
+	var liElem = document.createElement("li");
+	liElem.setAttribute('class', 'listitem gras');
+	liElem.innerHTML = htmlCode;
+	pageZone.appendChild(liElem);
+
+}
+
+function showBlock(oBlock){
+var bloc = oBlock;
+var nextCourse = 0;
+
+// Course list
+var pageZone = document.getElementById('pageZone');
+if (bloc.length > 0){
+for (var p = 0; p < clubCourse.length; p++) {
+	var htmlCode = "";
+	var courseID = clubCourse[p]._id;
+	//var bloc = oBlock[p];
+	var b = 0;
+	while (bloc[b] && bloc[b].PARCOURS_ID != courseID) {
+		b++;
+	}
+	
+	nextCourse = b;
+	//Bloc list
+	if (bloc[b]){
+		var nbrTrou = clubCourse[p].TROUS;
+
+		var liElem = document.createElement("li");
+		liElem.setAttribute('class', 'listitem gras');
+		var divElem = document.createElement("div");
+		divElem.setAttribute('id', 'p1');
+		divElem.setAttribute('class', 'cartePts');
+
+		var htmlCode = '<table class="cartePts"><tr><td  class="titre" colspan="14"><b>' + langLbl["cours"] + clubCourse[p].PARCOURS + "&nbsp;" + nbrTrou + langLbl["holes"] + '</b></td></tr>';
+		if(nbrTrou == 9)
+			htmlCode += '<tr class="entete"><th>' + langLbl["hole"] + '</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>Total</th></tr>';
+		else
+			htmlCode += '<tr class="entete"><th>' + langLbl["hole"] + '</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>' + langLbl["goout"] + '</th><td></td><td></td><td></td></tr>';
+
+		
+		do{
+			var cName = 'B' + bloc[b].Bloc;
+			htmlCode += '<tr><td class="' + cName + '">' + langLbl[bloc[b].Bloc] + '</td>';
+			for (var i = 1; i < 10; i++) {
+				var x = "bloc[b].T" + i;
+				htmlCode += '<td class="' + cName + '">' + eval(x) + '</td>';
+			}
+			if(nbrTrou == 9)
+				htmlCode += '<td class="' + cName + '">' + ((bloc[b].Aller == null) ? "":bloc[b].Aller) + '</td>';
+			else
+				htmlCode += '<td class="' + cName + '">' + ((bloc[b].Aller == null) ? "":bloc[b].Aller) + '</td><td></td><td></td><td></td>';
+		b += 1;
+		} while ( bloc[b] && bloc[b].PARCOURS_ID == courseID);
+
+		if(nbrTrou == 18){
+			htmlCode += '<tr class="entete"><th>' + langLbl["hole"] + '</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th><th>16</th><th>17</th><th>18</th><th>' + langLbl["goin"] + '</th><th>Total</th><th>Eval.</th><th>Slope</th></tr>';
+			var b = nextCourse;
+			do{
+				var cName = 'B' + bloc[b].Bloc;
+				htmlCode += '<tr><td class="' + cName + '">' + langLbl[bloc[b].Bloc] + '</td>';
+				for (var i = 10; i < 19; i++) {
+					var x = "bloc[b].T" + i;
+					htmlCode += '<td class="' + cName + '">' + eval(x) + '</td>';
+				}
+				htmlCode += '<td class="' + cName + '">' + ((bloc[b].Retour == null) ? "":bloc[b].Retour) + '</td><td class="' + cName + '">' + ((bloc[b].Total == null) ? "":bloc[b].Total) + '</td><td class="' + cName + '">' + bloc[b].Eval + '</td><td class="' + cName + '">' + bloc[b].Slope + '</td>';
+			b += 1;
+			} while ( bloc[b] && bloc[b].PARCOURS_ID == courseID);
+		}
+		nextCourse = b;
+		htmlCode += '</table>';
+		divElem.innerHTML = htmlCode;
+		liElem.appendChild(divElem);
+		pageZone.appendChild(liElem);
+	}
+}
+}
+showProgress(1);
+}
+
+// -->
+</script>
+
+<style>
+
+label{
+width: 500px;
+}
+
+</style>
+
+</head>
+
+<body onload="initPage()" onunload="majFav()"><a name="haut"></a>
+
+<div id="topbar" class="vert">
+<div id="leftnav"><a title="Formulaire de recherche" href="#" onclick="majFav('index.html');"><img alt="Formulaire de recherche" height="22" width="25" src="images/home22.png" /></a></div>
+<div id="chargement" class="">
+<progress id="progressQ" ></progress>
+<div class="charge"><text id="load"></text></div><div class="charge loading"></div></div>
+<div id="fontAdjust" class="unselectable">
+<div class="divFont" onclick="setFontSize(0.2, this)"><div class="divFontSize">A</div><div class="fontLogo">&#8593;</div></div>
+<div class="divFont" onclick="setFontSize(-0.2, this)"><div class="divFontSize fontSmall">A</div><div class="fontLogo">&#8595;</div></div>
+</div>
+</div>
+<div id="duobutton">
+<a href="#" id="butMenu" title="Menu" onmouseover="showMenu()" onclick="showMenu();"><img id="logomenu" alt="Menu" src="images/menu.png" width="64" height="32"></a>
+<a href="#" onclick="majFav('listeResult.html');"><text id="mlist"></text></a>
+<a id="mapLink" target="_blank" href="ClubMap.html?data=" onclick="majFav();"><text id="mmaps"></text></a></div>
+<div id="menuList">
+<table><tbody>
+<tr id="trEdit"><td onclick="editClub(true);" title="&Eacute;diter la fiche du club.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="medit"></text></td></tr>
+<tr><td onclick="editClub(false);" title="Ajouter un club de golf.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="majou"></text></td></tr>
+</tbody></table>
+</div>
+
+<div id="content">
+
+<form id="clubForm" action="javascript:void(0);">
+
+<ul id="pageZone" class="pageitem">
+
+	
+	<label for="FclubName">Club name</label>
+	<input id="FclubName" class="inputtext" type="text" size="20" maxlength="25" value=""/>
+	<div>
+	<label for="Faddress">Address</label>
+	<input id="Faddress" class="inputtext" type="text" size="20" maxlength="25" value=""/>
+	
+	<label for="Fville">Ville</label>
+	<input id="Fville" class="inputtext" type="text" size="20" maxlength="25" value=""/>
+	
+	<label for="Fcopep">Code postal</label>
+	<input id="Fcopep" class="inputtext" type="text" size="7" maxlength="7" value=""/>
+	</div>
+			<li class="listitem gras">			
+			<div id="clubInfo" class="itemdesc">
+			</div>
+			<div id="clubDetail" class="itemdetail">
+			</div>
+			</li>
+</ul>
+
+</form>
+
+</div>
+
+<div id="bottombar" class="vert">
+	<div id="rightbutton"> <a href="#haut"><img alt="Haut de page" src="images/haut.png" /></a> </div>
+	<div id="message"></div>
+</div>
+
+<div id="copyright">
+<a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2018</a>
+</div>
+
+
+</body>
+
+</html>

@@ -1,5 +1,5 @@
 
-var HOSTserv = "https://pytgolf-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Python 3.6.3 
+var "https://pytgolf-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Python 3.6.3 
 // "http://127.0.0.1:3000/";		//Portable Windows 10 Local host Node JS v6.10.0
 // "http://192.168.2.195:3000/";    //Ubuntu workstation 16.04
 // "http://192.168.2.195:8080/";    //Ubuntu workstation 16.04 docker 1.12.6 Node JS v4.2.3  MongoDB server v3.4.9
@@ -460,6 +460,7 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["modid"] = "Modifier la destination";
 		langLbl["medit"] = "&Eacute;diter";
 		langLbl["mcent"] = "Centrer";
+		langLbl["majou"] = "Ajouter un club";
 		langLbl["mrefr"] = "Actualiser";
 		langLbl["mopti"] = "Options";
 		langLbl["mdown"] = "T&eacute;l&eacute;charger";
@@ -571,6 +572,7 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["modid"] = "Cambiar destino";
 		langLbl["medit"] = "Editar";
 		langLbl["mcent"] = "Centrar";
+		langLbl["majou"] = "Agregar club";
 		langLbl["mrefr"] = "Refrescar";
 		langLbl["mopti"] = "Opciones";
 		langLbl["mdown"] = "Descargar";
@@ -681,6 +683,7 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["modid"] = "Change destination";
 		langLbl["medit"] = "Edit";
 		langLbl["mcent"] = "Center";
+		langLbl["majou"] = "Add club";
 		langLbl["mrefr"] = "Refresh";
 		langLbl["mopti"] = "Options";
 		langLbl["mdown"] = "Download";
