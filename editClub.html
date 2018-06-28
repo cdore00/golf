@@ -76,10 +76,6 @@ document.location.href = goURL;
 }
 
 function initPage(){
-var butMenu = document.getElementById("butMenu");
-//var trEdit = document.getElementById("trEdit");
-if ( GetCookie("userRole") != "MEM")
-	butMenu.style.visibility = "visible";
 	
 var data = getURLdata();
 
@@ -92,22 +88,6 @@ getInfo("getClubParc?data=" + clubID + "$" + userId, showClub);
 
 }
 
-function showMenu(){
-var menuList = document.getElementById('menuList');
-
-if (menuList.style.height != "0px" && menuList.style.height != ""){
-	menuList.style.height = "0px";
-}else{
-	var adj = menuList.childNodes[1].offsetHeight;
-	menuList.style.height = (adj * .75) + "pt";
-	}
-//menuOn = true;
-}
-
-function closeMenu(){
-	var menuList = document.getElementById('menuList');
-	menuList.style.height = "0px";
-}
 
 function editClub(currentClub){
 
@@ -121,9 +101,21 @@ clubForm.FclubName.value = oClubParc[0].nom;
 clubForm.Faddress.value = oClubParc[0].adresse;
 clubForm.Fville.value = oClubParc[0].municipal;
 clubForm.Fcopep.value = oClubParc[0].codepostal2;
+clubForm.Ftel1.value = oClubParc[0].telephone;
+clubForm.Ftel2.value = oClubParc[0].telephone2;
+clubForm.Ftel3.value = oClubParc[0].telephone3;
+clubForm.FurlClub.value = oClubParc[0].url_club;
+clubForm.FurlMun.value = oClubParc[0].url_ville;
+clubForm.Flong.value = oClubParc[0].longitude;
+clubForm.Flat.value = oClubParc[0].latitude;
+var reg = oClubParc[0].region;
+for (var i = 0; i < clubForm.Freg.length; i++) {
+	if (clubForm.Freg.options[i].value == reg)
+		clubForm.Freg.selectedIndex = i;
+	
+}
 
-var clubInfo = document.getElementById('clubInfo');
-var clubDetail = document.getElementById('clubDetail');
+
 var mapLink = document.getElementById('mapLink');
 var CourseList = "";
 
@@ -137,73 +129,30 @@ for (var i = 0; i < clubCourse.length; i++) {
 CourseList = CourseList.substring(0, CourseList.length - 1 );
 getInfo("getBloc?data=" + CourseList, showBlock);
 
-clubName = oClubParc[0].nom;
-var cInfo = 'Club:&nbsp;';
-if (oClubParc[0].url_club)
-	cInfo += '<a target="_blank" href=' + oClubParc[0].url_club + '>' + oClubParc[0].nom + '</a>&nbsp;';
-else
-	cInfo += oClubParc[0].nom + '&nbsp;';
-if (oClubParc[0].prive)
-	cInfo += '&nbsp;(Priv&eacute;)&nbsp;';
-if (userId){
-	if (oClubParc[0].isFavorite){
-		cInfo += '<img id="favIcon" onclick="changeFav(this)" alt="Favoris" width="30" height="30" src="images/favoris.png" />&nbsp;';
-	}else{
-		cInfo += '<img id="favIcon" onclick="changeFav(this)" alt="Favoris" width="30" height="30" src="images/favorisOff.png" />&nbsp;';
-	}
-}
-var myPos = localStorage.getItem('myPos');
-if (myPos){
-	var coord = myPos.split(',');
-
-	cInfo += '&nbsp;&nbsp;<a class="itin" target="_blank" href="ClubTrajet.html?data=' + coord[0] + '$' + coord[1] + '$' +  oClubParc[0].latitude + '$' + oClubParc[0].longitude + '$' + encodeURI(oClubParc[0].nom) +'">' + langLbl["direc"] + '</a>';
-	}
-if (false)
-	cInfo += '&nbsp;<a class="itin" target="_blank" href="ClubTrajet.html?Lat=">' + langLbl["direc"] + '</a>';
-
-clubInfo.innerHTML = cInfo;
-
-var cInfo = oClubParc[0].adresse + ',&nbsp;';
-if (oClubParc[0].url_ville)
-	cInfo += '<a target="_blank" href=' + oClubParc[0].url_ville + '">' + oClubParc[0].municipal + '</a>,&nbsp;';
-else
-	cInfo += oClubParc[0].municipal + ',&nbsp;';
-cInfo += oClubParc[0].codepostal2 + '&nbsp; ';
-cInfo += oClubParc[0].telephone + '&nbsp;';
-if (oClubParc[0].telephone2)
-	cInfo += ", " + oClubParc[0].telephone2;
-if (oClubParc[0].telephone3)
-	cInfo += ", " + oClubParc[0].telephone3;
-	
-clubDetail.innerHTML = cInfo;
-
 var pageZone = document.getElementById('pageZone');
 
-	var htmlCode = "<ul>";
+var selParc = document.getElementById('Fparc');
 for (var p = 0; p < clubCourse.length; p++) {
-	htmlCode += "<li>";
+	var optCode = "";
+	var optElem = document.createElement("option");
+	optElem.setAttribute('value', clubCourse[p]._id);
 	var parcoursName = "";
 	if (clubCourse[p].POINTS == "E")
-		htmlCode += "Ex&eacute;cutif,&nbsp;";
+		optCode += "Ex&eacute;cutif,&nbsp;";
 	if (clubCourse[p].PARCOURS != null && clubCourse[p].PARCOURS != "")
-		htmlCode += clubCourse[p].PARCOURS + "&nbsp;" 
+		optCode += clubCourse[p].PARCOURS + "&nbsp;" 
 	
-		htmlCode += clubCourse[p].TROUS + langLbl["holes"];
+		optCode += clubCourse[p].TROUS + langLbl["holes"];
 	if (clubCourse[p].DEPUIS)	
-		htmlCode += langLbl["since"] + clubCourse[p].DEPUIS ;
-	htmlCode +=  langLbl["ccpar"] + clubCourse[p].NORMALE + ", &nbsp;" + clubCourse[p].VERGES + langLbl["cyard"];
+		optCode += langLbl["since"] + clubCourse[p].DEPUIS ;
+	optCode +=  langLbl["ccpar"] + clubCourse[p].NORMALE + ", &nbsp;" + clubCourse[p].VERGES + langLbl["cyard"];
 	if (clubCourse[p].PARCOURS != "")
 		parcoursName += " - " + clubCourse[p].PARCOURS;
-	if (clubCourse[p].GPS)
-		htmlCode += '<a class="itin" target="_blank" href="golfGPS.html?data=' + clubCourse[p]._id + '&' + clubName + parcoursName + '">' + langLbl["bplay"] + '</a>';
-htmlCode += "</li>";
 
+	optElem.innerHTML = optCode;	
+	selParc.appendChild(optElem);
 }
-htmlCode += "</ul>";
-	var liElem = document.createElement("li");
-	liElem.setAttribute('class', 'listitem gras');
-	liElem.innerHTML = htmlCode;
-	pageZone.appendChild(liElem);
+
 
 }
 
@@ -280,13 +229,23 @@ for (var p = 0; p < clubCourse.length; p++) {
 showProgress(1);
 }
 
+function addParc(){
+
+}
+
 // -->
 </script>
 
 <style>
 
-label{
-width: 500px;
+.formLabel{
+position: relative;
+float: left;
+clear: both;
+width: 200px;
+display: inline;
+text-align: right;
+margin-right: 1em;
 }
 
 </style>
@@ -306,41 +265,135 @@ width: 500px;
 </div>
 </div>
 <div id="duobutton">
-<a href="#" id="butMenu" title="Menu" onmouseover="showMenu()" onclick="showMenu();"><img id="logomenu" alt="Menu" src="images/menu.png" width="64" height="32"></a>
 <a href="#" onclick="majFav('listeResult.html');"><text id="mlist"></text></a>
 <a id="mapLink" target="_blank" href="ClubMap.html?data=" onclick="majFav();"><text id="mmaps"></text></a></div>
-<div id="menuList">
-<table><tbody>
-<tr id="trEdit"><td onclick="editClub(true);" title="&Eacute;diter la fiche du club.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="medit"></text></td></tr>
-<tr><td onclick="editClub(false);" title="Ajouter un club de golf.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="majou"></text></td></tr>
-</tbody></table>
-</div>
+
 
 <div id="content">
 
 <form id="clubForm" action="javascript:void(0);">
 
 <ul id="pageZone" class="pageitem">
-
-	
-	<label for="FclubName">Club name</label>
+	<div class="">
+	<label for="Fparc">Club&nbsp;:</label></div>
+<li class="listitem gras">
+	<div class="formLabel">	
+	<label for="FclubName">Club name</label></div>
 	<input id="FclubName" class="inputtext" type="text" size="20" maxlength="25" value=""/>
-	<div>
-	<label for="Faddress">Address</label>
+</li>
+<li class="listitem gras">
+	<div class="formLabel">
+	<label for="Faddress">Address</label></div>
 	<input id="Faddress" class="inputtext" type="text" size="20" maxlength="25" value=""/>
-	
-	<label for="Fville">Ville</label>
+</li>
+<li class="listitem gras">
+	<div class="formLabel">
+	<label for="Fville">Ville</label></div>
 	<input id="Fville" class="inputtext" type="text" size="20" maxlength="25" value=""/>
-	
-	<label for="Fcopep">Code postal</label>
+</li>
+<li class="listitem gras">
+	<div class="formLabel">
+	<label for="Fcopep">Code postal</label></div>
 	<input id="Fcopep" class="inputtext" type="text" size="7" maxlength="7" value=""/>
-	</div>
-			<li class="listitem gras">			
-			<div id="clubInfo" class="itemdesc">
-			</div>
-			<div id="clubDetail" class="itemdetail">
-			</div>
-			</li>
+</li>
+<li class="listitem gras">
+	<div class="formLabel">
+	<label for="Ftel1">Téléphone 1</label></div>
+	<input id="Ftel1" class="inputtext" type="text" size="12" maxlength="12" value=""/>
+</li>	
+<li class="listitem gras">
+	<div class="formLabel">
+	<label for="Ftel2">Téléphone 2</label></div>
+	<input id="Ftel2" class="inputtext" type="text" size="12" maxlength="12" value=""/>
+</li>
+<li class="listitem gras">
+	<div class="formLabel">
+	<label for="Ftel3">Téléphone 3</label></div>
+	<input id="Ftel3" class="inputtext" type="text" size="12" maxlength="12" value=""/>
+</li>
+<li class="listitem gras">
+	<div class="formLabel">
+	<label for="FurlClub">url Club</label></div>
+	<input id="FurlClub" class="inputtext" type="text" size="25" maxlength="80" value=""/>
+</li>
+<li class="listitem gras">
+	<div class="formLabel">
+	<label for="FurlMun">url Municipalité</label></div>
+	<input id="FurlMun" class="inputtext" type="text" size="25" maxlength="80" value=""/>
+</li>
+<li class="listitem gras">
+	<div class="formLabel">
+	<label for="Flong">Longitude</label></div>
+	<input id="Flong" class="inputtext" type="text" size="12" maxlength="12" value=""/>
+</li>
+<li class="listitem gras">
+	<div class="formLabel">
+	<label for="Flat">Latitude</label></div>
+	<input id="Flat" class="inputtext" type="text" size="12" maxlength="12" value=""/>
+</li>
+<li class="listitem gras">
+	<div class="formLabel">
+	<label for="Freg">Région</label></div>
+	<select id="Freg" class="inputselect">
+		<option value="1">Abitibi</option>
+		<option value="2">Appalaches</option>
+		<option value="3">Côte-Nord</option>
+		<option value="4">Centre Québec</option>
+		<option value="5">Estrie</option>
+		<option value="6">Gaspésie</option>
+		<option value="7">Lanaudière</option>
+		<option value="8">Laurentides</option>
+		<option value="9">Laval</option>
+		<option value="10">Mauricie</option>
+		<option value="11">Montréal</option>
+		<option value="12">Montérégie</option>
+		<option value="13">Outaouais</option>
+		<option value="14">Québec</option>
+		<option value="15">Saguenay</option>
+		<option value="16">Valleyfield</option>
+		<option value="17">PGA est</option>
+		<option value="18">PGA ouest</option>	
+	</select>
+</li>
+<!-- Course list // -->
+	<div class="">
+	<label for="Fparc">Parcours&nbsp;:&nbsp;&nbsp;</label><a alt="Add course" href="javascript:addParc();">Add course</a></div>
+	<select id="Fparc" class="inputselect">
+
+	</select>
+	
+	
+ <table>
+  <thead>
+  <input id="FPid" type="hidden" value=""/>
+  <tr>
+     <th>Type</th>
+     <th>Name</th>
+     <th>Depuis</th>
+     <th>Trous</th>
+     <th>Normale</th>
+     <th>Verges</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+     <td><input id="FPtype" class="inputtext" type="text" size="3" maxlength="3" value=""/></td>
+     <td><input id="FPname" class="inputtext" type="text" size="20" maxlength="30" value=""/></td>
+	 <td><input id="FPdep" class="inputtext" type="text" size="4" maxlength="4" value=""/></td>
+	 <td>
+	 <!-- <input id="FPtrous" class="inputtext" type="text" size="3" maxlength="3" value=""/> // -->
+	<select id="FPtrous" class="inputselect">
+		<option value="18">18</option>
+		<option value="9">9</option>
+	</select>
+	</td>
+	 <td><input id="FPnorm" class="inputtext" type="text" size="3" maxlength="3" value=""/></td>
+	 <td><input id="FPverg" class="inputtext" type="text" size="4" maxlength="4" value=""/></td>
+  </tr>
+  </tbody>
+</table> 
+	
+
 </ul>
 
 </form>
