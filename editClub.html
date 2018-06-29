@@ -23,8 +23,10 @@ var clubID;
 var courseIDdef;
 var clubName;
 var clubCourse;
+var bloc;
 var favChange = false;
 var goURL;
+var clubForm;
 
 if (document.images)
 {
@@ -35,48 +37,8 @@ if (document.images)
  favOff.src="images/favorisOff.png";
 }
 
-function changeFav(objImg){
-
-if (favChange)
-	favChange = false;
-else
-	favChange = true;
-
-if (objImg.src.indexOf("Off") !=  -1)
-	objImg.src = favOn.src;
-else
-	objImg.src = favOff.src;
-}
-
-
-function majFav(nextURL){
-var action;
-var imgStat = document.getElementById('favIcon');
-
-goURL = nextURL;
-
-if (favChange){
-	if (imgStat.src.indexOf("Off") !=  -1)
-		action=0;  //deleteAction
-	else
-		action=1;  //addAction
-		
-	if (nextURL)
-		getInfo("updateFav?data=" + clubID + "$" + userId + "$" + action, changeURL);
-	else
-		getInfo("updateFav?data=" + clubID + "$" + userId + "$" + action);
-}else
-if (nextURL)
-	changeURL();
-	
-}
-
-function changeURL(oRep){
-document.location.href = goURL;
-}
-
 function initPage(){
-	
+clubForm = document.getElementById('clubForm');
 var data = getURLdata();
 
 setFontSize();
@@ -89,13 +51,7 @@ getInfo("getClubParc?data=" + clubID + "$" + userId, showClub);
 }
 
 
-function editClub(currentClub){
-
-}
-
-
 function showClub(oClubParc){
-var clubForm = document.getElementById('clubForm');
 
 clubForm.FclubName.value = oClubParc[0].nom;
 clubForm.Faddress.value = oClubParc[0].adresse;
@@ -136,6 +92,7 @@ for (var p = 0; p < clubCourse.length; p++) {
 	var optCode = "";
 	var optElem = document.createElement("option");
 	optElem.setAttribute('value', clubCourse[p]._id);
+	//optElem.setAttribute('onchange', showCourse(this));
 	var parcoursName = "";
 	if (clubCourse[p].POINTS == "E")
 		optCode += "Ex&eacute;cutif,&nbsp;";
@@ -152,13 +109,57 @@ for (var p = 0; p < clubCourse.length; p++) {
 	optElem.innerHTML = optCode;	
 	selParc.appendChild(optElem);
 }
+showCourse();
 
+}
+
+function showCourse(parcList){
+//alert(parcList);
+if (parcList)
+	var ind = parcList.selectedIndex;
+else
+	var ind = 0;
+
+clubForm.FPid.value = clubCourse[ind]._id;
+clubForm.FPtype.value = clubCourse[ind].POINTS;
+clubForm.FPname.value = clubCourse[ind].PARCOURS;
+clubForm.FPdep.value = clubCourse[ind].DEPUIS;
+clubForm.FPtrous.value = clubCourse[ind].TROUS;
+clubForm.FPnorm.value = clubCourse[ind].NORMALE;
+clubForm.FPverg.value = clubCourse[ind].VERGES;
+//_id:597,CLUB_ID:532,POINTS:"",PARCOURS:"",DEPUIS:1960,TROUS:18,NORMALE:71,VERGES:7276
+
+}
+
+function showBloc(blocList, parcID){
+if (blocList)
+	var ind = blocList.selectedIndex;
+else
+	var ind = 0;
+
+//clubForm.FBt1.value = bloc[0].nom;
+}
+
+function initBlocs(){
+var parcID = clubForm.FPid.value;
+
+for (var p = 0; p < bloc.length; p++) {
+	if (bloc[p].PARCOURS_ID == parcID){
+		//alert(bloc[p].Bloc);
+		var optElem = document.createElement("option");
+		optElem.setAttribute('value', bloc[p]._id);
+		optElem.innerHTML = bloc[p].Bloc;
+		clubForm.FBbloc.appendChild(optElem);
+	}
+}
 
 }
 
 function showBlock(oBlock){
-var bloc = oBlock;
+bloc = oBlock;
 var nextCourse = 0;
+initBlocs();
+showBloc(false);
 
 // Course list
 var pageZone = document.getElementById('pageZone');
@@ -252,10 +253,10 @@ margin-right: 1em;
 
 </head>
 
-<body onload="initPage()" onunload="majFav()"><a name="haut"></a>
+<body onload="initPage()"><a name="haut"></a>
 
 <div id="topbar" class="vert">
-<div id="leftnav"><a title="Formulaire de recherche" href="#" onclick="majFav('index.html');"><img alt="Formulaire de recherche" height="22" width="25" src="images/home22.png" /></a></div>
+<div id="leftnav"><a title="Formulaire de recherche" href="#"><img alt="Formulaire de recherche" height="22" width="25" src="images/home22.png" /></a></div>
 <div id="chargement" class="">
 <progress id="progressQ" ></progress>
 <div class="charge"><text id="load"></text></div><div class="charge loading"></div></div>
@@ -265,8 +266,8 @@ margin-right: 1em;
 </div>
 </div>
 <div id="duobutton">
-<a href="#" onclick="majFav('listeResult.html');"><text id="mlist"></text></a>
-<a id="mapLink" target="_blank" href="ClubMap.html?data=" onclick="majFav();"><text id="mmaps"></text></a></div>
+<a href="#" ><text id="mlist"></text></a>
+<a id="mapLink" target="_blank" href="ClubMap.html?data=" ><text id="mmaps"></text></a></div>
 
 
 <div id="content">
@@ -355,10 +356,11 @@ margin-right: 1em;
 		<option value="18">PGA ouest</option>	
 	</select>
 </li>
+<hr>
 <!-- Course list // -->
 	<div class="">
 	<label for="Fparc">Parcours&nbsp;:&nbsp;&nbsp;</label><a alt="Add course" href="javascript:addParc();">Add course</a></div>
-	<select id="Fparc" class="inputselect">
+	<select id="Fparc" class="inputselect" onchange="showCourse(this)">
 
 	</select>
 	
@@ -371,7 +373,7 @@ margin-right: 1em;
      <th>Name</th>
      <th>Depuis</th>
      <th>Trous</th>
-     <th>Normale</th>
+     <th>Par</th>
      <th>Verges</th>
   </tr>
   </thead>
@@ -380,20 +382,100 @@ margin-right: 1em;
      <td><input id="FPtype" class="inputtext" type="text" size="3" maxlength="3" value=""/></td>
      <td><input id="FPname" class="inputtext" type="text" size="20" maxlength="30" value=""/></td>
 	 <td><input id="FPdep" class="inputtext" type="text" size="4" maxlength="4" value=""/></td>
-	 <td>
-	 <!-- <input id="FPtrous" class="inputtext" type="text" size="3" maxlength="3" value=""/> // -->
-	<select id="FPtrous" class="inputselect">
-		<option value="18">18</option>
-		<option value="9">9</option>
-	</select>
-	</td>
-	 <td><input id="FPnorm" class="inputtext" type="text" size="3" maxlength="3" value=""/></td>
+	 <td><input id="FPtrous" class="inputtext" type="text" size="2" maxlength="2" value=""/></td>
+	 <td><input id="FPnorm" class="inputtext" type="text" size="2" maxlength="2" value=""/></td>
 	 <td><input id="FPverg" class="inputtext" type="text" size="4" maxlength="4" value=""/></td>
   </tr>
   </tbody>
 </table> 
-	
-
+<hr>
+<!-- Blocs list // -->	
+	<div class="">
+	<label for="FBbloc">Blocs&nbsp;:&nbsp;&nbsp;</label><a alt="Add course" href="javascript:addBloc();">Add bloc</a></div>
+	<select id="FBbloc" class="inputselect" onchange="showBloc(this)">
+<!--<option value="Normale">Par</option>
+<option value="HDCP">HDCP</option>
+<option value="Argent">Argent</option>
+<option value="Blanc">Blanc</option>
+<option value="Bleu">Bleu</option>
+<option value="Bronze">Bronze</option>
+<option value="Cuivre">Cuivre</option>
+<option value="Jaune">Jaune</option>
+<option value="Noir">Noir</option>
+<option value="Or">Or</option>
+<option value="Orange">Orange</option>
+<option value="Rose">Rose</option>
+<option value="Rouge">Rouge</option>
+<option value="Vert">Vert</option>// -->
+	</select>
+<table>
+  <thead>
+  <input id="FBid" type="hidden" value=""/>
+  <tr>
+     <th>1</th>
+     <th>2</th>
+     <th>3</th>
+     <th>4</th>
+     <th>5</th>
+     <th>6</th>
+     <th>7</th>
+     <th>8</th>
+     <th>9</th>
+     <th>Total</th>
+     <th></th>
+     <th></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+     <td><input id="FBt1" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
+	 <td><input id="FBt2" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
+	 <td><input id="FBt3" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
+	 <td><input id="FBt4" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
+	 <td><input id="FBt5" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
+     <td><input id="FBt6" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
+	 <td><input id="FBt7" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
+	 <td><input id="FBt8" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
+	 <td><input id="FBt9" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
+	 <td><input id="FBtoto" class="inputtext" type="text" size="3" maxlength="4" value=""/></td>
+	 <td></td>
+     <td></td>
+  </tr>
+  </tbody>
+  <thead>
+  <input id="FBid" type="hidden" value=""/>
+  <tr>
+     <th>10</th>
+     <th>11</th>
+     <th>12</th>
+     <th>13</th>
+     <th>14</th>
+     <th>15</th>
+     <th>16</th>
+     <th>17</th>
+     <th>18</th>
+     <th>Total</th>
+     <th>Eval.</th>
+     <th>Slope</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+     <td><input id="FBt1" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
+	 <td><input id="FBt2" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
+	 <td><input id="FBt3" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
+	 <td><input id="FBt4" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
+	 <td><input id="FBt5" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
+     <td><input id="FBt6" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
+	 <td><input id="FBt7" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
+	 <td><input id="FBt8" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
+	 <td><input id="FBt9" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
+	 <td><input id="FBtoto" class="inputtext" type="text" size="3" maxlength="4" value=""/></td>
+	 <td><input id="FBeval" class="inputtext" type="text" size="3" maxlength="4" value=""/></td>
+     <td><input id="FBslope" class="inputtext" type="text" size="3" maxlength="4" value=""/></td>
+  </tr>
+  </tbody>
+</table> 
 </ul>
 
 </form>
