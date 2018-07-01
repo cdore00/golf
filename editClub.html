@@ -27,6 +27,8 @@ var bloc;
 var favChange = false;
 var goURL;
 var clubForm;
+var newClub = {}, newCourse = {}, newBloc = {};
+tmpID = 1000000;
 
 if (document.images)
 {
@@ -52,7 +54,10 @@ getInfo("getClubParc?data=" + clubID + "$" + userId, showClub);
 
 
 function showClub(oClubParc){
+//Create newClub object
+//newCourse.
 
+//Load club fields
 clubForm.FclubName.value = oClubParc[0].nom;
 clubForm.Faddress.value = oClubParc[0].adresse;
 clubForm.Fville.value = oClubParc[0].municipal;
@@ -71,7 +76,6 @@ for (var i = 0; i < clubForm.Freg.length; i++) {
 	
 }
 
-
 var mapLink = document.getElementById('mapLink');
 var CourseList = "";
 
@@ -86,7 +90,6 @@ CourseList = CourseList.substring(0, CourseList.length - 1 );
 getInfo("getBloc?data=" + CourseList, showBlock);
 
 var pageZone = document.getElementById('pageZone');
-
 var selParc = document.getElementById('Fparc');
 for (var p = 0; p < clubCourse.length; p++) {
 	var optCode = "";
@@ -109,15 +112,66 @@ for (var p = 0; p < clubCourse.length; p++) {
 	optElem.innerHTML = optCode;	
 	selParc.appendChild(optElem);
 }
+//Create newCourse object
+saveCourse(newCourse);
+tmpID++;
+newCourse._id = tmpID;
+//Load first course fields
 showCourse();
 
 }
 
+function delCourse(){
+var cname = clubForm.Fparc.options[clubForm.Fparc.selectedIndex].innerHTML;
+//  &nbsp;
+cname = cname.replace(/&nbsp;/g, " ");
+if (confirm("Remove course « " + cname + " » and all blocs ?")){
+	var ind = eval(clubForm.FPid.value);
+	for (var p = 0; p < clubCourse.length; p++){
+		if (clubCourse[p]._id == ind){
+			clubCourse.splice(p,1);
+			break;
+			}
+	}
+	showCourse();
+	initBlocs();
+	showBloc();
+}
+}
+
+function delBloc(){
+if (confirm("Remove bloc « " + clubForm.FBbloc.options[clubForm.FBbloc.selectedIndex].innerHTML + " » ?")){
+	var ind = eval(clubForm.FBid.value);
+	for (var p = 0; p < bloc.length; p++){
+		if (bloc[p]._id == ind){
+			bloc.splice(p,1);
+			break;
+			}
+	}
+	initBlocs();
+	showBloc();
+}
+}
+
+function saveCourse(curParc){
+	curParc.CLUB_ID = clubID;
+	curParc._id = clubForm.FPid.value;
+	curParc.POINTS = clubForm.FPtype.value;
+	curParc.PARCOURS = clubForm.FPname.value;
+	curParc.DEPUIS = clubForm.FPdep.value;
+	curParc.TROUS = clubForm.FPtrous.value;
+	curParc.NORMALE = clubForm.FPnorm.value;
+	curParc.VERGES = clubForm.FPverg.value;
+}
+
 function showCourse(parcList){
 //alert(parcList);
-if (parcList)
+if (parcList){  // On course change Save course and show new
+	for (var p = 0; p < clubCourse.length; p++){
+		if (clubCourse[p]._id == clubForm.FPid.value){saveCourse(clubCourse[p]);}
+	}
 	var ind = parcList.selectedIndex;
-else
+}else
 	var ind = 0;
 
 clubForm.FPid.value = clubCourse[ind]._id;
@@ -128,21 +182,83 @@ clubForm.FPtrous.value = clubCourse[ind].TROUS;
 clubForm.FPnorm.value = clubCourse[ind].NORMALE;
 clubForm.FPverg.value = clubCourse[ind].VERGES;
 //_id:597,CLUB_ID:532,POINTS:"",PARCOURS:"",DEPUIS:1960,TROUS:18,NORMALE:71,VERGES:7276
-
+if (parcList){  //Change course init blocs
+	initBlocs();
+	showBloc();
+}  
 }
 
-function showBloc(blocList, parcID){
-if (blocList)
-	var ind = blocList.selectedIndex;
-else
-	var ind = 0;
 
+function saveBloc(curBloc){
+	curBloc.PARCOURS_ID = clubForm.FPid.value;
+	curBloc.T1 = clubForm.FBt1.value;
+	curBloc.T2 = clubForm.FBt2.value;
+	curBloc.T3 = clubForm.FBt3.value;
+	curBloc.T4 = clubForm.FBt4.value;
+	curBloc.T5 = clubForm.FBt5.value;
+	curBloc.T6 = clubForm.FBt6.value;
+	curBloc.T7 = clubForm.FBt7.value;
+	curBloc.T8 = clubForm.FBt8.value;
+	curBloc.T9 = clubForm.FBt9.value;
+	curBloc.T10 = clubForm.FBt10.value;
+	curBloc.T11 = clubForm.FBt11.value;
+	curBloc.T12 = clubForm.FBt12.value;
+	curBloc.T13 = clubForm.FBt13.value;
+	curBloc.T14 = clubForm.FBt14.value;
+	curBloc.T15 = clubForm.FBt15.value;
+	curBloc.T16 = clubForm.FBt16.value;
+	curBloc.T17 = clubForm.FBt17.value;
+	curBloc.T18 = clubForm.FBt18.value;
+	curBloc.Aller = clubForm.FBtoto.value;
+	curBloc.Retour = clubForm.FBtoti.value;
+	curBloc.Eval = clubForm.FBeval.value;
+	curBloc.Slope = clubForm.FBslope.value;
+}
+
+function showBloc(oBlocsList){
+if (oBlocsList){  // On bloc change Save bloc and show new
+	for (var p = 0; p < bloc.length; p++) {
+		if (bloc[p]._id == clubForm.FBid.value){saveBloc(bloc[p]);}
+	}
+	clubForm.FBid.value = oBlocsList.options[oBlocsList.selectedIndex].value;
+}
+var blocID = clubForm.FBid.value;
+for (var p = 0; p < bloc.length; p++) {
+	if (bloc[p]._id == blocID){
+		//alert(bloc[p].Bloc);
+		clubForm.FBt1.value = bloc[p].T1;
+		clubForm.FBt2.value = bloc[p].T2;
+		clubForm.FBt3.value = bloc[p].T3;
+		clubForm.FBt4.value = bloc[p].T4;
+		clubForm.FBt5.value = bloc[p].T5;
+		clubForm.FBt6.value = bloc[p].T6;
+		clubForm.FBt7.value = bloc[p].T7;
+		clubForm.FBt8.value = bloc[p].T8;
+		clubForm.FBt9.value = bloc[p].T9;
+		clubForm.FBt10.value = bloc[p].T10;
+		clubForm.FBt11.value = bloc[p].T11;
+		clubForm.FBt12.value = bloc[p].T12;
+		clubForm.FBt13.value = bloc[p].T13;
+		clubForm.FBt14.value = bloc[p].T14;
+		clubForm.FBt15.value = bloc[p].T15;
+		clubForm.FBt16.value = bloc[p].T16;
+		clubForm.FBt17.value = bloc[p].T17;
+		clubForm.FBt18.value = bloc[p].T18;
+		clubForm.FBtoto.value = bloc[p].Aller;
+		clubForm.FBtoti.value = bloc[p].Retour;
+		clubForm.FBeval.value = bloc[p].Eval;
+		clubForm.FBslope.value = bloc[p].Slope;
+		break; 
+	}
+}
 //clubForm.FBt1.value = bloc[0].nom;
 }
 
 function initBlocs(){
 var parcID = clubForm.FPid.value;
-
+while (clubForm.FBbloc.childNodes.length > 0){
+	clubForm.FBbloc.removeChild(clubForm.FBbloc.childNodes[0]);
+}
 for (var p = 0; p < bloc.length; p++) {
 	if (bloc[p].PARCOURS_ID == parcID){
 		//alert(bloc[p].Bloc);
@@ -152,14 +268,19 @@ for (var p = 0; p < bloc.length; p++) {
 		clubForm.FBbloc.appendChild(optElem);
 	}
 }
-
+clubForm.FBid.value = clubForm.FBbloc.options[clubForm.FBbloc.selectedIndex].value;
 }
 
 function showBlock(oBlock){
+//Create newBloc object
+saveBloc(newBloc);
+tmpID++;
+newBloc._id = tmpID;
+//Load first course fields
 bloc = oBlock;
 var nextCourse = 0;
 initBlocs();
-showBloc(false);
+showBloc();
 
 // Course list
 var pageZone = document.getElementById('pageZone');
@@ -256,7 +377,7 @@ margin-right: 1em;
 <body onload="initPage()"><a name="haut"></a>
 
 <div id="topbar" class="vert">
-<div id="leftnav"><a title="Formulaire de recherche" href="#"><img alt="Formulaire de recherche" height="22" width="25" src="images/home22.png" /></a></div>
+<div id="leftnav"><a title="Formulaire de recherche" href="index.html"><img alt="Formulaire de recherche" height="22" width="25" src="images/home22.png" /></a></div>
 <div id="chargement" class="">
 <progress id="progressQ" ></progress>
 <div class="charge"><text id="load"></text></div><div class="charge loading"></div></div>
@@ -359,7 +480,8 @@ margin-right: 1em;
 <hr>
 <!-- Course list // -->
 	<div class="">
-	<label for="Fparc">Parcours&nbsp;:&nbsp;&nbsp;</label><a alt="Add course" href="javascript:addParc();">Add course</a></div>
+	<label for="Fparc">Parcours&nbsp;:&nbsp;&nbsp;</label><a class="itin" alt="Add course" href="javascript:addParc();">Add course</a>
+	<a class="itin" alt="Add course" href="javascript:delCourse();">Remove course</a></div>
 	<select id="Fparc" class="inputselect" onchange="showCourse(this)">
 
 	</select>
@@ -391,7 +513,8 @@ margin-right: 1em;
 <hr>
 <!-- Blocs list // -->	
 	<div class="">
-	<label for="FBbloc">Blocs&nbsp;:&nbsp;&nbsp;</label><a alt="Add course" href="javascript:addBloc();">Add bloc</a></div>
+	<label for="FBbloc">Blocs&nbsp;:&nbsp;&nbsp;</label><a class="itin" alt="Add course" href="javascript:addBloc();">Add bloc</a>
+	<a class="itin" alt="Add course" href="javascript:delBloc();">Remove bloc</a></div>
 	<select id="FBbloc" class="inputselect" onchange="showBloc(this)">
 <!--<option value="Normale">Par</option>
 <option value="HDCP">HDCP</option>
@@ -443,7 +566,6 @@ margin-right: 1em;
   </tr>
   </tbody>
   <thead>
-  <input id="FBid" type="hidden" value=""/>
   <tr>
      <th>10</th>
      <th>11</th>
@@ -461,16 +583,16 @@ margin-right: 1em;
   </thead>
   <tbody>
   <tr>
-     <td><input id="FBt1" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
-	 <td><input id="FBt2" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
-	 <td><input id="FBt3" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
-	 <td><input id="FBt4" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
-	 <td><input id="FBt5" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
-     <td><input id="FBt6" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
-	 <td><input id="FBt7" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
-	 <td><input id="FBt8" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
-	 <td><input id="FBt9" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
-	 <td><input id="FBtoto" class="inputtext" type="text" size="3" maxlength="4" value=""/></td>
+     <td><input id="FBt10" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
+	 <td><input id="FBt11" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
+	 <td><input id="FBt12" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
+	 <td><input id="FBt13" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
+	 <td><input id="FBt14" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
+	 <td><input id="FBt15" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
+     <td><input id="FBt16" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
+	 <td><input id="FBt17" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
+	 <td><input id="FBt18" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
+	 <td><input id="FBtoti" class="inputtext" type="text" size="3" maxlength="4" value=""/></td>
 	 <td><input id="FBeval" class="inputtext" type="text" size="3" maxlength="4" value=""/></td>
      <td><input id="FBslope" class="inputtext" type="text" size="3" maxlength="4" value=""/></td>
   </tr>
