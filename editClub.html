@@ -54,11 +54,10 @@ getInfo("getClubParc?data=" + clubID + "$" + userId, showClub);
 
 
 function showClub(oClubParc){
-//Create newClub object
-//newCourse.
 
 //Load club fields
 clubForm.FclubName.value = oClubParc[0].nom;
+clubForm.Fprive.checked = oClubParc[0].prive;
 clubForm.Faddress.value = oClubParc[0].adresse;
 clubForm.Fville.value = oClubParc[0].municipal;
 clubForm.Fcopep.value = oClubParc[0].codepostal2;
@@ -73,12 +72,10 @@ var reg = oClubParc[0].region;
 for (var i = 0; i < clubForm.Freg.length; i++) {
 	if (clubForm.Freg.options[i].value == reg)
 		clubForm.Freg.selectedIndex = i;
-	
 }
 
 var mapLink = document.getElementById('mapLink');
 var CourseList = "";
-
 clubCourse = (oClubParc[0].courses);
 courseIDdef = oClubParc[0].courses[0]._id;
 mapLink.href += clubID + "$" + courseIDdef;
@@ -89,47 +86,139 @@ for (var i = 0; i < clubCourse.length; i++) {
 CourseList = CourseList.substring(0, CourseList.length - 1 );
 getInfo("getBloc?data=" + CourseList, showBlock);
 
-var pageZone = document.getElementById('pageZone');
+//Create course dropdown list
+initCourses();
+//Create newCourse object
+saveCourse(newCourse);
+//Show first course
+showCourse();
+}
+
+function initCourses(isNew){
+while (clubForm.Fparc.childNodes.length > 0){
+	clubForm.Fparc.removeChild(clubForm.Fparc.childNodes[0]);
+}
 var selParc = document.getElementById('Fparc');
 for (var p = 0; p < clubCourse.length; p++) {
 	var optCode = "";
 	var optElem = document.createElement("option");
 	optElem.setAttribute('value', clubCourse[p]._id);
-	//optElem.setAttribute('onchange', showCourse(this));
 	var parcoursName = "";
 	if (clubCourse[p].POINTS == "E")
 		optCode += "Ex&eacute;cutif,&nbsp;";
-	if (clubCourse[p].PARCOURS != null && clubCourse[p].PARCOURS != "")
+	if (clubCourse[p].PARCOURS && clubCourse[p].PARCOURS != null && clubCourse[p].PARCOURS != "")
 		optCode += clubCourse[p].PARCOURS + "&nbsp;" 
-	
+	if (clubCourse[p].TROUS)
 		optCode += clubCourse[p].TROUS + langLbl["holes"];
 	if (clubCourse[p].DEPUIS)	
 		optCode += langLbl["since"] + clubCourse[p].DEPUIS ;
-	optCode +=  langLbl["ccpar"] + clubCourse[p].NORMALE + ", &nbsp;" + clubCourse[p].VERGES + langLbl["cyard"];
+	if (clubCourse[p].NORMALE)
+		optCode +=  langLbl["ccpar"] + clubCourse[p].NORMALE + ", &nbsp;" + clubCourse[p].VERGES + langLbl["cyard"];
 	if (clubCourse[p].PARCOURS != "")
 		parcoursName += " - " + clubCourse[p].PARCOURS;
 
 	optElem.innerHTML = optCode;	
 	selParc.appendChild(optElem);
 }
-//Create newCourse object
-saveCourse(newCourse);
-tmpID++;
-newCourse._id = tmpID;
-//Load first course fields
-showCourse();
+if (isNew)
+	selParc.selectedIndex = selParc.length -1;
+return selParc;
+}
 
+function saveAll(){
+var data = {}, oClub = {};
+
+oClub.ID = clubID;
+oClub.name = clubForm.FclubName.value;
+oClub.prive = clubForm.Fprive.checked;
+oClub.addr = clubForm.Faddress.value;
+oClub.ville = clubForm.Fville.value;
+oClub.codp = clubForm.Fcopep.value;
+oClub.tel1 = clubForm.Ftel1.value;
+oClub.tel2 = clubForm.Ftel2.value;
+oClub.tel3 = clubForm.Ftel3.value;
+oClub.urlc = clubForm.FurlClub.value;
+oClub.urlv = clubForm.FurlMun.value; 
+oClub.lng = eval(clubForm.Flong.value);
+oClub.lat = eval(clubForm.Flat.value);
+oClub.region = eval(clubForm.Freg.options[clubForm.Freg.selectedIndex].value);  //	clubForm.Freg.selectedIndex
+	
+	//Save current course
+	for (var p = 0; p < clubCourse.length; p++){
+		if (clubCourse[p]._id == clubForm.FPid.value){saveCourse(clubCourse[p]);}
+	}
+	//Save current bloc
+	for (var p = 0; p < bloc.length; p++) {
+		if (bloc[p]._id == clubForm.FBid.value){saveBloc(bloc[p]);}
+	}
+data.club = oClub;
+data.course = clubCourse;
+data.blocs = bloc;
+
+getInfo("saveClub?data=" + JSON.stringify(data) , clubSaved);
+
+}
+
+function clubSaved(oRep){
+var cour = oRep.courses;
+for (var p = 0; p < cour.length; p++){
+	if (cour[p].oldID){
+		var oldID = cour[p].oldID;
+		for (var i = 0; i < cour.length; i++){
+			if ( clubCourse[i]._id == oldID){
+				clubCourse[i]._id = cour[p].newID;
+				if (clubForm.FPid.value == oldID)
+					clubForm.FPid.value = cour[p].newID;
+			}
+				
+		}
+	}
+}
+
+}
+
+function addParc(){
+clubCourse[clubCourse.length] = JSON.parse(JSON.stringify(newCourse));
+clubForm.FPtype.value = "";
+clubForm.FPname.value = "New course";
+clubForm.FPdep.value = "";
+clubForm.FPtrous.value = "18";
+clubForm.FPnorm.value = "72";
+clubForm.FPverg.value = "6000";
+tmpID++;
+clubCourse[clubCourse.length-1]._id = tmpID;
+clubCourse[clubCourse.length-1].GPS = false;
+clubForm.FPid.value = tmpID;
+saveCourse(clubCourse[clubCourse.length-1]);
+parcList = initCourses(true);
+addBloc("Normale");
+showCourse(parcList);
+}
+
+function addBloc(blocName){
+bloc[bloc.length] = JSON.parse(JSON.stringify(newBloc));
+bloc[bloc.length-1].PARCOURS_ID = clubForm.FPid.value;
+tmpID++;
+
+clubForm.FBid.value = tmpID;
+bloc[bloc.length-1]._id = tmpID;
+if (blocName)
+	bloc[bloc.length-1].Bloc = blocName;
+initBlocs();
 }
 
 function delCourse(){
 var cname = clubForm.Fparc.options[clubForm.Fparc.selectedIndex].innerHTML;
-//  &nbsp;
 cname = cname.replace(/&nbsp;/g, " ");
+if (clubForm.Fparc.options.length < 2)
+	alert("Can't remove last course.");
+else
 if (confirm("Remove course « " + cname + " » and all blocs ?")){
-	var ind = eval(clubForm.FPid.value);
+	var ind = (clubForm.FPid.value);
 	for (var p = 0; p < clubCourse.length; p++){
 		if (clubCourse[p]._id == ind){
 			clubCourse.splice(p,1);
+			clubForm.Fparc.removeChild(clubForm.Fparc.options[clubForm.Fparc.selectedIndex]);
 			break;
 			}
 	}
@@ -140,6 +229,9 @@ if (confirm("Remove course « " + cname + " » and all blocs ?")){
 }
 
 function delBloc(){
+if (clubForm.FBbloc.options.length < 2)
+	alert("Can't remove last bloc.");
+else
 if (confirm("Remove bloc « " + clubForm.FBbloc.options[clubForm.FBbloc.selectedIndex].innerHTML + " » ?")){
 	var ind = eval(clubForm.FBid.value);
 	for (var p = 0; p < bloc.length; p++){
@@ -155,13 +247,13 @@ if (confirm("Remove bloc « " + clubForm.FBbloc.options[clubForm.FBbloc.selected
 
 function saveCourse(curParc){
 	curParc.CLUB_ID = clubID;
-	curParc._id = clubForm.FPid.value;
+	curParc._id = eval(clubForm.FPid.value);
 	curParc.POINTS = clubForm.FPtype.value;
 	curParc.PARCOURS = clubForm.FPname.value;
 	curParc.DEPUIS = clubForm.FPdep.value;
-	curParc.TROUS = clubForm.FPtrous.value;
-	curParc.NORMALE = clubForm.FPnorm.value;
-	curParc.VERGES = clubForm.FPverg.value;
+	curParc.TROUS = eval(clubForm.FPtrous.value);
+	curParc.NORMALE = eval(clubForm.FPnorm.value);
+	curParc.VERGES = eval(clubForm.FPverg.value);
 }
 
 function showCourse(parcList){
@@ -175,13 +267,13 @@ if (parcList){  // On course change Save course and show new
 	var ind = 0;
 
 clubForm.FPid.value = clubCourse[ind]._id;
+newBloc.PARCOURS_ID = eval(clubForm.FPid.value);
 clubForm.FPtype.value = clubCourse[ind].POINTS;
 clubForm.FPname.value = clubCourse[ind].PARCOURS;
 clubForm.FPdep.value = clubCourse[ind].DEPUIS;
 clubForm.FPtrous.value = clubCourse[ind].TROUS;
 clubForm.FPnorm.value = clubCourse[ind].NORMALE;
 clubForm.FPverg.value = clubCourse[ind].VERGES;
-//_id:597,CLUB_ID:532,POINTS:"",PARCOURS:"",DEPUIS:1960,TROUS:18,NORMALE:71,VERGES:7276
 if (parcList){  //Change course init blocs
 	initBlocs();
 	showBloc();
@@ -190,7 +282,7 @@ if (parcList){  //Change course init blocs
 
 
 function saveBloc(curBloc){
-	curBloc.PARCOURS_ID = clubForm.FPid.value;
+	curBloc.PARCOURS_ID = eval(clubForm.FPid.value);
 	curBloc.T1 = clubForm.FBt1.value;
 	curBloc.T2 = clubForm.FBt2.value;
 	curBloc.T3 = clubForm.FBt3.value;
@@ -216,7 +308,7 @@ function saveBloc(curBloc){
 }
 
 function showBloc(oBlocsList){
-if (oBlocsList){  // On bloc change Save bloc and show new
+if (typeof oBlocsList == "object"){  // On bloc change Save bloc and show new
 	for (var p = 0; p < bloc.length; p++) {
 		if (bloc[p]._id == clubForm.FBid.value){saveBloc(bloc[p]);}
 	}
@@ -251,7 +343,8 @@ for (var p = 0; p < bloc.length; p++) {
 		break; 
 	}
 }
-//clubForm.FBt1.value = bloc[0].nom;
+if (typeof oBlocsList == "number")
+	clubForm.FBbloc.selectedIndex = oBlocsList;
 }
 
 function initBlocs(){
@@ -262,10 +355,13 @@ while (clubForm.FBbloc.childNodes.length > 0){
 for (var p = 0; p < bloc.length; p++) {
 	if (bloc[p].PARCOURS_ID == parcID){
 		//alert(bloc[p].Bloc);
+		bloc[p]._id = (bloc[p]._id.$oid) ? bloc[p]._id.$oid : bloc[p]._id;
 		var optElem = document.createElement("option");
 		optElem.setAttribute('value', bloc[p]._id);
 		optElem.innerHTML = bloc[p].Bloc;
 		clubForm.FBbloc.appendChild(optElem);
+		if (!bloc[p].Bloc)
+			selNewBloc();
 	}
 }
 clubForm.FBid.value = clubForm.FBbloc.options[clubForm.FBbloc.selectedIndex].value;
@@ -274,8 +370,6 @@ clubForm.FBid.value = clubForm.FBbloc.options[clubForm.FBbloc.selectedIndex].val
 function showBlock(oBlock){
 //Create newBloc object
 saveBloc(newBloc);
-tmpID++;
-newBloc._id = tmpID;
 //Load first course fields
 bloc = oBlock;
 var nextCourse = 0;
@@ -351,8 +445,48 @@ for (var p = 0; p < clubCourse.length; p++) {
 showProgress(1);
 }
 
-function addParc(){
+function selNewBloc(){
+var modLayer = document.getElementById('modalDiv');
+var prefLayer = document.getElementById('prefLayer');
+var FselBloc = document.getElementById('FselBloc');
+var parcID = clubForm.FPid.value;
+var arrOpt = ["Normale", "HDCP", "Argent", "Blanc", "Bleu", "Bronze", "Cuivre", "Jaune", "Noir", "Or", "Orange", "Rose", "Rouge", "Vert"];
 
+while (FselBloc.childNodes.length > 0){
+	FselBloc.removeChild(FselBloc.childNodes[0]);
+}
+for (var p = 0; p < bloc.length; p++) {
+	if (bloc[p].PARCOURS_ID == parcID){
+		value = bloc[p].Bloc;
+		if (value)
+			arrOpt.splice(value,1);
+	}
+}
+for (var i = 0; i < arrOpt.length; i++) {
+		var optElem = document.createElement("option");
+		optElem.setAttribute('value', arrOpt[i]);
+		optElem.innerHTML = arrOpt[i];
+		FselBloc.appendChild(optElem);
+}
+modLayer.style.visibility="visible";
+prefLayer.style.visibility="visible";
+}
+
+function selBloc(){
+var modLayer = document.getElementById('modalDiv');
+var prefLayer = document.getElementById('prefLayer');
+var FselBloc = document.getElementById('FselBloc');
+
+if (FselBloc.selectedIndex  < 0)
+	alert("Select a value then click Ok");
+else{
+	bloc[bloc.length-1].Bloc = FselBloc.options[FselBloc.selectedIndex].value;
+	initBlocs();
+	clubForm.FBid.value = clubForm.FBbloc.options[clubForm.FBbloc.length - 1].value;
+	showBloc(clubForm.FBbloc.length - 1);
+	prefLayer.style.visibility="hidden";
+	modLayer.style.visibility="hidden";
+}
 }
 
 // -->
@@ -370,6 +504,20 @@ text-align: right;
 margin-right: 1em;
 }
 
+.inputselect {
+height: auto;
+}
+
+#butMenu {
+    visibility: visible;
+	margin-left: 10px;
+}
+
+.sectionTitle{
+margin-left: 10px;
+font-weight: bold;
+font-size: 1.1em;
+}
 </style>
 
 </head>
@@ -387,6 +535,7 @@ margin-right: 1em;
 </div>
 </div>
 <div id="duobutton">
+<a href="#" id="butMenu" title="Save data" onclick="saveAll();"><img id="logosave" alt="Menu" src="images/save.png" height="32"></a>
 <a href="#" ><text id="mlist"></text></a>
 <a id="mapLink" target="_blank" href="ClubMap.html?data=" ><text id="mmaps"></text></a></div>
 
@@ -396,12 +545,17 @@ margin-right: 1em;
 <form id="clubForm" action="javascript:void(0);">
 
 <ul id="pageZone" class="pageitem">
-	<div class="">
+	<div class="sectionTitle">
 	<label for="Fparc">Club&nbsp;:</label></div>
 <li class="listitem gras">
 	<div class="formLabel">	
 	<label for="FclubName">Club name</label></div>
 	<input id="FclubName" class="inputtext" type="text" size="20" maxlength="25" value=""/>
+</li>
+<li class="listitem gras">
+	<div class="formLabel">	
+	<label for="Fprive">Privé</label></div>
+	<input id="Fprive" class="inputtext" type="checkbox" />
 </li>
 <li class="listitem gras">
 	<div class="formLabel">
@@ -479,11 +633,10 @@ margin-right: 1em;
 </li>
 <hr>
 <!-- Course list // -->
-	<div class="">
+	<div class="sectionTitle">
 	<label for="Fparc">Parcours&nbsp;:&nbsp;&nbsp;</label><a class="itin" alt="Add course" href="javascript:addParc();">Add course</a>
 	<a class="itin" alt="Add course" href="javascript:delCourse();">Remove course</a></div>
 	<select id="Fparc" class="inputselect" onchange="showCourse(this)">
-
 	</select>
 	
 	
@@ -512,7 +665,7 @@ margin-right: 1em;
 </table> 
 <hr>
 <!-- Blocs list // -->	
-	<div class="">
+	<div class="sectionTitle">
 	<label for="FBbloc">Blocs&nbsp;:&nbsp;&nbsp;</label><a class="itin" alt="Add course" href="javascript:addBloc();">Add bloc</a>
 	<a class="itin" alt="Add course" href="javascript:delBloc();">Remove bloc</a></div>
 	<select id="FBbloc" class="inputselect" onchange="showBloc(this)">
@@ -613,6 +766,16 @@ margin-right: 1em;
 <a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2018</a>
 </div>
 
+
+
+<div id="modalDiv"></div>
+<div id="prefLayer">
+<form>
+	<select id="FselBloc" class="inputselect" size="12">
+	</select>
+</form>
+	<div><a class="itin" alt="Add course" href="javascript:selBloc();">&nbsp;&nbsp;&nbsp;&nbsp;Ok&nbsp;&nbsp;&nbsp;&nbsp;</a></div>
+</div>
 
 </body>
 
