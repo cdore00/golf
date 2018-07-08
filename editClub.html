@@ -29,6 +29,8 @@ var goURL;
 var clubForm;
 var newClub = {}, newCourse = {}, newBloc = {};
 tmpID = 1000000;
+const NORMALE = "Normale";
+const ARRBLOCOPT = [NORMALE, "Hdcp", "Argent", "Blanc", "Bleu", "Bronze", "Cuivre", "Jaune", "Noir", "Or", "Orange", "Rose", "Rouge", "Vert"];
 
 if (document.images)
 {
@@ -148,9 +150,8 @@ oClub.region = eval(clubForm.Freg.options[clubForm.Freg.selectedIndex].value);  
 		if (clubCourse[p]._id == clubForm.FPid.value){saveCourse(clubCourse[p]);}
 	}
 	//Save current bloc
-	for (var p = 0; p < bloc.length; p++) {
-		if (bloc[p]._id == clubForm.FBid.value){saveBloc(bloc[p]);}
-	}
+	saveBloc(getCurrentBloc());
+	
 data.club = oClub;
 data.course = clubCourse;
 data.blocs = bloc;
@@ -159,18 +160,31 @@ getInfo("saveClub?data=" + JSON.stringify(data) , clubSaved);
 
 }
 
+function getCurrentBloc(){
+	for (var p = 0; p < bloc.length; p++) {
+		if (bloc[p]._id == clubForm.FBid.value){
+			 return bloc[p]; break;}
+	}
+}
+
+
 function clubSaved(oRep){
 var cour = oRep.courses;
 for (var p = 0; p < cour.length; p++){
 	if (cour[p].oldID){
 		var oldID = cour[p].oldID;
-		for (var i = 0; i < cour.length; i++){
+		var newID = cour[p].newID;
+		for (var i = 0; i < clubCourse.length; i++){	// Change course _id = oldID
 			if ( clubCourse[i]._id == oldID){
-				clubCourse[i]._id = cour[p].newID;
+				clubCourse[i]._id = newID;
 				if (clubForm.FPid.value == oldID)
-					clubForm.FPid.value = cour[p].newID;
-			}
-				
+					clubForm.FPid.value = newID;
+			}		
+		}
+		for (var i = 0; i < bloc.length; i++){	// Change course _id = oldID
+			if ( bloc[i].PARCOURS_ID == oldID){
+				bloc[i].PARCOURS_ID = newID;
+			}		
 		}
 	}
 }
@@ -191,15 +205,15 @@ clubCourse[clubCourse.length-1].GPS = false;
 clubForm.FPid.value = tmpID;
 saveCourse(clubCourse[clubCourse.length-1]);
 parcList = initCourses(true);
-addBloc("Normale");
+addBloc(NORMALE);
 showCourse(parcList);
 }
 
 function addBloc(blocName){
+//saveBloc(getCurrentBloc());
 bloc[bloc.length] = JSON.parse(JSON.stringify(newBloc));
 bloc[bloc.length-1].PARCOURS_ID = clubForm.FPid.value;
 tmpID++;
-
 clubForm.FBid.value = tmpID;
 bloc[bloc.length-1]._id = tmpID;
 if (blocName)
@@ -233,7 +247,9 @@ if (clubForm.FBbloc.options.length < 2)
 	alert("Can't remove last bloc.");
 else
 if (confirm("Remove bloc « " + clubForm.FBbloc.options[clubForm.FBbloc.selectedIndex].innerHTML + " » ?")){
-	var ind = eval(clubForm.FBid.value);
+	var ind = clubForm.FBid.value;
+	if (ind.length < 9)
+		ind = eval(clubForm.FBid.value);
 	for (var p = 0; p < bloc.length; p++){
 		if (bloc[p]._id == ind){
 			bloc.splice(p,1);
@@ -282,6 +298,7 @@ if (parcList){  //Change course init blocs
 
 
 function saveBloc(curBloc){
+
 	curBloc.PARCOURS_ID = eval(clubForm.FPid.value);
 	curBloc.T1 = clubForm.FBt1.value;
 	curBloc.T2 = clubForm.FBt2.value;
@@ -303,15 +320,14 @@ function saveBloc(curBloc){
 	curBloc.T18 = clubForm.FBt18.value;
 	curBloc.Aller = clubForm.FBtoto.value;
 	curBloc.Retour = clubForm.FBtoti.value;
+	curBloc.Total = clubForm.FBtota.value;
 	curBloc.Eval = clubForm.FBeval.value;
 	curBloc.Slope = clubForm.FBslope.value;
 }
 
 function showBloc(oBlocsList){
-if (typeof oBlocsList == "object"){  // On bloc change Save bloc and show new
-	for (var p = 0; p < bloc.length; p++) {
-		if (bloc[p]._id == clubForm.FBid.value){saveBloc(bloc[p]);}
-	}
+if (typeof oBlocsList == "object"){  // On bloc change Save current bloc and show new
+	saveBloc(getCurrentBloc());
 	clubForm.FBid.value = oBlocsList.options[oBlocsList.selectedIndex].value;
 }
 var blocID = clubForm.FBid.value;
@@ -338,6 +354,7 @@ for (var p = 0; p < bloc.length; p++) {
 		clubForm.FBt18.value = bloc[p].T18;
 		clubForm.FBtoto.value = bloc[p].Aller;
 		clubForm.FBtoti.value = bloc[p].Retour;
+		clubForm.FBtota.value = bloc[p].Total;
 		clubForm.FBeval.value = bloc[p].Eval;
 		clubForm.FBslope.value = bloc[p].Slope;
 		break; 
@@ -450,7 +467,7 @@ var modLayer = document.getElementById('modalDiv');
 var prefLayer = document.getElementById('prefLayer');
 var FselBloc = document.getElementById('FselBloc');
 var parcID = clubForm.FPid.value;
-var arrOpt = ["Normale", "HDCP", "Argent", "Blanc", "Bleu", "Bronze", "Cuivre", "Jaune", "Noir", "Or", "Orange", "Rose", "Rouge", "Vert"];
+var arrOpt = ARRBLOCOPT.slice();
 
 while (FselBloc.childNodes.length > 0){
 	FselBloc.removeChild(FselBloc.childNodes[0]);
@@ -459,7 +476,7 @@ for (var p = 0; p < bloc.length; p++) {
 	if (bloc[p].PARCOURS_ID == parcID){
 		value = bloc[p].Bloc;
 		if (value)
-			arrOpt.splice(value,1);
+			arrOpt.splice(arrOpt.indexOf(value),1);
 	}
 }
 for (var i = 0; i < arrOpt.length; i++) {
@@ -486,6 +503,58 @@ else{
 	showBloc(clubForm.FBbloc.length - 1);
 	prefLayer.style.visibility="hidden";
 	modLayer.style.visibility="hidden";
+}
+}
+
+function addToBlocks(fBloc){
+var tTab = fBloc.tabText.value;
+var dat = tTab.split("\n");
+
+for (var i = 0; i < dat.length; i++) {
+	var bData = dat[i];
+	var t = bData[0].charCodeAt(0);
+	bData = bData.split("\t");
+	if (! (t>= 48 && t<=57)){	//Not numeric
+		var bName = bData[0];
+		if (ARRBLOCOPT.indexOf(bName) == -1){
+			alert(bName + " nor avalaible in bloc options list. ");
+			continue;
+		}
+		if (bName == NORMALE){
+			clubForm.FBbloc.selectedIndex = 0;
+			clubForm.FBid.value = clubForm.FBbloc[0].value;
+		}else{
+			addBloc(bName);
+			clubForm.FBbloc.selectedIndex = clubForm.FBbloc.options.length - 1;
+			clubForm.FBid.value = clubForm.FBbloc.options[clubForm.FBbloc.selectedIndex].value;
+			showBloc();
+		}
+		bData.splice(0,1);
+	}
+	addToBlock(bData);
+	saveBloc(getCurrentBloc());
+}
+}
+
+function addToBlock(dat){
+//var tTab = fBloc.tabText.value;
+//var dat = bDat.split("\t");
+var adj = 1;
+for (var i = 0; i < dat.length; i++) {
+	var oF = eval("clubForm.FBt" + (i + adj) )
+	if (i == 9){
+		oF = clubForm.FBtoto ;
+		adj--;
+		}
+	if (i == 19)
+		oF = clubForm.FBtoti ;
+	if (i == 20)
+		oF = clubForm.FBtota ;
+	if (i == 21)
+		oF = clubForm.FBeval ;
+	if (i == 22)
+		oF = clubForm.FBslope ;
+	oF.value = dat[i];
 }
 }
 
@@ -536,15 +605,17 @@ font-size: 1.1em;
 </div>
 <div id="duobutton">
 <a href="#" id="butMenu" title="Save data" onclick="saveAll();"><img id="logosave" alt="Menu" src="images/save.png" height="32"></a>
-<a href="#" ><text id="mlist"></text></a>
+<a href="listeResult.html" ><text id="mlist"></text></a>
 <a id="mapLink" target="_blank" href="ClubMap.html?data=" ><text id="mmaps"></text></a></div>
 
 
 <div id="content">
 
-<form id="clubForm" action="javascript:void(0);">
+
 
 <ul id="pageZone" class="pageitem">
+<form id="clubForm" action="javascript:void(0);">
+
 	<div class="sectionTitle">
 	<label for="Fparc">Club&nbsp;:</label></div>
 <li class="listitem gras">
@@ -556,6 +627,30 @@ font-size: 1.1em;
 	<div class="formLabel">	
 	<label for="Fprive">Privé</label></div>
 	<input id="Fprive" class="inputtext" type="checkbox" />
+</li>
+<li class="listitem gras">
+	<div class="formLabel">
+	<label for="Freg">Région</label></div>
+	<select id="Freg" class="inputselect">
+		<option value="1">Abitibi</option>
+		<option value="2">Appalaches</option>
+		<option value="3">Côte-Nord</option>
+		<option value="4">Centre Québec</option>
+		<option value="5">Estrie</option>
+		<option value="6">Gaspésie</option>
+		<option value="7">Lanaudière</option>
+		<option value="8">Laurentides</option>
+		<option value="9">Laval</option>
+		<option value="10">Mauricie</option>
+		<option value="11">Montréal</option>
+		<option value="12">Montérégie</option>
+		<option value="13">Outaouais</option>
+		<option value="14">Québec</option>
+		<option value="15">Saguenay</option>
+		<option value="16">Valleyfield</option>
+		<option value="17">PGA est</option>
+		<option value="18">PGA ouest</option>	
+	</select>
 </li>
 <li class="listitem gras">
 	<div class="formLabel">
@@ -607,30 +702,7 @@ font-size: 1.1em;
 	<label for="Flat">Latitude</label></div>
 	<input id="Flat" class="inputtext" type="text" size="12" maxlength="12" value=""/>
 </li>
-<li class="listitem gras">
-	<div class="formLabel">
-	<label for="Freg">Région</label></div>
-	<select id="Freg" class="inputselect">
-		<option value="1">Abitibi</option>
-		<option value="2">Appalaches</option>
-		<option value="3">Côte-Nord</option>
-		<option value="4">Centre Québec</option>
-		<option value="5">Estrie</option>
-		<option value="6">Gaspésie</option>
-		<option value="7">Lanaudière</option>
-		<option value="8">Laurentides</option>
-		<option value="9">Laval</option>
-		<option value="10">Mauricie</option>
-		<option value="11">Montréal</option>
-		<option value="12">Montérégie</option>
-		<option value="13">Outaouais</option>
-		<option value="14">Québec</option>
-		<option value="15">Saguenay</option>
-		<option value="16">Valleyfield</option>
-		<option value="17">PGA est</option>
-		<option value="18">PGA ouest</option>	
-	</select>
-</li>
+
 <hr>
 <!-- Course list // -->
 	<div class="sectionTitle">
@@ -697,7 +769,8 @@ font-size: 1.1em;
      <th>7</th>
      <th>8</th>
      <th>9</th>
-     <th>Total</th>
+     <th>T. out</th>
+     <th></th>
      <th></th>
      <th></th>
   </tr>
@@ -716,6 +789,7 @@ font-size: 1.1em;
 	 <td><input id="FBtoto" class="inputtext" type="text" size="3" maxlength="4" value=""/></td>
 	 <td></td>
      <td></td>
+     <td></td>
   </tr>
   </tbody>
   <thead>
@@ -729,6 +803,7 @@ font-size: 1.1em;
      <th>16</th>
      <th>17</th>
      <th>18</th>
+     <th>T. in</th>
      <th>Total</th>
      <th>Eval.</th>
      <th>Slope</th>
@@ -746,14 +821,24 @@ font-size: 1.1em;
 	 <td><input id="FBt17" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
 	 <td><input id="FBt18" class="inputtext" type="text" size="2" maxlength="3" value=""/></td>
 	 <td><input id="FBtoti" class="inputtext" type="text" size="3" maxlength="4" value=""/></td>
+	 <td><input id="FBtota" class="inputtext" type="text" size="3" maxlength="4" value=""/></td>
 	 <td><input id="FBeval" class="inputtext" type="text" size="3" maxlength="4" value=""/></td>
      <td><input id="FBslope" class="inputtext" type="text" size="3" maxlength="4" value=""/></td>
   </tr>
   </tbody>
 </table> 
+</form>
+
+<form id="tabTextF">
+	​<textarea id="tabText" rows="4" cols="100" form="tabTextF"></textarea>
+	<input id="butAddBloc" type="button" onclick="addToBlocks(this.form);" value="Add text tab delimited above to current block"/>
+</form>
+
 </ul>
 
-</form>
+
+
+
 
 </div>
 
