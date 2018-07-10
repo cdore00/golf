@@ -28,6 +28,7 @@ var favChange = false;
 var goURL;
 var clubForm;
 var newClub = {}, newCourse = {}, newBloc = {};
+var indNewClub = false;
 tmpID = 1000000;
 const NORMALE = "Normale";
 const ARRBLOCOPT = [NORMALE, "Hdcp", "Argent", "Blanc", "Bleu", "Bronze", "Cuivre", "Jaune", "Noir", "Or", "Orange", "Rose", "Rouge", "Vert"];
@@ -88,6 +89,16 @@ for (var i = 0; i < clubCourse.length; i++) {
 CourseList = CourseList.substring(0, CourseList.length - 1 );
 getInfo("getBloc?data=" + CourseList, showBlock);
 
+if (oClubParc[0]._id == 2){	// New club
+	tmpID++;
+	clubID = tmpID;
+	oClubParc[0]._id = clubID;
+	clubCourse[0].CLUB_ID = tmpID;
+	tmpID++;
+	clubCourse[0]._id = tmpID;
+	indNewClub = true;
+}  
+
 //Create course dropdown list
 initCourses();
 //Create newCourse object
@@ -125,6 +136,16 @@ for (var p = 0; p < clubCourse.length; p++) {
 if (isNew)
 	selParc.selectedIndex = selParc.length -1;
 return selParc;
+}
+
+function delClub(){
+
+if (confirm("Remove course « " + clubForm.FclubName.value + " » and all data ?"))
+	getInfo("delClub?data=" + clubID , clubDeleted);
+}
+
+function clubDeleted(oRep){
+
 }
 
 function saveAll(){
@@ -390,6 +411,12 @@ saveBloc(newBloc);
 //Load first course fields
 bloc = oBlock;
 var nextCourse = 0;
+if (indNewClub){
+	bloc[0].PARCOURS_ID = clubCourse[0]._id;
+	tmpID++;
+	bloc[0]._id = tmpID;
+}
+	
 initBlocs();
 showBloc();
 
@@ -475,7 +502,7 @@ while (FselBloc.childNodes.length > 0){
 for (var p = 0; p < bloc.length; p++) {
 	if (bloc[p].PARCOURS_ID == parcID){
 		value = bloc[p].Bloc;
-		if (value)
+		if (value && value != NORMALE && value != "Hdcp")
 			arrOpt.splice(arrOpt.indexOf(value),1);
 	}
 }
@@ -617,7 +644,7 @@ font-size: 1.1em;
 <form id="clubForm" action="javascript:void(0);">
 
 	<div class="sectionTitle">
-	<label for="Fparc">Club&nbsp;:</label></div>
+	<label for="Fparc">Club&nbsp;:&nbsp;&nbsp;&nbsp;</label><a class="itin" alt="Remove club" href="javascript:delClub();">Remove club</a></div>
 <li class="listitem gras">
 	<div class="formLabel">	
 	<label for="FclubName">Club name</label></div>
