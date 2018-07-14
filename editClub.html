@@ -97,6 +97,12 @@ if (oClubParc[0]._id == 2){	// New club
 	tmpID++;
 	clubCourse[0]._id = tmpID;
 	indNewClub = true;
+}else{
+	var labClub = document.getElementById('labClub');
+	var butClub = document.getElementById('butClub');
+
+	labClub.innerHTML = "Edit Club&nbsp;:&nbsp;&nbsp;&nbsp;";
+	butClub.style.visibility = "visible";
 }  
 
 //Create course dropdown list
@@ -138,19 +144,43 @@ if (isNew)
 return selParc;
 }
 
-function delClub(){
+function addClub(isAuto){
+if (isAuto)
+	document.location = "editClub.html?data=2";
+else 
+	if (confirm("Add a new club ? "))
+		document.location = "editClub.html?data=2";
+}
 
-if (confirm("Remove course « " + clubForm.FclubName.value + " » and all data ?"))
-	getInfo("delClub?data=" + clubID , clubDeleted);
+function delClub(){
+if (confirm("Remove course « " + clubForm.FclubName.value + " » and all data ?")){
+	var divCoor = document.getElementById("divCoor");
+	var tipCoorTxt = document.getElementById("divCoorTxt")
+		divCoor.style.visibility = 'visible';
+		var msg = "&nbsp;<b>Deleting Club " + clubForm.FclubName.value + " ...</b>";
+		tipCoorTxt.innerHTML = msg;
+		getInfo("delClub?data=" + clubID , clubDeleted);
+}
 }
 
 function clubDeleted(oRep){
-
+if (oRep.ok){
+	var tipCoorTxt = document.getElementById("divCoorTxt")
+	tipCoorTxt.innerHTML = "&nbsp;<b>Club " + clubForm.FclubName.value + " deleted !</b>";
+	fadeOut("divCoor",300);
+	setTimeout(function() {
+		addClub(true);
+	}, 3000);
+}
 }
 
 function saveAll(){
+var divCoor = document.getElementById("divCoor");
+var tipCoorTxt = document.getElementById("divCoorTxt")
 var data = {}, oClub = {};
-
+	divCoor.style.visibility = 'visible';
+	var msg = "&nbsp;<b>Saving Club " + clubForm.FclubName.value + " ...</b>";
+	tipCoorTxt.innerHTML = msg;
 oClub.ID = clubID;
 oClub.name = clubForm.FclubName.value;
 oClub.prive = clubForm.Fprive.checked;
@@ -188,28 +218,53 @@ function getCurrentBloc(){
 	}
 }
 
+function clubSaved(oRes){
 
-function clubSaved(oRep){
-var cour = oRep.courses;
-for (var p = 0; p < cour.length; p++){
-	if (cour[p].oldID){
-		var oldID = cour[p].oldID;
-		var newID = cour[p].newID;
-		for (var i = 0; i < clubCourse.length; i++){	// Change course _id = oldID
-			if ( clubCourse[i]._id == oldID){
-				clubCourse[i]._id = newID;
-				if (clubForm.FPid.value == oldID)
-					clubForm.FPid.value = newID;
-			}		
+var tipCoorTxt = document.getElementById("divCoorTxt");
+
+if (!oRes.ok && oRes.message){
+	var modLayer = document.getElementById('modalDiv');
+	alert(langLbl[oRes.message]);
+	authentifier();
+	modLayer.style.visibility="visible";
+}else{
+	if (oRes.upserted)
+		var msg = "&nbsp;<b>Club " + clubForm.FclubName.value + " : <strong>ADDED</strong></b></br>" ;
+	else
+		var msg = "&nbsp;<b>Club " + clubForm.FclubName.value + " : " + ((oRes.nModified == 0) ? 'UNCHANGED':'<strong>UPDATED</strong>') + " </b></br>" ;
+	
+	tipCoorTxt.innerHTML = msg;
+	var cour = oRes.courses;
+	for (var p = 0; p < cour.length; p++){
+		msg += "&nbsp;&nbsp;<b>Course " + clubCourse[p].PARCOURS + " " + clubCourse[p].VERGES + " verges : " ;
+		if (cour[p].oldID){
+			var oldID = cour[p].oldID;
+			var newID = cour[p].newID;
+			for (var i = 0; i < clubCourse.length; i++){	// Change course _id = oldID
+				if ( clubCourse[i]._id == oldID){
+					clubCourse[i]._id = newID;
+					if (clubForm.FPid.value == oldID)
+						clubForm.FPid.value = newID;
+				}		
+			}
+			for (var i = 0; i < bloc.length; i++){	// Change course _id = oldID
+				if ( bloc[i].PARCOURS_ID == oldID){
+					bloc[i].PARCOURS_ID = newID;
+				}		
+			}
+			msg += " <strong>ADDED</strong></b></br>" ;
+		}else{
+			
+			msg += ((oRes.courses[p].result.nModified == 0) ? 'UNCHANGED':'<strong>UPDATED</strong>') + " </b></br>" ;
 		}
-		for (var i = 0; i < bloc.length; i++){	// Change course _id = oldID
-			if ( bloc[i].PARCOURS_ID == oldID){
-				bloc[i].PARCOURS_ID = newID;
-			}		
-		}
+		tipCoorTxt.innerHTML = msg;
 	}
+	fadeOut("divCoor",300);
+	if (oRes.upserted)
+		setTimeout(function() {
+			document.location = "editClub.html?data=" + oRes.upserted;
+		}, 3000);
 }
-
 }
 
 function addParc(){
@@ -614,6 +669,39 @@ margin-left: 10px;
 font-weight: bold;
 font-size: 1.1em;
 }
+
+.tipCoor .tipCoorTxt{
+	position: absolute;
+	top: 70px;
+	left: 1%;
+	/*background:white;
+	visibility:hidden;*/
+	padding: 5px;
+	background-color: #777;
+	border-radius: 6px;
+	color: #eee;
+}
+
+.tipCoor .tipCoorTxt::after {
+    content: "";
+    position: absolute;
+    top: -0.8em;
+    left: 1em;
+    margin-left: -5px;
+    border-width: 10px;
+    border-style: solid;
+    border-color: transparent transparent #777 transparent;
+}
+
+#divCoor, #butClub{
+visibility: hidden;
+display: inline;
+}
+
+strong{
+color: #0f0;
+}
+
 </style>
 
 </head>
@@ -633,7 +721,8 @@ font-size: 1.1em;
 <div id="duobutton">
 <a href="#" id="butMenu" title="Save data" onclick="saveAll();"><img id="logosave" alt="Menu" src="images/save.png" height="32"></a>
 <a href="listeResult.html" ><text id="mlist"></text></a>
-<a id="mapLink" target="_blank" href="ClubMap.html?data=" ><text id="mmaps"></text></a></div>
+<a id="mapLink" target="_blank" href="ClubMap.html?data=" ><text id="mmaps"></text></a>
+</div>
 
 
 <div id="content">
@@ -644,7 +733,11 @@ font-size: 1.1em;
 <form id="clubForm" action="javascript:void(0);">
 
 	<div class="sectionTitle">
-	<label for="Fparc">Club&nbsp;:&nbsp;&nbsp;&nbsp;</label><a class="itin" alt="Remove club" href="javascript:delClub();">Remove club</a></div>
+	<label id="labClub">Add Club&nbsp;:&nbsp;&nbsp;&nbsp;</label>
+	<div id="butClub">
+	<a class="itin" alt="Add club" href="javascript:addClub();">Add club</a>
+	<a class="itin" alt="Remove club" href="javascript:delClub();">Remove club</a>
+	</div></div>
 <li class="listitem gras">
 	<div class="formLabel">	
 	<label for="FclubName">Club name</label></div>
@@ -657,7 +750,7 @@ font-size: 1.1em;
 </li>
 <li class="listitem gras">
 	<div class="formLabel">
-	<label for="Freg">Région</label></div>
+	<label for="Freg"><text id="region">R&eacute;gion</text></label></div>
 	<select id="Freg" class="inputselect">
 		<option value="1">Abitibi</option>
 		<option value="2">Appalaches</option>
@@ -733,7 +826,7 @@ font-size: 1.1em;
 <hr>
 <!-- Course list // -->
 	<div class="sectionTitle">
-	<label for="Fparc">Parcours&nbsp;:&nbsp;&nbsp;</label><a class="itin" alt="Add course" href="javascript:addParc();">Add course</a>
+	<label for="Fparc">Courses&nbsp;:&nbsp;&nbsp;</label><a class="itin" alt="Add course" href="javascript:addParc();">Add course</a>
 	<a class="itin" alt="Add course" href="javascript:delCourse();">Remove course</a></div>
 	<select id="Fparc" class="inputselect" onchange="showCourse(this)">
 	</select>
@@ -879,8 +972,9 @@ font-size: 1.1em;
 </div>
 
 
-
+<div id="divCoor" class="tipCoor"><span id="divCoorTxt" class="tipCoorTxt"></span></div>
 <div id="modalDiv"></div>
+<div id="authLayer"></div>
 <div id="prefLayer">
 <form>
 	<select id="FselBloc" class="inputselect" size="12">

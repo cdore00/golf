@@ -37,10 +37,12 @@ setFontSize();
 if (urlInfo.indexOf("data=") == -1){  // Not a new request
 	var data = localStorage.getItem("idList");
 	var pos = localStorage.getItem("posList");
-	var pos = pos.split(",");
-	lat = (pos[0]);
-	lng = (pos[1]);
-	km  = (pos[2])
+	if (pos){
+		var pos = pos.split(",");
+		lat = (pos[0]);
+		lng = (pos[1]);
+		km  = (pos[2])
+	}
 	var request = encodeURI(data);
 	getInfo("getClubList?data=" + request, showResult);
 	
