@@ -29,6 +29,7 @@ var goURL;
 var clubForm;
 var newClub = {}, newCourse = {}, newBloc = {};
 var indNewClub = false;
+var delC = [], delB = [];
 tmpID = 1000000;
 const NORMALE = "Normale";
 const ARRBLOCOPT = [NORMALE, "Hdcp", "Argent", "Blanc", "Bleu", "Bronze", "Cuivre", "Jaune", "Noir", "Or", "Orange", "Rose", "Rouge", "Vert"];
@@ -219,7 +220,6 @@ function getCurrentBloc(){
 }
 
 function clubSaved(oRes){
-
 var tipCoorTxt = document.getElementById("divCoorTxt");
 
 if (!oRes.ok && oRes.message){
@@ -234,12 +234,13 @@ if (!oRes.ok && oRes.message){
 		var msg = "&nbsp;<b>Club " + clubForm.FclubName.value + " : " + ((oRes.nModified == 0) ? 'UNCHANGED':'<strong>UPDATED</strong>') + " </b></br>" ;
 	
 	tipCoorTxt.innerHTML = msg;
-	var cour = oRes.courses;
-	for (var p = 0; p < cour.length; p++){
+	var resCour = oRes.courses;
+	var resBloc = oRes.blocs;
+	for (var p = 0; p < resCour.length; p++){	// For each course
 		msg += "&nbsp;&nbsp;<b>Course " + clubCourse[p].PARCOURS + " " + clubCourse[p].VERGES + " verges : " ;
-		if (cour[p].oldID){
-			var oldID = cour[p].oldID;
-			var newID = cour[p].newID;
+		if (resCour[p].oldID){
+			var oldID = resCour[p].oldID;
+			var newID = resCour[p].newID;
 			for (var i = 0; i < clubCourse.length; i++){	// Change course _id = oldID
 				if ( clubCourse[i]._id == oldID){
 					clubCourse[i]._id = newID;
@@ -254,12 +255,43 @@ if (!oRes.ok && oRes.message){
 			}
 			msg += " <strong>ADDED</strong></b></br>" ;
 		}else{
-			
 			msg += ((oRes.courses[p].result.nModified == 0) ? 'UNCHANGED':'<strong>UPDATED</strong>') + " </b></br>" ;
 		}
-		tipCoorTxt.innerHTML = msg;
+		// Check blocs
+		for (var jj = 0; jj < bloc.length; jj++){	
+			for (var j = 0; j < resBloc.length; j++){
+				if ( bloc[jj].PARCOURS_ID == resCour[p].result._id ){	// Current course 
+				if ( (resBloc[j].result._id.$oid && bloc[jj]._id == resBloc[j].result._id.$oid) || 
+					 (bloc[jj]._id == resBloc[j].result._id) || 
+					 (resBloc[j].oldID && bloc[jj]._id == resBloc[j].oldID )){
+					msg += "&nbsp;&nbsp;&nbsp;&nbsp;<b>Bloc " + bloc[jj].Bloc + ", Total = " + bloc[jj].Total ;
+					if (resBloc[j].newID){
+						bloc[jj]._id = resBloc[j].newID;
+						if (clubForm.FBid.value == resBloc[j].oldID)
+							clubForm.FBid.value = resBloc[j].newID;						
+						msg += " <strong>ADDED</strong></b></br>" ;
+					}else{
+						msg += ((resBloc[j].result.nModified == 0) ? ' : UNCHANGED':'<strong> : UPDATED</strong>') + " </b></br>" ;
+					}
+					break;
+				}}
+			}
+		}
+		var pos = delB.indexOf(clubCourse[p]._id);
+		if (pos != -1)
+			for (var x = 0; x < delB.length; x+=3){
+				if (delB[x] == clubCourse[p]._id)
+					msg += "&nbsp;&nbsp;&nbsp;&nbsp;<b>Bloc " + delB[x+1] + ", Total = " + delB[x+2] + " <strong> REMOVED</strong></b></br>";
+			}
+			
 	}
+	for (var x = 0; x < delC.length; x+=3){
+		msg += "&nbsp;&nbsp;<b>Course " + delC[x+1] + " " + delC[x+2] + " verges<strong> REMOVED</strong></b></br>";
+	}	
+	tipCoorTxt.innerHTML = msg;
 	fadeOut("divCoor",300);
+	delC = [];
+	delB = [];
 	if (oRes.upserted)
 		setTimeout(function() {
 			document.location = "editClub.html?data=" + oRes.upserted;
@@ -307,6 +339,9 @@ if (confirm("Remove course « " + cname + " » and all blocs ?")){
 	var ind = (clubForm.FPid.value);
 	for (var p = 0; p < clubCourse.length; p++){
 		if (clubCourse[p]._id == ind){
+			delC[delC.length] = clubCourse[p]._id;
+			delC[delC.length] = clubCourse[p].PARCOURS;
+			delC[delC.length] = clubCourse[p].VERGES;
 			clubCourse.splice(p,1);
 			clubForm.Fparc.removeChild(clubForm.Fparc.options[clubForm.Fparc.selectedIndex]);
 			break;
@@ -328,6 +363,9 @@ if (confirm("Remove bloc « " + clubForm.FBbloc.options[clubForm.FBbloc.selected
 		ind = eval(clubForm.FBid.value);
 	for (var p = 0; p < bloc.length; p++){
 		if (bloc[p]._id == ind){
+			delB[delB.length] = bloc[p].PARCOURS_ID;
+			delB[delB.length] = bloc[p].Bloc;
+			delB[delB.length] = bloc[p].Total;
 			bloc.splice(p,1);
 			break;
 			}
