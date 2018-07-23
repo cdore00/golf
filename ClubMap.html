@@ -173,6 +173,7 @@ function showCourse(oClub){
 	intLng = oClub[0].longitude;
 	clubName = oClub[0].nom;
 	nbrTrous = oClub[0].courses[0].TROUS;
+	collCcourse = oClub[0].courses;
 	for (var i = 0; i < nbrTrous; i++) {
 		trouCoord[i] = new google.maps.LatLng(oClub[0].latitude, oClub[0].longitude);
 	}
@@ -182,7 +183,7 @@ function showCourse(oClub){
 	else
 		isMapped = false;
 		
-if (isMapped){
+if (isMapped){	// If GPS hole available
 	var navTrou = document.getElementById("navTrou");
 	var trous = oClub[0].trous;
 	intLat = trous[0].latitude;
@@ -193,6 +194,23 @@ if (isMapped){
 	}
 	setHole(map, trouCoord[0]);
 	navTrou.style.display = "inline";
+	
+	var Fparc = document.getElementById("Fparc");
+	var cntC = 0;
+	for (var p = 0; p < collCcourse.length; p++) {
+		if (collCcourse[p].GPS == true){
+			cntC ++
+			var optElem = document.createElement("option");
+			optElem.setAttribute('value', collCcourse[p]._id);
+			optElem.innerHTML = collCcourse[p].PARCOURS;
+			Fparc.appendChild(optElem);
+			if (collCcourse[p]._id == courseID)
+				Fparc.selectedIndex = p;
+		}
+	if (cntC > 1)
+		Fparc.style.display = "inline";
+	}
+	
 }
 }
 
@@ -211,6 +229,13 @@ if (menuList.style.height != "0px" && menuList.style.height != ""){
 function closeMenu(){
 	var menuList = document.getElementById('menuList');
 	menuList.style.height = "0px";
+}
+
+function changeCourse(fParc){
+
+var courID = fParc.options[fParc.selectedIndex].value;
+document.location = "ClubMap.html?data=" + clubID + "$" + courID;
+
 }
 
 
@@ -286,6 +311,10 @@ visibility: hidden;
 display:none;
 }
 
+#Fparc{
+display:none;
+}
+
 </style>
 
 </head>
@@ -293,6 +322,10 @@ display:none;
   
 <div id="duobutton">
 <a href="#" id="butMenu" title="Menu" onmouseover="showMenu()" onclick="showMenu();"><img id="logomenu" alt="Menu" src="images/menu.png" width="64" height="32"></a>
+
+	<select id="Fparc" class="inputselect" onchange="changeCourse(this)">
+	</select>
+
 <a href="#"  onclick="window.close(); return false;"><text id="close"></text></a>
 
 	<div id="navTrou">
