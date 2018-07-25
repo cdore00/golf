@@ -177,13 +177,44 @@ function showCourse(oClub){
 	for (var i = 0; i < nbrTrous; i++) {
 		trouCoord[i] = new google.maps.LatLng(oClub[0].latitude, oClub[0].longitude);
 	}
+	
+	var submenu1 = document.getElementById("submenu1");
+	//var Fparc = document.getElementById("Fparc");
+	var cntC = 0;
+	for (var p = 0; p < collCcourse.length; p++) {
+		cntC ++
+		var aElem = document.createElement("a");
+		aElem.setAttribute('class', "inputButton");
+		aElem.setAttribute('onmouseover', "showSubmenu(false, 'inherit')");
+		var url = "ClubMap.html?data=" + clubID + "$" + collCcourse[p]._id;
+		aElem.setAttribute('href', url);
+		
+		//var optElem = document.createElement("option");
+		//optElem.setAttribute('value', collCcourse[p]._id);
+		lbl = collCcourse[p].PARCOURS;
+		if (lbl == "")
+			lbl = collCcourse[p].TROUS + " trous, " + collCcourse[p].VERGES + " verges";
+		//optElem.innerHTML = lbl;
+		//Fparc.appendChild(optElem);		ERASE Fparc & changeCourse(fParc) & style
+		
+		var pref = "&nbsp;&nbsp;&nbsp;&nbsp;";
+		if (collCcourse[p]._id == courseID)
+			pref = "&#10004;&nbsp;";
+			//Fparc.selectedIndex = p;
+		aElem.innerHTML = pref + lbl;
+		submenu1.appendChild(aElem);
+	}
+//	if (cntC > 1)
+	//	Fparc.style.display = "inline";	
+	
+	
 	initialize();
-	if (oClub[0].trous.length != 0)
+	if (oClub[0].trous)
 		isMapped = true;
 	else
 		isMapped = false;
 		
-if (isMapped){	// If GPS hole available
+if (isMapped){	// If GPS holes availables
 	var navTrou = document.getElementById("navTrou");
 	var trous = oClub[0].trous;
 	intLat = trous[0].latitude;
@@ -194,23 +225,6 @@ if (isMapped){	// If GPS hole available
 	}
 	setHole(map, trouCoord[0]);
 	navTrou.style.display = "inline";
-	
-	var Fparc = document.getElementById("Fparc");
-	var cntC = 0;
-	for (var p = 0; p < collCcourse.length; p++) {
-		if (collCcourse[p].GPS == true){
-			cntC ++
-			var optElem = document.createElement("option");
-			optElem.setAttribute('value', collCcourse[p]._id);
-			optElem.innerHTML = collCcourse[p].PARCOURS;
-			Fparc.appendChild(optElem);
-			if (collCcourse[p]._id == courseID)
-				Fparc.selectedIndex = p;
-		}
-	if (cntC > 1)
-		Fparc.style.display = "inline";
-	}
-	
 }
 }
 
@@ -238,7 +252,17 @@ document.location = "ClubMap.html?data=" + clubID + "$" + courID;
 
 }
 
+function showSubmenu(objOpt, state){
+var submenu = document.getElementById('submenu1');
 
+if (objOpt){
+	submenu.style.left = objOpt.offsetWidth + "px";
+	submenu.style.top = (objOpt.offsetTop + 35) + "px";
+}
+
+submenu.style.display = state;
+
+}
 	// -->
 </script> 
 
@@ -315,6 +339,19 @@ display:none;
 display:none;
 }
 
+#submenu1 a {
+    text-decoration: none;
+    color: #000;
+	
+}
+
+#submenu1 a:hover, a:focus {
+    transition-property: background-color, border, color;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-out;
+    background: #999;
+}
+
 </style>
 
 </head>
@@ -322,10 +359,10 @@ display:none;
   
 <div id="duobutton">
 <a href="#" id="butMenu" title="Menu" onmouseover="showMenu()" onclick="showMenu();"><img id="logomenu" alt="Menu" src="images/menu.png" width="64" height="32"></a>
-
+<!--
 	<select id="Fparc" class="inputselect" onchange="changeCourse(this)">
 	</select>
-
+	// -->
 <a href="#"  onclick="window.close(); return false;"><text id="close"></text></a>
 
 	<div id="navTrou">
@@ -344,10 +381,15 @@ display:none;
 
 <div id="menuList">
 <table><tbody>
-<tr id="trEdit"><td onclick="showHole(this);" title="&Eacute;diter la position des drapeaux.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="medit"></text></td></tr>
+<tr><td onclick="showSubmenu(this, 'inherit');" onmouseover="showSubmenu(this, 'inherit');" onmouseout="showSubmenu(this, 'none');"  title="Sélectionner un parcours.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="cours"></text></td></tr>
 <tr><td onclick="showCenter(this);" title="Centrage sur changement de drapeau.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mcent"></text></td></tr>
+<tr id="trEdit"><td onclick="showHole(this);" title="&Eacute;diter la position des drapeaux.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="medit"></text></td></tr>
+
 </tbody></table>
 </div>
+<div id="submenu1">
+</div>
+
 
 
 <div id="map_canvas" ></div> 
