@@ -190,11 +190,9 @@ cursor: pointer;
     font-weight: bold;
     min-width: 100px;
     width: 100%;
-    height: 1.1em !important;
-	min-height: 1.1em !important;
-	max-height: 1.1em !important;
+	min-height: 1em !important;
 	text-align: left;
-	padding: 0.3em;
+	padding: 0.2em;
 	border: buttonhighlight 2px inset;
 }
 

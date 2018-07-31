@@ -323,6 +323,7 @@ if (rep.resp.result){
 	if (typeof setIdent != "undefined")
 		setIdent();
 	DelCookie("userID");
+	DelCookie("userRole");
 	alert(langLbl["M0004"]);
 	tryLog++;
 	if (tryLog > 2){
@@ -425,6 +426,8 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["passw"] = "Mot de passe";
 		langLbl["npass"] = "Nouveau mot de passe";
 		langLbl["cpass"] = "Confirmer mot de passe";
+		langLbl["coups"] = "Coups";
+		langLbl["penal"] = "P&eacute;nalit&eacute;";
 		langLbl["M0001"] = "Le mot de passe actuel est requis.";
 		langLbl["M0002"] = "Le mot de passe doit comprendre au moins 3 caractères.";
 		langLbl["M0003"] = "La confirmation du nouveau mot de passe n'est pas valide.";
@@ -536,7 +539,9 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["uname"] = "Nombre";
 		langLbl["passw"] = "Contraseña";
 		langLbl["npass"] = "Nueva contraseña";
+		langLbl["coups"] = "Golpes";
 		langLbl["cpass"] = "Contraseña válida"
+		langLbl["penal"] = "Pena";
 		langLbl["M0001"] = "Se requiere la contraseña actual.";
 		langLbl["M0002"] = "La contraseña debe tener al menos 3 caracteres.";
 		langLbl["M0003"] = "La confirmación de la nueva contraseña no es válida.";
@@ -648,6 +653,8 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["passw"] = "Password";
 		langLbl["npass"] = "New password";
 		langLbl["cpass"] = "Valid Password"
+		langLbl["coups"] = "Hits";
+		langLbl["penal"] = "Penalty";
 		langLbl["M0001"] = "The current password is required.";
 		langLbl["M0002"] = "The password must be at least 3 characters long.";
 		langLbl["M0003"] = "The confirmation of the new password is invalid.";

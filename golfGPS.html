@@ -81,7 +81,8 @@ var trouPar =  new Array();
 var trouNormale = false;
 var aScore = [{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}];
 google.maps.visualRefresh = true;
-function initialize() { 
+
+function initialize() {
 var myOptions = { 
   center: trouCoord[0], 
   zoom: 18,
@@ -100,7 +101,7 @@ map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 var bodyobj = document.getElementsByTagName('body')[0];
 bodyobj.style.fontSize = '2.5em';
 adjustScreen(0);
-setMyPosition(map, trouCoord[0]);
+setMyPosition(map, trouCoord[0].lat(), trouCoord[0].lng());
 setHole(map, trouCoord[0]);
 setpiquetMarker(map, trouCoord[0]);
 var polyOptions = {
@@ -127,6 +128,7 @@ event.preventDefault();
 }, false);
 holeMarker.position_changed = holePosChange;
 }
+
 function setMyPosition(map, lat, lng) {
   var image = {
     url: iciOn.src,
@@ -149,7 +151,8 @@ function setMyPosition(map, lat, lng) {
         zIndex: 1
 		});
 	//posMarker.position_changed = calcPosDist;
-}	
+}
+
 function setpiquetMarker(map, location) {
   var image = {url:'images/piquet.png',
   			size: new google.maps.Size(50, 50),
@@ -168,6 +171,7 @@ function setpiquetMarker(map, location) {
   });
   piquetMarker.position_changed = stopPiquetDrag;
 }
+
 function changeBloc(B_id){
 var blockName;
 var blocForm = document.getElementById('blocForm');
@@ -181,6 +185,7 @@ function showBlocs(){
 var blocForm = document.getElementById('blocForm');
 blocForm.style.visibility="visible";
 }
+
 function calcPosDist(myLatLng, precision){
 var distance = calculDistance( posMarker.getPosition(), holeMarker.getPosition());
 	holeDist.innerHTML = distance + '<p id="accu">' + precision + '&apos;</p>';
@@ -195,10 +200,12 @@ var distance = calculDistance( posMarker.getPosition(), holeMarker.getPosition()
 		parler(distance);
 		}
 }
+
 function holePosChange(){
 	if (piquetMarker.getVisible())
 		traceLine(piquetMarker.getPosition());
 }
+
 function localiser(chx){
 if (watchLoc == 0){
 	clearGeo();
@@ -206,6 +213,7 @@ if (watchLoc == 0){
   }else
 	getLocalisation();
 }
+
 function clearGeo(){
 //alert(watchId);
 clearTimeout(locTimer);
@@ -330,6 +338,7 @@ var d = R * a ;
 	  }
 	return d + '';
 }
+
 function getLoc(bLoc){
 var locForm = document.getElementById('locForm');
 var imgLoc = document.getElementById('imgLoc');
@@ -349,6 +358,7 @@ var sh = posMarker.getIcon();
 posMarker.setIcon(sh);
 //alert(sh);
 }
+
 function goTract(chx){
 var boutonLoc = document.getElementById('boutonLoc');
 var locForm = document.getElementById('locForm');
@@ -363,11 +373,13 @@ locForm.style.visibility="hidden";
 imgLoc.src=iciOn.src;
 localiser(watchLoc);
 }
+
 function chxPiqDist(oPiqDist){
 var chxPiqD = document.getElementById('chxPiqDist');
 chxPiqD.style.left = oPiqDist.offsetLeft + "px";
 chxPiqD.style.visibility="visible";
 }
+
 function setChxPiqDist(chx){
 var chxPiqD = document.getElementById('chxPiqDist');
 chxDistPiq = chx;
@@ -375,12 +387,14 @@ chxPiqD.style.visibility="hidden";
 if (piquetMarker.getVisible())
 	traceLine(piquetMarker.getPosition());
 }
+
 function showScoreFrame(strParc){
 var layerScore = document.getElementById('showScore');
 var scoreHole = document.getElementById('scoreHole');
-scoreHole.innerHTML = "Trou " + trou + " par " + eval("trouNormale.T" + trou);
-//getInfo("getGam?data=" + userId + "$" + courseID, setHoleScore);
-setHoleScore();
+var hPar = eval("trouNormale.T" + trou);
+scoreHole.innerHTML = "Trou " + trou + " par " + hPar;
+
+setHoleScore(hPar);
 layerScore.style.visibility="visible";
 	
 }
@@ -394,6 +408,7 @@ function startTouch(event) {
 	this.addEventListener('touchmove', moveTouch, false);
 //	this.addEventListener('touchend', endTouch, false);
 }
+
 function moveTouch(event) {
     var touch = event.targetTouches[0];
     // Place element where the finger is
@@ -402,46 +417,46 @@ function moveTouch(event) {
     event.preventDefault();
 }
 	    
-function setHoleScore(gData){
+function setHoleScore(hPar){
 var setScore = document.getElementById('setScore');
-var vc = aScore[trou-1].T;
-var vp = aScore[trou-1].P;
-var vl = aScore[trou-1].L;
-setScore.nbrCoups.selectedIndex = (vc - 1);
-setScore.nbrPutts.selectedIndex = (vp );
-setScore.nbrPen.selectedIndex = (vl );
-setScore.nbrCoups.click();
-	setScore.nbrCoups.focus();
+sInfo = aScore[trou-1];
+if (sInfo.T)
+	var vc = sInfo.T;
+else
+	var vc = hPar;
+if (sInfo.P || sInfo.P == 0)
+	var vp = sInfo.P;
+else
+	var vp = "2";
+if (sInfo.L || sInfo.L == 0)
+	var vl = sInfo.L;
+else
+	var vl = "0";
+setScore.nbrCoups.value = vc;
+setScore.nbrPutts.value = vp;
+setScore.nbrPen.value = vl;
+selPts(document.getElementById('tdC' + vc));
+selPts(document.getElementById('tdP' + vp));
+selPts(document.getElementById('tdL' + vl));
 }
-/*function setHoleScore(gData){
-var setScore = document.getElementById('setScore');
-var vc = eval("gData[0].T" + trou);
-var vp = eval("gData[0].P" + trou);
-var vl = eval("gData[0].L" + trou);
-setScore.nbrCoups.selectedIndex = (vc - 1);
-setScore.nbrPutts.selectedIndex = (vp );
-setScore.nbrPen.selectedIndex = (vl );
-setScore.nbrCoups.click();
-	setScore.nbrCoups.focus();
-}*/
+
 function closeScore(){
 var layerScore = document.getElementById('showScore');
 //alert(setScore.nbrCoups[setScore.nbrCoups.selectedIndex].value);
 layerScore.style.visibility="hidden";
 }
+
 function saveScore(formRef){
-var score = formRef.nbrCoups[formRef.nbrCoups.selectedIndex].value;
-var putt = formRef.nbrPutts[formRef.nbrPutts.selectedIndex].value;
-var penal = formRef.nbrPen[formRef.nbrPen.selectedIndex].value;
-//alert(formRef);
+var score = formRef.nbrCoups.value;
+var putt = formRef.nbrPutts.value;
+var penal = formRef.nbrPen.value;
+
 var strData = userId + "$" + courseID + "$" + trou + "$" + score + "$" + putt + "$" + penal + "$" + clubName;
 	
 getInfo("updateGame?data=" + strData, setMyScore);
 closeScore();
 }
-/*function callMyScore(){  // non utilisé
-	getInfo("getGame?data=" + userId + "$" + courseID, setMyScore);
-}*/
+
 function setMyScore(gData){
 var myScore = document.getElementById('myScore');
 var tot = 0;
@@ -451,12 +466,15 @@ if (gData.length > 0){
 currentGameID = gData[0]._id;
 for (var i= 1; i < 19 ; i++){
 	ts = eval("gData[0].T" + i);
+	
 	if (ts > 0){
 		tot += ts;
 		laN += eval("trouNormale.T" + i);
 		aScore[i-1].T=ts;
 		aScore[i-1].P=eval("gData[0].P" + i);
 		aScore[i-1].L=eval("gData[0].L" + i);
+	}else{
+	
 	}
 }
 score = tot - laN;
@@ -475,19 +493,23 @@ if (calltabScore){
 	calltableauScore();
 }
 }
+
 function tableauScore(formRef){
 	calltabScore = true;
 	saveScore(formRef, true);
 }
+
 function calltableauScore(){
 var localWindow = window.open('scoreTab.html?data=' + currentGameID + "$" + clubName);
 localWindow.document.close();
 //closeScore();
 }
+
 function detectLong(idName){
 locTimer = setTimeout("showDiv('" + idName + "');", 900);
 touchin = true;
 }
+
 function showDiv(idName){
 if (touchin == true){
 	var divElement = document.getElementById(idName);
@@ -495,6 +517,7 @@ if (touchin == true){
 	touchin = false;
 }
 }
+
 function initVoice(){
 if ('speechSynthesis' in window) {
 //	msg.voice = speechSynthesis.getVoices().filter(function(voice) { return voice.name == 'Google français'; })[0];
@@ -602,6 +625,24 @@ for (var i= 0; i < bloc.length; i++){
 	}
 initialize();
 }
+
+
+function selPts(oOpt){
+var setScore = document.getElementById('setScore'); 
+var oList = oOpt.parentNode;
+for (var i= 0; i < oList.childNodes.length ; i++){
+	if (oList.childNodes[i].classList)
+		oList.childNodes[i].classList.remove("selectedOpt");
+}
+oOpt.classList.add("selectedOpt");
+//alert(oList.id + oOpt.innerHTML);
+if (oList.id == "lPts")
+	setScore.nbrCoups.value = oOpt.innerHTML;
+if (oList.id == "lPut")
+	setScore.nbrPutts.value = oOpt.innerHTML;
+if (oList.id == "lPen")
+	setScore.nbrPen.value = oOpt.innerHTML;
+}
 // -->
 </script> 
 
@@ -613,7 +654,34 @@ initialize();
     float: inherit;
     font-size: 0.6em;
 	height: 50px;
-	}
+}
+ 
+.selScore{
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+}
+ 
+.selScore td {
+    font-size: 1.2em;
+    color: black;
+	background: white;
+    font-weight: bold;
+	min-width: 1.2em;
+}
+
+.selScore td:hover{
+transition: color 0.9s ease 0s;
+transition: background 0.9s ease 0s;
+background: #999 ;
+color: #ff1822;
+ } 
+ 
+.selectedOpt{
+ color: #ff1822 !important;
+ background: #999 !important;
+ }
+
 </style>
 
 </head>
@@ -682,63 +750,61 @@ initialize();
 <div id="scoreHole">Trou par </div>
 
 <form id="setScore">
+<input id="nbrCoups" type="hidden" value="0"/>
+<input id="nbrPutts" type="hidden" value="0"/>
+<input id="nbrPen" type="hidden" value="0"/>
+
 <div id="prefOptions">
-	<table>
-	<tr>
-	<th><label for="nbrCoups">Coups</label></th><th><label for="nbrPutts">Putts</label></th><th><label for="nbrPen">P&eacute;nal.</label></th>
-	</tr>
-	<tr>
-	<td>
-	<select id="nbrCoups">
-	 <option value="1">1</option>
-	 <option value="2">2</option> 
-	 <option value="3">3</option>
-	 <option value="4">4</option> 
-	 <option value="5">5</option>
-	 <option value="6">6</option>
-	 <option value="7">7</option> 
-	 <option value="8">8</option>
-	 <option value="9">9</option> 
-	 <option value="10">10</option>
-	 <option value="11">11</option>
-	 <option value="12">12</option>
-	 <option value="13">13</option>
-	 <option value="14">14</option>
-	 <option value="15">15</option>
-	</select>
-	</td>
-	<td>
-	<select id="nbrPutts">
-	 <option value="0">-</option>
-	 <option value="1">1</option>
-	 <option value="2">2</option> 
-	 <option value="3">3</option>
-	 <option value="4">4</option> 
-	 <option value="5">5</option>
-	 <option value="6">6</option>
-	 <option value="7">7</option> 
-	 <option value="8">8</option>
-	 <option value="9">9</option> 
-	 <option value="10">10</option>
-	 </select>
-	</td>
-	<td>
-	<select id="nbrPen">
-	 <option value="0">-</option>
-	 <option value="1">1</option>
-	 <option value="2">2</option> 
-	 <option value="3">3</option>
-	 <option value="4">4</option> 
-	 <option value="5">5</option>
-	 <option value="6">6</option>
-	 <option value="7">7</option> 
-	 <option value="8">8</option>
-	 <option value="9">9</option> 
-	 <option value="10">10</option>
-	 </select>
-	</td>
-	</tr>
-	</table>
+
+<label for="nbrCoups"><text id="coups"></text></label>
+<div class="selScore">
+<table>
+<tr id="lPts">
+	<td id="tdC1" onclick="selPts(this)">1</td>
+	<td id="tdC2" onclick="selPts(this)">2</td>
+	<td id="tdC3" onclick="selPts(this)">3</td>
+	<td id="tdC4" onclick="selPts(this)">4</td>
+	<td id="tdC5" onclick="selPts(this)">5</td>
+	<td id="tdC6" onclick="selPts(this)">6</td>
+	<td id="tdC7" onclick="selPts(this)">7</td>
+	<td id="tdC8" onclick="selPts(this)">8</td>
+	<td id="tdC9" onclick="selPts(this)">9</td>
+	<td id="tdC10" onclick="selPts(this)">10</td>
+	<td id="tdC11" onclick="selPts(this)">11</td>
+	<td id="tdC12" onclick="selPts(this)">12</td>
+	<td id="tdC13" onclick="selPts(this)">13</td>
+	<td id="tdC14" onclick="selPts(this)">14</td>
+	<td id="tdC15" onclick="selPts(this)">15</td>
+</tr>
+</table>
+</div>
+<label for="nbrCoups">Putts</label>
+<div class="selScore">
+<table>
+<tr id="lPut">
+	<td id="tdP0" onclick="selPts(this)">0</td>
+	<td id="tdP1" onclick="selPts(this)">1</td>
+	<td id="tdP2" onclick="selPts(this)">2</td>
+	<td id="tdP3" onclick="selPts(this)">3</td>
+	<td id="tdP4" onclick="selPts(this)">4</td>
+	<td id="tdP5" onclick="selPts(this)">5</td>
+</tr>
+</table>
+</div>
+<label for="nbrCoups"><text id="penal"></text></label>
+<div class="selScore">
+<table>
+<tr id="lPen">
+	<td id="tdL0" onclick="selPts(this)">0</td>
+	<td id="tdL1" onclick="selPts(this)">1</td>
+	<td id="tdL2" onclick="selPts(this)">2</td>
+	<td id="tdL3" onclick="selPts(this)">3</td>
+	<td id="tdL4" onclick="selPts(this)">4</td>
+	<td id="tdL5" onclick="selPts(this)">5</td>
+</tr>
+</table>
+</div>
+
 </div>
 
 <div>

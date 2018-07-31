@@ -259,7 +259,8 @@ tb.appendChild(trElem);
 
 var trElem = document.createElement("tr");
 var po = 0, pi = 0;   /// Les pénalités
-var tdH = '<th>P&eacute;nal.</th>';
+
+var tdH = '<th>' + langLbl["penal"] + '</th>';
 for (var i= 1; i < 10; i++){
 	var s = (eval("gameData.L" + i));
 	if ( typeof s == "number" ){

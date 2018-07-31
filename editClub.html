@@ -334,7 +334,6 @@ showCourse(parcList);
 }
 
 function addBloc(blocName){
-//saveBloc(getCurrentBloc());
 bloc[bloc.length] = JSON.parse(JSON.stringify(newBloc));
 bloc[bloc.length-1].PARCOURS_ID = clubForm.FPid.value;
 tmpID++;
@@ -536,20 +535,16 @@ if (!bloc){
 	//Load first course fields
 	bloc = oBlock;
 }
-var nextCourse = 0;
 if (indNewClub){
 	bloc[0].PARCOURS_ID = clubCourse[0]._id;
 	tmpID++;
 	bloc[0]._id = tmpID;
 	indNewClub = false;
 }
-
 if (fistLoad){
 	initBlocs(true);
 	showBloc(false,true);
 }
-
-
 // Course list
 var pageZone = document.getElementById('pageZone');
 remChilds(pageZone);
@@ -557,31 +552,34 @@ if (bloc.length > 0){
 for (var p = 0; p < clubCourse.length; p++) {
 	var htmlCode = "";
 	var courseID = clubCourse[p]._id;
-	//var bloc = oBlock[p];
-	var b = 0;
-	while (bloc[b] && bloc[b].PARCOURS_ID != courseID) {
-		b++;
-	}
-	
-	nextCourse = b;
-	//Bloc list
-	if (bloc[b]){
-		var nbrTrou = clubCourse[p].TROUS;
+	var nbrTrou = clubCourse[p].TROUS;
 
-		var liElem = document.createElement("li");
-		liElem.setAttribute('class', 'listitem gras');
-		var divElem = document.createElement("div");
-		divElem.setAttribute('id', 'p1');
-		divElem.setAttribute('class', 'cartePts');
+	for (var i = 0; i < bloc.length; i++) {
+		if (bloc[i].PARCOURS_ID == courseID){
+			liBloc = parseBloc( p, courseID, nbrTrou);
+			pageZone.appendChild(liBloc);
+			break;
+	}}
+}
+}
+showProgress(1);
+}
 
-		var htmlCode = '<table class="cartePts"><tr><td  class="titre" colspan="14"><b>' + langLbl["cours"] + clubCourse[p].PARCOURS + "&nbsp;" + nbrTrou + langLbl["holes"] + '</b></td></tr>';
-		if(nbrTrou == 9)
-			htmlCode += '<tr class="entete"><th>' + langLbl["hole"] + '</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>Total</th></tr>';
-		else
-			htmlCode += '<tr class="entete"><th>' + langLbl["hole"] + '</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>' + langLbl["goout"] + '</th><td></td><td></td><td></td></tr>';
+function parseBloc( p, courseID, nbrTrou){
+	var liElem = document.createElement("li");
+	liElem.setAttribute('class', 'listitem gras');
+	var divElem = document.createElement("div");
+	divElem.setAttribute('id', 'p1');
+	divElem.setAttribute('class', 'cartePts');
 
-		
-		do{
+	var htmlCode = '<table class="cartePts"><tr><td  class="titre" colspan="14"><b>' + langLbl["cours"] + clubCourse[p].PARCOURS + "&nbsp;" + nbrTrou + langLbl["holes"] + '</b></td></tr>';
+	if(nbrTrou == 9)
+		htmlCode += '<tr class="entete"><th>' + langLbl["hole"] + '</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>Total</th></tr>';
+	else
+		htmlCode += '<tr class="entete"><th>' + langLbl["hole"] + '</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>' + langLbl["goout"] + '</th><td></td><td></td><td></td></tr>';
+
+	for (var b = 0; b < bloc.length; b++) {
+		if (bloc[b].PARCOURS_ID == courseID){
 			var cName = 'B' + bloc[b].Bloc;
 			htmlCode += '<tr><td class="' + cName + '">' + langLbl[bloc[b].Bloc] + '</td>';
 			for (var i = 1; i < 10; i++) {
@@ -592,32 +590,26 @@ for (var p = 0; p < clubCourse.length; p++) {
 				htmlCode += '<td class="' + cName + '">' + ((bloc[b].Aller == null) ? "":bloc[b].Aller) + '</td>';
 			else
 				htmlCode += '<td class="' + cName + '">' + ((bloc[b].Aller == null) ? "":bloc[b].Aller) + '</td><td></td><td></td><td></td>';
-		b += 1;
-		} while ( bloc[b] && bloc[b].PARCOURS_ID == courseID);
-
-		if(nbrTrou == 18){
-			htmlCode += '<tr class="entete"><th>' + langLbl["hole"] + '</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th><th>16</th><th>17</th><th>18</th><th>' + langLbl["goin"] + '</th><th>Total</th><th>Eval.</th><th>Slope</th></tr>';
-			var b = nextCourse;
-			do{
-				var cName = 'B' + bloc[b].Bloc;
-				htmlCode += '<tr><td class="' + cName + '">' + langLbl[bloc[b].Bloc] + '</td>';
-				for (var i = 10; i < 19; i++) {
-					var x = "bloc[b].T" + i;
-					htmlCode += '<td class="' + cName + '">' + eval(x) + '</td>';
-				}
-				htmlCode += '<td class="' + cName + '">' + ((bloc[b].Retour == null) ? "":bloc[b].Retour) + '</td><td class="' + cName + '">' + ((bloc[b].Total == null) ? "":bloc[b].Total) + '</td><td class="' + cName + '">' + bloc[b].Eval + '</td><td class="' + cName + '">' + bloc[b].Slope + '</td>';
-			b += 1;
-			} while ( bloc[b] && bloc[b].PARCOURS_ID == courseID);
 		}
-		nextCourse = b;
-		htmlCode += '</table>';
-		divElem.innerHTML = htmlCode;
-		liElem.appendChild(divElem);
-		pageZone.appendChild(liElem);
 	}
-}
-}
-showProgress(1);
+
+	if(nbrTrou == 18){
+		htmlCode += '<tr class="entete"><th>' + langLbl["hole"] + '</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th><th>16</th><th>17</th><th>18</th><th>' + langLbl["goin"] + '</th><th>Total</th><th>Eval.</th><th>Slope</th></tr>';
+		for (var b = 0; b < bloc.length; b++) {
+			if (bloc[b].PARCOURS_ID == courseID){
+			var cName = 'B' + bloc[b].Bloc;
+			htmlCode += '<tr><td class="' + cName + '">' + langLbl[bloc[b].Bloc] + '</td>';
+			for (var i = 10; i < 19; i++) {
+				var x = "bloc[b].T" + i;
+				htmlCode += '<td class="' + cName + '">' + eval(x) + '</td>';
+			}
+			htmlCode += '<td class="' + cName + '">' + ((bloc[b].Retour == null) ? "":bloc[b].Retour) + '</td><td class="' + cName + '">' + ((bloc[b].Total == null) ? "":bloc[b].Total) + '</td><td class="' + cName + '">' + bloc[b].Eval + '</td><td class="' + cName + '">' + bloc[b].Slope + '</td>';
+		}}
+	}
+	htmlCode += '</table>';
+	divElem.innerHTML = htmlCode;
+	liElem.appendChild(divElem);
+	return liElem;
 }
 
 function selNewBloc(){
@@ -785,6 +777,14 @@ color: #0f0;
 
 input[type=checkbox] {
   transform: scale(2);
+}
+
+.listitem {
+    overflow: hidden;
+}
+
+textarea{
+overflow: scroll;
 }
 
 </style>
@@ -993,7 +993,7 @@ input[type=checkbox] {
 	 <td><input id="FBt7" class="inputtext" type="text" size="1" maxlength="3" value=""/></td>
 	 <td><input id="FBt8" class="inputtext" type="text" size="1" maxlength="3" value=""/></td>
 	 <td><input id="FBt9" class="inputtext" type="text" size="1" maxlength="3" value=""/></td>
-	 <td><input id="FBtoto" class="inputtext" type="text" size="2" maxlength="4" value=""/></td>
+	 <td><input id="FBtoto" class="inputtext" type="text" size="3" maxlength="4" value=""/></td>
 	 <td></td>
      <td></td>
      <td></td>
@@ -1027,7 +1027,7 @@ input[type=checkbox] {
      <td><input id="FBt16" class="inputtext" type="text" size="1" maxlength="3" value=""/></td>
 	 <td><input id="FBt17" class="inputtext" type="text" size="1" maxlength="3" value=""/></td>
 	 <td><input id="FBt18" class="inputtext" type="text" size="1" maxlength="3" value=""/></td>
-	 <td><input id="FBtoti" class="inputtext" type="text" size="2" maxlength="4" value=""/></td>
+	 <td><input id="FBtoti" class="inputtext" type="text" size="3" maxlength="4" value=""/></td>
 	 <td><input id="FBtota" class="inputtext" type="text" size="2" maxlength="4" value=""/></td>
 	 <td><input id="FBeval" class="inputtext" type="text" size="2" maxlength="4" value=""/></td>
      <td><input id="FBslope" class="inputtext" type="text" size="2" maxlength="4" value=""/></td>
@@ -1038,7 +1038,7 @@ input[type=checkbox] {
 
 <form id="tabTextF">
 	​<textarea id="tabText" rows="4" cols="92" form="tabTextF"></textarea>
-	<input id="butAddBloc" type="button" onclick="addToBlocks(this.form);" value="Add text tab delimited above to current block"/>
+	<input id="butAddBloc" class="itin" type="button" onclick="addToBlocks(this.form);" value="Add text tab delimited above to current block"/>
 </form>
 </div>
 <ul id="pageZone" class="pageitem">

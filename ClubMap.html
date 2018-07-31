@@ -30,6 +30,7 @@ var showLatLng = false;
 var affCenter = false;
 var trouCoord =  new Array();
 var nbrTrous, clubID, courseID, clubName, isMapped;
+var nbrMitem = 2;
 
 function initialize() { 
 	var leCentre = new google.maps.LatLng(intLat,intLng)
@@ -152,13 +153,14 @@ afficheTrou(trou);
 function initPage(){
 var butMenu = document.getElementById("butMenu");
 var trEdit = document.getElementById("trEdit");
-if ( GetCookie("userRole") != "MEM")
-	butMenu.style.visibility = "visible";
-
+if ( GetCookie("userRole") != "MEM"){
+	trEdit.style.visibility = "visible";
+	nbrMitem++;
+}
+	
 setFontSize();
 userId = GetCookie("userID");
-if (userId)
-	trEdit.style.display = "contents";
+
 var data = getURLdata();
 var ids = data.split('$');
 clubID = parseInt(ids[0]);
@@ -235,7 +237,8 @@ if (menuList.style.height != "0px" && menuList.style.height != ""){
 	menuList.style.height = "0px";
 }else{
 	var adj = menuList.childNodes[1].offsetHeight;
-	menuList.style.height = (adj * .75) + "pt";
+	menuList.style.height = (nbrMitem * adj * .75) + "pt";
+	x=1;
 	}
 //menuOn = true;
 }
@@ -256,13 +259,63 @@ function showSubmenu(objOpt, state){
 var submenu = document.getElementById('submenu1');
 
 if (objOpt){
-	submenu.style.left = objOpt.offsetWidth + "px";
+	submenu.style.left = (objOpt.offsetWidth * .92) + "px";
 	submenu.style.top = (objOpt.offsetTop + 35) + "px";
 }
 
 submenu.style.display = state;
 
 }
+
+function showSubMenu(oOpt){
+var ht = 0;
+var docBody = document.getElementsByTagName("BODY")[0];
+var parent = oOpt.parentNode;
+var subName = oOpt.id + "sub";
+var subOptions = false;
+var subElem = document.getElementById(subName);
+// Close other sub menu
+var othSub = document.getElementsByClassName("submenu");
+if (subName != "logomenusub")
+	for (i = 0; i < othSub.length; i++) {
+		outSub(othSub[i])
+	}
+if (subElem){
+	//alert(subElem.id + subElem.offsetHeight);
+	if (logomenuOpen){
+		outSub(subElem);
+		return false;
+	}else
+	ht = subElem.childNodes.length;
+}else{
+	for (i = 0; i < subMenus.length; i++) {
+		if (subMenus[i].parent == oOpt.id)
+			subOptions = subMenus[i].options;
+	}
+	if (subOptions){
+		var divElem = document.createElement("div");
+		divElem.setAttribute('id', subName);
+		divElem.setAttribute('class', 'submenu');		
+		if (subName != "logomenusub")
+			divElem.setAttribute('onmouseleave', 'outSub(this)');
+		for (i = 0; i < subOptions.length; i++) {
+			opt = addMenuOpt(subOptions[i]);
+			ht += 1;
+			divElem.appendChild(opt);
+		}
+		docBody.appendChild(divElem);
+		subElem = divElem;
+	}
+}
+if (subElem){
+		subElem.style.top = parent.offsetHeight + "px" ;
+		subElem.style.left = parent.offsetLeft + "px" ;
+		subElem.style.height = (ht * (optHeight)) + "em";
+		if (subElem.id == "logomenusub")
+			logomenuOpen = true;
+	}
+}
+
 	// -->
 </script> 
 
@@ -327,29 +380,30 @@ visibility:hidden;
     border-color: transparent transparent #fff transparent;
 }
 
-#divCoor{
+#divCoor, #trEdit{
 visibility: hidden;
 }
 
-#trEdit{
-display:none;
-}
 
 #Fparc{
 display:none;
 }
 
-#submenu1 a {
+#submenu1 a, #menuList a {
     text-decoration: none;
     color: #000;
 	
 }
 
-#submenu1 a:hover, a:focus {
+#submenu1 a:hover, a:focus, #menuList a:hover, a:focus {
     transition-property: background-color, border, color;
     transition-duration: 0.3s;
     transition-timing-function: ease-out;
     background: #999;
+}
+
+#butMenu {
+visibility: visible;
 }
 
 </style>
@@ -378,14 +432,20 @@ display:none;
 <div class="divFont" onclick="setFontSize(-0.2, this)"><div class="divFontSize fontSmall">A</div><div class="fontLogo">&#8595;</div></div>
 </div>
 </div>
-
+<!--
 <div id="menuList">
 <table><tbody>
 <tr><td onclick="showSubmenu(this, 'inherit');" onmouseover="showSubmenu(this, 'inherit');" onmouseout="showSubmenu(this, 'none');"  title="Sélectionner un parcours.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="cours"></text></td></tr>
 <tr><td onclick="showCenter(this);" title="Centrage sur changement de drapeau.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mcent"></text></td></tr>
 <tr id="trEdit"><td onclick="showHole(this);" title="&Eacute;diter la position des drapeaux.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="medit"></text></td></tr>
-
 </tbody></table>
+</div>
+// -->
+
+<div id="menuList">
+<a class="inputButton" onclick="showSubmenu(this, 'inherit')" onmouseover="showSubmenu(this, 'inherit')" onmouseout="showSubmenu(this, 'none')" href="#">&nbsp;&nbsp;&nbsp;&nbsp;<text id="cours"></text></a>
+<a class="inputButton" onclick="showCenter(this)" href="#">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mcent"></text></a>
+<a id="trEdit" class="inputButton" onclick="showCenter(this)" href="#">&nbsp;&nbsp;&nbsp;&nbsp;<text id="medit"></text></a>
 </div>
 <div id="submenu1">
 </div>

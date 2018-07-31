@@ -77,7 +77,7 @@ document.location.href = goURL;
 
 function initPage(){
 var butMenu = document.getElementById("butMenu");
-if ( GetCookie("userRole") != "MEM")
+if ( GetCookie("userRole") == "ADM")
 	butMenu.style.visibility = "visible";
 	
 var data = getURLdata();
