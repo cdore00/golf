@@ -320,8 +320,10 @@ x=1;
 </li>
 </ul>
 <div id="gameBut">
-<center><input id="saveGame" class="bouton" type="button" onClick="askSaveGame(1); return false;" value=" Terminer la partie " />
-<input id="delGame" class="bouton" type="button" onClick="askSaveGame(0); return false;" value="Supprimer la partie" /></center>
+<center>
+<button id="saveGame" class="bouton" type="button" onClick=""askSaveGame(1); return false;">&nbsp;<text id="fgame">Terminer la partie</text>&nbsp;</button>
+<button id="delGame" class="bouton" type="button" onClick=""askSaveGame(-1); return false;">&nbsp;<text id="rgame">Supprimer la partie</text>&nbsp;</button>
+</center>
 </div>
 
 </form>

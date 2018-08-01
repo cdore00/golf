@@ -447,7 +447,10 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["I0005"] = "&nbsp;ou le nom de la ville du club ";
 		langLbl["I0006"] = "&nbsp;le nom de la ville du club ";
 		langLbl["I0007"] = " nom du club de golf";
-		
+
+		langLbl["fgame"] = "Terminer la partie";
+		langLbl["rgame"] = "Supprimer la partie";
+		langLbl["scard"] = "Carte de pointage";
 		langLbl["searc"] = "Recherche";
 		langLbl["load"] = "Chargement";
 		langLbl["mlist"] = "Liste";
@@ -561,7 +564,10 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["I0005"] = "&nbsp;o en el nombre de la ciudad del club ";
 		langLbl["I0006"] = "&nbsp;el nombre de la ciudad del club ";
 		langLbl["I0007"] = " nombre del club de golf";
-	
+
+		langLbl["fgame"] = "Termina el juego";
+		langLbl["rgame"] = "Eliminar el juego";
+		langLbl["scard"] = "Tarjeta se&ntilde;alando";
 		langLbl["searc"] = "Buscando";
 		langLbl["load"] = "Cargando";
 		langLbl["mlist"] = "Lista";
@@ -674,7 +680,10 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["I0005"] = "&nbsp;or the name of the city of the club ";
 		langLbl["I0006"] = "&nbsp;the name of the city of the club ";
 		langLbl["I0007"] = " name of the golf club";
-
+		
+		langLbl["fgame"] = "Finish the game";
+		langLbl["rgame"] = "Remove the game";
+		langLbl["scard"] = "Score Card";
 		langLbl["searc"] = "Searching";
 		langLbl["load"] = "Loading";
 		langLbl["mlist"] = "List";

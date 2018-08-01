@@ -64,7 +64,6 @@ progress {
   border: 1px solid #0063a6;
   background: #fff;
 }
-
 progress::-webkit-progress-value { background: #00A4AC; }  
 progress::-webkit-progress-bar { background: #fff; }  
 

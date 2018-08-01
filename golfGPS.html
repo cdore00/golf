@@ -55,7 +55,7 @@ var holeDist;
 var watchId = null;
 var locTimer = null;
 var watchLoc = 0;
-var trou = 1;
+var trou = 1, sTrou = null;
 var blocID = 0;
 var polyLine;
 var clicListener;
@@ -242,13 +242,19 @@ function getLocalisation(){
 }
 function trouSuivant(p_m){
 trou = trou + p_m;
-if (trou > trouCoord.length)
-	trou = 1;
-if (trou == 0)
-	trou = trouCoord.length;
-	
+trou = validTrou(trou);
 afficheTrou(trou);
 }
+
+function validTrou(noT){
+if (noT > trouCoord.length)
+	noT = 1;
+if (noT == 0)
+	noT = trouCoord.length;
+return noT;
+}
+
+
 function afficheTrou(noTrou, keepPosition){
 var holePar = document.getElementById("holePar");
 var holePlay = document.getElementById("holePlay");
@@ -388,13 +394,30 @@ if (piquetMarker.getVisible())
 	traceLine(piquetMarker.getPosition());
 }
 
-function showScoreFrame(strParc){
+function showScoreFrame(nScore){
 var layerScore = document.getElementById('showScore');
 var scoreHole = document.getElementById('scoreHole');
-var hPar = eval("trouNormale.T" + trou);
-scoreHole.innerHTML = "Trou " + trou + " par " + hPar;
+var scoreOk = document.getElementById('scoreOk');
 
-setHoleScore(hPar);
+var hs = trou;
+
+if (!sTrou)
+	sTrou = trou;
+if (nScore){
+	sTrou = sTrou + nScore;
+	hs = sTrou;
+}
+hs = validTrou(hs);
+sTrou = hs;
+var hPar = eval("trouNormale.T" + hs);
+scoreHole.innerHTML = "Trou " + hs + " par " + hPar;
+
+sInfo = aScore[hs - 1];
+scoreOk.classList.remove("backGreen", "backRed");
+if (sInfo.T)
+	scoreOk.classList.add("backGreen");
+
+setHoleScore(hPar, sInfo);
 layerScore.style.visibility="visible";
 	
 }
@@ -417,9 +440,9 @@ function moveTouch(event) {
     event.preventDefault();
 }
 	    
-function setHoleScore(hPar){
+function setHoleScore(hPar, sInfo){
 var setScore = document.getElementById('setScore');
-sInfo = aScore[trou-1];
+
 if (sInfo.T)
 	var vc = sInfo.T;
 else
@@ -435,15 +458,15 @@ else
 setScore.nbrCoups.value = vc;
 setScore.nbrPutts.value = vp;
 setScore.nbrPen.value = vl;
-selPts(document.getElementById('tdC' + vc));
-selPts(document.getElementById('tdP' + vp));
-selPts(document.getElementById('tdL' + vl));
+selPts(document.getElementById('tdC' + vc), true);
+selPts(document.getElementById('tdP' + vp), true);
+selPts(document.getElementById('tdL' + vl), true);
 }
 
 function closeScore(){
 var layerScore = document.getElementById('showScore');
-//alert(setScore.nbrCoups[setScore.nbrCoups.selectedIndex].value);
 layerScore.style.visibility="hidden";
+sTrou = null;
 }
 
 function saveScore(formRef){
@@ -451,7 +474,7 @@ var score = formRef.nbrCoups.value;
 var putt = formRef.nbrPutts.value;
 var penal = formRef.nbrPen.value;
 
-var strData = userId + "$" + courseID + "$" + trou + "$" + score + "$" + putt + "$" + penal + "$" + clubName;
+var strData = userId + "$" + courseID + "$" + sTrou + "$" + score + "$" + putt + "$" + penal + "$" + clubName;
 	
 getInfo("updateGame?data=" + strData, setMyScore);
 closeScore();
@@ -627,9 +650,14 @@ initialize();
 }
 
 
-function selPts(oOpt){
+function selPts(oOpt, initCall){
 var setScore = document.getElementById('setScore'); 
 var oList = oOpt.parentNode;
+if (!initCall  && !oOpt.classList.contains("selectedOpt")){
+	var scoreOk = document.getElementById('scoreOk');
+	if (scoreOk.classList.contains("backGreen"))
+		scoreOk.classList.replace( "backGreen", "backRed" )
+}
 for (var i= 0; i < oList.childNodes.length ; i++){
 	if (oList.childNodes[i].classList)
 		oList.childNodes[i].classList.remove("selectedOpt");
@@ -643,6 +671,26 @@ if (oList.id == "lPut")
 if (oList.id == "lPen")
 	setScore.nbrPen.value = oOpt.innerHTML;
 }
+
+function nextScore(nx){
+showScoreFrame(nx);
+}
+
+function delScore(){
+
+if (confirm("Delete hole score ?")){
+	var formRef = document.getElementById('setScore'); 
+	formRef.nbrCoups.value = 0;
+	formRef.nbrPutts.value = 0;
+	formRef.nbrPen.value = 0;
+	saveScore(formRef);
+	if (!sTrou)
+		sTrou = trou;
+	aScore[sTrou - 1].T = null;
+}
+
+}
+ 
 // -->
 </script> 
 
@@ -681,7 +729,28 @@ color: #ff1822;
  color: #ff1822 !important;
  background: #999 !important;
  }
+ 
+ a{
+ text-decoration:none;
+ }
 
+ .wgInd{
+ /*position: asolute;*/
+ float: right;
+ width: 0.5em;
+ height: 0.5em;
+ background: white;
+ border-radius: 20px;
+   margin: 0.3em;
+ }
+ 
+ .backGreen{
+ background-color:#3A9D23;
+ }
+ .backRed{
+ background-color:#ff1822;
+ }
+ 
 </style>
 
 </head>
@@ -747,8 +816,11 @@ color: #ff1822;
 <div  id="map_canvas"></div >
 
 <div id="showScore">
-<div id="scoreHole">Trou par </div>
 
+<div class="selScore">
+
+<div><a href="#" onclick="nextScore(-1)">&#9664;&nbsp;&nbsp;</a><span id="scoreHole">Trou par </span><a href="#" onclick="nextScore(1)">&nbsp;&nbsp;&#9654;</a></div>
+</div>
 <form id="setScore">
 <input id="nbrCoups" type="hidden" value="0"/>
 <input id="nbrPutts" type="hidden" value="0"/>
@@ -756,7 +828,12 @@ color: #ff1822;
 
 <div id="prefOptions">
 
-<label for="nbrCoups"><text id="coups"></text></label>
+<div class="selScore">
+<div id="scoreOk" class="wgInd" onclick="delScore()"></div>
+<label>&nbsp;<text id="coups"></text></label>
+
+</div>
+
 <div class="selScore">
 <table>
 <tr id="lPts">
@@ -778,7 +855,7 @@ color: #ff1822;
 </tr>
 </table>
 </div>
-<label for="nbrCoups">Putts</label>
+<label for="nbrCoups">&nbsp;Putts</label>
 <div class="selScore">
 <table>
 <tr id="lPut">
@@ -791,7 +868,7 @@ color: #ff1822;
 </tr>
 </table>
 </div>
-<label for="nbrCoups"><text id="penal"></text></label>
+<label for="nbrCoups">&nbsp;<text id="penal"></text></label>
 <div class="selScore">
 <table>
 <tr id="lPen">
@@ -808,9 +885,9 @@ color: #ff1822;
 </div>
 
 <div>
-<input id="okPref" class="bouton" type="button" onClick="saveScore(this.form); return false;" value="      Ok      " /><input id="annulePref" class="bouton" type="button" onClick="closeScore(); return false;" value="  Annuler  " />
+<button id="okPref" class="bouton" type="button" onClick="saveScore(this.form); return false;">&nbsp;<text id="_okok">Ok</text>&nbsp;</button><button id="annulePref" class="bouton" type="button" onClick="closeScore(); return false;">&nbsp;<text id="_canc">Cancel</text>&nbsp;</button>
 </br>
-<input id="tabScore" class="bouton" type="button" onClick="tableauScore(this.form); return false;" value="  Carte de pointage  " />
+<button id="tabScore" class="bouton" type="button" onClick="tableauScore(this.form); return false;">&nbsp;<text id="scard">Carte de pointage</text>&nbsp;</button>
 </div>
 </form>
 </div>
