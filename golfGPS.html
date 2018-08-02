@@ -649,14 +649,16 @@ for (var i= 0; i < bloc.length; i++){
 initialize();
 }
 
-
 function selPts(oOpt, initCall){
 var setScore = document.getElementById('setScore'); 
 var oList = oOpt.parentNode;
+var oVal = oOpt.innerHTML;
 if (!initCall  && !oOpt.classList.contains("selectedOpt")){
 	var scoreOk = document.getElementById('scoreOk');
+		// If not change => Green else if
+		
 	if (scoreOk.classList.contains("backGreen"))
-		scoreOk.classList.replace( "backGreen", "backRed" )
+		scoreOk.classList.replace( "backGreen", "backRed" );
 }
 for (var i= 0; i < oList.childNodes.length ; i++){
 	if (oList.childNodes[i].classList)
@@ -665,11 +667,11 @@ for (var i= 0; i < oList.childNodes.length ; i++){
 oOpt.classList.add("selectedOpt");
 //alert(oList.id + oOpt.innerHTML);
 if (oList.id == "lPts")
-	setScore.nbrCoups.value = oOpt.innerHTML;
+	setScore.nbrCoups.value = oVal;
 if (oList.id == "lPut")
-	setScore.nbrPutts.value = oOpt.innerHTML;
+	setScore.nbrPutts.value = oVal;
 if (oList.id == "lPen")
-	setScore.nbrPen.value = oOpt.innerHTML;
+	setScore.nbrPen.value = oVal;
 }
 
 function nextScore(nx){
