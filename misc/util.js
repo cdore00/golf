@@ -1,5 +1,5 @@
 
-var HOSTserv = "https://nodegolf-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Openshift mon_golf34
+var HOSTserv = "https://pytgolf-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Python 3.6.3 
 // "http://127.0.0.1:3000/";		//Portable Windows 10 Local host Node JS v6.10.0
 // "http://192.168.2.195:3000/";    //Ubuntu workstation 16.04
 // "http://192.168.2.195:8080/";    //Ubuntu workstation 16.04 docker 1.12.6 Node JS v4.2.3  MongoDB server v3.4.9
@@ -11,7 +11,7 @@ var HOSTserv = "https://nodegolf-cd-serv.1d35.starter-us-east-1.openshiftapps.co
 // "https://pytgolf-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Python 3.6.3 
 
 var progressBar, langSet;
-var THCall = "GET";
+var THCall = "POST";
 var tryLog = 0;
 
 function is_touch_device() {
