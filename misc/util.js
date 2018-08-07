@@ -11,7 +11,7 @@ var HOSTserv = "https://nodegolf-cd-serv.1d35.starter-us-east-1.openshiftapps.co
 // "https://pytgolf-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Python 3.6.3 
 
 var progressBar, langSet;
-var THCall = "POST";
+var THCall = "GET";
 var tryLog = 0;
 
 function is_touch_device() {
