@@ -33,13 +33,13 @@ var gameID;
 var userId;
 var clubName = "";
 
-function askSaveGame(askSave){
-if (askSave){
+function askSaveGame(action){
+if (action){
 	var conf = confirm("Voulez-vous terminer cette partie?");
-	var action = 1;
+	//var action = 1;
 }else{
 	var conf = confirm("Voulez-vous supprimer cette partie?");
-	var action = 0;
+	//var action = 0;
 }
 if (conf){
 	getInfo("endDelGame?data=" + gameID + "$" + action, closePage);
@@ -322,7 +322,7 @@ x=1;
 <div id="gameBut">
 <center>
 <button id="saveGame" class="bouton" type="button" onClick="askSaveGame(1); return false;">&nbsp;<text id="fgame">Terminer la partie</text>&nbsp;</button>
-<button id="delGame" class="bouton" type="button" onClick="askSaveGame(-1); return false;">&nbsp;<text id="rgame">Supprimer la partie</text>&nbsp;</button>
+<button id="delGame" class="bouton" type="button" onClick="askSaveGame(0); return false;">&nbsp;<text id="rgame">Supprimer la partie</text>&nbsp;</button>
 </center>
 </div>
 

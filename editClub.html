@@ -52,8 +52,25 @@ setFontSize();
 clubID = parseInt(data);
 userId = GetCookie("userID");
 
-getInfo("getClubParc?data=" + clubID + "$" + userId, showClub);
+getInfo("getClubData?data=" + clubID + "$", getClubData);
 
+}
+
+function getClubData(odata){
+var Freg = document.getElementById('Freg');
+
+var reg=JSON.parse(odata[0]);
+var oClub=JSON.parse(odata[1]);
+var oBlocColl=JSON.parse(odata[2]);
+
+for (var i = 0; i < reg.length; i++) {
+	var optElem = document.createElement("option");
+	optElem.setAttribute('value', reg[i]._id);
+	optElem.innerHTML = reg[i].Nom;	
+	Freg.appendChild(optElem);
+}
+showClub(oClub);
+showBlock(oBlocColl);
 }
 
 function getBlocList(){
@@ -67,7 +84,6 @@ getInfo("getBloc?data=" + CourseList, showBlock);
 
 
 function showClub(oClubParc){
-
 //Load club fields
 clubForm.FclubName.value = oClubParc[0].nom;
 clubForm.Fprive.checked = oClubParc[0].prive;
@@ -93,7 +109,7 @@ clubCourse = (oClubParc[0].courses);
 courseIDdef = oClubParc[0].courses[0]._id;
 mapLink.href += clubID + "$" + courseIDdef;
 
-getBlocList();
+//getBlocList();
 
 if (oClubParc[0]._id == 2){	// New club
 	tmpID++;
@@ -432,7 +448,6 @@ if (parcList){  //Change course init blocs
 
 
 function saveBloc(curBloc){
-
 	curBloc.PARCOURS_ID = eval(clubForm.FPid.value);
 	curBloc.T1 = clubForm.FBt1.value;
 	curBloc.T2 = clubForm.FBt2.value;
@@ -837,24 +852,6 @@ overflow: scroll;
 	<div class="formLabel">
 	<label for="Freg"><text id="region">R&eacute;gion</text></label></div>
 	<select id="Freg" class="inputselect">
-		<option value="1">Abitibi</option>
-		<option value="2">Appalaches</option>
-		<option value="3">Côte-Nord</option>
-		<option value="4">Centre Québec</option>
-		<option value="5">Estrie</option>
-		<option value="6">Gaspésie</option>
-		<option value="7">Lanaudière</option>
-		<option value="8">Laurentides</option>
-		<option value="9">Laval</option>
-		<option value="10">Mauricie</option>
-		<option value="11">Montréal</option>
-		<option value="12">Montérégie</option>
-		<option value="13">Outaouais</option>
-		<option value="14">Québec</option>
-		<option value="15">Saguenay</option>
-		<option value="16">Valleyfield</option>
-		<option value="17">PGA est</option>
-		<option value="18">PGA ouest</option>	
 	</select>
 </li>
 <li class="listitem gras">
@@ -1038,7 +1035,9 @@ overflow: scroll;
 
 <form id="tabTextF">
 	​<textarea id="tabText" rows="4" cols="92" form="tabTextF"></textarea>
+	<div>
 	<input id="butAddBloc" class="itin" type="button" onclick="addToBlocks(this.form);" value="Add text tab delimited above to current block"/>
+	</div>
 </form>
 </div>
 <ul id="pageZone" class="pageitem">

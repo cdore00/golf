@@ -56,6 +56,7 @@ var watchId = null;
 var locTimer = null;
 var watchLoc = 0;
 var trou = 1, sTrou = null;
+var curScore = {};
 var blocID = 0;
 var polyLine;
 var clicListener;
@@ -181,8 +182,9 @@ blockName = 'B' + trouPar[blocID][0]
 document.getElementById("holeBloc").className = blockName;
 afficheTrou(trou, true);
 }
-function showBlocs(){
+function showBlocs(oDivHole){
 var blocForm = document.getElementById('blocForm');
+blocForm.style.left = oDivHole.offsetLeft + "px";
 blocForm.style.visibility="visible";
 }
 
@@ -419,27 +421,9 @@ if (sInfo.T)
 
 setHoleScore(hPar, sInfo);
 layerScore.style.visibility="visible";
-	
-}
-	    
-var offSetX = 0;
-var offSetY = 0;
-function startTouch(event) {
-	var touch = event.targetTouches[0];
-	offSetX = touch.pageX-this.offsetLeft;
-	offSetY = touch.pageY-this.offsetTop;
-	this.addEventListener('touchmove', moveTouch, false);
-//	this.addEventListener('touchend', endTouch, false);
+
 }
 
-function moveTouch(event) {
-    var touch = event.targetTouches[0];
-    // Place element where the finger is
-    this.style.left = touch.pageX-this.parentElement.offsetLeft-offSetX + 'px';
-    this.style.top = touch.pageY-this.parentElement.offsetTop-offSetY + 'px';
-    event.preventDefault();
-}
-	    
 function setHoleScore(hPar, sInfo){
 var setScore = document.getElementById('setScore');
 
@@ -458,9 +442,30 @@ else
 setScore.nbrCoups.value = vc;
 setScore.nbrPutts.value = vp;
 setScore.nbrPen.value = vl;
+curScore.T = vc;
+curScore.P = vp;
+curScore.L = vl;
 selPts(document.getElementById('tdC' + vc), true);
 selPts(document.getElementById('tdP' + vp), true);
 selPts(document.getElementById('tdL' + vl), true);
+}
+	    
+var offSetX = 0;
+var offSetY = 0;
+function startTouch(event) {
+	var touch = event.targetTouches[0];
+	offSetX = touch.pageX-this.offsetLeft;
+	offSetY = touch.pageY-this.offsetTop;
+	this.addEventListener('touchmove', moveTouch, false);
+//	this.addEventListener('touchend', endTouch, false);
+}
+
+function moveTouch(event) {
+    var touch = event.targetTouches[0];
+    // Place element where the finger is
+    this.style.left = touch.pageX-this.parentElement.offsetLeft-offSetX + 'px';
+    this.style.top = touch.pageY-this.parentElement.offsetTop-offSetY + 'px';
+    event.preventDefault();
 }
 
 function closeScore(){
@@ -599,6 +604,7 @@ getInfo("getGolfGPS?data=" + courseID, showCourse);
 }
 
 function showCourse(oGps){
+var menuGPS = document.getElementById('menuGPS'); 
 var bloc = oGps[0].parc;
 var blocForm = document.getElementById('blocForm'); 
 var holeList = document.getElementById('holeList'); 
@@ -647,16 +653,16 @@ for (var i= 0; i < bloc.length; i++){
 	return a.split(",");;
 	}
 initialize();
+menuGPS.style.visibility = "visible";
 }
 
 function selPts(oOpt, initCall){
 var setScore = document.getElementById('setScore'); 
 var oList = oOpt.parentNode;
 var oVal = oOpt.innerHTML;
+var scoreOk = document.getElementById('scoreOk');
+
 if (!initCall  && !oOpt.classList.contains("selectedOpt")){
-	var scoreOk = document.getElementById('scoreOk');
-		// If not change => Green else if
-		
 	if (scoreOk.classList.contains("backGreen"))
 		scoreOk.classList.replace( "backGreen", "backRed" );
 }
@@ -665,13 +671,17 @@ for (var i= 0; i < oList.childNodes.length ; i++){
 		oList.childNodes[i].classList.remove("selectedOpt");
 }
 oOpt.classList.add("selectedOpt");
-//alert(oList.id + oOpt.innerHTML);
+
 if (oList.id == "lPts")
 	setScore.nbrCoups.value = oVal;
 if (oList.id == "lPut")
 	setScore.nbrPutts.value = oVal;
 if (oList.id == "lPen")
 	setScore.nbrPen.value = oVal;
+	
+if (scoreOk.classList.contains("backRed"))
+	if (curScore.T == setScore.nbrCoups.value && curScore.P == setScore.nbrPutts.value && curScore.L == setScore.nbrPen.value)
+		scoreOk.classList.replace("backRed", "backGreen" );
 }
 
 function nextScore(nx){
@@ -685,10 +695,10 @@ if (confirm("Delete hole score ?")){
 	formRef.nbrCoups.value = 0;
 	formRef.nbrPutts.value = 0;
 	formRef.nbrPen.value = 0;
-	saveScore(formRef);
 	if (!sTrou)
 		sTrou = trou;
 	aScore[sTrou - 1].T = null;
+	saveScore(formRef);
 }
 
 }
@@ -706,52 +716,21 @@ if (confirm("Delete hole score ?")){
 	height: 50px;
 }
  
-.selScore{
-  overflow-x: scroll;
-  overflow-y: hidden;
-  white-space: nowrap;
-}
- 
-.selScore td {
-    font-size: 1.2em;
-    color: black;
-	background: white;
-    font-weight: bold;
-	min-width: 1.2em;
-}
-
-.selScore td:hover{
-transition: color 0.9s ease 0s;
-transition: background 0.9s ease 0s;
-background: #999 ;
-color: #ff1822;
- } 
- 
-.selectedOpt{
- color: #ff1822 !important;
- background: #999 !important;
- }
- 
  a{
  text-decoration:none;
  }
-
- .wgInd{
- /*position: asolute;*/
- float: right;
- width: 0.5em;
- height: 0.5em;
- background: white;
- border-radius: 20px;
-   margin: 0.3em;
- }
  
- .backGreen{
- background-color:#3A9D23;
- }
- .backRed{
- background-color:#ff1822;
- }
+.selScore td,a {
+color: #33d;
+}
+ 
+.selScore a {
+text-shadow: 2px 2px #bbb;
+}
+
+#menuGPS{
+visibility: hidden;
+}
  
 </style>
 
@@ -760,12 +739,9 @@ color: #ff1822;
 <body onload='initPage()' onUnload='clearGeo()' > 
 
 <div id="menuGPS" class="unselectable">
-<button class="bouton-prec-suiv" onclick="trouSuivant(-1)"><img  height="18" width="13" alt="Trou pr&eacute;c&eacute;dent" src="images/prec.png" /></button>
-<img id="imgFlag" onclick="trouSuivant(-1)" height="25" width="16" src="images/flag.png" />
-<div id="holePlay" onclick="trouSuivant(1)" ontouchstart="detectLong('listeTrous');" ontouchend="touchin = false;" onmouseover="detectLong('listeTrous');" onmouseout="touchin = false;"></div>
-<button class="bouton-prec-suiv" onclick="trouSuivant(1)"><img height="18" width="13" alt="Trou suivant" src="images/suiv.png" /></button>
+<a class="bouton-prec-suiv" href="#" onclick="trouSuivant(-1)">&#9664;&nbsp;</a><img id="imgFlag" onclick="trouSuivant(-1)" height="25" width="16" src="images/flag.png" /><div id="holePlay" onclick="trouSuivant(1)" ontouchstart="detectLong('listeTrous');" ontouchend="touchin = false;" onmouseover="detectLong('listeTrous');" onmouseout="touchin = false;"></div><a class="bouton-prec-suiv" href="#" onclick="trouSuivant(1)">&#9654;</a>
 
-<div id="hole" onclick="showBlocs();" ><div id="holePar"></div><div id="holeBloc" ></div></div>
+<div id="hole" onclick="showBlocs(this);" ><div id="holePar"></div><div id="holeBloc" ></div></div>
 <button id="boutonPiquet" class="itin" title="Placer un piquet" onclick="getPiquet(this); return false;"><img id="imgPiquet" height="18" width="3" src="images/piquet.png" /></button>
 <button id="boutonLoc" class="itin" title="Localiser" onclick="getLoc(this); return false;"><img id="imgLoc" height="18" width="18" alt="Localiser" src="images/ici.png" /></button>
 <!--
@@ -814,6 +790,7 @@ color: #ff1822;
 <tbody>
 </table>
 </div>
+</div>
 
 <div  id="map_canvas"></div >
 
@@ -821,7 +798,7 @@ color: #ff1822;
 
 <div class="selScore">
 
-<div><a href="#" onclick="nextScore(-1)">&#9664;&nbsp;&nbsp;</a><span id="scoreHole">Trou par </span><a href="#" onclick="nextScore(1)">&nbsp;&nbsp;&#9654;</a></div>
+<div><a href="#" onclick="nextScore(-1)">&#9664;&nbsp;</a><span id="scoreHole">Trou par </span><a href="#" onclick="nextScore(1)">&nbsp;&#9654;</a></div>
 </div>
 <form id="setScore">
 <input id="nbrCoups" type="hidden" value="0"/>

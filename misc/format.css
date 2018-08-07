@@ -1,4 +1,5 @@
 ﻿html { height: 100% } 
+html { height: 100% } 
 
 @charset "UTF-8";
 
@@ -518,7 +519,7 @@ text-align:left;
 }
 
  #identOptions a{
- color: #33f;
+ color: #33d;
  }
  
  .prefOpt{
@@ -618,7 +619,7 @@ width:40px;
 #onglets a{
     font-size : 15px;
 	font-weight:bold;
-	color: #33f;
+	color: #33d;
 	margin-left : 5px;
 	margin-right : 15px;
     text-decoration:none;

@@ -1,3 +1,4 @@
+
 body {
 -webkit-user-select: none;
 }
@@ -128,7 +129,7 @@ text-align:center;
 #holePlay{
 width:0.9em;
 text-align:right;
-margin-left: -10px;
+
 }
 
 #holePar{
@@ -136,15 +137,12 @@ width:1.5em;
 }
 
 #boutonPiquet, #boutonLoc{
-margin-top:2px;
-background-color:#eee;
-font-size:1em;
-display:inline;
-width:1.4em;
-height: 1.4em;
-margin-left:0em;
-text-align:center;
+background-color: #eee;
+font-size: 1em;
+width: 1.2em;
+height: 1.2em;
 cursor: pointer;
+line-height: 0.5;
 }
 
 #boutonPiquet img, #boutonLoc img{
@@ -189,14 +187,15 @@ background:-moz-linear-gradient(top,#ddd,#ddd);
 }
 
 .bouton-prec-suiv{
+color: #33d;
 background-color:#eee;
 padding-top:0.2em;
-width:15px;
 border:0;
 margin:0;
 padding:0;
 text-align:center;
 cursor: pointer;
+text-shadow: 2px 2px #bbb;
 }
 
 .itin {
@@ -250,4 +249,52 @@ background-color:transparent;
 border:0;
 margin:3px
 }
+
+
+ 
+.selScore{
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+}
+ 
+.selScore td {
+    font-size: 1.2em;
+    color: black;
+	background: white;
+    font-weight: bold;
+	min-width: 1.2em;
+	box-shadow: inset 0px 0px 5px 0px #ABABAB;
+	border-radius: 5px;
+}
+
+.selScore td:hover{
+transition: color 0.9s ease 0s;
+transition: background 0.9s ease 0s;
+background: #999 ;
+color: #ff1822;
+ } 
+ 
+.selectedOpt{
+ color: #ff1822 !important;
+ background: #999 !important;
+ }
+
+ .wgInd{
+ float: right;
+ width: 0.9em;
+ height: 0.9em;
+ background: white;
+ border-radius: 20px;
+margin-top: 0.2em;
+margin-right: 0.2em;
+ box-shadow: inset 0 0 6px 6px #eee;
+ }
+ 
+ .backGreen{
+ background-color:#3A9D23;
+ }
+ .backRed{
+ background-color:#ff1822;
+ }
 
