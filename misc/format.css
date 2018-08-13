@@ -128,7 +128,7 @@ background:-webkit-gradient(linear,0% 0,0% 100%,from(#d9d9d9),color-stop(3%,#d9d
 background:-moz-linear-gradient(top,#ddd,#666);text-align:center};}
 #duobutton a:first-child{border:0px solid #fff;}
 
-#duobutton a{height:30px;display:inline-block;line-height:30px;margin-top:0px;font-weight:bold;overflow: hidden;text-decoration:none;color:#0022ff;}
+#duobutton a{height:30px;display:inline-block;line-height:30px;margin-top:0px;font-weight:bold;overflow: hidden;text-decoration:none;color:#33d;}
 
 #duobutton a:hover, #pressed {
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#4f4f4f',endColorstr='#888888');
@@ -136,7 +136,8 @@ background:-moz-linear-gradient(top,#ddd,#666);text-align:center};}
     background: -webkit-gradient(linear,0% 0,0% 100%,from(#4f4f4f),color-stop(10%,#4f4f4f),to(#888888));
     background: -moz-linear-gradient(top,#4f4f4f,#888888);
 }
-#duobutton a:hover, #duobutton a:focus {color:#EE3333}
+#duobutton a:hover, #duobutton a:focus {color:#d33}
+
 #pressed{color:#ffffff!important}
 
 #butMenu {
@@ -290,8 +291,8 @@ box-shadow: 1px 1px 1px #ccccdd, 3px 3px 3px #aaaaaa inset;
 #localisation,#localiser{visibility:hidden;}
 
 .listitem {display:block;overflow:auto;padding:0px 0px 2px 5px;border:0px solid #aaa;}
-.listitem a {color:#55f;text-decoration:none;font-weight:bold}
-.listitem a:hover {color:#DD3333}
+.listitem a {color:#33d;text-decoration:none;font-weight:bold}
+.listitem a:hover {color:#d33}
 
 .prefList{clear:both;left: 0px; padding-left: 0px;margin: 2px; min-height:40px; border:0px solid #aaa}
 .prefPart{display:block; left: 0px; padding: 0px;margin: 0px; border:0px;text-align: center;}
@@ -352,8 +353,8 @@ table.cartePts th{background-color: #999;text-align:center}
 
 #layerContent{padding-top:7px}
 #layerContent p{border:0px; margin:0px;width:250px}
-#layerContent a {color:#55f;font-weight:bold;text-decoration:none}
-#layerContent a:hoverm #layerContent a:focus {color:#DD3333;text-decoration:none}
+#layerContent a {color:#33d;font-weight:bold;text-decoration:none}
+#layerContent a:hoverm #layerContent a:focus {color:#d33;text-decoration:none}
 .itin {padding-left:5px !important;padding-right:5px !important;
 border:1px solid #999;
 border-radius:7px;
@@ -370,6 +371,18 @@ box-shadow: 1px 1px 1px #ccccdd, 2px 2px 2px #aaaaaa inset;
    text-decoration: none;}
 
 .itinDetail{visibility:hidden;}
+
+.bouton-prec-suiv{
+background:transparent;
+color: #33d;
+border:0px solid;
+margin:0;
+padding:0;
+min-width:0px;
+display: inline;
+cursor: pointer;
+text-shadow: 2px 2px #999;
+}
 
 /* Class tooltip to show input message */
 .tooltip {
@@ -416,7 +429,7 @@ padding-top:17px;
 
 #tooltip a, #tooltip a:visited{
  text-decoration:none;
- color:#0022ff;
+ color:#33d;
 }
 
 #tooltipFleche{
@@ -574,7 +587,7 @@ z-index: 1100;
 }
 
 #navTrou{
-/*visibility:hidden;*/
+position: fixed;
 cursor: pointer;
 display: none;
 }
@@ -626,7 +639,7 @@ width:40px;
 }
 
 #onglets a:hover, a:focus {
-	color:#EE3333;
+	color:#d33;
 }
 
 

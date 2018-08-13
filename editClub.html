@@ -596,15 +596,15 @@ function parseBloc( p, courseID, nbrTrou){
 	for (var b = 0; b < bloc.length; b++) {
 		if (bloc[b].PARCOURS_ID == courseID){
 			var cName = 'B' + bloc[b].Bloc;
-			htmlCode += '<tr><td class="' + cName + '">' + langLbl[bloc[b].Bloc] + '</td>';
+			htmlCode += '<tr id="B' + bloc[b]._id + '" draggable="true" ondragstart="dragIt(event, this);"  ondrop="dropIt(event);" ondragover="allowDrop(event);"><td class="' + cName + '">' + langLbl[bloc[b].Bloc] + '</td>';
 			for (var i = 1; i < 10; i++) {
 				var x = "bloc[b].T" + i;
 				htmlCode += '<td class="' + cName + '">' + eval(x) + '</td>';
 			}
 			if(nbrTrou == 9)
-				htmlCode += '<td class="' + cName + '">' + ((bloc[b].Aller == null) ? "":bloc[b].Aller) + '</td>';
+				htmlCode += '<td class="' + cName + '">' + ((bloc[b].Aller == null) ? "":bloc[b].Aller) + '</td><td class="drag-handler">Reorder</td>';
 			else
-				htmlCode += '<td class="' + cName + '">' + ((bloc[b].Aller == null) ? "":bloc[b].Aller) + '</td><td></td><td></td><td></td>';
+				htmlCode += '<td class="' + cName + '">' + ((bloc[b].Aller == null) ? "":bloc[b].Aller) + '</td><td></td><td></td><td class="drag-handler">Reorder</td>';
 		}
 	}
 
@@ -728,6 +728,76 @@ for (var i = 0; i < dat.length; i++) {
 }
 }
 
+// Functions for Drag and drop
+//function with mouse called when drag starts
+var oRd = null;
+
+function dragIt(e, oRow) {
+	oRd = oRow;
+	e.dataTransfer.setData("Text", e.target.id);
+}
+//function with mouse called when element drops
+function dropIt(event) {
+event.preventDefault();
+
+var targetTbody = event.target.parentNode.parentNode;
+var targetRow = event.target.parentNode;
+
+//targetTbody.insertBefore(oRd, targetRow);
+reorderBloc(oRd.id.substring(1), targetRow.id.substring(1))
+}
+
+function allowDrop(e) {
+    e.preventDefault();
+}
+
+function reorderBloc(oP, nP){
+//alert(oP + nP);
+for (var p = 0; p < bloc.length; p++) {
+	if (bloc[p]._id == oP){
+		var oB = bloc[p];
+		var oI = p;
+		break;
+	}
+}
+for (var p = 0; p < bloc.length; p++) {
+	if (bloc[p]._id == nP){
+		var nB = bloc[p];
+		var nI = p;
+		break;
+	}
+}
+nB._id = oP;
+oB._id = nP;
+//alert(oI + " to " + nI);
+if (oI > nI)
+	for (var p = oI; p > nI; p--) {
+		bloc[p] = bloc[p-1];
+	}
+else
+	for (var p = oI; p < nI; p++) {
+		bloc[p] = bloc[p+1];
+	}
+	
+bloc[nI] = oB;
+showBlock(bloc);
+}
+
+function decalBloc(oI, nI){
+alert(oI + " to " + nI);
+if (oI > nI){
+for (var p = oI; p > nI; p--) {
+	bloc[p] = bloc[p-1];
+}
+bloc[nI] = oB;
+}else{
+for (var p = nI; p < oI; p++) {
+	bloc[p] = bloc[p+1];
+}
+bloc[oI] = nB;
+}
+}
+
 // -->
 </script>
 
@@ -737,10 +807,10 @@ for (var i = 0; i < dat.length; i++) {
 position: relative;
 float: left;
 clear: both;
-width: 200px;
+min-width: 7em;
 display: inline;
 text-align: right;
-margin-right: 1em;
+margin-right: 0.5em;
 }
 
 .inputselect {
@@ -762,8 +832,6 @@ font-size: 1.1em;
 	position: absolute;
 	top: 70px;
 	left: 1%;
-	/*background:white;
-	visibility:hidden;*/
 	padding: 5px;
 	background-color: #777;
 	border-radius: 6px;
@@ -802,6 +870,23 @@ textarea{
 overflow: scroll;
 }
 
+.drag-handler {
+    width: 1.4em;
+    position: relative;
+    background-color: #E4E6EB;
+    background-image: linear-gradient(45deg, #E4E6EB, #E4E6EB 2px, #fff 2px, #fff 4px, #E4E6EB 4px, #E4E6EB 9px, #fff 9px, #fff 11px, #E4E6EB 11px, #E4E6EB 16px, #fff 16px, #fff 18px, #E4E6EB 18px, #E4E6EB 22px);
+    background-size: 10px 20px;
+    cursor: move;
+    border-top: 2px solid #FFF;
+    border-bottom: 2px solid #FFF;
+	font-size: 0.5em;
+}
+
+.drag-handler:active {
+    background-image: linear-gradient(45deg, #d33, #d33 2px, #fff 2px, #fff 4px, #d33 4px, #d33 9px, #fff 9px, #fff 11px, #d33 11px, #d33 16px, #fff 16px, #fff 18px, #d33 18px, #d33 22px);
+    background-size: 10px 20px;
+}
+
 </style>
 
 </head>
@@ -826,7 +911,6 @@ overflow: scroll;
 
 
 <div id="content">
-
 
 <div class="pageitem">
 
@@ -945,20 +1029,7 @@ overflow: scroll;
 	<label for="FBbloc">Blocs&nbsp;:&nbsp;&nbsp;</label><a class="itin" alt="Add course" href="javascript:addBloc();">Add bloc</a>
 	<a class="itin" alt="Add course" href="javascript:delBloc();">Remove bloc</a></div>
 	<select id="FBbloc" class="inputselect" onchange="showBloc(this)">
-<!--<option value="Normale">Par</option>
-<option value="HDCP">HDCP</option>
-<option value="Argent">Argent</option>
-<option value="Blanc">Blanc</option>
-<option value="Bleu">Bleu</option>
-<option value="Bronze">Bronze</option>
-<option value="Cuivre">Cuivre</option>
-<option value="Jaune">Jaune</option>
-<option value="Noir">Noir</option>
-<option value="Or">Or</option>
-<option value="Orange">Orange</option>
-<option value="Rose">Rose</option>
-<option value="Rouge">Rouge</option>
-<option value="Vert">Vert</option>// -->
+
 	</select>
 <table>
   <thead>
@@ -1039,15 +1110,11 @@ overflow: scroll;
 	<input id="butAddBloc" class="itin" type="button" onclick="addToBlocks(this.form);" value="Add text tab delimited above to current block"/>
 	</div>
 </form>
-</div>
+</div>  <!-- FIN  class="pageitem" // -->
+
 <ul id="pageZone" class="pageitem">
 </ul>
-
-
-
-
-
-</div>
+</div>  <!-- FIN  id="content" // -->
 
 <div id="bottombar" class="vert">
 	<div id="rightbutton"> <a href="#haut"><img alt="Haut de page" src="images/haut.png" /></a> </div>

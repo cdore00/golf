@@ -202,7 +202,7 @@ if (!tel || tel == 99){
 	}else
 		getInfo("getGameList?user=" + userId + "&parc=" + parcNo + "&skip=" + skip + "&limit=" + limit + "&is18=" + nbrTrous  + "&date=" + date, showGameList);
 }else{
-	var param = ("getGameList?user=" + userId + "&skip=" + skip + "&limit=" + limit + "&is18=" + nbrTrous  + "&date=" + date + "&tele=" + tel);
+	var param = ("getGameList?user=" + userId + "&parc=" + parcNo + "&skip=" + skip + "&limit=" + limit + "&is18=" + nbrTrous  + "&date=" + date + "&tele=" + tel);
 	document.location.href = HOSTserv + param;
 	stopLoad();
 	}

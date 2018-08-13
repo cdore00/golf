@@ -8,7 +8,7 @@
 
 <link rel="shortcut icon" type="image/x-icon" href="images/golf.png">
 <link rel="shortcut icon" type="image/x-icon" href="images/golf.png?">
-<title>Golfs du Qu&eacute;bec</title>
+<title id="titClub">Golfs du Qu&eacute;bec</title>
 <meta content="Golf GPS, Qu&eacute;bec, Canada, Golf du Qu&eacute;bec, Clubs de golf au Qu&eacute;bec, Qu&eacute;bec golf" name="keywords" />
 <meta content="R&eacute;pertoire des clubs de golf du Qu&eacute;bec. GPS golf." name="description" />
 
@@ -16,7 +16,6 @@
 <link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
 <link href="misc/golfGPS.css" rel="stylesheet" media="screen" type="text/css" />
 
-<title id="titClub"></title>
 <meta content="Golf, Québec, Canada, Golf du Québec, Clubs de golf au Québec, Québec golf" name="keywords" />
 <meta content="Répertoire des clubs de golf du Québec." name="description" />
 
@@ -482,6 +481,8 @@ var penal = formRef.nbrPen.value;
 var strData = userId + "$" + courseID + "$" + sTrou + "$" + score + "$" + putt + "$" + penal + "$" + clubName;
 	
 getInfo("updateGame?data=" + strData, setMyScore);
+if (trou == sTrou)
+	trouSuivant(1);
 closeScore();
 }
 
@@ -497,7 +498,7 @@ for (var i= 1; i < 19 ; i++){
 	
 	if (ts > 0){
 		tot += ts;
-		laN += eval("trouNormale.T" + i);
+		laN += eval(eval("trouNormale.T" + i));
 		aScore[i-1].T=ts;
 		aScore[i-1].P=eval("gData[0].P" + i);
 		aScore[i-1].L=eval("gData[0].L" + i);
@@ -739,7 +740,8 @@ visibility: hidden;
 <body onload='initPage()' onUnload='clearGeo()' > 
 
 <div id="menuGPS" class="unselectable">
-<a class="bouton-prec-suiv" href="#" onclick="trouSuivant(-1)">&#9664;&nbsp;</a><img id="imgFlag" onclick="trouSuivant(-1)" height="25" width="16" src="images/flag.png" /><div id="holePlay" onclick="trouSuivant(1)" ontouchstart="detectLong('listeTrous');" ontouchend="touchin = false;" onmouseover="detectLong('listeTrous');" onmouseout="touchin = false;"></div><a class="bouton-prec-suiv" href="#" onclick="trouSuivant(1)">&#9654;</a>
+<a class="bouton-prec-suiv" href="#" onclick="trouSuivant(-1)">&#9664;&nbsp;</a><img id="imgFlag" onclick="trouSuivant(-1)" height="25" width="16" src="images/flag.png" /><div id="holePlay" onclick="trouSuivant(1)" ontouchstart="detectLong('listeTrous');" ontouchend="touchin = false;" onmouseover="detectLong('listeTrous');" onmouseout="touchin = false;"></div>
+<a class="bouton-prec-suiv" href="#" onclick="trouSuivant(1)">&#9654;</a>
 
 <div id="hole" onclick="showBlocs(this);" ><div id="holePar"></div><div id="holeBloc" ></div></div>
 <button id="boutonPiquet" class="itin" title="Placer un piquet" onclick="getPiquet(this); return false;"><img id="imgPiquet" height="18" width="3" src="images/piquet.png" /></button>
