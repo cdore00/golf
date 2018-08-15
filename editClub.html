@@ -233,7 +233,8 @@ oClub.region = eval(clubForm.Freg.options[clubForm.Freg.selectedIndex].value);  
 		if (clubCourse[p]._id == clubForm.FPid.value){saveCourse(clubCourse[p]);}
 	}
 	//Save current bloc
-	saveBloc(getCurrentBloc());
+	if (bloc)
+		saveBloc(getCurrentBloc());
 	
 data.club = oClub;
 data.course = clubCourse;
@@ -289,23 +290,25 @@ if (!oRes.ok && oRes.message){
 			msg += ((oRes.courses[p].result.nModified == 0) ? 'UNCHANGED':'<strong>UPDATED</strong>') + " </b></br>" ;
 		}
 		// Check blocs
-		for (var jj = 0; jj < bloc.length; jj++){	
-			for (var j = 0; j < resBloc.length; j++){
-				if ( bloc[jj].PARCOURS_ID == resCour[p].result._id ){	// Current course 
-				if ( (resBloc[j].result._id.$oid && bloc[jj]._id == resBloc[j].result._id.$oid) || 
-					 (bloc[jj]._id == resBloc[j].result._id) || 
-					 (resBloc[j].oldID && bloc[jj]._id == resBloc[j].oldID )){
-					msg += "&nbsp;&nbsp;&nbsp;&nbsp;<b>Bloc " + bloc[jj].Bloc + ", Total = " + bloc[jj].Total ;
-					if (resBloc[j].newID){
-						bloc[jj]._id = resBloc[j].newID;
-						if (clubForm.FBid.value == resBloc[j].oldID)
-							clubForm.FBid.value = resBloc[j].newID;						
-						msg += " <strong>ADDED</strong></b></br>" ;
-					}else{
-						msg += ((resBloc[j].result.nModified == 0) ? ' : UNCHANGED':'<strong> : UPDATED</strong>') + " </b></br>" ;
-					}
-					break;
-				}}
+		if (bloc){
+			for (var jj = 0; jj < bloc.length; jj++){	
+				for (var j = 0; j < resBloc.length; j++){
+					if ( bloc[jj].PARCOURS_ID == resCour[p].result._id ){	// Current course 
+					if ( (resBloc[j].result._id.$oid && bloc[jj]._id == resBloc[j].result._id.$oid) || 
+						 (bloc[jj]._id == resBloc[j].result._id) || 
+						 (resBloc[j].oldID && bloc[jj]._id == resBloc[j].oldID )){
+						msg += "&nbsp;&nbsp;&nbsp;&nbsp;<b>Bloc " + bloc[jj].Bloc + ", Total = " + bloc[jj].Total ;
+						if (resBloc[j].newID){
+							bloc[jj]._id = resBloc[j].newID;
+							if (clubForm.FBid.value == resBloc[j].oldID)
+								clubForm.FBid.value = resBloc[j].newID;						
+							msg += " <strong>ADDED</strong></b></br>" ;
+						}else{
+							msg += ((resBloc[j].result.nModified == 0) ? ' : UNCHANGED':'<strong> : UPDATED</strong>') + " </b></br>" ;
+						}
+						break;
+					}}
+				}
 			}
 		}
 		var pos = delB.indexOf(clubCourse[p]._id);
@@ -548,7 +551,11 @@ if (!bloc){
 	//Create newBloc object
 	saveBloc(newBloc);
 	//Load first course fields
-	bloc = oBlock;
+	if (oBlock.length == 0){  // No block for the course
+		showProgress(1);
+		return;
+	}else
+		bloc = oBlock;
 }
 if (indNewClub){
 	bloc[0].PARCOURS_ID = clubCourse[0]._id;
@@ -594,6 +601,10 @@ function parseBloc( p, courseID, nbrTrou){
 		htmlCode += '<tr class="entete"><th>' + langLbl["hole"] + '</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>' + langLbl["goout"] + '</th><td></td><td></td><td></td></tr>';
 
 	for (var b = 0; b < bloc.length; b++) {
+		if (clubForm.FPid.value == bloc[b].PARCOURS_ID)
+			var Ltd = '<td class="drag-handler" title="Drag and drop to reorder" >Reorder</td>';
+		else
+			var Ltd = '<td></td>';
 		if (bloc[b].PARCOURS_ID == courseID){
 			var cName = 'B' + bloc[b].Bloc;
 			htmlCode += '<tr id="B' + bloc[b]._id + '" draggable="true" ondragstart="dragIt(event, this);"  ondrop="dropIt(event);" ondragover="allowDrop(event);"><td class="' + cName + '">' + langLbl[bloc[b].Bloc] + '</td>';
@@ -602,9 +613,9 @@ function parseBloc( p, courseID, nbrTrou){
 				htmlCode += '<td class="' + cName + '">' + eval(x) + '</td>';
 			}
 			if(nbrTrou == 9)
-				htmlCode += '<td class="' + cName + '">' + ((bloc[b].Aller == null) ? "":bloc[b].Aller) + '</td><td class="drag-handler">Reorder</td>';
+				htmlCode += '<td class="' + cName + '">' + ((bloc[b].Aller == null) ? "":bloc[b].Aller) + '</td>' + Ltd;
 			else
-				htmlCode += '<td class="' + cName + '">' + ((bloc[b].Aller == null) ? "":bloc[b].Aller) + '</td><td></td><td></td><td class="drag-handler">Reorder</td>';
+				htmlCode += '<td class="' + cName + '">' + ((bloc[b].Aller == null) ? "":bloc[b].Aller) + '</td><td></td><td></td>' + Ltd;
 		}
 	}
 
@@ -672,6 +683,11 @@ else{
 }
 
 function addToBlocks(fBloc){
+if (!bloc){
+	bloc = [];
+	addBloc(NORMALE);
+	initBlocs();
+}
 var tTab = fBloc.tabText.value;
 var dat = tTab.split("\n");
 var firstPar = false;
@@ -752,7 +768,7 @@ function allowDrop(e) {
 }
 
 function reorderBloc(oP, nP){
-//alert(oP + nP);
+// Detect selected bloc and target
 for (var p = 0; p < bloc.length; p++) {
 	if (bloc[p]._id == oP){
 		var oB = bloc[p];
@@ -762,40 +778,28 @@ for (var p = 0; p < bloc.length; p++) {
 }
 for (var p = 0; p < bloc.length; p++) {
 	if (bloc[p]._id == nP){
-		var nB = bloc[p];
+		var nBid = bloc[p]._id;
 		var nI = p;
 		break;
 	}
 }
-nB._id = oP;
-oB._id = nP;
-//alert(oI + " to " + nI);
-if (oI > nI)
+
+if (oI > nI)  // Selected bloc after target
 	for (var p = oI; p > nI; p--) {
-		bloc[p] = bloc[p-1];
+		var ID = bloc[p]._id;
+		bloc[p] = JSON.parse(JSON.stringify( bloc[p-1]));
+		bloc[p]._id = ID;
 	}
 else
 	for (var p = oI; p < nI; p++) {
-		bloc[p] = bloc[p+1];
+		var ID = bloc[p]._id;
+		bloc[p] = JSON.parse(JSON.stringify( bloc[p+1]));
+		bloc[p]._id = ID;
 	}
 	
 bloc[nI] = oB;
-showBlock(bloc);
-}
-
-function decalBloc(oI, nI){
-alert(oI + " to " + nI);
-if (oI > nI){
-for (var p = oI; p > nI; p--) {
-	bloc[p] = bloc[p-1];
-}
-bloc[nI] = oB;
-}else{
-for (var p = nI; p < oI; p++) {
-	bloc[p] = bloc[p+1];
-}
-bloc[oI] = nB;
-}
+bloc[nI]._id = nBid;
+initBlocs();
 }
 
 // -->
@@ -880,6 +884,7 @@ overflow: scroll;
     border-top: 2px solid #FFF;
     border-bottom: 2px solid #FFF;
 	font-size: 0.5em;
+	text-align: center;
 }
 
 .drag-handler:active {
