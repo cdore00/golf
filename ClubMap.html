@@ -227,7 +227,7 @@ if (isMapped){	// If GPS holes availables
 		trouCoord[i] = new google.maps.LatLng(trous[i].latitude, trous[i].longitude);
 	}
 	setHole(map, trouCoord[0]);
-	if (window.matchMedia("(max-width: 480px)"))
+	if (!(window.matchMedia("(min-width: 480px)").matches))
 		duobutton.classList.add("alignStart");
 	navTrou.style.display = "inline";
 }
