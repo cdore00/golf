@@ -117,8 +117,7 @@ progress::-webkit-progress-bar { background: #fff; }
 #message, #messageErreur {position:relative;display:block;width:85%;left:10px;color:#222222;font-weight:bold;padding-bottom:5px}
 #messageErreur{color:#FF3333;text-decoration:blink}
 
-/*#duobutton a:first-child{width:110px}
-#duobutton a:last-child{width:110px}*/
+
 #triButton a:first-child, #triButton a:last-child{width:110px}
 #duobutton a{min-width:90px}
 #duobutton{/*font-size: 0;*/width:100%;overflow:hidden;min-height: 32px;height:32px;

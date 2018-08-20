@@ -1,5 +1,5 @@
 
-var HOSTserv = "https://pytgolf-cdore2.a3c1.starter-us-west-1.openshiftapps.com/";  // Python 3.6.3 
+var HOSTserv = "https://pytgolf-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Python 3.6.3 
 
 // "http://127.0.0.1:3000/";		//Portable Windows 10 Local host Node JS v6.10.0
 // "http://192.168.2.195:3000/";    //Ubuntu workstation 16.04
@@ -18,8 +18,8 @@ var THCall = "POST";
 var tryLog = 0;
 
 function is_touch_device() {
-  return 'ontouchstart' in window        // works on most browsers 
-      || navigator.maxTouchPoints;       // works on IE10/11 and Surface
+  return 'ontouchstart' in window;        // works on most browsers 
+      //|| navigator.maxTouchPoints;       // works on IE10/11 and Surface
 };
 
 var isTouchDevice = is_touch_device();

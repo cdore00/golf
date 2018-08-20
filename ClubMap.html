@@ -83,7 +83,7 @@ if (!showLatLng){
 	//	alert("Set");
 	navTrou.style.display = "inline";
 	setFlag.disabled = false;
-	setFlag.style.display = 'inherit';
+	setFlag.style.display = 'inline';
 	menuTxt.innerHTML = "&#10004;&nbsp;" + langLbl["medit"];
 }else{
 	showLatLng = false;
@@ -217,6 +217,7 @@ function showCourse(oClub){
 		isMapped = false;
 		
 if (isMapped){	// If GPS holes availables
+	var duobutton = document.getElementById("duobutton");
 	var navTrou = document.getElementById("navTrou");
 	var trous = oClub[0].trous;
 	intLat = trous[0].latitude;
@@ -226,6 +227,8 @@ if (isMapped){	// If GPS holes availables
 		trouCoord[i] = new google.maps.LatLng(trous[i].latitude, trous[i].longitude);
 	}
 	setHole(map, trouCoord[0]);
+	if (window.matchMedia("(max-width: 480px)"))
+		duobutton.classList.add("alignStart");
 	navTrou.style.display = "inline";
 }
 }
@@ -324,12 +327,15 @@ if (subElem){
 
 #duobutton{overflow:auto;height:auto;}
 
+.alignStart{
+text-align: start !important;
+}
+
 #setFlag{
-display:none;
-opacity:1.0 !important;
-position: absolute;
-top: -5px;
+display: none;
+opacity: 1.0 !important;
 cursor: pointer;
+margin: 0;
 }
 
 .bouton {min-width: 40px;}
@@ -339,7 +345,7 @@ display: inline;
 }  
 
 #hole{
-min-width:30px !important;
+min-width:1.1em !important;
 color:#000 !important;
 }
 
@@ -396,6 +402,10 @@ display:none;
 visibility: visible;
 }
 
+@media screen and (max-width: 540px), only screen and (min-device-width: 320px) and (max-device-width: 480px), only screen and (-moz-min-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) 
+{ 
+
+}
 
 </style>
 
@@ -405,10 +415,7 @@ visibility: visible;
 <div id="duobutton">
 <a href="#" id="butMenu" title="Menu" onmouseover="showMenu()" onclick="showMenu();"><img id="logomenu" alt="Menu" src="images/menu.png" width="64" height="32"></a>
 <a href="#"  onclick="window.close(); return false;"><text id="close"></text></a><div id="navTrou">
-	<button class="bouton-prec-suiv" onclick="trouSuivant(-1)">&#9664;</button>
-	<button id="holeSet" class="bouton-prec-suiv" onclick="trouSuivant(-1)"><img id="imgFlag" height="20" width="16" src="images/flag.png" /></button>
-	<button id="hole" class="bouton-prec-suiv" onclick="trouSuivant(1)">1</button>
-	<button class="bouton-prec-suiv" onclick="trouSuivant(1)">&#9654;</button>
+	<button class="bouton-prec-suiv" onclick="trouSuivant(-1)">&#9664;</button><button id="holeSet" class="bouton-prec-suiv" onclick="trouSuivant(-1)"><img id="imgFlag" height="20" width="16" src="images/flag.png" /></button><button id="hole" class="bouton-prec-suiv" onclick="trouSuivant(1)">1</button><button class="bouton-prec-suiv" onclick="trouSuivant(1)">&#9654;</button>
 	<button id="setFlag" class="bouton" title="Soumettre" onclick="setFlagCoord(this); return false;">Ok</button>
 </div>
 
@@ -433,7 +440,6 @@ visibility: visible;
 <div id="mapZoom">
 <button class="boutonZoom" title="Zoom in" onclick="zoomMap(1); return false;">+</button>
 <button class="boutonZoom" title="Zoom out" onclick="zoomMap(-1); return false;">-</button>
-<!--<button id="setFlag2" class="boutonZoom" title="Soumettre" onclick="setFlagCoord(this); return false;">Ok</button>// -->
 </div>
 
 <div id="divCoor" class="tipCoor"><span id="divCoorTxt" class="tipCoorTxt"></span></div>
