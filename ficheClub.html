@@ -164,6 +164,9 @@ if (oClubParc[0].url_ville)
 else
 	cInfo += oClubParc[0].municipal + ',&nbsp;';
 cInfo += oClubParc[0].codepostal2 + '&nbsp; ';
+if (oClubParc[0].email)
+	cInfo += ' <a href="mailto:' + oClubParc[0].email + '">' + oClubParc[0].email + '</a> ';
+
 cInfo += oClubParc[0].telephone + '&nbsp;';
 if (oClubParc[0].telephone2)
 	cInfo += ", " + oClubParc[0].telephone2;

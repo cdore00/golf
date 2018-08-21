@@ -55,7 +55,8 @@ clubID = parseInt(data);
 userId = GetCookie("userID");
 
 getInfo("getClubData?data=" + clubID + "$", getClubData);
-
+//Make the DIV element draggagle:
+dragElement(document.getElementById("divParse"));
 }
 
 function getClubData(odata){
@@ -95,6 +96,8 @@ clubForm.Fcopep.value = oClubParc[0].codepostal2;
 clubForm.Ftel1.value = oClubParc[0].telephone;
 clubForm.Ftel2.value = oClubParc[0].telephone2;
 clubForm.Ftel3.value = oClubParc[0].telephone3;
+if (oClubParc[0].email)
+clubForm.Femail.value = oClubParc[0].email;
 clubForm.FurlClub.value = oClubParc[0].url_club;
 clubForm.FurlMun.value = oClubParc[0].url_ville;
 clubForm.Flong.value = oClubParc[0].longitude;
@@ -218,6 +221,7 @@ oClub.codp = clubForm.Fcopep.value;
 oClub.tel1 = clubForm.Ftel1.value;
 oClub.tel2 = clubForm.Ftel2.value;
 oClub.tel3 = clubForm.Ftel3.value;
+oClub.email = clubForm.Femail.value;
 oClub.urlc = clubForm.FurlClub.value;
 oClub.urlv = clubForm.FurlMun.value; 
 if (eval(clubForm.Flong.value) != undefined)
@@ -729,8 +733,6 @@ showBloc();
 }
 
 function addToBlock(dat){
-//var tTab = fBloc.tabText.value;
-//var dat = bDat.split("\t");
 var adj = 1;
 for (var i = 0; i < dat.length; i++) {
 	var oF = eval("clubForm.FBt" + (i + adj) )
@@ -753,10 +755,12 @@ for (var i = 0; i < dat.length; i++) {
 // Functions for Drag and drop
 //function with mouse called when drag starts
 var oRd = null;
+var dragID = null;
 
 function dragIt(e, oRow) {
-	oRd = oRow;
 	e.dataTransfer.setData("Text", e.target.id);
+	dragID = e.target.id;
+	oRd = oRow;
 }
 //function with mouse called when element drops
 function dropIt(event) {
@@ -806,6 +810,99 @@ bloc[nI] = oB;
 bloc[nI]._id = nBid;
 initBlocs();
 showBloc(false,true);
+}
+
+function copyCoord(){
+var tabText = document.getElementById('tabText');
+tabText.value = clubForm.Flat.value + ", " + clubForm.Flong.value;
+tabText.select();
+document.execCommand("copy");
+tabText.value = "";
+}
+
+function butParseData(oTxt){
+var divParse = document.getElementById('divParse');
+var parseContent = document.getElementById('parseContent');
+divParse.style.top = clubForm.FclubName.offsetTop + "px";
+divParse.style.left = (clubForm.FclubName.offsetLeft + clubForm.FclubName.offsetWidth) + "px";
+divParse.style.visibility = "visible";
+
+var tTab = oTxt.tabText.value;
+var dat = tTab.split("\n");
+
+if (dat[0] != ""){
+	remChilds(parseContent);
+	for (var i = 0; i < dat.length; i++) {
+		parseContent.appendChild(newParsedInput(dat[i], i));
+		if (dat[i].indexOf(",") != -1){
+			var vData = dat[i].split(",");
+			for (var p = 0; p < vData.length; p++) {
+				parseContent.appendChild(newParsedInput(vData[p], i + "v" + p));
+			}
+		}
+	}
+}
+}
+
+function newParsedInput(data, id){
+	var inputElem = document.createElement("input");
+	inputElem.setAttribute('id', "pElem" + id);
+	inputElem.setAttribute('value', data.trim());
+	inputElem.setAttribute('draggable', true);
+	inputElem.setAttribute('ondragstart', "dragIt(event, this)");
+return inputElem;
+}
+
+function dropParsedElem(e){
+var draggedElement = document.getElementById(dragID);
+e.target.value = draggedElement.value;
+e.preventDefault();
+}
+
+
+function dragElement(elmnt) {
+  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  if (document.getElementById(elmnt.id + "header")) {
+    /* if present, the header is where you move the DIV from:*/
+    document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+  } else {
+    /* otherwise, move the DIV from anywhere inside the DIV:*/
+    elmnt.onmousedown = dragMouseDown;
+  }
+
+  function dragMouseDown(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // get the mouse cursor position at startup:
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    document.onmouseup = closeDragElement;
+    // call a function whenever the cursor moves:
+    document.onmousemove = elementDrag;
+  }
+
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // calculate the new cursor position:
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    // set the element's new position:
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  }
+
+  function closeDragElement() {
+    /* stop moving when mouse button is released:*/
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+}
+
+function closeParseWin(oP){
+oP.style.visibility = "hidden";
 }
 
 // -->
@@ -898,6 +995,35 @@ overflow: scroll;
     background-size: 10px 20px;
 }
 
+#divParse {
+    position: absolute;
+    z-index: 9;
+    background-color: #f1f1f1;
+    border: 1px solid #d3d3d3;
+    text-align: center;
+	visibility: hidden;
+	border: buttonhighlight 4px outset;
+}
+
+#divParseheader {
+    padding: 3px;
+    cursor: pointer;
+    z-index: 10;
+    background-color: #33d;
+	text-align: right;
+	font-weight: bold;
+}
+
+#divParseheader a{
+text-decoration: none;
+
+}
+
+#parseContent input{
+display: block;
+cursor: move;
+}
+
 </style>
 
 </head>
@@ -936,7 +1062,7 @@ overflow: scroll;
 <li class="listitem gras">
 	<div class="formLabel">	
 	<label for="FclubName">Club name</label></div>
-	<input id="FclubName" class="inputtext" type="text" size="20" maxlength="25" value=""/>
+	<input id="FclubName" class="inputtext" type="text" size="20" maxlength="25" value="" ondrop="dropParsedElem(event);" />
 </li>
 <li class="listitem gras">
 	<div class="formLabel">	
@@ -952,53 +1078,61 @@ overflow: scroll;
 <li class="listitem gras">
 	<div class="formLabel">
 	<label for="Faddress">Address</label></div>
-	<input id="Faddress" class="inputtext" type="text" size="20" maxlength="35" value=""/>
+	<input id="Faddress" class="inputtext" type="text" size="20" maxlength="35" value="" ondrop="dropParsedElem(event);" />
 </li>
 <li class="listitem gras">
 	<div class="formLabel">
 	<label for="Fville">Ville</label></div>
-	<input id="Fville" class="inputtext" type="text" size="20" maxlength="35" value=""/>
+	<input id="Fville" class="inputtext" type="text" size="20" maxlength="35" value="" ondrop="dropParsedElem(event);" />
 </li>
 <li class="listitem gras">
 	<div class="formLabel">
 	<label for="Fcopep">Code postal</label></div>
-	<input id="Fcopep" class="inputtext" type="text" size="7" maxlength="7" value=""/>
+	<input id="Fcopep" class="inputtext" type="text" size="7" maxlength="7" value="" ondrop="dropParsedElem(event);" />
 </li>
 <li class="listitem gras">
 	<div class="formLabel">
 	<label for="Ftel1">Téléphone 1</label></div>
-	<input id="Ftel1" class="inputtext" type="text" size="12" maxlength="12" value=""/>
+	<input id="Ftel1" class="inputtext" type="text" size="12" maxlength="12" value="" ondrop="dropParsedElem(event);" />
 </li>	
 <li class="listitem gras">
 	<div class="formLabel">
 	<label for="Ftel2">Téléphone 2</label></div>
-	<input id="Ftel2" class="inputtext" type="text" size="12" maxlength="12" value=""/>
+	<input id="Ftel2" class="inputtext" type="text" size="12" maxlength="12" value="" ondrop="dropParsedElem(event);" />
 </li>
 <li class="listitem gras">
 	<div class="formLabel">
 	<label for="Ftel3">Téléphone 3</label></div>
-	<input id="Ftel3" class="inputtext" type="text" size="12" maxlength="12" value=""/>
+	<input id="Ftel3" class="inputtext" type="text" size="12" maxlength="12" value="" ondrop="dropParsedElem(event);" />
+</li>
+<li class="listitem gras">
+	<div class="formLabel">
+	<label for="Femail">Courriel</label></div>
+	<input id="Femail" class="inputtext" type="text" size="20" maxlength="35" value="" ondrop="dropParsedElem(event);" />
 </li>
 <li class="listitem gras">
 	<div class="formLabel">
 	<label for="FurlClub">url Club</label></div>
-	<input id="FurlClub" class="inputtext" type="text" size="25" maxlength="80" value=""/>
+	<input id="FurlClub" class="inputtext" type="text" size="25" maxlength="80" value="" ondrop="dropParsedElem(event);" />
 </li>
 <li class="listitem gras">
 	<div class="formLabel">
 	<label for="FurlMun">url Municipalité</label></div>
-	<input id="FurlMun" class="inputtext" type="text" size="25" maxlength="80" value=""/>
+	<input id="FurlMun" class="inputtext" type="text" size="25" maxlength="80" value="" ondrop="dropParsedElem(event);" />
 </li>
 <li class="listitem gras">
 	<div class="formLabel">
 	<label for="Flong">Longitude</label></div>
-	<input id="Flong" class="inputtext" type="text" size="12" maxlength="12" value=""/>
+	<input id="Flong" class="inputtext" type="text" size="12" maxlength="12" value="" ondrop="dropParsedElem(event);" />
+		<a href="#" onclick="copyCoord()">Copy</a>
 </li>
 <li class="listitem gras">
 	<div class="formLabel">
 	<label for="Flat">Latitude</label></div>
-	<input id="Flat" class="inputtext" type="text" size="12" maxlength="12" value=""/>
+	<input id="Flat" class="inputtext" type="text" size="12" maxlength="12" value="" ondrop="dropParsedElem(event);" />
 </li>
+
+
 
 <hr>
 <!-- Course list // -->
@@ -1120,6 +1254,9 @@ overflow: scroll;
 	<div>
 	<input id="butAddBloc" class="itin" type="button" onclick="addToBlocks(this.form);" value="Add text tab delimited above to current block"/>
 	</div>
+	<div>
+	<input id="butParse" class="itin" type="button" onclick="butParseData(this.form);" value="Parse data"/>
+	</div>
 </form>
 </div>  <!-- FIN  class="pageitem" // -->
 
@@ -1147,6 +1284,16 @@ overflow: scroll;
 </form>
 	<div><a class="itin" alt="Add course" href="javascript:selBloc();">&nbsp;&nbsp;&nbsp;&nbsp;Ok&nbsp;&nbsp;&nbsp;&nbsp;</a></div>
 </div>
+
+ <!--Draggable DIV:-->
+<div id="divParse">
+  <!--Include a header DIV with the same name as the draggable DIV, followed by "header":-->
+  <div id="divParseheader"><a href="#" onclick="closeParseWin(this.parentNode.parentNode)">✖️</a></div>
+
+  <div id="parseContent">
+  </div>
+
+</div> 
 
 </body>
 
