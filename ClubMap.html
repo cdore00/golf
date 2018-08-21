@@ -71,26 +71,24 @@ document.location = "golfGPS.html?data=" + courseID + "&" + clubName;
 function showHole(menuTxt){
 var setFlag = document.getElementById("setFlag");
 var navTrou = document.getElementById("navTrou");
-if (GetCookie("userRole") == "MEM")
-	return false;
-
-if (!showLatLng){
-	showLatLng = true;
-	if (eval(holeMarker) == null){
-		var holePos = new google.maps.LatLng(intLat,intLng);
-		setHole(map, holePos);
-		}
-	//	alert("Set");
-	navTrou.style.display = "inline";
-	setFlag.disabled = false;
-	setFlag.style.display = 'inline';
-	menuTxt.innerHTML = "&#10004;&nbsp;" + langLbl["medit"];
-}else{
-	showLatLng = false;
-	setFlag.style.display = 'none';
-	menuTxt.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;" + langLbl["medit"];
+if (GetCookie("userRole") == "ADM"){
+	if (!showLatLng){
+		showLatLng = true;
+		if (eval(holeMarker) == null){
+			var holePos = new google.maps.LatLng(intLat,intLng);
+			setHole(map, holePos);
+			}
+		//	alert("Set");
+		navTrou.style.display = "inline";
+		setFlag.disabled = false;
+		setFlag.style.display = 'inline';
+		menuTxt.innerHTML = "&#10004;&nbsp;" + langLbl["medit"];
+	}else{
+		showLatLng = false;
+		setFlag.style.display = 'none';
+		menuTxt.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;" + langLbl["medit"];
+	}
 }
-
 closeMenu();
 }
 
@@ -153,7 +151,7 @@ afficheTrou(trou);
 function initPage(){
 var butMenu = document.getElementById("butMenu");
 var trEdit = document.getElementById("trEdit");
-if ( GetCookie("userRole") != "MEM"){
+if ( GetCookie("userRole") == "ADM"){
 	trEdit.style.visibility = "visible";
 	nbrMitem++;
 }
