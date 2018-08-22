@@ -324,7 +324,7 @@ if (rep.resp.result){
 
 }else{
 	userId = null;
-	if (typeof setIdent != "undefined")
+	//if (typeof setIdent != "undefined")
 		setIdent();
 	DelCookie("userID");
 	DelCookie("userRole");
@@ -336,8 +336,16 @@ if (rep.resp.result){
 		}
 	}
 }
-if (typeof identified != "undefined")
+//if (typeof identified != "undefined")
 	identified();
+}
+
+function setIdent(){
+
+}
+
+function identified(){
+
 }
 
 function repMailPass(oRep){

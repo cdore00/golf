@@ -202,11 +202,15 @@ if (!tel || tel == 99){
 	}else
 		getInfo("getGameList?user=" + userId + "&parc=" + parcNo + "&skip=" + skip + "&limit=" + limit + "&is18=" + nbrTrous  + "&date=" + date, showGameList);
 }else{
+	if (gameCount == 0){
+		stopLoad();
+		alert("No data");
+		return;
+	}
 	var param = ("getGameList?user=" + userId + "&parc=" + parcNo + "&skip=" + skip + "&limit=" + limit + "&is18=" + nbrTrous  + "&date=" + date + "&tele=" + tel);
 	document.location.href = HOSTserv + param;
 	stopLoad();
 	}
-
 }
 
 function addSelParc(oGroup){
@@ -314,8 +318,10 @@ if (i == 20)
 	var hdp = "Hand.: " + calcHDP(arrHDP);
 else
 	var hdp = "";
-
-Tcode += '<tr><td><strong>' + hdp + '</strong></td><td><strong>' + nbrGame + '&nbsp;parties</strong></td><td><strong>Moy.: ' + (Math.round(listTot/limit*10) /10 ) + '</strong></td><td class="tdEdit"></td></tr>';
+var rmoy =  (Math.round(listTot/limit*10) /10 )
+if (!rmoy)
+	rmoy = 0;
+Tcode += '<tr><td><strong>' + hdp + '</strong></td><td><strong>' + nbrGame + '&nbsp;parties</strong></td><td><strong>Moy.: ' + rmoy + '</strong></td><td class="tdEdit"></td></tr>';
 	
 tbodyElem.innerHTML = Tcode;
 
@@ -498,14 +504,6 @@ if (oRes.ok){
 	}else
 		alert("Erreur");
 }
-}
-
-function setIdent(){
-
-}
-
-function identified(){
-
 }
 
 function resizeImg(fs){
