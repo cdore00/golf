@@ -12,7 +12,6 @@ var HOSTserv = "https://pytgolf-cd-serv.1d35.starter-us-east-1.openshiftapps.com
 // "https://pytgolf-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Python 3.6.3 
 // "https://pytgolf-cdore2.a3c1.starter-us-west-1.openshiftapps.com/";  // Python 3.6.3 
 
-
 var progressBar, langSet;
 var THCall = "POST";
 var tryLog = 0;
