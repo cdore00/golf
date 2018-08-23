@@ -53,6 +53,7 @@ this.lat=lat;
 this.lng=lng;
 this.acc=acc;
 }
+
 function manageIdent(action){
 var modLayer = document.getElementById('modalDiv');
 var authLayer = document.getElementById('authLayer');
@@ -115,6 +116,8 @@ if (Npass != ""){  // Change password
 
 function saveAccRes(oRes){
 	if (oRes.resp.result)
+		if (GetCookie("userMail") != oRes.resp.email)
+			SetCook("userMail",oRes.resp.email);
 		closeAccountForm();  // close
 	else
 		alert(langLbl[oRes.resp.message]);
