@@ -494,6 +494,8 @@ var blocID = clubForm.FBid.value;
 for (var p = 0; p < bloc.length; p++) {
 	if (bloc[p]._id == blocID){
 		//alert(bloc[p].Bloc);
+		var cName = 'B' + bloc[p].Bloc;
+		clubForm.FBblocName.className = cName;
 		clubForm.FBt1.value = bloc[p].T1;
 		clubForm.FBt2.value = bloc[p].T2;
 		clubForm.FBt3.value = bloc[p].T3;
@@ -823,8 +825,9 @@ tabText.value = "";
 function butParseData(oTxt){
 var divParse = document.getElementById('divParse');
 var parseContent = document.getElementById('parseContent');
-divParse.style.top = clubForm.FclubName.offsetTop + "px";
-divParse.style.left = (clubForm.FclubName.offsetLeft + clubForm.FclubName.offsetWidth) + "px";
+var op = posObj(clubForm.FclubName);
+divParse.style.top = op.y + "px";
+divParse.style.left = (op.x + clubForm.FclubName.offsetWidth) + "px";
 divParse.style.visibility = "visible";
 
 var tTab = oTxt.tabText.value;
@@ -852,6 +855,50 @@ function newParsedInput(data, id){
 	inputElem.setAttribute('ondragstart', "dragIt(event, this)");
 return inputElem;
 }
+
+function changeBloc(oB){
+var divParse = document.getElementById('divParse');
+var parseContent = document.getElementById('parseContent');
+var op = posObj(oB);
+
+divParse.style.top = op.y + "px";
+divParse.style.left = (op.x + oB.offsetWidth) + "px";
+
+remChilds(parseContent);
+
+for (var i = 0; i < ARRBLOCOPT.length; i++){
+	var inputElem = document.createElement("input");
+	inputElem.setAttribute('id', "bElem" + i);
+	inputElem.setAttribute('type', 'button');
+	var cInfo = ARRBLOCOPT[i];
+	inputElem.setAttribute('value', cInfo);
+	cInfo = "B" + ARRBLOCOPT[i] + ' blocDisplay';
+	inputElem.setAttribute('class', cInfo);
+	inputElem.setAttribute('onclick', "modifyBloc(this)");
+	parseContent.appendChild(inputElem);
+}
+divParse.style.visibility = "visible";
+}
+
+function modifyBloc(cB){
+var bName = cB.className.split(" ");
+var actID = clubForm.FBid.value;
+bName = bName[0].substring(1);
+for (var p = 0; p < bloc.length; p++) {
+	if (bloc[p]._id == actID){
+		bloc[p].Bloc = bName;
+		var actCombo = clubForm.FBbloc.selectedIndex;
+		initBlocs();
+		clubForm.FBbloc.selectedIndex = actCombo;
+		//alert(bName + " act=" + clubForm.FBid.value + " Combo=" + actCombo);
+		clubForm.FBid.value = actID;
+		showBloc(clubForm.FBbloc);	
+		closeParseWin();
+		break;
+	}
+}
+}
+
 
 function dropParsedElem(e){
 var draggedElement = document.getElementById(dragID);
@@ -901,8 +948,11 @@ function dragElement(elmnt) {
   }
 }
 
-function closeParseWin(oP){
-oP.style.visibility = "hidden";
+function closeParseWin(){
+var op = document.getElementById('divParse');
+op.style.visibility = "hidden";
+clubForm.FBblocName.scrollIntoView({behavior: "instant", block: "end", inline: "nearest"});
+x=1;
 }
 
 // -->
@@ -1022,6 +1072,18 @@ text-decoration: none;
 #parseContent input{
 display: block;
 cursor: move;
+}
+
+#FBblocName{
+width: 60px;
+height: 25px;
+}
+
+.blocDisplay{
+text-align: center;
+width: 5em;
+height: 25px;
+cursor: pointer !important;
 }
 
 </style>
@@ -1180,6 +1242,7 @@ cursor: move;
   <thead>
   <input id="FBid" type="hidden" value=""/>
   <tr>
+
      <th>1</th>
      <th>2</th>
      <th>3</th>
@@ -1190,14 +1253,15 @@ cursor: move;
      <th>8</th>
      <th>9</th>
      <th>T. out</th>
+	 <th>Bloc</th>
      <th></th>
      <th></th>
-     <th></th>
+     
   </tr>
   </thead>
   <tbody>
   <tr>
-     <td><input id="FBt1" class="inputtext" type="text" size="1" maxlength="3" value=""/></td>
+	 <td><input id="FBt1" class="inputtext" type="text" size="1" maxlength="3" value=""/></td>
 	 <td><input id="FBt2" class="inputtext" type="text" size="1" maxlength="3" value=""/></td>
 	 <td><input id="FBt3" class="inputtext" type="text" size="1" maxlength="3" value=""/></td>
 	 <td><input id="FBt4" class="inputtext" type="text" size="1" maxlength="3" value=""/></td>
@@ -1207,8 +1271,8 @@ cursor: move;
 	 <td><input id="FBt8" class="inputtext" type="text" size="1" maxlength="3" value=""/></td>
 	 <td><input id="FBt9" class="inputtext" type="text" size="1" maxlength="3" value=""/></td>
 	 <td><input id="FBtoto" class="inputtext" type="text" size="3" maxlength="4" value=""/></td>
+     <td><input id="FBblocName" class="iBloc" type="button" onclick="changeBloc(this)" value=""/></td> 
 	 <td></td>
-     <td></td>
      <td></td>
   </tr>
   </tbody>
@@ -1288,7 +1352,7 @@ cursor: move;
  <!--Draggable DIV:-->
 <div id="divParse">
   <!--Include a header DIV with the same name as the draggable DIV, followed by "header":-->
-  <div id="divParseheader"><a href="#" onclick="closeParseWin(this.parentNode.parentNode)">✖️</a></div>
+  <div id="divParseheader"><a href="#" onclick="closeParseWin()">✖️</a></div>
 
   <div id="parseContent">
   </div>
