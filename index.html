@@ -115,11 +115,11 @@ if (Npass != ""){  // Change password
 }
 
 function saveAccRes(oRes){
-	if (oRes.resp.result)
+	if (oRes.resp.result){
 		if (GetCookie("userMail") != oRes.resp.email)
 			SetCook("userMail",oRes.resp.email);
 		closeAccountForm();  // close
-	else
+	}else
 		alert(langLbl[oRes.resp.message]);
 }
 
