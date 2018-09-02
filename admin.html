@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
+<meta name="format-detection" content="telephone=no" />
+
+<link rel="shortcut icon" type="image/x-icon" href="images/golf.png">
+<link rel="shortcut icon" type="image/x-icon" href="images/golf.png?">
+<title>Golfs du Qu&eacute;bec</title>
+<meta content="Golf GPS, Qu&eacute;bec, Canada, Golf du Qu&eacute;bec, Clubs de golf au Qu&eacute;bec, Qu&eacute;bec golf" name="keywords" />
+<meta content="R&eacute;pertoire des clubs de golf du Qu&eacute;bec. GPS golf." name="description" />
+<link href="misc/init.css" rel="stylesheet" media="screen" type="text/css" />
+<link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
+
+<script type="text/javascript" src="misc/util.js"></script>
+
+<script type="text/javascript" language="Javascript">
+<!--
+
+var userId = null, user_id = null, user_mail = null, user_name = null;
+
+function initPage(){
+var pageZone = document.getElementById('pageZone');
+if (GetCookie("userRole") != "ADM")
+	document.location.href = "index.html";
+else
+	pageZone.style.visibility="visible";
+userId = GetCookie("userID");
+o_messTip.init();
+setFontSize();
+
+}
+
+function listUsers(ui){
+var word = document.getElementById('iword').value;
+word = (word=="") ? "xxxxx":word;
+getInfo("getUser?word=" + word, initListUser);
+}
+
+function initListUser(oList){
+var pageZone = document.getElementById('pageZone');
+remChilds(pageZone);
+for (var i = 0; i < oList.length; i++){
+	var liElem = document.createElement("option");
+	liElem.setAttribute('class', "listitem");
+	if (typeof oList[i]._id == "object")
+		var oId = oList[i]._id.$oid;
+	else
+		var oId = oList[i]._id;
+	iList = '<span>' + oList[i].courriel + '</span>';
+	iList += '<span>' + oList[i].Nom + '</span>';
+	iList += ((oList[i].actif) ? "":"inactif") ;
+	liElem.innerHTML = '<a href="javascript:editUser(\'' + oId + '\')" class="itemdetail">' + iList + '</a>';	
+	pageZone.appendChild(liElem);
+}	
+}
+
+function editUser(ui){
+user_id = ui;
+var modLayer = document.getElementById('modalDiv');
+var authLayer = document.getElementById('authLayer');
+
+var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onloadend = function() {
+    authLayer.innerHTML = xmlhttp.responseText;
+	initAccountForm();
+	  setLanguage();
+	 authLayer.style.visibility="visible";
+  }
+
+xmlhttp.open("GET","editaccount.html",false);
+xmlhttp.send();
+modLayer.style.visibility="visible";
+}
+
+function initAccountForm(){
+getInfo("getUser?id=" + user_id, initMyForm);
+}
+
+function initMyForm(oUser){
+var formIdent = document.getElementById('formIdent');
+if (oUser._id){
+	//user_id = oUser._id;
+	formIdent.nomUser.value = oUser.Nom;
+	user_name = oUser.Nom;
+	formIdent.courUser.value = oUser.courriel;
+	user_mail = oUser.courriel;
+	var optVal = "";
+	for (var i = 0; i < oUser.role.length; i++){
+		optVal += '<option value="' + oUser.role[i] + '">' + oUser.role[i] + '</option>';
+		if (oUser.role[i] == oUser.niveau)
+			var si = i;
+	}
+	formIdent.roleUser.innerHTML = optVal;
+	formIdent.roleUser.selectedIndex = si;
+	formIdent.stateUser.checked = oUser.actif;
+}
+}
+
+function closePref(notEdit){
+var modLayer = document.getElementById('modalDiv');
+var authLayer = document.getElementById('authLayer');
+authLayer.style.visibility="hidden";
+modLayer.style.visibility="hidden";
+setFontSize();
+if (!notEdit)
+	editUser(user_id);
+}
+
+function changePass(){
+var authLayer = document.getElementById('authLayer');
+var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onloadend = function() {
+    authLayer.innerHTML = xmlhttp.responseText;
+  }
+
+xmlhttp.open("GET", HOSTserv + "getPassForm?",false);
+xmlhttp.send();
+
+}
+
+function updUser(){
+var formIdent = document.getElementById('formIdent');
+o_messTip.show([0,20],false, "Saving account...", false, true);
+var name = formIdent.nomUser.value;
+var email = formIdent.courUser.value;
+var role = formIdent.roleUser.options[formIdent.roleUser.selectedIndex].value;
+var active = (formIdent.stateUser.checked) ? '1':'0';
+getInfo("updUser?id=" + user_id + "&user=" + email + "&name=" + name + "&role=" + role + "&active=" + active , updRes);
+}
+
+function updRes(oRes){
+o_messTip.initMess("Account&nbsp;saved:</br>&nbsp;&nbsp;");
+o_messTip.addMess((oRes.nModified) ? "updated":"unchanged");
+o_messTip.fadeout(200);
+}
+
+function savePass(){
+var formPass = document.getElementById('formPass');
+o_messTip.show([0,20],false, "Saving&nbsp;password...", false, true);
+	setTimeout(function() {
+		getInfo("savePass?id=" + user_id + "&pass=" + formPass.passUser.value + "&user_mail=" + user_mail + "&user_name=" + user_name, updPass);
+	}, 100);
+}
+
+function updPass(oRes){
+o_messTip.initMess("Password&nbsp;saved:</br>&nbsp;&nbsp;");
+o_messTip.addMess((oRes.nModified) ? "updated":"unchanged");
+o_messTip.fadeout(200);
+}
+
+
+
+// -->
+</script>
+
+<style>
+
+.listitem{
+margin-left: 20px;
+}
+
+a span{
+width: 300px;
+display: inline-block;
+}
+
+#pageZone{
+	visibility: hidden;
+}
+
+</style>
+
+</head>
+
+<body onload="initPage();"><a name="haut"></a>
+
+<div id="topbar" class="vert">
+<div id="leftnav"><a title="Formulaire de recherche" href="index.html"><img alt="Formulaire de recherche" height="22" width="25" src="images/home22.png" /></a></div>
+
+<div id="fontAdjust" class="unselectable">
+<div class="divFont" onclick="setFontSize(0.2, this)"><div class="divFontSize">A</div><div class="fontLogo">&#8593;</div></div>
+<div class="divFont" onclick="setFontSize(-0.2, this)"><div class="divFontSize fontSmall">A</div><div class="fontLogo">&#8595;</div></div>
+</div>
+</div>
+<div id="duobutton">
+<a id="lAdmin" href="admin.html" >Manage</a>
+</div>
+
+<div id="content">
+
+<ul id="pageZone" class="pageitem">
+
+<li class="listitem"><a href="javascript:listUsers(userId)" class="itemdetail">Users</a>(User mail word:<input id="iword" type="text" size="15" maxlength="25"/>)</li>
+
+<li class="listitem"><a target="_blank" href="editClub.html?data=2" class="itemdetail"><text id="majou">Ajouter un club</text></a></li>
+
+</ul>
+
+</div>
+
+<div id="bottombar" class="vert">
+</div>
+
+<!-- #include file = "pied_page.asp" -->
+</div>
+<script type="text/javascript" language="Javascript">
+<!--
+//document.location = '#pos';
+
+// -->
+</script>
+
+<div id="copyright">
+<a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2018</a>
+</div>
+
+<div id="modalDiv"></div>
+
+
+<div id="authLayer" class="winLayer">
+<div id="divLoad"><img id="imgLoad" alt="Chargement en cours..." height="64" width="64" src="images/loading.gif" /></div>
+
+</div>
+
+</body>
+
+</html>

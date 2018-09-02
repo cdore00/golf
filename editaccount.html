@@ -1,0 +1,40 @@
+<div id="accountForm">
+<div id="titrePref">Edit account</div>
+
+<form id="formIdent">
+<div id="identOptions">
+
+<div class="prefList">
+<label for="nomUser" class="identLbl"><text id="uname">Nom</text>:</label><div class="prefVal">
+<input id="nomUser" type="text" size="15" maxlength="25"/>
+</div></div>
+
+<div class="prefList">
+<label for="courUser" class="identLbl"><text id="email">Courriel</text>:</label><div class="prefVal">
+<input id="courUser" type="text" size="15" maxlength="25"/>
+</div></div>
+
+<div class="prefList">
+<label for="roleUser" class="identLbl">Role:</label><div class="prefVal">
+<select id="roleUser" class="inputselect">
+</select>
+
+</div></div>
+
+<div class="prefList">
+<label for="stateUser" class="identLbl">Is active:</label><div class="prefVal">
+<input id="stateUser" type="checkbox" class="inputselect"/>
+</div></div>
+
+<div class="prefList">
+<label for="chgPass" class="identLbl"></label><div class="prefVal">
+<input id="chgPass" class="bouton" type="submit" onClick="changePass(); return false;" value="Change Password" />
+</div></div>
+
+</div>
+
+<div>
+<input id="okPref" class="bouton" type="submit" onClick="updUser(); return false;" value="_okok" /><input id="annulePref" class="bouton" type="button" onClick="closePref(true); return false;"  value="_close"/>
+</div>
+</form>
+</div>

@@ -1,5 +1,5 @@
 
-var HOSTserv = "https://pytgolf-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Python 3.6.3 
+var HOSTserv = "https://pytgolf-cdore2.a3c1.starter-us-west-1.openshiftapps.com/";  // Python 3.6.3 
 
 // "http://127.0.0.1:3000/";		//Portable Windows 10 Local host Node JS v6.10.0
 // "http://192.168.2.195:3000/";    //Ubuntu workstation 16.04
@@ -233,6 +233,54 @@ function getOffset(el) {
     return { top: _y, left: _x };
 }
 
+// Tool tip message object
+var o_messTip = {
+	oID: "o_messTip",
+    oFr: null,
+	oMess: null,
+    init : function(){	// To call onload document event
+		var bodyobj = document.getElementsByTagName('body')[0];
+		var odiv = document.createElement("div");
+		odiv.setAttribute('id', this.oID);
+		odiv.setAttribute('class', "o_messTip");
+		odiv.innerHTML = '<span id="o_messTipTxt" class="o_messTipTxt"></span>'
+		bodyobj.appendChild(odiv);
+		this.oFr = odiv;
+		this.oMess = this.oFr.childNodes[0];
+		},
+    initMess : function(mess){
+		this.oMess.innerHTML = mess;
+		},
+    addMess : function(mess){
+		this.oMess.innerHTML += mess;
+		},
+    fadeout : function(milli){
+		if (milli)
+			fadeOut(this.oID, milli);
+		else
+			fadeOut(this.oID, 100);
+		},
+	show : function(oPos, milli, mess, adj, noArrow){
+		if (!adj)	// Top pixel adjust
+			adj = 0;
+		if (mess)
+			this.initMess(mess);
+		if (oPos.length){
+			this.oFr.style.top = oPos[0] + "px";
+			this.oFr.style.left = oPos[1] + "px";
+		}else{
+			var pos=posObj(oPos);
+			this.oFr.style.top = (pos.y - oPos.offsetHeight + adj) + "px";
+			this.oFr.style.left = pos.x + "px";
+		}
+		if (noArrow)	// Not show top arrow
+			this.oMess.classList.add("noArrow");
+		this.oFr.style.visibility = 'visible';
+		if (milli)
+			fadeOut(this.oID, milli);
+		}
+}
+
 function adjustScreen(hauteurUtil){
 	var divMap, dispH, pxRatio
 	
@@ -297,6 +345,12 @@ if (progressBar.value >= 1){
 	}
 }
 
+function remChilds(eItem){
+while (eItem.childNodes.length > 0){
+	eItem.removeChild(eItem.childNodes[0]);
+}
+}
+
 function authentif(){
 var formAuth = document.getElementById('formAuth');
 var userCour = formAuth.nameUser.value;
@@ -323,8 +377,7 @@ if (rep.resp.result){
 
 }else{
 	userId = null;
-	//if (typeof setIdent != "undefined")
-		setIdent();
+	setIdent();
 	DelCookie("userID");
 	DelCookie("userRole");
 	alert(langLbl["M0004"]);
@@ -335,15 +388,14 @@ if (rep.resp.result){
 		}
 	}
 }
-//if (typeof identified != "undefined")
 	identified();
 }
 
-function setIdent(){
+function setIdent(){ // Define in page on case 
 
 }
 
-function identified(){
+function identified(){ // Define in page on case 
 
 }
 
@@ -467,6 +519,7 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["mlist"] = "Liste";
 		langLbl["mmaps"] = "Carte";
 		langLbl["close"] = "Fermer";
+		langLbl["_close"] = "Fermer";
 		langLbl["direc"] = "Trajet";
 		langLbl["bplay"] = "Jouer";
 		langLbl["holes"] = "&nbsp;trous";
@@ -584,6 +637,7 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["mlist"] = "Lista";
 		langLbl["mmaps"] = "Mapa";
 		langLbl["close"] = "Cerca";
+		langLbl["_close"] = "Cerca";
 		langLbl["direc"] = "Direcci&oacute;n";
 		langLbl["bplay"] = "Jugar";
 		langLbl["holes"] = "&nbsp;agujeros";
@@ -700,6 +754,7 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["mlist"] = "List";
 		langLbl["mmaps"] = "Map";
 		langLbl["close"] = "Close";
+		langLbl["_close"] = "Close";
 		langLbl["direc"] = "Direction";
 		langLbl["bplay"] = "Play";
 		langLbl["holes"] = "&nbsp;holes";

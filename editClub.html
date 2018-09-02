@@ -28,7 +28,7 @@ var favChange = false;
 var goURL;
 var clubForm;
 var newClub = {}, newCourse = {};
-var newBloc = { _id: "", Bloc: "Normale" , PARCOURS_ID: "" , Aller: "" , Retour: "" , Total: "" , Eval: "" , Slope: "" , T1: "" , T2: "" , T3: "" , T4: "" , T5: "" , T6: "" , T7: "" , T8: "" , T9: "" , T10: "" , T11: "" , T12: "" , T13: "" , T14: "" , T15: "" , T16: "" , T17: "" , T18: "" };
+var newBloc = { _id: "", Bloc: "" , PARCOURS_ID: "" , Aller: "" , Retour: "" , Total: "" , Eval: "" , Slope: "" , T1: "" , T2: "" , T3: "" , T4: "" , T5: "" , T6: "" , T7: "" , T8: "" , T9: "" , T10: "" , T11: "" , T12: "" , T13: "" , T14: "" , T15: "" , T16: "" , T17: "" , T18: "" };
 
 var indNewClub = false;
 var delC = [], delB = [];
@@ -45,9 +45,15 @@ if (document.images)
  favOff.src="images/favorisOff.png";
 }
 
+function logUserOperation(e){
+x=1;
+}
+
 function initPage(){
 clubForm = document.getElementById('clubForm');
 var data = getURLdata();
+o_messTip.init();
+document.addEventListener('paste', logUserOperation);
 
 setFontSize();
 
@@ -183,35 +189,29 @@ else
 		document.location = "editClub.html?data=2";
 }
 
-function delClub(){
+function delClub(oButDel){
 if (confirm("Remove course « " + clubForm.FclubName.value + " » and all data ?")){
-	var divCoor = document.getElementById("divCoor");
-	var tipCoorTxt = document.getElementById("divCoorTxt")
-		divCoor.style.visibility = 'visible';
-		var msg = "&nbsp;<b>Deleting Club " + clubForm.FclubName.value + " ...</b>";
-		tipCoorTxt.innerHTML = msg;
+		o_messTip.show(oButDel, false, "&nbsp;<b>Deleting Club " + clubForm.FclubName.value + " ...</b>");
 		getInfo("delClub?data=" + clubID , clubDeleted);
 }
 }
 
 function clubDeleted(oRep){
 if (oRep.ok){
-	var tipCoorTxt = document.getElementById("divCoorTxt")
-	tipCoorTxt.innerHTML = "&nbsp;<b>Club " + clubForm.FclubName.value + " deleted !</b>";
-	fadeOut("divCoor",300);
+	o_messTip.initMess("&nbsp;<b>Club " + clubForm.FclubName.value + " deleted !</b>");
+	o_messTip.fadeout(300);
 	setTimeout(function() {
 		addClub(true);
 	}, 3000);
 }
 }
 
-function saveAll(){
-var divCoor = document.getElementById("divCoor");
-var tipCoorTxt = document.getElementById("divCoorTxt")
+function saveAll(oButSave){
+
 var data = {}, oClub = {};
-	divCoor.style.visibility = 'visible';
 	var msg = "&nbsp;<b>Saving Club " + clubForm.FclubName.value + " ...</b>";
-	tipCoorTxt.innerHTML = msg;
+	//o_messTip.initMess(msg);
+	o_messTip.show(oButSave, false, msg);
 oClub.ID = clubID;
 oClub.name = clubForm.FclubName.value;
 oClub.prive = clubForm.Fprive.checked;
@@ -258,7 +258,6 @@ function getCurrentBloc(){
 }
 
 function clubSaved(oRes){
-var tipCoorTxt = document.getElementById("divCoorTxt");
 
 if (!oRes.ok && oRes.message){
 	var modLayer = document.getElementById('modalDiv');
@@ -271,7 +270,7 @@ if (!oRes.ok && oRes.message){
 	else
 		var msg = "&nbsp;<b>Club " + clubForm.FclubName.value + " : " + ((oRes.nModified == 0) ? 'UNCHANGED':'<strong>UPDATED</strong>') + " </b></br>" ;
 	
-	tipCoorTxt.innerHTML = msg;
+	o_messTip.initMess(msg);
 	var resCour = oRes.courses;
 	var resBloc = oRes.blocs;
 	for (var p = 0; p < resCour.length; p++){	// For each course
@@ -328,8 +327,8 @@ if (!oRes.ok && oRes.message){
 	for (var x = 0; x < delC.length; x+=3){
 		msg += "&nbsp;&nbsp;<b>Course " + delC[x+1] + " " + delC[x+2] + " verges<strong> REMOVED</strong></b></br>";
 	}	
-	tipCoorTxt.innerHTML = msg;
-	fadeOut("divCoor",300);
+	o_messTip.initMess(msg);
+	o_messTip.fadeout(300);
 	delC = [];
 	delB = [];
 	if (oRes.upserted)
@@ -528,12 +527,6 @@ if (!notShowBlock)	// Not recall showBlock() on fistLoad
 	showBlock(bloc);
 }
 
-function remChilds(eItem){
-while (eItem.childNodes.length > 0){
-	eItem.removeChild(eItem.childNodes[0]);
-}
-}
-
 function initBlocs(notShow){
 var parcID = clubForm.FPid.value;
 remChilds(clubForm.FBbloc);
@@ -561,7 +554,7 @@ var fistLoad = false;
 if (!bloc){
 	fistLoad = true;
 	//Create newBloc object
-	saveBloc(newBloc);
+//saveBloc(newBloc);
 	//Load first course fields
 	if (oBlock.length == 0){  // No block for the course
 		showProgress(1);
@@ -652,14 +645,9 @@ function parseBloc( p, courseID, nbrTrou){
 
 function selNewBloc(){
 var modLayer = document.getElementById('modalDiv');
-var prefLayer = document.getElementById('prefLayer');
-var FselBloc = document.getElementById('FselBloc');
 var parcID = clubForm.FPid.value;
 var arrOpt = ARRBLOCOPT.slice();
 
-while (FselBloc.childNodes.length > 0){
-	FselBloc.removeChild(FselBloc.childNodes[0]);
-}
 for (var p = 0; p < bloc.length; p++) {
 	if (bloc[p].PARCOURS_ID == parcID){
 		value = bloc[p].Bloc;
@@ -667,31 +655,20 @@ for (var p = 0; p < bloc.length; p++) {
 			arrOpt.splice(arrOpt.indexOf(value),1);
 	}
 }
-for (var i = 0; i < arrOpt.length; i++) {
-		var optElem = document.createElement("option");
-		optElem.setAttribute('value', arrOpt[i]);
-		optElem.innerHTML = arrOpt[i];
-		FselBloc.appendChild(optElem);
-}
-modLayer.style.visibility="visible";
-prefLayer.style.visibility="visible";
+modLayer.style.height = document.documentElement.scrollHeight + "px";
+modLayer.style.visibility = "visible";
+changeBloc(clubForm.FBbloc, arrOpt);
 }
 
-function selBloc(){
+function selBloc(oSel){
 var modLayer = document.getElementById('modalDiv');
-var prefLayer = document.getElementById('prefLayer');
-var FselBloc = document.getElementById('FselBloc');
 
-if (FselBloc.selectedIndex  < 0)
-	alert("Select a value then click Ok");
-else{
-	bloc[bloc.length-1].Bloc = FselBloc.options[FselBloc.selectedIndex].value;
+	bloc[bloc.length-1].Bloc = oSel.value;
 	initBlocs();
 	clubForm.FBid.value = clubForm.FBbloc.options[clubForm.FBbloc.length - 1].value;
-	showBloc(clubForm.FBbloc.length - 1);
-	prefLayer.style.visibility="hidden";
+	showBloc();
+	clubForm.FBbloc.selectedIndex = clubForm.FBbloc.length-1;
 	modLayer.style.visibility="hidden";
-}
 }
 
 function addToBlocks(fBloc){
@@ -814,9 +791,12 @@ initBlocs();
 showBloc(false,true);
 }
 
-function copyCoord(){
+function copyCoord(oIcon){
 var tabText = document.getElementById('tabText');
+
 tabText.value = clubForm.Flat.value + ", " + clubForm.Flong.value;
+o_messTip.show(oIcon,200, "To clipboard : </br>" + tabText.value, 10);
+
 tabText.select();
 document.execCommand("copy");
 tabText.value = "";
@@ -857,23 +837,31 @@ function newParsedInput(data, id){
 return inputElem;
 }
 
-function changeBloc(oB){
+function changeBloc(oB, arrBloc){
 var divParse = document.getElementById('divParse');
 var parseContent = document.getElementById('parseContent');
+var divParseheader = document.getElementById('divParseheader');
+if (arrBloc) // Add nwe bloc
+	divParseheader.style.display = "none";
+else	// Change bloc
+	divParseheader.style.display = "";
+	
 var op = posObj(oB);
 
+if (!arrBloc)
+	arrBloc = ARRBLOCOPT;
 divParse.style.top = op.y + "px";
 divParse.style.left = (op.x + oB.offsetWidth) + "px";
 
 remChilds(parseContent);
 
-for (var i = 0; i < ARRBLOCOPT.length; i++){
+for (var i = 0; i < arrBloc.length; i++){
 	var inputElem = document.createElement("input");
 	inputElem.setAttribute('id', "bElem" + i);
 	inputElem.setAttribute('type', 'button');
-	var cInfo = ARRBLOCOPT[i];
+	var cInfo = arrBloc[i];
 	inputElem.setAttribute('value', cInfo);
-	cInfo = "B" + ARRBLOCOPT[i] + ' blocDisplay';
+	cInfo = "B" + arrBloc[i] + ' blocDisplay';
 	inputElem.setAttribute('class', cInfo);
 	inputElem.setAttribute('onclick', "modifyBloc(this)");
 	parseContent.appendChild(inputElem);
@@ -882,6 +870,14 @@ divParse.style.visibility = "visible";
 }
 
 function modifyBloc(cB){
+var divParseheader = document.getElementById('divParseheader');
+if (divParseheader.style.display == "none"){  // Add new bloc
+	divParseheader.style.display = "";
+	closeParseWin();
+	selBloc(cB);
+	return false;
+}
+	
 var bName = cB.className.split(" ");
 var actID = clubForm.FBid.value;
 bName = bName[0].substring(1);
@@ -891,7 +887,6 @@ for (var p = 0; p < bloc.length; p++) {
 		var actCombo = clubForm.FBbloc.selectedIndex;
 		initBlocs();
 		clubForm.FBbloc.selectedIndex = actCombo;
-		//alert(bName + " act=" + clubForm.FBid.value + " Combo=" + actCombo);
 		clubForm.FBid.value = actID;
 		showBloc(clubForm.FBbloc);	
 		closeParseWin();
@@ -956,6 +951,8 @@ clubForm.FBblocName.scrollIntoView({behavior: "instant", block: "end", inline: "
 x=1;
 }
 
+
+
 // -->
 </script>
 
@@ -986,28 +983,7 @@ font-weight: bold;
 font-size: 1.1em;
 }
 
-.tipCoor .tipCoorTxt{
-	position: absolute;
-	top: 70px;
-	left: 1%;
-	padding: 5px;
-	background-color: #777;
-	border-radius: 6px;
-	color: #eee;
-}
-
-.tipCoor .tipCoorTxt::after {
-    content: "";
-    position: absolute;
-    top: -0.8em;
-    left: 1em;
-    margin-left: -5px;
-    border-width: 10px;
-    border-style: solid;
-    border-color: transparent transparent #777 transparent;
-}
-
-#divCoor, #butClub{
+#butClub{
 visibility: hidden;
 display: inline;
 }
@@ -1048,7 +1024,7 @@ overflow: scroll;
 
 #divParse {
     position: absolute;
-    z-index: 9;
+    z-index: 1100;
     background-color: #f1f1f1;
     border: 1px solid #d3d3d3;
     text-align: center;
@@ -1073,6 +1049,7 @@ text-decoration: none;
 #parseContent input{
 display: block;
 cursor: move;
+
 }
 
 #FBblocName{
@@ -1085,6 +1062,11 @@ text-align: center;
 width: 5em;
 height: 25px;
 cursor: pointer !important;
+}
+
+.symbolFont{
+font-size: 1.5em;
+line-height: 80%;
 }
 
 </style>
@@ -1104,7 +1086,7 @@ cursor: pointer !important;
 </div>
 </div>
 <div id="duobutton">
-<a href="#" id="butMenu" title="Save data" onclick="saveAll();"><img id="logosave" alt="Menu" src="images/save.png" height="32"></a>
+<a href="#" id="butMenu" title="Save data" onclick="saveAll(this);"><img id="logosave" alt="Menu" src="images/save.png" height="32"></a>
 <a href="listeResult.html" ><text id="mlist"></text></a>
 <a id="mapLink" target="_blank" href="ClubMap.html?data=" ><text id="mmaps"></text></a>
 </div>
@@ -1120,7 +1102,7 @@ cursor: pointer !important;
 	<label id="labClub">Add Club&nbsp;:&nbsp;&nbsp;&nbsp;</label>
 	<div id="butClub">
 	<a class="itin" alt="Add club" href="javascript:addClub();">Add club</a>
-	<a class="itin" alt="Remove club" href="javascript:delClub();">Remove club</a>
+	<a class="itin" alt="Remove club" href="javascript:return false;" onclick="delClub(this);">Remove club</a>
 	</div></div>
 <li class="listitem gras">
 	<div class="formLabel">	
@@ -1185,14 +1167,14 @@ cursor: pointer !important;
 </li>
 <li class="listitem gras">
 	<div class="formLabel">
-	<label for="Flong">Longitude</label></div>
-	<input id="Flong" class="inputtext" type="text" size="12" maxlength="12" value="" ondrop="dropParsedElem(event);" />
-		<a href="#" onclick="copyCoord()">Copy</a>
+	<label for="Flat">Latitude</label></div>
+	<input id="Flat" class="inputtext" type="text" size="12" maxlength="12" value="" ondrop="dropParsedElem(event);" />
+		<a href="#" class="symbolFont" onclick="copyCoord(this)" title="Copy coordinates">&#10064;</a>
 </li>
 <li class="listitem gras">
 	<div class="formLabel">
-	<label for="Flat">Latitude</label></div>
-	<input id="Flat" class="inputtext" type="text" size="12" maxlength="12" value="" ondrop="dropParsedElem(event);" />
+	<label for="Flong">Longitude</label></div>
+	<input id="Flong" class="inputtext" type="text" size="12" maxlength="12" value="" ondrop="dropParsedElem(event);" />
 </li>
 
 
@@ -1317,7 +1299,7 @@ cursor: pointer !important;
 <form id="tabTextF">
 	​<textarea id="tabText" rows="4" cols="92" form="tabTextF"></textarea>
 	<div>
-	<input id="butAddBloc" class="itin" type="button" onclick="addToBlocks(this.form);" value="Add text tab delimited above to current block"/>
+	<input id="butAddBloc" class="itin" type="button" onclick="addToBlocks(this.form);" value="Add text tab delimited to block"/>
 	</div>
 	<div>
 	<input id="butParse" class="itin" type="button" onclick="butParseData(this.form);" value="Parse data"/>
@@ -1339,16 +1321,7 @@ cursor: pointer !important;
 </div>
 
 
-<div id="divCoor" class="tipCoor"><span id="divCoorTxt" class="tipCoorTxt"></span></div>
 <div id="modalDiv"></div>
-<div id="authLayer"></div>
-<div id="prefLayer">
-<form>
-	<select id="FselBloc" class="inputselect" size="12">
-	</select>
-</form>
-	<div><a class="itin" alt="Add course" href="javascript:selBloc();">&nbsp;&nbsp;&nbsp;&nbsp;Ok&nbsp;&nbsp;&nbsp;&nbsp;</a></div>
-</div>
 
  <!--Draggable DIV:-->
 <div id="divParse">

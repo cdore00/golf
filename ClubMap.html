@@ -105,22 +105,17 @@ closeMenu();
 
 function setFlagCoord(butObj){
 var flagLatLng = holeMarker.getPosition();
-var divCoor = document.getElementById("divCoor");
-var tipCoorTxt = document.getElementById("divCoorTxt");
 
-document.getElementById("divCoorTxt").innerHTML = "&nbsp;<b>Lat.: </b>" + flagLatLng.lat() + "&nbsp;</br>&nbsp;<b>Lng.: </b>" + flagLatLng.lng();
-divCoor.style.visibility = 'visible';
+o_messTip.show(butObj, 200, "&nbsp;<b>Lat.: </b>" + flagLatLng.lat() + "&nbsp;</br>&nbsp;<b>Lng.: </b>" + flagLatLng.lng(), 10);
 if (isMapped){
 	var data = courseID + "$" + trou + "$" + flagLatLng.lat() + "$" + flagLatLng.lng() + "$0$0";
 	trouCoord[trou - 1] = new google.maps.LatLng(flagLatLng.lat(), flagLatLng.lng());
 	getInfo("setGolfGPS?data=" + data, evalResp);
-	//butObj.disabled = true;
 }else{
 	var data = courseID + "$" + trou + "$" + flagLatLng.lat() + "$" + flagLatLng.lng() + "$" + nbrTrous + "$" + clubID;
 	getInfo("setGolfGPS?data=" + data, evalResp);
 }
-fadeOut("divCoor",100);
-//alert(trou + ' Lat: ' + flagLatLng.lat() + ' Lng: ' + flagLatLng.lng());
+
 }
 
 function evalResp(oRes){
@@ -163,7 +158,7 @@ var data = getURLdata();
 var ids = data.split('$');
 clubID = parseInt(ids[0]);
 courseID = parseInt(ids[1]);
-
+o_messTip.init();
 getInfo("getClubParcTrous?data=" + data, showCourse);
 }
 
@@ -440,13 +435,9 @@ visibility: visible;
 <button class="boutonZoom" title="Zoom out" onclick="zoomMap(-1); return false;">-</button>
 </div>
 
-<div id="divCoor" class="tipCoor"><span id="divCoorTxt" class="tipCoorTxt"></span></div>
-
 <div id="modalDiv"></div>
 <div id="authLayer">
-<!--
-<div id="divLoad"><img id="imgLoad" alt="Chargement en cours..." height="64" width="64" src="images/loading.gif" /></div>
-// -->
+
 </div>
 
   </body> 
