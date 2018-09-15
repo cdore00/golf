@@ -1,0 +1,3219 @@
+<!DOCTYPE html> 
+<html lang="en-CA">
+
+<head>
+<meta charset="UTF-8">
+<meta name="contactcity" content="Quebec"/>
+<meta name="contactcountry" content="Canada"/>
+<title>PSM Quiz</title>
+<meta name="viewport" content="minimum-scale=1.0, width=device-width, user-scalable=yes" />
+
+<script type="text/javascript"> 
+<!--
+
+var rightnav; 		// Font adjust control to right
+var actQuest = 1;  // Actual Question number
+var affReponse = false;  // Mode Real or Learning to display answer
+var nbrQuestions = 80;  // May be reset in StartTest2(), for maximum
+var typeQuiz = "PSM";	// Type de quiz PSM or PSPO to come
+var qList = new Array();  // Available questions in JSON
+var progressBar;	// Progress bar <progress> HTML 5
+var startTime = 0;	// Start in milisecond
+var precElapse = 0;  // Total of time elapsed (multi session)
+var finDure = false;  // True = arrête le chronomètre
+var duree = 3600000; //3600 miliseconds = 60 minutes
+var isRandom = true; // Random Mode (true) ou sequential (false)
+var somResultHeight = "0px";  // Height of DIV somResult for transition
+var revQuest = new Array(); // For saving questions to reviewed
+var savedQuizSelect; // Record/object in the grid
+var curPersoName;	// personnalised Quiz name used, depending on the case
+var sortColl = -1;  // Row number to sort
+var sortOrder = 1;  // Sort ascending = 1 descending = -1
+var sortArray = new Array(); // Grid record sorted
+var storeKey = new Array(); // localStorage key list
+var supportStorage = (function() {  // Detect localStorage availability for Quiz history, Quiz templates (Custom Quiz) and Overall analysis 
+	try {
+		var mod = "test";
+		localStorage.setItem(mod, mod);
+		localStorage.removeItem(mod);
+		return true;
+	} catch (exception) {
+		return false;
+	}
+}());
+
+// -->
+</script> 
+
+<style>
+
+.logoN{
+position: absolute;
+width: 115px;
+height:50px;
+background:  url('data:image/gif;base64,R0lGODlhcwAyAPcAAAAAAAICAgwQDwkVEREKDBEOEBcXFyYmJjY3NmwPJGoWLXMVJ3kTKXgZLWEjOHIqNn4lO38oOUw+Q3Q/UXo/UUdHR01RUFpOUlRQT1dWVnlNXHZbZGdmZmZpcHd3d09/gRuYuzePmyiKqCeKtCeWqSmZujGPszOTqzeYtyqhuDijuQ+WwxiZxxWe0xek2Byt4iacxCOf0zadwzOf0CihyCWm0DinyTeq0zOxyj2y2C6z4EOCi1iGhkWMrEuYtV2arEmmukmxvmqWl3ebm2ijrkWixUq1yUa11Vaqw1e51lO642i5yGa30VrE3kvG71LI8GXDzWvE1HfH2WnI523Z/HnK5XjU7X7b+IoLKYkTK48aN5MIKZUSM5UcOZ4SNZ8VOZocOoUmOoEtPY4iOY8oPaMRNqAcOqsXPIAxR4k1TJ0mQpE0R5E+UqElQaIqRawiRKkoRqoqSZ9CVZlPXotSZYVlcIZ5e6JVZqNcarNUaLpWbrpZbbtccqliaqxjc65rdLxrfI98grJ/kMd6jMtwgeF2ioiIiJOIjJWVloirq4qysqSZnbeeoqemp6W9vbGnqLa2toHJzIDH24DS3ZrIyI7K4o7V543a9Jjc7Yvh+Jvl+avCwavY2bzLyrTU1aDm7qfo+aj3/77m5rXr/bTw5Lj6/saMlciAlsiJlNyElN6Xn8WTo8O3u+KFmOiNnuOcq+ubpumfruOoruezteu3ueq4u/GntvOrufGzuM69w+m7wv+6ysbBvsbHx8zc29fDydfX19Pa4sbl6czu9Mn9/tnm5Njp8Nzx7Nj9/uvL0+7N2OjZ2/HDxfLE1P/H1f/H2fzK0/3R3v/N4f7U4fza4v/f6ufn5+ns8er07eP18+P+/uz08vXi5PTq7f7i5v/k7f3s4/7s7P/n8PTx7QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAP8ALAAAAABzADIAAAj/AP8JHEiwoMGDCBMqXMgQobhv1CJ6+/YvXMOLGDNq3HjQ4j9qrwDx0ZPnzh08fvwMsjWNo8uXMDGGg4aKzQIGXbyU+QKmC5ifXrBo2XPLW8yjSF2K02VqjpgwZMZogRMnjhs1XbhsOXPmjZs1f3QlHUs24bNXbCAkaCCHkCtYuGjVmiVLVapCbcyYybKgDzNwZQOXlXYKjYI0gGI5qybQY2Nv03a1yhPhgalwjgVrftmMjgMKq6I1Hp2QWjJG3Dar5tjtnzINEwQ1o8bRmsBtq3NfXFZHw6qWR3HrHn6wW6ANyQSKG2vNNnHii+z8+rf8X2uk1nxh+7f9uepeh6Zr/+4F7J9w75ofib+OdNzAYp18oVedS7D7gZ02aZsv2PnqYo5swp9A1tz3koEL+UcgR9p4kggyFylIUHMMWQMJIpBAwtxAEgqUzT/FFNRLI41kuJExQ3gC4UG2OQceBxlkwIEh5THUiwcIHBBAAAZU4EGNAzUSo4yIINQLjDBmEOQFEmRQgZGGVICAATsiUAGNDe2HTCKKQLgfQb1kYAAHiHhA5Y488mhIhxx6gOabaBpCECRvHtCLQdZk8CYHAx1CAJoGdfPImXDGmSUynAghypcENUJooW9moOFBbqZp6Y5UekCQmwXsqKSCjbxZQTADGRLAnwEYtAiqbz4aACJsEv+kDTLI8MAJo0EeIACmrop6ECJwHiCjjmce0Mg/LVaApgHHDtQLAm8W6RywgBLEigSn7hqABR0oW2ezCGkzKzIfULLinK5W0Ig1jUD7ppwL/qIjmpoSyIGoQCLy6D/3uXnmkwSZmiZ3BB6CaQADdLLdOL2cmSmQBn34DzI7RIIMrv9A8uikA1G74wEFCbwjuANVOvKmB/P5Ty+WIgDxPyKnOtAybyJwJ0HA6HkmyeGiYEQo5wqkMb0SAnMvmgoeHUAFHQLjbQAc+MfyvAY8Yo27OxYZ8ptgvvvrmzwjhAIOoASdMaE3F0QnmkBeTS9CIiPQnUAmB5BB3UwbFPOcy3L/DOa8AYR9kAopaILx0DuyyXKaHFsDeAaGIIIIiY1IrmeVClpDKJVof12tQIvz+MhBwEyZNUPIqAACJoc7zCYwb6btOJy9iiphqJDCqzfXA63NoyMsYq21QsSkQAImBiHuMumxc4g1pIUekPk/SqNZwcul8g5636QLz9AoJaQASvLFYo/sm40/Dz2+BnmMadQIud81pn47+/TwCCGjCQkqjEL+x69DH4cA54FeWIM8wLAGMICBwAXi6WnFSltB5DcQVqDJWAfpxf0Ssg1tEOMSJAjCMP7HIzZZQ4AEIpTuJrSQmNXMGuzJ3ucydkEJ2g9N+DMIMojBBBJAwWxnw5QJ/1HIL6zZgUMXadiyABeAFcpwR/PjESQkpMD7xeofxNBEEVQwCSAiTnosah6BngY/PCnIQE9roiGIVcLdzdB3Bqgf6AAHq/wRowooAMInMBbENuJJjMhSWgZqZCBIWEmOvgvA8i63I5UFTHv/gB2aAnGQmAlOIMgARRJQgIRS8BFxBhgimhrnPg5IUINnygCFkPW8KdoGTjyjIIGel0N9oclm4SKGFGRgAkkAsY9g/OMo/yaqRjBwEc8bZMkspSQCJRJgT5RZx+DkAUj04kJMdCJBMgmEEaAAFHzsYyjDiCYbimwAmGIij4bXC8AdoH7VW1M0C5Kng1XpUQZ4Z7hIsf+EE6BgCsQIJyhFuSM5VqB2lqqXQOKZPCYCaW9qoxqcWGW+iSEjEiEwQRFCIa6DNIJqASxnJdV3S5IhglWqxFPMEDBPgwSjA7UzwAZ4MZBrDGSHoZgCCU6ABEsQIyHAiJzkEiJURFS0F2VC0owQYcNeGEKoNuRQ5RAROfxI7qkIYZch7JABDGBgRo9YhkGMkQ1khMIJNrABCpbgyYZc8YoGWaADkwJXgpwHMM1pznUQNBBiJCEHIhABW385oNzMDSHH+Me4EEUEEtjgBD4omzYkVtjcCEMYF9PSbSQ2LmJ4VhNL8AH/BDuKi1V2MwZCxjCI8ANLgCIUnr2YbGlFjFK+hOIKTbBBCUCQAiAsoWyn1c2sKuEDEcjgBkd4AhU0UYrmhiITVphCEo5AAxCswAUuAEEUSkGr4OaGVj0owgxY8IIXuIAFMLDBEdJ6AxvQgAYsoIEO4KsDKhDDtN5dzayQIN4YtMAF5cWugGvwXt2iQAVJuAJsw5lfweD0Ckq4AQxAwAIBt4AF6JWBDZAgBdfel8ENFsysagsKTEghCkfIQQ6Qm4QpVEEToPjwbULsHXGNy7ahyHEp7ksrECckIAA7') ;
+}
+
+.logoPSM{
+position: relative;
+float: left;
+width: 100px;
+height:112px;
+background:  
+url('data:image/gif;base64,R0lGODlhZABwAPcAAAAAADNuijRxjTVzkDV0kjZ2lDd4ljl2kjh2lDl4lj55lTh6mjl8mzp9nTx6mD18mj1+nTt/oEB6lkF8l0B7mEB8mEB+nEl/mT6AnjuAoDyBojyCpD2Epj6GqEKAnkaBnEmAmUqEn06Cm02CnE6EnlCDm1KFnVSGnUGCoUKEokKFpUSDoUaFokSGpUCHqEaIp0GIqUWJqESKrEeNrUmFoUiHpE6GoEqJpk6IokiKqUmMq0qOrUyLqE6MqU2OrUqPsE6QrkqQsE2RsU+Us0+VtFGLp1KMplWMplKLqFGMqFCPrFWNqFuKoFuMpFyKoV2MoliOqFGQrVeQqVSSr1qQqlmTrVqUrlyRq12SrF2UrVGSsFGUslGVtVWTsFaUsVWWtVWYtlKYuFaZuFiWs1qYtVyatl+ct1mcul2buF6cuV2evGCNomKOpGSPpGaRpGaUqmeXrWmTpmuUp26WqGqZr2WXsGaYsWCeumGfvGiasmqctHCXqnKYqnSarHecrXqern6fr3OesmGgvX6gr3Kit3OiuHekunumunynu3+pvmOjwWOkwWalwWimw2inxGqoxWyqxm2ryG6syHCuyoGisoSks4amtICmuIKpvIintYqoto2quI2vv5GtupSvvJawvZiyvoKswImuwI2vwI2wwI6zxY60xpG0xZW4yZqzwJq0wJm3xp21wZ+4w5q5yJq7zJy6yZ28y5y9zKC4w6G5xKS7xqW8x6C8yqC/zqe9yKi+yKDAzqrAyqnDz6zByq7CzKTD0qjF06jH1qzF0anI1q3M2rHFzrPH0LTH0LPK1bbI0bTL1rbM17DP3bTN2bjK0rrL1LrM1LzN1bzR3MDQ18HR2MHV38TT2sbU28fV3MjW3crY3szZ38HW4MbZ4snb48vc5M3a4M3d5dHd4tPe5NTf5Nbg5dbj6tji5trj6Nrk6Nrm7N7m6uDo6+Hp7OTq7uXs7+bt8Oju8erw8uzx8+7y9O/09fH09vL2+PT2+Pb4+fj6+vn7/Pr8/P7+/gAAACH5BAEAAP8ALAAAAABkAHAAAAj/AP8JHEiwoMGDCA+uetNkwIMeEHtAGNDkzaqEGDNq3MiRY54EBRY0aJDhhaCTglpkyNBgQYEEeTrKnEkzIyEeXsrE2MCBQwcOQh5BgvRISM+eG2KU8cKDUM2nUDWOeEAGD6NGYn4EmcHlkSRFYBVJesRlRpAfYhoxwkMGwoiocOGOKNBAwxehkiQxOiNkRocOMB49gvF3hpAzjPIS/bKhgYG3cSNz5ESgLgcYiRWpkfH3b88fkyb96Nm5gww1YhkRblyAk+TXCK8syNAT82Y1kwQh1aCBpRYtJDNo4MlB0KTbqn9qYIAFtnOBN8ho4TADzBnOHc7kjuCYAggTT8I//zEBQkHIBsbP/JVxpiwHLWRuPJcsqweaq4KDeN6QoUUFE3NY0sknoLBiICuqfOJJJnOYIAELEfD0VxCCqYVGD7LMF9UlN6TBCCSSqEFYTxksMMIcm7BiDDbluBNPPPLI86I75WRzDCud7CGCAQ1ICIMakkDCSBo3XKJhTZRl8AWIgogBAwcaLAACIJ0YE847MMozDz1cdjlPjPHAE44xn1ByQQK0wSCGIEGCoYEBrh0pEwG0iQHJDKGB0UAFfHSCjDrvxEhPPfbcY+ihhtpTDz0xwqOOMp/0IUEDYIQ2AyRiQFmAnB0N0MBlj/h1BiQtjGCJLeO4A488gx6az6v66P/zaj74JFrPPPG8U44umoiAAiTqzTAYBxlsymlGk/okhl9QLrBGJ8qwE+g89RiaT6z67KPtttjSes+i8sDjzjOftFGABj7NIMZPDUxwbEKHQLABDO0pt4Abn1wjrTzV3nNttvvww08/BBMssLayGlpPuO5kA4oc5/rExRlPanDIuwf1cMcXe/20wb2fVLNvtf8GTLA/KKeMssEI53OPPfOIe40qEKObHSNf3NEDxgVlQcaHyXHAwBqfRBsoydkOrPLSS/fDzz6xfhtzO9Ko4kYC6GIGSSNkZMGzQLJEIYhXYczAQQMmdKILOu7w62+2/TAtd9NP6yP1O+r88skJC1D/F8ZYgkSRIc8hkOFIJIqEFgMFltCyTdtI7xP33JSvXPe38rgTTi6bKNBCaIpE4ggZNnxdwAZg3CnJJCjwoSI78NDzttKV1+401Ji7owwtfngwiSSXgsHBAjyP8KkYagCmwghqawM5PvrQXvv0T7s8zzvc/AKKry50oEamGZCAMQHoXtfBx4PMoow58VQL9/Tw+9MP7gujA40tlUTM3vkGvMtJ3x1YF7FE0AleSIMd8rBHPgIWv/jNz27zcEc1jLG9TwWQXaM4lvE4wAUu/GQBc1CfNmJ3j/dRDh/xaCDK+KEPfNQjHtyARi34UACJcQFK4uPUA5ISCcJoIAGbgAMU/7BQBzvk4YimmAbTnGGIBTCgJVkIBj5Q5gw9WNGKU1zZ/PJgBztggQp0+AQC0gQJGXDAAseagiAaoYifZOAEnzjCAuZIxzk2AAnrSFko6ljHJKBMFnwMxtKmwccjsOIEFlQEIwQxBU6hYgyNwBQYdtCAObRCjnzs4xQBmck5OuOPfMyCyvqxxzpCwRZ9MMAOwCCGSDRiDKiQUyHK0AhJLCI0CaCELaBAR1S44hV6qOMnV0BHPTijigv4JCjryIAUogwfmYQCLyxBgNAsQhKNKEMh5GSENHjlC3pJQAF5OccFxs0UdJTFOugoypQ5c5l1lEXKnJFJKpDpAIkB5yPSYP8EOSUgBlyQxF80AAJP/IKcC8iH0ug5R1mIg44reOfSOLmALMzRjygL5gISQUcqIEMVF7CgJLgQA+IdiXwwECixQPAJY1CBjvjYxz2sQcw5CrKmC2BBKLqRxZRRNBh0zGM86EjIOV5BGawIqU8kAYMNIEBO5OuAINx4AVC4tJN0bKY/KFrHULyTouJIwhxP4Q9hzHEF0DTqM2YBAgtOdQP9O6kGOqAfYpkgFVfF6gLkibJg4HSODGBBHrdKR3Gc4qz+wMIcMaEPOl7hGbRYgwXrmgCozjV5xKoqMl7aSUOIY2n4YCIf9QBPcayzoURtrFppUQILJm8DlZVrB1SaARD/WJWzC7iH5KaHD66W1h9ireMK+JEPxyJVqbPlnz8BqlKCfuIXuC3h5JiGj576Q6ML+O1h61iKfaR1AR5NqkhJalINdfOb4eyELxBaQn7IDR9ZyMJgxYHT356WjuewW0cpiE9J6JOfsqSlLXGpS4TWw4Qpgy8dkxDcOYbit8ClYxFYeA86QsEXmqjmJK6ZzW0e6ZEfEgMYhABCWiyBjvWI6XRRVspORhTC211Ad/NRDwvnog8FEMIX7MQIWHJKjYxo49lMAApMLmAe7WUaV9k5WMLO8bP+uG9+70EPOh5hFidggE8UychjWYA6kPChBDpxClj0IhntMyd1nSGLNqtz/2nxEIeceypncOBOHswYxi1UAQoJROAyd+IACjT45w5+cA+zeIY2zOEOJEdPhdPrh93q4ahwSOPGUTW0BkrHqf8pi10iAMUvqjEOdqR5t5XDx5xttw+XZa4c2DAGK0qg5QuejRTvOld2OMOBAlCCFopmtDz8heq5PXQBUJ7bA6n8jnRwQxrTJB8H9jc8jG1QDOo5mwieS41wAEp2CGbasZPNtGVTmh3juIasSwDAM2Rq0zxbAOrKuDoP+GEWyLhGqeHhvmIvbdzKpp882mEObTzDFn+wwO9kAAnhNeBrNPBCIxAXmhwoQBO2UHQ5TN1v94r7yXIzd+bQ8WxfdEIBL/8AnSu/QIOvyUILYxup2RoAR19IYxvmMLXsruVvfwB8lFBz2cLcgY5wUEPWfNsAVwA3hcHxLAtlAJrHFhAHVfzi5jmHB7VKmLSTgWOO4LAcwmpFj3i0o+gTbMUcItYBoJXBa18TiMa+4Ihsa6AAcmDF1bVBDna0TXZv29Y35vgNbrUQc+9ghzm4MUFazIEAf86OI76AhyTEfSCJQMFl6qUpOajCF9HAxjjQsa9Wvc0bc/SGrGqFOXGlYxzakIYx1F4ZiVGMAypIxOUHkqwAMuvucQCFLpRRjW2MIx1+h9Gg6mGNOVqjHov60jvcoY5yhOMaz/AFKx5vQXUppwK7J0j/AdIUquw8wgMn2AQtfhGNa3Dj+OxohzveAY+iTiNM7nAHO9BhfWzI3hadcAIWUHcdICwVE1fhNxARYyd4MglgsAAK4AegYAvG0H7aEA7jYA7ooA7JMEfLoA7owH/jsA3XIA3IoAus8AcKsABfYCmYwgEfk4AFcQkGoAGpIwlN0lQNUAAiYAmqYAu/oAzSUA3YoA3cEA5IGA7csA3ZUA3S8AzGgIKWUAKVoQFqwiYNNzxGIoMEwSEeAiIUoxw7eAJ/8AmtkAu/YAzK8AzRIA3SEA3PoAzG8Au8QAug8AcnQAALYDP0EiRDUiRcaBCn0AMeIhiPUFdQ0gAeoABM0Aeb/1AgtEALtTCJtIAgndAHTqAAFsAA6OITQcAIgjEkPXAKgYgQ0fEF1CEGy/IT2qEGDGAABKAAF8AEa8AGbLAGTlAeBBASuHEGPiEDqugXXBAfpYgRWGAZgMEIajADuKEbG9AbI8EASqAETtQAETAcxXEcp5Ec5wMBzVGMGBEIPMITmKEXm9EZR7EDobEDR+ETpqEGiaEaJLIAgQCOG0ECs8EBdxEJeaEIYiAE2BEYg7EeQiAGYiEJkfAIqLgcnGaPGyEKCQABVXEVZxAEFtkVkBAWikAUXGCRQXAGasEWGJAAouCQHVEMSYACNNADOREDR/EXWyAURLEFntETSuEFPf9AAyiQBMVgkhzRDGTwBWOwBDRAA3YkHEmBEoKwE9DIAAtQlEswBsPYDD65EUAZBoKAB2UwBkdgAx+gACDhAT2QBErQAx7wEg/wATZwBGNQBnggCGFABlRZlRlRDF/ABSjxlmlQBmRgBVUgBUaAAzhgBFJQBVbQlmaQlSjBBV/Qk3SJEc0wBmFwB5RZmZZ5mZh5mWEwBnP5mAhhl1yQmaI5mpTJmI7pmQcBmmmwmqzZmq75mq5pmqj5mV5ABLB5m7i5mkTgBac5mwRhl0OABsI5nMRZnMZZnEPQmL5pEMXgBUJQBtAZndI5ndQ5nULAm8tZEMWwBUJABt75neAZnuL/GZ5CsAW9mZ3N2Z3juZ7sSQbXeZ7LWQxaIARjUJ/2eZ/4mZ/4KQRaAJ++KZ9AoJ8COqD1CQT9mZ0EQQxasANe0KAO+qAQGqEQugNaQAwIOhDEEAUMKqEc2qFesANRYKEX+g/EIAQ70AUomqIquqIsuqI7IAQieqEZqgNTUKM2eqM4mqM4qgMhOqL/IAw+kANRMKREWqRGeqRGmgM+IAw+Cgw+EANIGqVSOqQxAATA4KNAGgPTuKVc2qVe6qUxsKRNugMvEBFmeqZomqY98AI7cKUjCgw60AJqOqdz2gI64KYXCgw50AI80Kd++qeAGqiA2gI5gKcIqqcpcAOKuqiM/9qojtqoKVCoTZoDifqolnqpNxCphpqdwBADKFADoBqqojqqpDqqKBADm7qcwPACHsACrvqqsBqrshqrHvACqeqbu9ACGDCrvNqrrooBLbALPpqrELACxnqsyJqsypqsEBCsw6oCD+AB0jqt1Fqt1lqtD6ACwjqiuACt1/qt4Cqt2YoLPioLKLAAFpCu6rqu6foAD8Cu8GoBC4ACToeg5qoA7pqv+pqvvLGv/voACkCv5fpD/5qvDgAB7goBDlCw7oo19ZqdsaABCOAAFFuxFRuRDoAJmHCwCWCxHosAGhALPgoLGHAACXCyKIuyDZAAmCAQmJAAK5uyKXsAGAALPr7qCg1AADJ7sgiwsi07EC/bAAiwswlQGa5wsw0wAAWwtEwbEgXwswSBCU7btEvrKUc7ojgrAASwtVt7LgQAtQWBCeRTAFy7tQLQAFd7oVlbtl4LtgYhtndXtmebtgi6tl2rAQRAtwjhCmPLtXOLtFq7i3g7J3FLAH+LtQ0QAFs7uDNBPlsbAGiLtIrLuDThuJCrt8uJswFAuTVBPpeLtBtAAHFBAI2Bub7Jt6IbGVtrurPJt7CRtzf7HKwrGQEBADs=')
+}
+
+.logoPSPO{
+position: relative;
+float: left;
+width: 90px;
+height:112px;
+background:  
+url('data:image/gif;base64,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')
+}
+
+
+body {
+  font: 1.0em;
+  -webkit-print-color-adjust: exact;
+  background: #eee;
+  margin: 0px;
+
+}
+
+h1, h2, h3, p {
+margin: 0;
+margin-top: 2px;
+}
+
+h3{
+width: 80%;
+}
+
+#fontAdjust{
+margin: -2px;
+font-size: 14pt !important;
+color: #dd8800 ;
+position: absolute;
+/*border: 1px solid black;*/
+right: 0px;
+top: 0px;
+width:30px;
+height:50px;
+z-index:1000;
+cursor: pointer;
+}
+
+.divFontSize{
+
+width:15px;
+height:25px;
+/*border: 1px solid blue;*/
+float: left;
+clear: both;
+font-weight: bold;
+text-align:center !important;
+
+}
+
+.fontLogo{
+display: inline;
+font-weight: bold;
+margin-right: 3px;
+float: right;
+}
+
+.fontSmall{
+font-size: 0.6em !important;
+margin-top: 15%;
+}
+
+#quizHead{
+margin-top: 25px;
+width: 100%;
+}
+
+a {
+    text-decoration: none;
+    color: #003caa;
+}
+
+button{min-width: 90px; border-radius: 10px; height:30px; margin: 3px;}
+
+.alignLeft{
+text-align:left !important;
+}
+
+#bReload{
+float:right;
+}
+
+.tipZone{
+border: 2px solid green ;
+border-radius: 20px;
+margin: 10px;
+padding: 5px;
+display: inherit !important;
+background: #eee;
+}
+
+#savedQuiz, #divRepList, #divImport{
+display: none;
+text-align:center;
+position: absolute;
+top: 0px;
+min-height: 100%;
+width: 100%;
+background: #ddf;
+}
+
+#savedQuiz{
+z-index: 10;
+}
+
+.qualColW{
+width: 45px;
+}
+
+#tableZone{
+  position:relative;
+}
+
+#divRepList, #divImport{
+text-align:left;
+background: #eee;
+border: buttonhighlight 2px inset;
+padding: 10px;
+margin: 10px;
+min-width: inherit;
+min-height: inherit;
+width: inherit;
+}
+
+#textToImport{
+width: 340px;
+height: 210px;
+}
+
+#repList td{
+border-radius: 4px;
+}
+
+#optMenu{
+display:block;
+width: 100px;
+border: buttonhighlight 2px outset;
+cursor: pointer;
+padding: 5px;
+font-weight: bold;
+}
+
+#tdMess{
+width: 90%;
+
+}
+
+#menuList, #chxPro{
+display:none;
+position: absolute;
+background: #eee;
+}
+
+#menuList td{
+border: buttonhighlight 2px inset;
+background: #eee;
+cursor: pointer;
+text-align: left;
+padding: 5px;
+padding-left: 25px;
+}
+
+#menuList td:hover{
+background: #00A4AC ;
+cursor: pointer;
+}
+
+#butCreer{
+display:none;
+}
+
+#sbutPrev{
+display: inline;
+}
+
+.sortInd{
+color: #dd8800;
+font-size: 1.3em;
+}
+
+#quizList{
+display: inline-block;
+background-color: #ccc;
+border: buttonhighlight 2px outset;
+font-size: 0.90em;
+max-width: 95%;
+text-align: left;
+}
+
+#quizList td, th{
+text-align:center;
+border-bottom: 1px solid #fff;
+border-right: 1px solid #fff;
+padding: 5px;
+max-width: 20%;
+word-break: break-word; 
+}
+
+#quizList tr:hover{
+background-color: #aaa !important;
+cursor: pointer;
+}
+
+.tblSelect{
+background-color: #aaa;
+cursor: pointer !important;
+}
+
+#questDragType{
+display:none;
+position: absolute;
+top: 0px;
+background-color: #ddd;
+width: 95%;
+}
+
+div[id^="place"]
+{float:left; width:80px; height:45px; border:1px dotted #333333; background-color:#ffb;
+display: inline-block;
+position:relative;}
+
+#repZone, #picsZone
+{clear:both; text-align:center;}
+
+.txtDiv{
+position:absolute;
+width:100%;
+height:45px;
+background-color:#ccc;
+border:1px solid #000;
+ transition : border 500ms ease-out;
+ z-index: 100;
+ cursor: pointer;
+}
+
+@keyframes borderPulse {
+  0% {
+    box-shadow: none;
+  }
+  100% {
+    box-shadow: inset 0 0 0 3px red;
+  }
+}
+
+.sdrag {
+   animation: borderPulse 1s ease infinite;
+}
+
+.repChx{
+display: flex;
+padding: 10px;
+border:1px solid #333;
+background-color:#ddd;
+text-align:center;
+}
+
+div[id^="repQuest"]
+{float:left; width:45%; min-height:45px; border:1px solid #333; background-color:#ccc;}
+
+div[id^="repQuestDrop"]
+{background-color:#ffb;
+position:relative;}
+
+.entete{
+text-align:center;
+position: relative;
+}
+
+.title2{
+padding-top:10px;
+margin-left: 115px;
+margin-right: 25px;
+}
+
+#headInfo{
+text-align:center;
+padding-bottom: 10px;
+position: relative;
+}
+
+#headInfo{
+position: relative;
+}
+
+#quest_list{
+background: #ddd;
+padding: 10px;
+}
+
+#quizInfo, #quest_list{
+display: none;
+}
+
+#quest_list p{
+margin-bottom: 5px;
+}
+#startInfo{
+visibility: hidden;
+margin-top: 25px;
+}
+
+#quest_zone{
+border: 1px solid #bbb;
+border-radius: 20px;
+padding: 10px;
+min-height:250px;
+position: relative;
+display: block;
+}
+
+#resultat{
+margin-top: 10px;
+min-height: 40px;
+height: auto;
+visibility: hidden;
+background: #dd8800;
+border-radius: 20px;
+padding-bottom: 1px;
+}
+
+#encQuestion, #infoResult, #encQuestionD{
+font-weight: bold;
+}
+
+#noQuestion{
+font-weight: lighter;
+font-style: italic;
+}
+
+.rFalse, .rTrue, .rtext, .rTip{
+font-size: 30pt;
+font-weight: bold;
+color: red;
+float: left;
+margin-left: -10px;
+display: inline-block;
+min-width: 30px;
+margin-top: -10px;
+}
+
+@keyframes bounce{
+     from {font-size: 30pt;}
+     to   {font-size: 25pt;}
+}
+
+.rTrue{
+color: green;
+}
+
+.rTip{
+color: #000;
+padding-left: 10px;
+margin-top: -20px;
+}
+
+.rtext{
+float: inherit;
+}
+
+.quest_zone{
+text-align:left;
+}
+
+.noQ{
+width: 20px;
+float: left;
+display: inline-block;
+}
+
+#timeZone{
+max-width: 90%;
+margin-left: 5%;
+margin-top: 25px;
+}
+
+.timeBox{
+width: 50px;
+border: 1px solid #bbb;
+}
+
+#tempsEcoule{
+float: left;
+display: flex;
+margin-left: 10px;
+}
+
+#tempsRestant{
+float: right;
+display: flex;
+}
+
+#sTheory, #sEvent , #sTeam , #sArtifact{
+display: inline-block;
+position: relative;
+width: 25%;
+}
+
+#somTheory, #somEvent , #somTeam , #somArtifact{
+display: inline-block;
+position: relative;
+width: 70%;
+border-radius: 5px;
+
+border: none;
+}
+
+#titleProgress{
+font-size: 0.8em;
+font-weight: bold;
+}
+
+#progressQ{
+position: relative;
+width: 90%;
+background: #00A4AC;
+    border-radius: 5px;
+    height: 10px;
+    padding: 2px;
+background-color: white;
+}
+
+progress {
+  font-size: 1em;
+
+  border: 1px solid #0063a6;
+  background: #fff;
+}
+
+progress::-webkit-progress-value { background: #00A4AC; }  
+progress::-webkit-progress-bar { background: #fff; }  
+
+#pageCell, #somResult {
+    width: 95%;
+    display: inline-block;
+	margin: 10px;
+	padding: 5px;
+	border: 1px solid #ccc;
+	border-radius: 20px;
+	margin-bottom: 0px;
+}
+
+#pageContainer{
+overflow-y: scroll;
+height: 70px;
+display: inline-block;
+text-align: center;
+}
+
+#somResult{
+position: relative;
+display: none;
+text-align:left;
+overflow: hidden;
+height: 1px;
+padding-top: 20px;
+-webkit-transition: all 0.6s ease-in-out;
+  -moz-transition: all 0.6s ease-in-out;
+  transition: all 0.6s ease-in-out;
+}
+
+#hideSom{
+position: absolute !important;
+left: 0px;
+top: 0px;
+cursor: pointer;
+position: relative;
+width: 50px;
+height: 20px;
+background: #aaa;
+color: #111;
+text-align:center;
+z-index: 2;
+}
+
+#divButAnal{
+position: relative;
+text-align:center;
+margin-top: -20px;
+z-index: 1;
+}
+
+#InfoSom{
+	display: inline-block;
+	text-align:left;
+	min-height: 120px;
+	width: 70%;
+	border: 1px solid #ddd;
+	border-style:inset;
+	border-radius: 10px;
+	background: #ddd;
+}
+
+.pages .pg {
+width: 35px;
+height: 30px;
+color: #555 ;
+padding-top: 2px;
+border: 1px solid #888;
+display: inherit;
+background: white;
+}
+
+.cGreen{
+background:#0c3 !important;
+}
+.cTurquoise{
+	background: #00A4AC !important;
+}
+.cRouge{
+	background: #f44 !important;
+}
+.cGold{
+	background: #dd8800 !important;
+}
+.qSelected{
+font-weight: bold;
+color: #333 !important;
+border: 2px solid #888 !important;
+}
+
+#questLegend{
+padding: 4px !important;
+font-size: 0.8em;
+list-style-type: none;
+}
+
+#questLegend li{
+display : inline;
+}
+
+.logoLegend{
+height: 10px!important;
+width: 10px!important;
+display: inline-block!important;
+margin-right: 2px!important;
+margin-left: 4px!important;
+border: 1px solid #888;
+}
+
+#enErreur{
+display: none;
+}
+
+.alignv{
+display: table-cell;
+padding-left: 5px;
+padding-top: 6px;
+}
+
+.alignQ{
+display: table-cell;
+padding-left: 5px;
+}
+
+#pResult{
+display: inlist-block;
+margin: 5px;
+}
+
+@media screen and (max-width: 540px), only screen and (min-device-width: 320px) and (max-device-width: 480px), only screen and (-moz-min-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) 
+{ 
+
+body{
+font-size: 1.2em;
+}
+
+.title2{
+padding-top:50px;
+margin-left: 5px;
+margin-right: 5px;
+}
+
+#InfoSom{
+	min-height: 190px;
+	width: 95%;
+}
+
+.qualColW{
+width: 25px;
+}
+
+button{
+height: 40px;
+}
+
+#sTheory, #sEvent , #sTeam , #sArtifact, #somTheory, #somEvent , #somTeam , #somArtifact{
+width: 50%;
+}
+
+#somResult{
+height: auto;
+}
+
+#textToImport{
+width: 260px;
+}
+
+}
+
+</style>
+
+<style media="print">
+/*  CSS pour l'impression seulement */
+
+body {margin:0; padding:0; line-height: 1.4em; word-spacing:1px; letter-spacing:0.2px; font: 13px Arial, Helvetica,"Lucida Grande", serif; color: #111;}
+
+.repChx, .txtDiv{background-color:#fff;}
+
+div[id^="repQuest"]
+{background-color:#fff;}
+
+body, .entete, #headInfo, #questDragType, #quest_list, #resultat, #hideSom, #InfoSom, #savedQuiz, #quizList{background-color:#fff;}
+
+#butquiz, #butQuest, #optMenu, #quizHead, #butCreer, #menuList {display:none}
+
+#butCreer {visibility:hidden}
+
+#pageContainer{height:auto;}
+
+.tblSelect{
+background-color: #fff !important;
+}
+
+#quizList{
+border: 1px solid #333;
+overflow: visible !important;
+}
+
+#quizList td{
+border-top: 1px solid #aaa;
+border-right: 1px solid #999;
+}
+
+#quizList tr:hover{
+background-color: #fff;
+}
+
+
+  /* THE FOLLOWING CSS IS REQUIRED AND SHOULD NOT BE MODIFIED. */
+  /* Source: http://stackoverflow.com/questions/7211229/having-google-chrome-repeat-table-headers-on-printed-pages */
+  
+    div.fauxRow {
+      display: inline-block;
+      vertical-align: top;
+      width: 100%;
+      page-break-inside: avoid;
+    }
+    table.fauxRow {border-spacing: 0;}
+    table.fauxRow > tbody > tr > td {
+      padding: 0;
+      overflow: hidden;
+    }
+    table.fauxRow > tbody > tr > td > table.print {
+      display: inline-table;
+      vertical-align: top;
+    }
+    table.fauxRow > tbody > tr > td > table.print > caption {caption-side: top;}
+    .noBreak {
+      float: right;
+      width: 100%;
+      visibility: hidden;
+    }
+    .noBreak:before, .noBreak:after {
+      display: block;
+      content: "";
+    }
+    .noBreak:after {margin-top: -594mm;}
+    .noBreak > div {
+      display: inline-block;
+      vertical-align: top;
+      width:100%;
+      page-break-inside: avoid;
+    }
+    table.print > tbody > tr {page-break-inside: avoid;}
+    table.print > tbody > .metricsRow > td {border-top: none !important;}
+
+  /* THE FOLLOWING CSS IS REQUIRED, but the values may be adjusted. */
+    /* NOTE: All size values that can affect an element's height should use the px unit! */
+    table.fauxRow, table.print {
+      font-size: 14px;
+      line-height: 20px;
+    }
+
+</style>
+
+<script type="text/javascript"> 
+<!--
+
+function loadQuestion(){
+qList = new Array();
+//categ : 0 = Theory, 1 = Team, 2 = Events, 3 = Artifact
+
+if (typeQuiz == "PSM"){
+qList[0] = '{"typeChx": 0,"categ": 0,"hint": "Choose one answer.", "quest": "If two Scrum Teams are added to the development of a product that previously had only one Scrum Team, what will be the immediate impact on the productivity of the original Scrum Team?","tip": "The original scrum team will need to learn how to work and coordinate with the new team, as both teams will be working from the same backlog and with the same PO. This extra coordination effort (communication, meetings) will negatively impact the original team’s capacity.", "questList":[';
+qList[0] += '{"enc": "Its productivity is likely to increase.", "rep": false},';
+qList[0] += '{"enc": "Its productivity is likely to stay the same.", "rep": false},';
+qList[0] += '{"enc": "Its productivity is likely to decrease.", "rep": true}';
+qList[0] += ']}';
+qList[1] = '{"typeChx": 1,"categ": 0,"hint": "Choose 3 answers.", "quest": "Which Scrum Values are exhibited by not building Product Backlog items that have low business value?","tip": "When the values of commitment, courage, focus, openness and respect are embodied and lived by the Scrum Team, the Scrum pillars of transparency, inspection, and adaptation come to life and build trust for everyone.",  "questList":[';
+qList[1] += '{"enc": "Focus", "rep": true},';
+qList[1] += '{"enc": "Respect", "rep": true},';
+qList[1] += '{"enc": "Economic Value Added", "rep": false},';
+qList[1] += '{"enc": "Courage", "rep": true},';
+qList[1] += '{"enc": "Earned Value", "rep": false}';
+qList[1] += ']}';
+qList[2] = '{"typeChx": 0,"categ": 3,"hint": "", "quest": "All Development Teams working on the same Product should use the same Product Backlog.","tip": "Multiple Scrum Teams often work together on the same product. One Product Backlog is used to describe the upcoming work on the product.", "questList":[';
+qList[2] += '{"enc": "False", "rep": false},';
+qList[2] += '{"enc": "True", "rep": true}';
+qList[2] += ']}';
+qList[3] = '{"typeChx": 0,"categ": 0,"hint": "", "quest": "Scrum does not allow additional meetings that are not defined in Scrum.","tip": "Scrum allows additional meetings if they facilitate achieving the Sprint Goal.", "questList":[';
+qList[3] += '{"enc": "False", "rep": true},';
+qList[3] += '{"enc": "True", "rep": false}';
+qList[3] += ']}';
+qList[4] = '{"typeChx": 0,"categ": 2,"hint": "", "quest": "Other people than the Scrum Team can attend the Sprint Planning  in order to provide technical or domain advice.","tip": "The Development Team may also invite other people to attend in order to provide technical or domain advice.", "questList":[';
+qList[4] += '{"enc": "False", "rep": false},';
+qList[4] += '{"enc": "True", "rep": true}';
+qList[4] += ']}';
+qList[5] = '{"typeChx": 0,"categ": 2,"hint": "", "quest": "All the Scrum Teams working on the same product should have the same Sprint length.","tip": "False. Scrum does not require having aligned Sprints for multiple teams.", "questList":[';
+qList[5] += '{"enc": "False", "rep": true},';
+qList[5] += '{"enc": "True", "rep": false}';
+qList[5] += ']}';
+qList[6] = '{"typeChx": 0,"categ": 1,"hint": "", "quest": "Could the Product Owner and the Scrum Master be a part of the Development Team?","tip": "The Product Owner and Scrum Master roles are not included in this count (Team Size) unless they are also executing the work of the Sprint Backlog.", "questList":[';
+qList[6] += '{"enc": "False", "rep": false},';
+qList[6] += '{"enc": "True", "rep": true}';
+qList[6] += ']}';
+qList[7] = '{"typeChx": 0,"categ": 2,"hint": "", "quest": "Only the Product Owner and the Development Team participate in the Sprint Planning. There is nothing to do for the Scrum Master.","tip": "The work to be performed in the Sprint is planned at the Sprint Planning. This plan is created by the collaborative work of the entire Scrum Team.", "questList":[';
+qList[7] += '{"enc": "False", "rep": true},';
+qList[7] += '{"enc": "True", "rep": false}';
+qList[7] += ']}';
+qList[8] = '{"typeChx": 1,"categ": 1,"hint": "Choose 3 answer.", "quest": "What does Product Backlog management include?","tip": "Product Backlog management includes:</br>- Clearly expressing Product Backlog items;</br>- Ordering the items in the Product Backlog to best achieve goals and missions;</br>- Optimizing the value of the work the Development Team performs;</br>- Ensuring that the Product Backlog is visible, transparent, and clear to all, and shows what the Scrum Team will work on next; and,</br>- Ensuring the Development Team understands items in the Product Backlog to the level needed.", "questList":[';
+qList[8] += '{"enc": "Optimizing the value of the work the Development Team performs.", "rep": true},';
+qList[8] += '{"enc": "Ordering the items in the Product Backlog to best achieve goals and missions.", "rep": true},';
+qList[8] += '{"enc": "Presenting Product Backlog items to the Key Stakeholders.", "rep": false},';
+qList[8] += '{"enc": "Moving Product Backlog items into the Sprint Backlog.", "rep": false},';
+qList[8] += '{"enc": "Ensuring that the Product Backlog is visible, transparent, and clear to all, and shows what the Scrum Team will work on next.", "rep": true}';
+qList[8] += ']}';
+qList[9] = '{"typeChx": 1,"categ": 1,"hint": "Choose 2 answers.", "quest": "The Product Owner is not collaborating with the Development Team during the Sprint. What are two valuable actions for a Scrum Master to take?", "questList":[';
+qList[9] += '{"enc": "Bring up the problem in the Sprint Retrospective.", "rep": true},';
+qList[9] += '{"enc": "Coach the Product Owner in the values of Scrum and incremental delivery.", "rep": true},';
+qList[9] += '{"enc": "Inform the Product Owner’s functional manager.", "rep": false},';
+qList[9] += '{"enc": "Stop the Sprint, send the Product Owner to a course and restart.", "rep": false},';
+qList[9] += '{"enc": "Nominate a proxy Product Owner.", "rep": false}';
+qList[9] += ']}';
+qList[10] = '{"typeChx": 1,"categ": 1,"hint": "Choose 2 answers.", "quest": "Which two things are appropriate for a Scrum Master to do if the Development Team doesn&#39;t have the engineering tools and infrastructure to completely finish each selected Product Backlog item?", "questList":[';
+qList[10] += '{"enc": "Encourage the Product Owner to accept partially done Increments until the situation improves.", "rep": false},';
+qList[10] += '{"enc": "Coach the Development Team to improve its skills, tools and infrastructure over time and adjust the Definition of Done accordingly.", "rep": true},';
+qList[10] += '{"enc": "Refocus the current Sprint on establishing the Development Team&#39;s infrastructure instead of delivering an Increment.", "rep": false},';
+qList[10] += '{"enc": "Have the Development Team establish a Definition of Done that is actually possible to achieve given current circumstances.", "rep": true},';
+qList[10] += '{"enc": "Declare the Development Team not ready for Scrum.", "rep": false}';
+qList[10] += ']}';
+qList[11] = '{"typeChx": 0,"categ": 2,"hint": "Choose one answer.", "quest": "Who starts the Daily Scrum?", "questList":[';
+qList[11] += '{"enc": "Whoever the Development Team decides should start.", "rep": false},';
+qList[11] += '{"enc": "The person coming in last. This encourages people to be on time and helps to stay within the time-box.", "rep": true},';
+qList[11] += '{"enc": "The person who has the token.", "rep": false},';
+qList[11] += '{"enc": "The Scrum Master. This ensures that the Development Team has the meeting and stays within the time-box.", "rep": false},';
+qList[11] += '{"enc": "The person who last broke the build.", "rep": false}';
+qList[11] += ']}';
+qList[12] = '{"typeChx": 0,"categ": 3,"hint": "Choose one answer.", "quest": "The Product Owner must release each Increment to production.","tip": "Development Teams deliver an Increment of product functionality every Sprint. This Increment is useable, so a Product Owner may choose to immediately release it.", "questList":[';
+qList[12] += '{"enc": "Without exception.", "rep": false},';
+qList[12] += '{"enc": "When it makes sense.", "rep": true},';
+qList[12] += '{"enc": "To make sure the Development Team is done every Sprint.", "rep": false},';
+qList[12] += '{"enc": "Whenever the product is free of defects.", "rep": false}';
+qList[12] += ']}';
+qList[13] = '{"typeChx": 1,"categ": 0,"hint": "Choose 2 answers.", "quest": "What are two ways that architecture and infrastructure are handled in Scrum?", "questList":[';
+qList[13] += '{"enc": "They are implemented along with functional development of the product.", "rep": true},';
+qList[13] += '{"enc": "They are built by a separate team through the creation of an architectural runway.", "rep": false},';
+qList[13] += '{"enc": "They are added to the Product Backlog and addressed in early Sprints, while always requiring at least some business functionality, no matter how small.", "rep": true},';
+qList[13] += '{"enc": "They are discussed, determined, and documented before the actual feature development Sprints.", "rep": false}';
+qList[13] += ']}';
+qList[14] = '{"typeChx": 1,"categ": 3,"hint": "Choose 2 answers.", "quest": "A Development Team is required to deliver a done Increment by the end of a Sprint. Select two statements that explain what ‘done’ means.", "questList":[';
+qList[14] += '{"enc": "No work left from the definition of “Done”.", "rep": true},';
+qList[14] += '{"enc": "All work to create software that is ready to be released to end users.", "rep": true},';
+qList[14] += '{"enc": "Whatever the Product Owner defines as quality.", "rep": false},';
+qList[14] += '{"enc": "All work the Development Team is willing to do.", "rep": false},';
+qList[14] += '{"enc": "Ready for integration.", "rep": false}';
+qList[14] += ']}';
+qList[15] = '{"typeChx": 1,"categ": 0,"hint": "Choose 3 answers.", "quest": "What are three ways Scrum promotes self-organization?", "questList":[';
+qList[15] += '{"enc": "By preventing stakeholders from entering the development room.", "rep": false},';
+qList[15] += '{"enc": "By not allowing documentation.", "rep": false},';
+qList[15] += '{"enc": "By removing titles for Development Team members.", "rep": true},';
+qList[15] += '{"enc": "By being a lightweight framework.", "rep": true},';
+qList[15] += '{"enc": "By the Development Team deciding what work to do in a Sprint.", "rep": true}';
+qList[15] += ']}';
+qList[16] = '{"typeChx": 1,"categ": 0,"hint": "Choose 3 answers.", "quest": "What are three benefits of self-organization?", "questList":[';
+qList[16] += '{"enc": "Increased self-accountability.", "rep": true},';
+qList[16] += '{"enc": "Increased creativity.", "rep": true},';
+qList[16] += '{"enc": "Increased commitment.", "rep": true},';
+qList[16] += '{"enc": "Increased accuracy of estimates.", "rep": false},';
+qList[16] += '{"enc": "Increased rule compliance.", "rep": false}';
+qList[16] += ']}';
+qList[17] = '{"typeChx": 0,"categ": 3,"hint": "Choose one answer.", "quest": "When many Scrum Teams are working on the same product, should all of their increments be integrated every Sprint?", "questList":[';
+qList[17] += '{"enc": "No, that is far too hard and must be done in a hardening Sprint.", "rep": false},';
+qList[17] += '{"enc": "No, each Scrum Team stands alone.", "rep": false},';
+qList[17] += '{"enc": "Economic Value Added.", "rep": false},';
+qList[17] += '{"enc": "Yes, otherwise the Product Owners (and stakeholders) may not be able to accurately inspect what is done.", "rep": true}';
+qList[17] += ']}';
+qList[18] = '{"typeChx": 0,"categ": 2,"hint": "Choose one answer.", "quest": "What is the accountability of the Product Owner during Sprint 0?", "questList":[';
+qList[18] += '{"enc": "There is no such thing as Sprint 0.", "rep": true},';
+qList[18] += '{"enc": "Determine the composition of the Development Teams so they have the capacity to deliver the completed forecast.", "rep": false},';
+qList[18] += '{"enc": "Make the complete project plan to commit date, budget and scope to the stakeholders.", "rep": false},';
+qList[18] += '{"enc": "Make sure enough Product Backlog items are refined to fill the first 3 Sprints.", "rep": false},';
+qList[18] += '{"enc": "Gathering, eliciting, and analyzing the requirements that will be inserted into the Product Backlog.", "rep": false}';
+qList[18] += ']}';
+qList[19] = '{"typeChx": 0,"categ": 0,"hint": "Choose one answer", "quest": "In accordance with Scrum theory, how should a group of 100 people be divided into multiple Development Teams? ", "questList":[';
+qList[19] += '{"enc": "Create a matrix of skills, seniority, and level of experience to assign people to teams.", "rep": false},';
+qList[19] += '{"enc": "It doesn’t really matter because you can rotate the teams every Sprint to spread knowledge.", "rep": false},';
+qList[19] += '{"enc": "Check with the allocation department to see who has worked together before and make these the first teams.", "rep": false},';
+qList[19] += '{"enc": "Understanding the product, the product vision and the rules of the Scrum framework, the group divides itself into teams.", "rep": true}';
+qList[19] += ']}';
+qList[20] = '{"typeChx": 1,"categ": 3,"hint": "Choose 2 answers.", "quest": "At the end of a Sprint a Product Backlog item worked on during the Sprint does not meet the definition of ‘done’. What two things should happen with the undone Product Backlog item?", "questList":[';
+qList[20] += '{"enc": "Put it on the Product Backlog for the Product Owner to decide what to do with it.", "rep": true},';
+qList[20] += '{"enc": "Review the item, add the ‘done’ part of the estimate to the velocity and create a Story for the remaining work.", "rep": false},';
+qList[20] += '{"enc": "If the stakeholders agree, the Product Owner can accept it and release it to the users.", "rep": false},';
+qList[20] += '{"enc": "Do not include the item in the Increment this Sprint.", "rep": true}';
+qList[20] += ']}';
+qList[21] = '{"typeChx": 1,"categ": 2,"hint": "Choose 2 answers.", "quest": "One of the Scrum events is the Daily Scrum. What are two intended outcomes of the Daily Scrum? ", "questList":[';
+qList[21] += '{"enc": "An update of completed tasks and of the remaining work so the Scrum Master can plan the next day.", "rep": false},';
+qList[21] += '{"enc": "An updated Scrum board to make Sprint progress transparent for the stakeholders.", "rep": true},';
+qList[21] += '{"enc": "A shared understanding of the most important work to be undertaken next to achieve the best possible progress toward the Sprint goal.", "rep": false},';
+qList[21] += '{"enc": "A status report for the upper management indicating what each individual has done, will be doing, and what is impeding him/her.", "rep": false},';
+qList[21] += '{"enc": "New impediments for the Scrum Master to take care of.", "rep": true}';
+qList[21] += ']}';
+qList[22] = '{"typeChx": 0,"categ": 2,"hint": "Choose one answer.", "quest": "Which of the following might the Scrum Team discuss during a Sprint Retrospective?", "questList":[';
+qList[22] += '{"enc": "The way the Scrum Team does Sprint Planning.", "rep": false},';
+qList[22] += '{"enc": "Its Definition of ‘done’.", "rep": false},';
+qList[22] += '{"enc": "Skills needed to improve the Development Team&#39;s ability to deliver. ", "rep": false},';
+qList[22] += '{"enc": "Methods of communication.", "rep": false},';
+qList[22] += '{"enc": "All of the above.", "rep": true}';
+qList[22] += ']}';
+qList[23] = '{"typeChx": 1,"categ": 1,"hint": "Choose 3 answers.", "quest": "What are the three most applicable characteristics of the Product Owner?","tip": "- Product Value Maximizer</br>- Lead Facilitator of Key Stakeholder Involvement</br>- Product Marketplace Expert", "questList":[';
+qList[23] += '{"enc": "Product Value Maximizer.", "rep": true},';
+qList[23] += '{"enc": "Lead Facilitator of Key Stakeholder Involvement .", "rep": true},';
+qList[23] += '{"enc": "Facilitator of Scrum events.", "rep": false},';
+qList[23] += '{"enc": "Lead Scrum evangelist in the Organization.", "rep": false},';
+qList[23] += '{"enc": "Product Marketplace Expert.", "rep": true}';
+qList[23] += ']}';
+qList[24] = '{"typeChx": 1,"categ": 1,"hint": "Choose 2 answers.", "quest": "What is a Development Team responsible for?", "questList":[';
+qList[24] += '{"enc": "Selecting the Product Owner.", "rep": false},';
+qList[24] += '{"enc": "Reporting productivity.", "rep": false},';
+qList[24] += '{"enc": "Organizing the work required to meet the Sprint Goal.", "rep": true},';
+qList[24] += '{"enc": "Resolving internal team conflicts.", "rep": true}';
+qList[24] += ']}';
+qList[25] = '{"typeChx": 0,"categ": 0,"hint": "Choose one answer.", "quest": "If an inspector determines that one or more aspects of a process deviate outside acceptable limits when an adjustment must be made?","tip": "If an inspector determines that one or more aspects of a process deviate outside acceptable limits, and that the resulting product will be unacceptable, the process or the material being processed must be adjusted. An adjustment must be made as soon as possible to minimize further deviation.", "questList":[';
+qList[25] += '{"enc": "After clarifying all the details with the Product Owner.", "rep": false},';
+qList[25] += '{"enc": "As soon as possible to minimize further deviation.", "rep": true},';
+qList[25] += '{"enc": "After Scrum Master approval.", "rep": false},';
+qList[25] += '{"enc": "The deviations should be discussed at the Daily Scrum and then an adjustment must be made.", "rep": false}';
+qList[25] += ']}';
+qList[26] = '{"typeChx": 1,"categ": 1,"hint": "Choose 3 answers.", "quest": "You are the Scrum Master on a newly formed Scrum Team. Which three of the following activities would probably help the team in starting up?", "questList":[';
+qList[26] += '{"enc": "Ensure the Scrum Team members have compatible personalities.", "rep": false},';
+qList[26] += '{"enc": "Have the Scrum Team members introduce themselves to each other and give a brief background of their skills and work history.", "rep": true},';
+qList[26] += '{"enc": "Have the development managers for each Development Team member introduce their direct reports and go over their responsibilities on the Scrum Team.", "rep": false},';
+qList[26] += '{"enc": "Introduce a bonus system for the top performers in the team.", "rep": false},';
+qList[26] += '{"enc": "Ask the Product Owner to discuss the product or project, its history, goals, and context, as well as answer questions.", "rep": true},';
+qList[26] += '{"enc": "Ensure the team understands they need a definition of ‘done’.", "rep": true}';
+qList[26] += ']}';
+qList[27] = '{"typeChx": 0,"categ": 2,"hint": "Choose one answer.", "quest": "What activities would a Product Owner typically undertake in the phase between the end of the current Sprint and the start of the next Sprint?", "questList":[';
+qList[27] += '{"enc": "Update the project plan with stakeholders.", "rep": false},';
+qList[27] += '{"enc": "Work with the QA departments on the Increment of the current Sprint.", "rep": false},';
+qList[27] += '{"enc": "There are no such activities. The next Sprint starts immediately after the current Sprint.", "rep": true},';
+qList[27] += '{"enc": "Refine the Product Backlog.", "rep": false}';
+qList[27] += ']}';
+qList[28] = '{"typeChx": 2,"categ": 2,"hint": "Sort elements", "quest": "Please, select a time-box for each Scrum event.","tip": "- Sprint Planning is time-boxed to a maximum of eight hours for a one-month Sprint. For shorter Sprints, the event is usually shorter.</br>- The Daily Scrum is a 15-minute time-boxed event for the Development Team to synchronize activities and create a plan for the next 24 hours.</br>- Sprint Review is a four-hour time-boxed meeting for one-month Sprints. For shorter Sprints, the event is usually shorter.</br>- Sprint Retrospective is a three-hour time-boxed meeting for one-month Sprints. For shorter Sprints, the event is usually shorter.", "questList":[';
+qList[28] += '{"enc": "Daily Scrum", "rep": "15 minutes"},';
+qList[28] += '{"enc": "Sprint Review", "rep": "4 hours or less"},';
+qList[28] += '{"enc": "Sprint Planning", "rep": "8 hours or less"},';
+qList[28] += '{"enc": "Sprint Retrospective", "rep": "3 hours or less"}';
+qList[28] += ']}';
+qList[29] = '{"typeChx": 2,"categ": 2,"hint": "Sort elements", "quest": "Sort Scrum events in the right order.","tip": "A sprint begins with Sprint Planning, then there are several Daily Scrum meetings following by Sprint Review and then Sprint Retrospective.", "questList":[';
+qList[29] += '{"enc": "1 - ", "rep": "Sprint Planning"},';
+qList[29] += '{"enc": "2 - ", "rep": "Daily Scrum"},';
+qList[29] += '{"enc": "3 - ", "rep": "Sprint Review"},';
+qList[29] += '{"enc": "4 - ", "rep": "Sprint Retrospective"}';
+qList[29] += ']}';
+qList[30] = '{"typeChx": 3,"categ": 0,"hint": "Select correct answer", "quest": "Typically calculated in story points, this is the rate at which the team converts ‘Done’ items in a single Sprints.", "questList":[';
+qList[30] += '{"enc": "Answer : ", "rep": "Velocity"},';
+qList[30] += '{"enc": "2 - ", "rep": "Burndown rate"},';
+qList[30] += '{"enc": "3 - ", "rep": "Burn-up rate"},';
+qList[30] += '{"enc": "4 - ", "rep": "Capacity"}';
+qList[30] += ']}';
+qList[31] = '{"typeChx": 2,"categ": 1,"hint": "Match elements", "quest": "Match the following activity and owner.","tip": "The development team provides estimate</br>The Crum Master removes impediments</br>The Product Owner priorizes the backlog</br>Management supports the Product Owner and Scrum Master", "questList":[';
+qList[31] += '{"enc": "Provides estimates", "rep": "Development Team"},';
+qList[31] += '{"enc": "Removes impediments", "rep": "Scrum Master"},';
+qList[31] += '{"enc": "Priorizes Backlog", "rep": "Product Owner"},';
+qList[31] += '{"enc": "Supports Scrum Master and Product Owner", "rep": "Management"}';
+qList[31] += ']}';
+
+qList[32] = '{"typeChx": 0,"categ": 2,"hint": "Choose one answer.", "quest": "What does it mean to say that an event has a time-box?","tip": "All events are time-boxed events, such that every event has a maximum duration. Once a Sprint begins, its duration is fixed and cannot be shortened or lengthened.", "questList":[';
+qList[32] += '{"enc": "The event can take no more than a maximum amount of time.", "rep": true},';
+qList[32] += '{"enc": "The event must happen at a set time.", "rep": false},';
+qList[32] += '{"enc": "The event must take at least a minimum amount of time.", "rep": false},';
+qList[32] += '{"enc": "The event must happen by a given time.", "rep": false}';
+qList[32] += ']}';
+qList[33] = '{"typeChx": 1,"categ": 1,"hint": "Choose all applicable variants.", "quest": "Which of the below are roles on a Scrum Team?","tip": "The Scrum Team consists of a Product Owner, the Development Team, and a Scrum Master.", "questList":[';
+qList[33] += '{"enc": "Scrum Master", "rep": true},';
+qList[33] += '{"enc": "Customers", "rep": false},';
+qList[33] += '{"enc": "Users", "rep": false},';
+qList[33] += '{"enc": "Product Owner", "rep": true},';
+qList[33] += '{"enc": "Development Team", "rep": true},';
+qList[33] += '{"enc": "Stakeholders", "rep": false}';
+qList[33] += ']}';
+qList[34] = '{"typeChx": 0,"categ": 0,"hint": "Choose one answer.", "quest": "An organization has decided to adopt Scrum, but management wants to change the terminology to fit with terminology already used. What will likely happen if this is done?", "questList":[';
+qList[34] += '{"enc": "Without a new vocabulary as a reminder of the change, very little change may actually happen.", "rep": false},';
+qList[34] += '{"enc": "The organization may not understand what has changed with Scrum and the benefits of Scrum may be lost.", "rep": false},';
+qList[34] += '{"enc": "Management may feel less anxious.", "rep": false},';
+qList[34] += '{"enc": "All answers apply.", "rep": true}';
+qList[34] += ']}';
+qList[35] = '{"typeChx": 0,"categ": 3,"hint": "", "quest": "It is mandatory that the product increment be released to production at the end of each Sprint.","tip": "The product increment should be usable and releasable at the end of every Sprint, but it does not have to be released.", "questList":[';
+qList[35] += '{"enc": "False", "rep": true},';
+qList[35] += '{"enc": "True", "rep": false}';
+qList[35] += ']}';
+qList[36] = '{"typeChx": 0,"categ": 1,"hint": "Choose one answer.", "quest": "When do Development Team members become the exclusive owner of a Sprint Backlog item?","tip": "Sprint Backlog and all of its items are collectively owned by the Development Team. No individual team member can claim ownership over an item as this would block communication and collaboration.", "questList":[';
+qList[36] += '{"enc": "Whenever a team member can accommodate more work.", "rep": false},';
+qList[36] += '{"enc": "Never. All Sprint Backlog Items are ‘owned’ by the entire Development Team, even though each one may be done by an individual development team member.", "rep": true},';
+qList[36] += '{"enc": "At the Sprint planning meeting.", "rep": false},';
+qList[36] += '{"enc": "During the Daily Scrum.", "rep": false}';
+qList[36] += ']}';
+qList[37] = '{"typeChx": 1,"categ": 1,"hint": "Choose 2 answers.", "quest": "Which two (2) things does the Development Team do during the first Sprint?","tip": "The heart of Scrum is a Sprint, a time-box of one month or less during which a ‘Done’, useable, and potentially releasable product Increment is created. This applies to every Sprint.", "questList":[';
+qList[37] += '{"enc": "Create the complete Product Backlog to be developed in subsequent Sprints.", "rep": false},';
+qList[37] += '{"enc": "Deliver an increment of releasable software.", "rep": true},';
+qList[37] += '{"enc": "Develop a plan for the rest of the release.", "rep": false},';
+qList[37] += '{"enc": "Determine the complete architecture and infrastructure for the product.", "rep": false},';
+qList[37] += '{"enc": "Develop and deliver at least one piece of functionality.", "rep": true}';
+qList[37] += ']}';
+qList[38] = '{"typeChx": 0,"categ": 2,"hint": "Choose one answer.", "quest": "When does the next Sprint begin?","tip": "A new Sprint starts immediately after the conclusion of the previous Sprint.", "questList":[';
+qList[38] += '{"enc": "Next Monday.", "rep": false},';
+qList[38] += '{"enc": "Immediately following the next Sprint Planning.", "rep": false},';
+qList[38] += '{"enc": "When the Product Owner is ready.", "rep": false},';
+qList[38] += '{"enc": "Immediately after the conclusion of the previous Sprint.", "rep": true}';
+qList[38] += ']}';
+qList[39] = '{"typeChx": 0,"categ": 2,"hint": "Choose one answer.", "quest": "The length of a Sprint should be:","tip": "All of these choices are appropriate considerations in determining the length of a Sprint.", "questList":[';
+qList[39] += '{"enc": "Short enough to keep the business risk acceptable to the Product Owner.", "rep": false},';
+qList[39] += '{"enc": "Short enough to be able to synchronize the development work with other business events.", "rep": false},';
+qList[39] += '{"enc": "No more than one month.", "rep": false},';
+qList[39] += '{"enc": "All of these answers are correct.", "rep": true}';
+qList[39] += ']}';
+qList[40] = '{"typeChx": 0,"categ": 3,"hint": "Choose one answer.", "quest": "When many Development Teams are working on a single product, what best describes the definition of ‘done’?","tip": "Scrum requires an Increment to be releasable. This is an Increment of product. Many teams working on a single product are expected to deliver such an Increment.", "questList":[';
+qList[40] += '{"enc": "Each Development Team defines and uses its own. The differences are discussed and reconciled during a hardening Sprint.", "rep": false},';
+qList[40] += '{"enc": "Each Development Team uses its own but must make their definition clear to all other Teams so the differences are known.", "rep": false},';
+qList[40] += '{"enc": "All Development Teams must have a definition of ‘done’ that makes their combined work potentially releasable.", "rep": true},';
+qList[40] += '{"enc": "It depends.", "rep": false}';
+qList[40] += ']}';
+qList[41] = '{"typeChx": 0,"categ": 3,"hint": "Choose one answer.", "quest": "During a Sprint, a Development Team determines that it will not be able to finish the complete forecast. Who should be present to review and adjust the Sprint work selected?","tip": "During the Sprint, scope may be clarified and re-negotiated between the Product Owner and Development Team as more is learned.", "questList":[';
+qList[41] += '{"enc": "The Scrum Master, the project manager and the Development Team.", "rep": false},';
+qList[41] += '{"enc": "The Product Owner and the Development Team.", "rep": true},';
+qList[41] += '{"enc": "The Product Owner and all stakeholders.", "rep": false},';
+qList[41] += '{"enc": "The Development Team.", "rep": false}';
+qList[41] += ']}';
+qList[42] = '{"typeChx": 1,"categ": 0,"hint": "Choose all applicable variants.", "quest": "The benefits of code refactoring include:", "questList":[';
+qList[42] += '{"enc": "Easier code maintenance.", "rep": true},';
+qList[42] += '{"enc": "Faster code execution.", "rep": false},';
+qList[42] += '{"enc": "Increased code readability.", "rep": true},';
+qList[42] += '{"enc": "Reduced code complexity.", "rep": true}';
+qList[42] += ']}';
+qList[43] = '{"typeChx": 0,"categ": 1,"hint": "", "quest": "In certain circumstances the Development Team can order the items in the Product Backlog.", "questList":[';
+qList[43] += '{"enc": "False", "rep": false},';
+qList[43] += '{"enc": "True", "rep": true}';
+qList[43] += ']}';
+qList[42] = '{"typeChx": 0,"categ": 0,"hint": "Choose one answer.", "quest": "If after extensive discussion the Scrum Team cannot agree on the length of the Sprint, who has the authority to make the final decision?","tip": "Who is it that gets to select a team’s sprint length? Of course, the answer is the whole team – that collective of Scrum Master plus Product Owner plus team members such as programmers, testers, designers, DBAs, analysts and so on. But what if that broad set of individuals cannot agree? Do they argue endlessly, perhaps sticking with their waterfall or ad hoc process until consensus finally emerges? No. The Scrum Master is ultimately the one who gets to choose a team’s sprint length.", "questList":[';
+qList[42] += '{"enc": "The Scrum Master.", "rep": true},';
+qList[42] += '{"enc": "The Product Owner.", "rep": false},';
+qList[42] += '{"enc": "The Development Team.", "rep": false},';
+qList[42] += '{"enc": "The CEO.", "rep": false}';
+qList[42] += ']}';
+qList[43] = '{"typeChx": 0,"categ": 0,"hint": "Choose one answer.", "quest": "What is technical debt?","tip": "Technical debt: A term used to describe the obligation that a software organization incurs when it chooses a design or construction approach that is expedient in the short term but that increases complexity and is more costly in the long term.", "questList":[';
+qList[43] += '{"enc": "The obligation incurred due to previously made technical decisions.", "rep": true},';
+qList[43] += '{"enc": "The measure of the progress delay visualized on the product burndown chart.", "rep": false},';
+qList[43] += '{"enc": "The average monetary cost of a single Sprint.", "rep": false}';
+qList[43] += ']}';
+qList[44] = '{"typeChx": 1,"categ": 0,"hint": "Choose all applicable variants.", "quest": "What does a Sprint burndown chart show?","tip": "A sprint burndown chart shows only one thing: How much work remains.", "questList":[';
+qList[44] += '{"enc": "The amount of items remaining in the Product Backlog.", "rep": false},';
+qList[44] += '{"enc": "The order of the Product Backlog.", "rep": false},';
+qList[44] += '{"enc": "The amount of work remaining on the Sprint Backlog.", "rep": true}';
+qList[44] += ']}';
+qList[45] = '{"typeChx": 1,"categ": 2,"hint": "Choose all applicable variants.", "quest": "What is the designated purpose of the Daily Scrum?","tip": "The Daily Scrum is a 15-minute time-boxed event for the Development Team to synchronize activities and create a plan for the next 24 hours.", "questList":[';
+qList[45] += '{"enc": "To synchronize activities of the Development Team.", "rep": true},';
+qList[45] += '{"enc": "To inspect how the last Sprint went with regards to people, relationships, process, and tools.", "rep": false},';
+qList[45] += '{"enc": "To forecast the functionality that will be developed during the Sprint.", "rep": false},';
+qList[45] += '{"enc": "To create a plan for the next 24 hours.", "rep": true}';
+qList[45] += ']}';
+qList[46] = '{"typeChx": 1,"categ": 2,"hint": "Choose all applicable variants.", "quest": "Which events provide a formal opportunity for inspection and adaptation?","tip": "Other than the Sprint itself, which is a container for all other events, each event in Scrum is a formal opportunity to inspect and adapt something.</br>Scrum prescribes four formal events for inspection and adaptation, as described in the Scrum Events section of this document: Sprint Planning, Daily Scrum, Sprint Review, Sprint Retrospective.", "questList":[';
+qList[46] += '{"enc": "The Sprint.", "rep": false},';
+qList[46] += '{"enc": "The Daily Scrum.", "rep": true},';
+qList[46] += '{"enc": "Sprint Review.", "rep": true},';
+qList[46] += '{"enc": "Sprint Planning.", "rep": true},';
+qList[46] += '{"enc": "Sprint Retrospective.", "rep": true}';
+qList[46] += ']}';
+qList[47] = '{"typeChx": 1,"categ": 1,"hint": "Choose 2 answers.", "quest": "What is the Scrum Master responsible for?","tip": "The Scrum Master is responsible for ensuring Scrum is understood and enacted. Scrum Masters do this by ensuring that the Scrum Team adheres to Scrum theory, practices, and rules.</br>Ensuring the Development Team understands items in the Product Backlog to the level needed is the responsibility of the Product Owner.", "questList":[';
+qList[47] += '{"enc": "Ensuring Scrum is understood and enacted.", "rep": true},';
+qList[47] += '{"enc": "Ensuring the Scrum Team adheres to Scrum theory, practices, and rules.", "rep": true},';
+qList[47] += '{"enc": "Ensuring the Development Team understands items in the Product Backlog to the level needed.", "rep": false},';
+qList[47] += '{"enc": "Ensuring the Product Backlog is visible, transparent, and clear to all.", "rep": false}';
+qList[47] += ']}';
+qList[48] = '{"typeChx": 1,"categ": 1,"hint": "Choose all applicable variants.", "quest": "In what ways does the Product Owner manage the value of the product?","tip": "The Product Owner manage the value of the product by ordering the backlog and gathering feedback from customer’s after releases.", "questList":[';
+qList[48] += '{"enc": "User accdeptence testing.", "rep": false},';
+qList[48] += '{"enc": "MoSCow Analysis.", "rep": false},';
+qList[48] += '{"enc": "Customer feetback via frequent releases.", "rep": true},';
+qList[48] += '{"enc": "Product backlog order.", "rep": true}';
+qList[48] += ']}';
+qList[49] = '{"typeChx": 1,"categ": 1,"hint": "Choose all applicable variants.", "quest": "The Scrum Master does the following regarding the Daily Scrum.","tip": "The Scrum Master:</br>- Ensures that the Development Team has the meeting, but the Development Team is responsible for conducting the Daily Scrum.</br>- Teaches the Development Team to keep the Daily Scrum within the 15-minute time-box.</br>- Enforces the rule that only Development Team members participate in the Daily Scrum.", "questList":[';
+qList[49] += '{"enc": "Ensures that the Development Team has the meeting.", "rep": true},';
+qList[49] += '{"enc": "Is responsible for conducting the Daily Scrum.", "rep": false},';
+qList[49] += '{"enc": "Teaches the Development Team to keep the Daily Scrum within the 15-minute time-box.", "rep": true},';
+qList[49] += '{"enc": "Enforces the rule that only Development Team members participate in the Daily Scrum.", "rep": true}';
+qList[49] += ']}';
+qList[50] = '{"typeChx": 0,"categ": 1,"hint": "Choose one answer.", "quest": "The CEO asks the Development Team to add a ‘very important’ item to a Sprint that is in progress. What should the Development Team do?","tip": "The items selected for a Sprint have been selected as most valuable with the Product Owner. The items serve the Sprint’s goal. No changes should be made that endanger the Sprint Goal. No one external to the Scrum Team can force changes on the Development Team (Sprint Backlog) and the Product Owner (Product Backlog).", "questList":[';
+qList[50] += '{"enc": "Add the item to the current Sprint without any adjustments.", "rep": false},';
+qList[50] += '{"enc": "Add the item to the current Sprint and drop an item of equal size.", "rep": false},';
+qList[50] += '{"enc": "Add the item to the next Sprint.", "rep": false},';
+qList[50] += '{"enc": "Inform the Product Owner so he/she can work with the CEO.", "rep": true}';
+qList[50] += ']}';
+qList[51] = '{"typeChx": 1,"categ": 1,"hint": "Choose 2 answers.", "quest": "What are the two primary ways a Scrum Master keeps a Development Team working at its highest level of productivity?","tip": "A Scrum Master is a servant-leader for the Development Team. Facilitation and removing impediments serves a team in achieving the best productivity possible.", "questList":[';
+qList[51] += '{"enc": "By facilitating Development Team decisions.", "rep": true},';
+qList[51] += '{"enc": "By removing impediments that hinder the Development Team.", "rep": true},';
+qList[51] += '{"enc": "By starting and ending the meetings at the proper time.", "rep": false},';
+qList[51] += '{"enc": "By keeping high value features high in the Product Backlog.", "rep": false}';
+qList[51] += ']}';
+qList[52] = '{"typeChx": 0,"categ": 2,"hint": "Choose one answer.", "quest": "Who is required to attend the Daily Scrum?","tip": "Only the people doing the work described on the Sprint Backlog need to inspect and adapt at the Daily Scrum. If the Scrum Master or Product Owner is also on the Development Team, they will need to be at the Daily Scrum. Otherwise, the Scrum Master simply has to make sure the Development Team knows how to conduct a Daily Scrum and does so.", "questList":[';
+qList[52] += '{"enc": "The Development Team.", "rep": true},';
+qList[52] += '{"enc": "The Scrum Team.", "rep": false},';
+qList[52] += '{"enc": "The Development Team and Scrum Master.", "rep": false},';
+qList[52] += '{"enc": "The Development Team and Product Owner.", "rep": false},';
+qList[52] += '{"enc": "The Scrum Master and Product Owner.", "rep": false}';
+qList[52] += ']}';
+qList[53] = '{"typeChx": 0,"categ": 2,"hint": "Choose one answer.", "quest": "Why is the Daily Scrum held at the same time and same place?","tip": "The Daily Scrum is held at the same time and place each day to reduce complexity.", "questList":[';
+qList[53] += '{"enc": "The place can be named.", "rep": false},';
+qList[53] += '{"enc": "The consistency reduces complexity.", "rep": true},';
+qList[53] += '{"enc": "The Product Owner demands it.", "rep": false},';
+qList[53] += '{"enc": "Rooms are hard to book and this lets it be booked in advance.", "rep": false}';
+qList[53] += ']}';
+qList[54] = '{"typeChx": 0,"categ": 2,"hint": "Choose one answer.", "quest": "Does Sprint Review result in a revised Product Backlog?","tip": "The result of the Sprint Review is a revised Product Backlog that defines the probable Product Backlog items for the next Sprint.", "questList":[';
+qList[54] += '{"enc": "True", "rep": true},';
+qList[54] += '{"enc": "False", "rep": false}';
+qList[54] += ']}';
+qList[55] = '{"typeChx": 0,"categ": 1,"hint": "Choose one answer.", "quest": "The Development Team should have all the skills needed to:","tip": "The Development Team consists of professionals who do the work of delivering a potentially releasable Increment of “Done” product at the end of each Sprint. Development Teams are cross-functional, with all of the skills as a team necessary to create a product Increment.", "questList":[';
+qList[55] += '{"enc": "Complete the project as estimated when the date and cost are committed to the Product Owner.", "rep": false},';
+qList[55] += '{"enc": "Do all of the development work, except for specialized testing that requires additional tools and environments.", "rep": false},';
+qList[55] += '{"enc": "Turn the Product Backlog items it selects into an increment of potentially releasable product functionality.", "rep": true}';
+qList[55] += ']}';
+qList[56] = '{"typeChx": 0,"categ": 0,"hint": "Choose one answer.", "quest": "What is the role of Management in Scrum?","tip": "Management has no active role in the actual product development through Scrum. However, management external to the Scrum team is incredibly important in setting the vision and strategy to guide the overall direction of the organization.", "questList":[';
+qList[56] += '{"enc": "Continually monitor staffing levels of the Development Team.", "rep": false},';
+qList[56] += '{"enc": "Monitor the Development Team’s productivity.", "rep": false},';
+qList[56] += '{"enc": "Support the Product Owner with insights and information into high value product and system capabilities. Support the Scrum Master to cause organizational change that fosters empiricism, self-organization, bottom-up intelligence, and intelligent release of software.", "rep": true},';
+qList[56] += '{"enc": "Identify and remove people that aren’t working hard enough.", "rep": false}';
+qList[56] += ']}';
+qList[57] = '{"typeChx": 0,"categ": 0,"hint": "Choose one answer.", "quest": "Upon what type of process control is Scrum based?","tip": "Scrum is founded on empirical process control theory, or empiricism. Empiricism asserts that knowledge comes from experience and making decisions based on what is known.", "questList":[';
+qList[57] += '{"enc": "Empirical", "rep": true},';
+qList[57] += '{"enc": "Hybrid", "rep": false},';
+qList[57] += '{"enc": "Defined", "rep": false},';
+qList[57] += '{"enc": "Complex", "rep": false}';
+qList[57] += ']}';
+qList[58] = '{"typeChx": 0,"categ": 2,"hint": "Choose one answer.", "quest": "During the Daily Scrum, the Scrum Master’s role is to:","tip": "The Scrum Master ensures that the Development Team has the meeting, but the Development Team is responsible for conducting the Daily Scrum. The Scrum Master teaches the Development Team to keep the Daily Scrum within the 15-minute time-box. The Scrum Master enforces the rule that only Development Team members participate in the Daily Scrum.", "questList":[';
+qList[58] += '{"enc": "Lead the discussions of the Development Team.", "rep": false},';
+qList[58] += '{"enc": "Make sure that all 3 questions have been answered.", "rep": false},';
+qList[58] += '{"enc": "Manage the meeting in a way that each team member has a chance to speak.", "rep": false},';
+qList[58] += '{"enc": "Teach the Development Team to keep the Daily Scrum within the 15 minute time-box.", "rep": true},';
+qList[58] += '{"enc": "All answers apply.", "rep": false}';
+qList[58] += ']}';
+qList[59] = '{"typeChx": 0,"categ": 2,"hint": "Choose one answer.", "quest": "The time-box for a Daily Scrum is?","tip": "The length of a daily Scrum is fixed at 15 minutes, it does not change with the length of a Sprint.", "questList":[';
+qList[59] += '{"enc": "The same time of day every day.", "rep": false},';
+qList[59] += '{"enc": "Two minutes per person.", "rep": false},';
+qList[59] += '{"enc": "4 hours.", "rep": false},';
+qList[59] += '{"enc": "15 minutes.", "rep": true},';
+qList[59] += '{"enc": "15 minutes for a 4 week sprint. For shorter Sprints it is usually shorter.", "rep": false}';
+qList[59] += ']}';
+qList[60] = '{"typeChx": 0,"categ": 2,"hint": "Choose one answer.", "quest": "The time-box for the Sprint Planning meeting is?","tip": "Sprint Planning is time-boxed to a maximum of eight hours for a one-month Sprint. For shorter Sprints, the event is usually shorter.", "questList":[';
+qList[60] += '{"enc": "4 hours.", "rep": false},';
+qList[60] += '{"enc": "8 hours for a monthly Sprint. For shorter Sprints it is usually shorter.", "rep": true},';
+qList[60] += '{"enc": "Whenever it is done.", "rep": false},';
+qList[60] += '{"enc": "Monthly.", "rep": false}';
+qList[60] += ']}';
+qList[61] = '{"typeChx": 0,"categ": 2,"hint": "Choose one answer.", "quest": "Which statement best describes the Sprint Review?","tip": "Every event in Scrum, besides the Sprint which is a container for the other events, is an opportunity to Inspect AND Adapt.", "questList":[';
+qList[61] += '{"enc": "It is a mechanism to control the Development Team’s activities during a Sprint.", "rep": false},';
+qList[61] += '{"enc": "It is when the Scrum Team and stakeholders inspect the outcome of a Sprint and figure out what to do next.", "rep": true},';
+qList[61] += '{"enc": "It is a demo at the end of the Sprint for everyone in the organization to check on the work done.", "rep": false}';
+qList[61] += ']}';
+qList[62] = '{"typeChx": 0,"categ": 3,"hint": "", "quest": "When multiple teams work together on the same product, each team should maintain a separate Product Backlog.","tip": "Products have one Product Backlog, regardless of how many teams are used. Any other setup makes it difficult for the Development Team to determine what it should work on.", "questList":[';
+qList[62] += '{"enc": "False", "rep": true},';
+qList[62] += '{"enc": "True", "rep": false}';
+qList[62] += ']}';
+qList[63] = '{"typeChx": 0,"categ": 1,"hint": "Choose one answer.", "quest": "The Development Team should not be interrupted during the Sprint. The Sprint Goal should remain intact. These are conditions that foster creativity, quality and productivity. Based on this, which of the following is FALSE?","tip": "The Sprint Backlog makes visible all of the work that the Development Team identifies as necessary to meet the Sprint Goal. The Development Team modifies the Sprint Backlog throughout the Sprint, and the Sprint Backlog emerges during the Sprint.", "questList":[';
+qList[63] += '{"enc": "The Product Owner can help clarify or optimize the Sprint when asked by the Development Team.", "rep": false},';
+qList[63] += '{"enc": "The Sprint Backlog is fully formulated in the Sprint Planning meeting and does not change during the Sprint.", "rep": true},';
+qList[63] += '{"enc": "As a decomposition of the selected Product Backlog Items, the Sprint Backlog changes and may grow as the work emerges.", "rep": false},';
+qList[63] += '{"enc": "The Development Team may work with the Product Owner to remove or add work if it finds it has more or less capacity than it expected.", "rep": false}';
+qList[63] += ']}';
+qList[64] = '{"typeChx": 0,"categ": 1,"hint": "Choose one answer.", "quest": "What is the recommended size for a Development Team (within the Scrum Team)?","tip": "Optimal Development Team size is small enough to remain nimble and large enough to complete significant work. Fewer than three Development Team members decreases interaction and results in smaller productivity gains. More than nine members simply requires too much coordination.", "questList":[';
+qList[64] += '{"enc": "Minimal 7", "rep": false},';
+qList[64] += '{"enc": "3 to 9", "rep": true},';
+qList[64] += '{"enc": "7 plus or minus 2", "rep": false},';
+qList[64] += '{"enc": "9", "rep": false}';
+qList[64] += ']}';
+qList[65] = '{"typeChx": 0,"categ": 0,"hint": "Choose one answer.", "quest": "Which statement best describes Scrum?","tip": "Scrum is not a process or a technique for building products; rather, it is a framework within which you can employ various processes and techniques.", "questList":[';
+qList[65] += '{"enc": "A complete methodology that defines how to develop software.", "rep": false},';
+qList[65] += '{"enc": "A cookbook that defines best practices for software development.", "rep": false},';
+qList[65] += '{"enc": "A framework within which complex products in complex environments are developed.", "rep": true},';
+qList[65] += '{"enc": "A defined and predictive process that conforms to the principles of Scientific Management.", "rep": false}';
+qList[65] += ']}';
+qList[66] = '{"typeChx": 0,"categ": 1,"hint": "Choose one answer.", "quest": "Which statement best describes a Product Owner’s responsibility?","tip": "The Product Owner is responsible for maximizing the value of the product and the work of the Development Team.", "questList":[';
+qList[66] += '{"enc": "Optimizing the value of the work the Development Team does.", "rep": true},';
+qList[66] += '{"enc": "Directing the Development Team.", "rep": false},';
+qList[66] += '{"enc": "Managing the project and ensuring that the work meets the commitments to the stakeholders.", "rep": false},';
+qList[66] += '{"enc": "Keeping stakeholders at bay.", "rep": false}';
+qList[66] += ']}';
+qList[67] = '{"typeChx": 0,"categ": 3,"hint": "", "quest": "The purpose of a Sprint is to produce a done increment of working product.","tip": "The heart of Scrum is a Sprint, a time-box of one month or less during which a “Done”, usable, and potentially releasable product Increment is created.", "questList":[';
+qList[67] += '{"enc": "True", "rep": true},';
+qList[67] += '{"enc": "False", "rep": false}';
+qList[67] += ']}';
+qList[68] = '{"typeChx": 0,"categ": 1,"hint": "Choose one answer.", "quest": "Who should know the most about the progress toward a business objective or a release, and be able to explain the alternatives most clearly?","tip": "The Product Owner is the sole person responsible for managing the Product Backlog, which includes that the Product Backlog is visible, transparent, and clear to all, and shows what the Scrum Team will work on next.", "questList":[';
+qList[68] += '{"enc": "The Product Owner.", "rep": true},';
+qList[68] += '{"enc": "The Development Team.", "rep": false},';
+qList[68] += '{"enc": "The Scrum Master.", "rep": false},';
+qList[68] += '{"enc": "The Project Manager.", "rep": false}';
+qList[68] += ']}';
+qList[69] = '{"typeChx": 0,"categ": 1,"hint": "Choose one answer.", "quest": "Who has the final say on the order of the Product Backlog?","tip": "The Product Owner is the sole person responsible for managing the Product Backlog.", "questList":[';
+qList[69] += '{"enc": "The Stakeholders.", "rep": false},';
+qList[69] += '{"enc": "The Development Team.", "rep": false},';
+qList[69] += '{"enc": "The Scrum Master.", "rep": false},';
+qList[69] += '{"enc": "The Product Owner.", "rep": true},';
+qList[69] += '{"enc": "The CEO.", "rep": false}';
+qList[69] += ']}';
+qList[70] = '{"typeChx": 0,"categ": 0,"hint": "Choose one answer.", "quest": "The three pillars of empirical process control are:","tip": "Scrum is founded on empirical process control theory, or empiricism. Empiricism asserts that knowledge comes from experience and making decisions based on what is known. Three pillars uphold every implementation of empirical process control: transparency, inspection, and adaptation.", "questList":[';
+qList[70] += '{"enc": "Respect For People, Kaizen, Eliminating Waste.", "rep": false},';
+qList[70] += '{"enc": "Planning, Demonstration, Retrospective.", "rep": false},';
+qList[70] += '{"enc": "Inspection, Transparency, Adaptation.", "rep": true},';
+qList[70] += '{"enc": "Planning, Inspection, Adaptation.", "rep": false},';
+qList[70] += '{"enc": "Transparency, Eliminating Waste, Kaizen.", "rep": false}';
+qList[70] += ']}';
+qList[71] = '{"typeChx": 0,"categ": 1,"hint": "Choose one answer.", "quest": "The Product Backlog is ordered by:","tip": "The Product Owner decides what makes the most sense to optimize the value of the work being done by the Development Team.", "questList":[';
+qList[71] += '{"enc": "Size, where small items are at the top and large items are at the bottom.", "rep": false},';
+qList[71] += '{"enc": "Risk, where safer items are at the top, and riskier items are at the bottom.", "rep": false},';
+qList[71] += '{"enc": "Least valuable items at the top to most valuable at the bottom.", "rep": false},';
+qList[71] += '{"enc": "Items are randomly arranged.", "rep": false},';
+qList[71] += '{"enc": "Whatever is deemed most appropriate by the Product Owner.", "rep": true}';
+qList[71] += ']}';
+qList[72] = '{"typeChx": 0,"categ": 2,"hint": "Choose one answer.", "quest": "When is a Sprint over?","tip": "The duration of a Sprint is fixed and cannot be shortened or lengthened.", "questList":[';
+qList[72] += '{"enc": "When all Product Backlog items meet their definition of done.", "rep": false},';
+qList[72] += '{"enc": "When the Product Owner says it is done.", "rep": false},';
+qList[72] += '{"enc": "When all the tasks are completed.", "rep": false},';
+qList[72] += '{"enc": "When the time-box expires.", "rep": true}';
+qList[72] += ']}';
+qList[73] = '{"typeChx": 0,"categ": 1,"hint": "Choose one answer.", "quest": "Who is responsible for all estimates of the Product Backlog items?","tip": "The Development Team is responsible for all estimates. The Product Owner may influence the Development Team by helping it understand and select trade-offs, but the people who will perform the work make the final estimate.", "questList":[';
+qList[73] += '{"enc": "The Development Team.", "rep": true},';
+qList[73] += '{"enc": "The Scrum Master.", "rep": false},';
+qList[73] += '{"enc": "The Product Owner.", "rep": false},';
+qList[73] += '{"enc": "The Scrum Team.", "rep": false}';
+qList[73] += ']}';
+qList[74] = '{"typeChx": 1,"categ": 0,"hint": "Choose all applicable variants.", "quest": "The benefits of code refactoring include:","tip": "Code refactoring is the process of restructuring existing computer code without changing its external behavior. Refactoring improves nonfunctional attributes of the software. Advantages include improved code readability and reduced complexity; these can improve source-code maintainability and create a more expressive internal architecture or object model to improve extensibility.", "questList":[';
+qList[74] += '{"enc": "Faster code execution.", "rep": false},';
+qList[74] += '{"enc": "Increased code readability.", "rep": true},';
+qList[74] += '{"enc": "Reduced code complexity.", "rep": true},';
+qList[74] += '{"enc": "Easier code maintenance.", "rep": true}';
+qList[74] += ']}';
+qList[75] = '{"typeChx": 0,"categ": 3,"hint": "Choose one answer.", "quest": "What is Product Backlog refinement?","tip": "Product Backlog refinement is the act of adding detail, estimates, and order to items in the Product Backlog.", "questList":[';
+qList[75] += '{"enc": "The act of selecting Product Backlog items for a Sprint.", "rep": false},';
+qList[75] += '{"enc": "The act of adding detail to items in the Product Backlog.", "rep": true},';
+qList[75] += '{"enc": "The act of re-negotiating scope between the Product Owner and Development Team.", "rep": false},';
+qList[75] += '{"enc": "The act of including Product Backlog items in the Increment.", "rep": false}';
+qList[75] += ']}';
+qList[76] = '{"typeChx": 0,"categ": 1,"hint": "Choose one answer.", "quest": "Who is responsible for conducting the Daily Scrum?","tip": "The Scrum Master ensures that the Development Team has the meeting, but the Development Team is responsible for conducting the Daily Scrum.", "questList":[';
+qList[76] += '{"enc": "The Scrum Master.", "rep": false},';
+qList[76] += '{"enc": "The Development Team.", "rep": true},';
+qList[76] += '{"enc": "The Scrum Team.", "rep": false},';
+qList[76] += '{"enc": "The Product Owner.", "rep": false}';
+qList[76] += ']}';
+qList[77] = '{"typeChx": 0,"categ": 0,"hint": "Choose one answer.", "quest": "A Development Team completed 13 items in Sprint 1, 9 items in Sprint 2, 8 items in Sprint 3. What is the Team’s average velocity?","tip": "The average velocity is the sum of the completed items divided by the number of Sprints: (13 + 9 + 8) / 3 = 10", "questList":[';
+qList[77] += '{"enc": "11.", "rep": false},';
+qList[77] += '{"enc": "8.", "rep": false},';
+qList[77] += '{"enc": "13.", "rep": false},';
+qList[77] += '{"enc": "10.", "rep": true}';
+qList[77] += ']}';
+qList[78] = '{"typeChx": 0,"categ": 2,"hint": "Choose one answer.", "quest": "When is the work planned for the first days of a Sprint decomposed?","tip": "Sprint Planning (...) Work planned for the first days of the Sprint by the Development Team is decomposed by the end of this meeting, often to units of one day or less.", "questList":[';
+qList[78] += '{"enc": "At the end of Sprint Planning.", "rep": true},';
+qList[78] += '{"enc": "At the beginning of Sprint Retrospective.", "rep": false},';
+qList[78] += '{"enc": "At the first Daily Scrum.", "rep": false},';
+qList[78] += '{"enc": "At the end of Sprint Review.", "rep": false}';
+qList[78] += ']}';
+qList[79] = '{"typeChx": 0,"categ": 3,"hint": "Choose one answer.", "quest": "Who determines whether the Development Team has sufficient skills to create release-quality increments?","tip": "A Development Team should have enough people with the right skills, between the limits of 3 and 9 members, to create an increment of release quality as per that team’s Definition of Done. Only the team itself can determine if it has the right membership and appropriate cross-functionality to do so.","tip": "", "questList":[';
+qList[79] += '{"enc": "The Scrum Master.", "rep": false},';
+qList[79] += '{"enc": "The Development Team.", "rep": true},';
+qList[79] += '{"enc": "The Scrum Team.", "rep": false},';
+qList[79] += '{"enc": "The Product Owner.", "rep": false}';
+qList[79] += ']}';
+qList[80] = '{"typeChx": 0,"categ": 2,"hint": "Choose one answer.", "quest": "In certain circumstances the Development Team can order the items in the Product Backlog.","tip": "Product Backlog management includes: Ordering the items in the Product Backlog to best achieve goals and missions. The Product Owner may do the above work, or have the Development Team do it. However, the Product Owner remains accountable.</br>The goal of this question is to help you remember that Scrum is a flexible framework and that the Product Owner can delegate his or her responsibilities if it suits the needs of the organization.", "questList":[';
+qList[80] += '{"enc": "False", "rep": false},';
+qList[80] += '{"enc": "True", "rep": true}';
+qList[80] += ']}';
+qList[81] = '{"typeChx": 0,"categ": 0,"hint": "Choose one answer.", "quest": "How often should the total work remaining in the Sprint Backlog be tracked?","tip": "At any point in time in a Sprint, the total work remaining in the Sprint Backlog can be summed. The Development Team tracks this total work remaining at least for every Daily Scrum to project the likelihood of achieving the Sprint Goal.", "questList":[';
+qList[81] += '{"enc": "At least for every Daily Scrum.", "rep": true},';
+qList[81] += '{"enc": "At least once a week.", "rep": false},';
+qList[81] += '{"enc": "At least once per Sprint.", "rep": false}';
+qList[81] += ']}';
+qList[82] = '{"typeChx": 0,"categ": 2,"hint": "Choose one answer.", "quest": "What is created first?","tip": "Sprint Backlog is the output of the ‘How?’ topic of the planning, Sprint Goal is crafted during ‘What?’ part which comes first.", "questList":[';
+qList[82] += '{"enc": "The Sprint Backlog.", "rep": false},';
+qList[82] += '{"enc": "The Sprint Goal.", "rep": true},';
+qList[82] += '{"enc": "The stories.", "rep": false}';
+qList[82] += ']}';
+qList[83] = '{"typeChx": 0,"categ": 1,"hint": "Choose one answer.", "quest": "We talk about pair programming when two developers:","tip": "Pair programming consists of two programmers sharing a single workstation (one screen, keyboard and mouse among the pair).", "questList":[';
+qList[83] += '{"enc": "Work on two related Sprint items.", "rep": false},';
+qList[83] += '{"enc": "Exchange their work for review at least once a day", "rep": false},';
+qList[83] += '{"enc": "Share the same computer.", "rep": true},';
+qList[83] += '{"enc": "Work on the same Sprint item.", "rep": false}';
+qList[83] += ']}';
+qList[84] = '{"typeChx": 1,"categ": 0,"hint": "Choose all applicable variants.", "quest": "Code coverage informs us of:","tip": "Code coverage will tell you how much of your code you exercised by running the test. Your tests may all pass with flying colours, but if you’ve only tested 50% of your code, how much confidence can you have in it?", "questList":[';
+qList[84] += '{"enc": "The amount of code available in the repository.", "rep": false},';
+qList[84] += '{"enc": "The amount of completed program features.", "rep": false},';
+qList[84] += '{"enc": "The amount of code covered by tests.", "rep": true},';
+qList[84] += '{"enc": "The amount of test code available.", "rep": false}';
+qList[84] += ']}';
+qList[85] = '{"typeChx": 0,"categ": 0,"hint": "Choose one answer.", "quest": "Scrum mandates the use of burndown charts.","tip": "Burn-down charts are an optional implementation within Scrum to make progress tranparent.", "questList":[';
+qList[85] += '{"enc": "False", "rep": true},';
+qList[85] += '{"enc": "True", "rep": false}';
+qList[85] += ']}';
+qList[86] = '{"typeChx": 0,"categ": 0,"hint": "Choose one answer.", "quest": "In Scrum, the development team decides which events or ceremonies take place during a Sprint.","tip": "In Scrum, ALL events take place. Failure to include any of these results in reduced transparency and is a lost opportunity to inspect and adapt.", "questList":[';
+qList[86] += '{"enc": "False", "rep": true},';
+qList[86] += '{"enc": "True", "rep": false}';
+qList[86] += ']}';
+qList[87] = '{"typeChx": 0,"categ": 2,"hint": "Choose one answer.", "quest": "Time can be allocated between Sprints for integration testing.","tip": "When a Sprint ends, a new one is immediately started.", "questList":[';
+qList[87] += '{"enc": "False", "rep": true},';
+qList[87] += '{"enc": "True", "rep": false}';
+qList[87] += ']}';
+qList[88] = '{"typeChx": 0,"categ": 0,"hint": "Choose one answer.", "quest": "Scrum mandates the use of stories.","tip": "User Stories are an agile requirement gathering technique, but not an artifact of the Scrum framework.", "questList":[';
+qList[88] += '{"enc": "False", "rep": true},';
+qList[88] += '{"enc": "True", "rep": false}';
+qList[88] += ']}';
+qList[89] = '{"typeChx": 0,"categ": 0,"hint": "Choose one answer.", "quest": "Scrum does not scale to large teams.","tip": "Scaling is common in Scrum, but requires a systematic, emergent, managed initiative to scale successfully.", "questList":[';
+qList[89] += '{"enc": "False", "rep": true},';
+qList[89] += '{"enc": "True", "rep": false}';
+qList[89] += ']}';
+qList[90] = '{"typeChx": 0,"categ": 3,"hint": "Choose one answer.", "quest": "Work that does not meet the definition of Done should be completed in the next Sprint.","tip": "Any work that is not completed in a Sprint returns to the Product backlog for priorization by the Product Owner.", "questList":[';
+qList[90] += '{"enc": "False", "rep": true},';
+qList[90] += '{"enc": "True", "rep": false}';
+qList[90] += ']}';
+qList[91] = '{"typeChx": 1,"categ": 0,"hint": "Choose 2 answers.", "quest": "Which of the following terms are optional in Scrum?","tip": "Burn-down charts are optional implementation within Scrum to make progress transparent. Velocity is an optional, but often used, indication of the average amount of Producy Backlog turned into an Increment of product.", "questList":[';
+qList[91] += '{"enc": "Burndown.", "rep": true},';
+qList[91] += '{"enc": "Backlog.", "rep": false},';
+qList[91] += '{"enc": "Definition of ‘Done’.", "rep": false},';
+qList[91] += '{"enc": "Velocity.", "rep": true},';
+qList[91] += '{"enc": "Increment.", "rep": false}';
+qList[91] += ']}';
+qList[92] = '{"typeChx": 0,"categ": 3,"hint": "Choose one answer.", "quest": "The Product Owner must frequently review Scrum artifacts and progress toward a Sprint Goal to detect undesirable variances. Which pillar of Scrum does this represent?","tip": "Inspection requires the Product Owner to frequently inspect Scrum artifacts and progress toward a Sprint Goal.", "questList":[';
+qList[92] += '{"enc": "Transparency.", "rep": false},';
+qList[92] += '{"enc": "Inspection.", "rep": true},';
+qList[92] += '{"enc": "Adaptation.", "rep": false}';
+qList[92] += ']}';
+qList[93] = '{"typeChx": 0,"categ": 3,"hint": "Choose one answer.", "quest": "When does producy refinement occur?","tip": "This is an ongoing process in which the Product Owner and the Development Team collaborate on the details of Product Backlog items.", "questList":[';
+qList[93] += '{"enc": "During the Sprint, in separation for the next Sprint(s)..", "rep": true},';
+qList[93] += '{"enc": "In Sprint 0.", "rep": false},';
+qList[93] += '{"enc": "In Sprint planning.", "rep": false},';
+qList[93] += '{"enc": "Between Sprints.", "rep": false}';
+qList[93] += ']}';
+qList[94] = '{"typeChx": 0,"categ": 0,"hint": "Choose one answer.", "quest": "What does Cone of Uncertainty show?","tip": "The Cone of Uncertainty describes the evolution of the amount of uncertainty during a project.", "questList":[';
+qList[94] += '{"enc": "How much is known about the Product over time.", "rep": true},';
+qList[94] += '{"enc": "Dependencies, start times and stop times for project tasks.", "rep": false},';
+qList[94] += '{"enc": "Hierarchy of tasks that comprise a project.", "rep": false},';
+qList[94] += '{"enc": "How much work remains till the end of the Sprint.", "rep": false}';
+qList[94] += ']}';
+qList[95] = '{"typeChx": 1,"categ": 0,"hint": "Choose 3 answers.", "quest": "What are the three pillars that uphold Scrum?","tip": "Scrum is founded on empirical process control theory, or empiricism. Empiricism asserts that knowledge comes from experience and making decisions based on what is known. Three pillars uphold every implementation of empirical process control: transparency, inspection, and adaptation.",  "questList":[';
+qList[95] += '{"enc": "Adaptation", "rep": true},';
+qList[95] += '{"enc": "Transparency", "rep": true},';
+qList[95] += '{"enc": "Inspection Value Added", "rep": true},';
+qList[95] += '{"enc": "Agility", "rep": false},';
+qList[95] += '{"enc": "Self-organization", "rep": false},';
+qList[95] += '{"enc": "Cross-functionality", "rep": false}';
+qList[95] += ']}';
+qList[96] = '{"typeChx": 1,"categ": 2,"hint": "Choose all applicable variants.", "quest": "Please, check all opportunities to inspect and adapt.","tip": "Other than the Sprint itself, which is a container for all other events, each event in Scrum is a formal opportunity to inspect and adapt something. These events are specifically designed to enable critical transparency and inspection.",  "questList":[';
+qList[96] += '{"enc": "The Daily Scrum.", "rep": true},';
+qList[96] += '{"enc": "The Sprint Planning.", "rep": true},';
+qList[96] += '{"enc": "The Sprint Review.", "rep": true},';
+qList[96] += '{"enc": "The Sprint.", "rep": false},';
+qList[96] += '{"enc": "The Sprint Retrospective.", "rep": true}';
+qList[96] += ']}';
+
+qList[97] = '{"typeChx": 0,"categ": 1,"hint": "Choose one answer.", "quest": "A large scale product development requires more than 100 developers. What is the most appropriate approach to develop an overall technical architecture?","tip": "Scrum recognizes no titles for Development Team members other than Developer, regardless of the work being performed by the person; there are no exceptions to this rule. As for the technical architecture , Development Teams emerge the design throughout the journey: Development Teams do not create a big upfront design before they start Sprints. Instead they evolve the design.</br>Given this, choices B) and C) are incorrect. These is no designer or design team.</br>Technically dividing the team increases the dependency between the teams in large Scrum. Hence choice D) is incorrect.</br>Correct answer is A).", "questList":[';
+qList[97] += '{"enc": "Start the product development with very minimal number of teams possible. Let them evolve the foundation architecture that reflects core product features of very high value and commonly expected non-functional needs. Gradually add more teams.", "rep": true},';
+qList[97] += '{"enc": "Create a complete reference architecture before the development. Provide training to the developers to teach them to comply by this architecture and hand over the architecture to them.", "rep": false},';
+qList[97] += '{"enc": "Identify a small set of best designers and let them guide the development teams during the Sprint with its implementation .", "rep": false},';
+qList[97] += '{"enc": "Divide the teams into technical component teams with specific responsibilities to design and manage their own components. Resolve any ongoing integration issues using Scrum of Scrum.", "rep": false}';
+qList[97] += ']}';
+}
+
+if (typeQuiz == "PSP"){
+qList[0] = '{"typeChx": 0,"categ": 0,"hint": "Choose one answer.", "quest": "Who creates the definition of ‘Done’?","tip": "The Product Owner represents the stakeholders to the Scrum Team, which includes representing their desired requirements in the Product Backlog. The Product Owner has the final call over the Product Backlog.", "questList":[';
+qList[0] += '{"enc": "The Product Owner writes the User Stories as provided by the stakeholders.", "rep": false},';
+qList[0] += '{"enc": "The Product Owner has the final call over the requirements and should involve the stakeholders as little as possible.", "rep": false},';
+qList[0] += '{"enc": "The Product Owner actively asks for stakeholder input and expectations to process into the Product Backlog.", "rep": true},';
+qList[0] += '{"enc": "The Product Owner provides the stakeholders with acceptance forms at the Sprint Review to record their formal agreement over the delivered software.", "rep": false}';
+qList[0] += ']}';
+qList[1] = '{"typeChx": 0,"categ": 0,"hint": "Choose one answer.", "quest": "Who creates the definition of ‘Done’?","tip": "If the definition of ‘Done’ is part of the conventions, standards or guidelines of the development organization, all Scrum Teams must follow it as a minimum. The Development Team of the Scrum Team can complement it with elements specific for the product or context.</br>If ‘Done’ for an increment is not a convention of the development organization, the Development Team of the Scrum Team must define a definition of ‘Done’ appropriate for the product.", "questList":[';
+qList[1] += '{"enc": "The development organization (or Development Team if none is available from the development organization)", "rep": true},';
+qList[1] += '{"enc": "The Scrum Team, in a collaborative effort where the result is the common denominator of all members’ definitions.", "rep": false},';
+qList[1] += '{"enc": "The Product Owner as he/she is responsible for the product’s success.", "rep": false},';
+qList[1] += '{"enc": "The Scrum Master as he/she is responsible for the Development Team’s productivity.", "rep": false}';
+qList[1] += ']}';
+
+}
+
+}
+
+
+function valKey(oper) {
+var resultKey = new Array();
+storeKey = new Array();
+
+  for (var i = 0; i < localStorage.length; i++) {
+	identPrevId(localStorage.key(i), oper, resultKey);
+  }
+return resultKey;
+}
+
+function identPrevId(cle, oper, resultKey){
+if (cle.indexOf(typeQuiz) == 0){
+	storeKey[storeKey.length] = cle;
+	if (oper == 0)
+		if (cle.length == 17)  // Longeur de clé 17 détermine un quiz historique
+			resultKey[resultKey.length] = (cle);
+}
+}
+
+
+
+function initP(){
+var savedQuiz = document.getElementById('savedQuiz');
+var optTitle = document.getElementById('optTitle');
+var prevQuiz = false;
+var result;
+var startInfo = document.getElementById('startInfo');
+
+rightnav = document.getElementById('fontAdjust');
+window.onscroll = scrollRightNav;
+//localStorage.clear();
+if (supportStorage){
+	optTitle.innerHTML = "Saved Quiz List (" + (Math.round(JSON.stringify(localStorage).length / 100) / 10) * 2 + "Kb)";
+	typeQuiz = localStorage.getItem("QUIZ_TYPE");
+	if (typeQuiz == null)
+		typeQuiz = "PSM";
+	chxQuiz(typeQuiz, true);
+	result = valKey(0);  // 0 = identifier les Quiz ID dans le localStorage HTML 5
+	result.sort();
+if (result.length > 0){
+	try{
+		listQuiz(result);  //Lister les Quiz enregistrés dans le localStorage
+		//listQuestions(false);  //Lister les Questions du Quiz
+		savedQuiz.style.display="inherit";
+	}catch(err){
+		alert(err.message);
+	}
+}else{
+	localStorage.clear();
+	savedQuiz.style.display="none";
+	startInfo.style.visibility="visible";	
+	animInfo();
+}
+document.body.style.fontSize = localStorage.getItem(typeQuiz + "_fontSize");
+}else{  // localStorage non supporté
+	savedQuiz.style.display="none";
+	startInfo.style.visibility="visible";
+	animInfo();
+}
+
+//Click la case à cocher "Learning mode"
+var aff_rep = document.getElementById('aff_rep');
+aff_rep.click();
+
+}
+
+
+////////// Objet quiz  //////////
+var quiz = {
+    id: 0,
+	mode: 0,
+    listeQuest : new Array()
+}
+
+quiz.addQuest = function (JSONid, typeChx, categ, enonce, hint, tip, lstChx, previous) {
+	this.listeQuest[this.listeQuest.length] = new question(JSONid, typeChx, categ, enonce, hint, tip, lstChx, previous);
+}
+
+//Constructeur objet question
+function question(JSONid, typeChx, categ, enonce, hint, tip, lstChx, previous){
+var lQuest;
+this.id = quiz.listeQuest.length ;
+this.JSONid = JSONid;
+this.typeChx=typeChx;
+this.categ=categ;
+this.enonce=enonce;
+this.hint = hint;
+this.tip = tip;
+this.listeChoix = new Array(lstChx.length);
+this.result=null;
+this.reponse="";
+if (isRandom && this.typeChx < 2 && !previous){
+	lQuest = tireRand(lstChx.length, lstChx.length);
+}else{
+	lQuest = new Array(lstChx.length);
+	for(var i = 0; i < lQuest.length; i++){
+		lQuest[i] = i;
+	}
+}
+var ans = "";
+for (var i = 0; i < lstChx.length; i++) {
+	this.listeChoix[i] = new chxReponse(lQuest[i], lstChx[lQuest[i]].enc, lstChx[lQuest[i]].rep, i);
+	if (this.typeChx == 2) // Type drag & drop
+		ans = ans + this.listeChoix[i].chxRep + " = " + this.listeChoix[i].requis + ", ";
+	else if (this.listeChoix[i].requis)
+		ans = ans + this.listeChoix[i].noRep + "), ";
+}
+if (this.typeChx == 3) // Type drag & drop avec 1 seul choix
+	this.reponse = this.listeChoix[0].requis;
+else
+this.reponse = ans.substring(0, ans.length - 2);
+
+// Renseigner les réponses
+this.setReponse = function(repID, resultat){
+	this.listeChoix[repID].reponse = resultat;
+}
+this.evalRep = evalueReponse;
+this.getReponse = getReponse;
+}
+
+function evalueReponse(storeQuizRep) { //Evaluates the final response according to choices
+var resultat = true;
+var repStr = [this.JSONid] ;
+var listChxLength = (this.typeChx == 3)  ? 1:this.listeChoix.length;
+	for (var i = 0; i < listChxLength; i++) {
+		if (this.listeChoix[i].requis != this.listeChoix[i].reponse)
+			resultat=false;
+
+		repStr[repStr.length] = this.getReponse(i);
+	}
+	if(supportStorage && storeQuizRep) {
+		writeQuizStorage();
+		localStorage.setItem(typeQuiz + "_" + quiz.id + "_Q" + (this.id + 1), JSON.stringify(repStr));
+	}
+this.result = resultat;
+return this.result;
+}
+
+// Objet choix de réponse
+function chxReponse(JSONid, chxRep, requis, noChx){
+var no = 65 + eval(noChx);
+// A = &#65;
+this.noRep = "&#" + no + ";";
+this.JSONid = JSONid;
+this.chxRep = chxRep; 
+this.requis = requis;
+this.reponse = false;
+}
+
+function getReponse(JSONid){
+for (var i = 0; i < this.listeChoix.length; i++) {
+	if (this.listeChoix[i].JSONid == JSONid)
+		return this.listeChoix[i].reponse;
+}
+}
+////////// End Define quiz Object  //////////
+
+
+////////// Manage storage //////////
+
+// Write storage
+function writeQuizStorage(score){
+var actElapsed = Date.now() - startTime;
+	localStorage.setItem(typeQuiz + "_" + quiz.id , JSON.stringify([ quiz.id, Date().toLocaleString().substring(0,Date().toLocaleString().indexOf('GMT')) , nbrQuestions , affReponse, actQuest, duree, actElapsed, score, curPersoName]));
+}
+
+function setStorage(tag, val){
+try{
+	localStorage.setItem(tag, val);
+	return true;
+}catch(err){
+	var storageSize = Math.round(JSON.stringify(localStorage).length / 100000) / 10;	
+	alert("Storage capacity exeeded :" + storageSize + " Mb\rPlease clear some items.");
+	document.location.reload(true);
+	return false;
+	}
+}
+// End Write storage
+
+function getCategoryName(catCode){
+var catName = "";
+switch(catCode) {
+    case 0:
+        catName = "Theory";
+        break;
+    case 1:
+        catName = "Team";
+        break;
+    case 2:
+        catName = "Events";
+        break;
+    case 3:
+        catName = "Artifacts";
+        break;
+} 
+return catName;
+}
+
+function sortAsc(a, b) {
+    if (a[sortColl] === b[sortColl]) {
+        return 0;
+    }
+    else {
+        return (a[sortColl] < b[sortColl]) ? -1 : 1;
+    }
+}
+
+function sortDes(a, b) {
+    if (a[sortColl] === b[sortColl]) {
+        return 0;
+    }
+    else {
+        return (a[sortColl] < b[sortColl]) ? 1 : -1;
+    }
+}
+
+function sortTable(noCol, checkBox){  // Sort list question table
+var quizList = document.getElementById('quizList');
+var selForm = document.getElementById('selForm');
+var sortTitle;
+var sortCar;
+
+if (typeof (checkBox) == "object"){
+	var checkList = checkBox[2];
+	for(var i = 0; i < checkList.length; i++){
+		//selForm[checkList[i]].checked = true;
+		sortArray[checkList[i]][0] = true;
+	}
+	selForm.nom_quiz.value = checkBox[1];
+}
+
+if (sortColl == noCol) 
+	sortOrder *= -1; 
+else
+	if (noCol == 0)
+		sortOrder = -1;
+	else
+		sortOrder = 1;
+
+sortColl = noCol;
+if (sortOrder == 1){
+	sortArray.sort(sortAsc);
+	sortCar = "&#9660;";
+	}
+else{
+	sortArray.sort(sortDes);
+	sortCar = "&#9650;";
+	}
+
+removeRowObj("quizList");
+
+var theadElem = document.createElement("thead");
+var tbodyElem = document.createElement("tbody");
+quizList.appendChild(theadElem);
+quizList.appendChild(tbodyElem);
+
+	var thElem = document.createElement("tr");
+	thElem.setAttribute('title', 'Click to sort');
+	if (checkBox)
+		thElem.innerHTML = '<th class="tblSelect" onclick="sortTable(0, true)">&#10004;</th><th class="tblSelect" onclick="sortTable(1, true)">No</th><th class="tblSelect" onclick="sortTable(2, true)">Question</th><th class="tblSelect" onclick="sortTable(3, true)">Category</th><th class="tblSelect" onclick="sortTable(4, true)">Type</th>';
+	else
+		thElem.innerHTML = '<th onclick="sortTable(0)">No</th><th onclick="sortTable(1)">Question</th><th onclick="sortTable(2)">Category</th><th onclick="sortTable(3)">Type</th>';
+	theadElem.appendChild(thElem);
+	
+	for(var i = 0; i < sortArray.length ; i++){
+		var trElem = document.createElement("tr");
+		trElem.setAttribute('title', 'Click to show answer choices');		
+		if (sortArray[i][5] != null)
+			if (sortArray[i][5] == true)
+				trElem.setAttribute('class', 'cGreen');
+			else
+				trElem.setAttribute('class', 'cRouge');
+			
+		if (checkBox)
+			trElem.innerHTML = '<td><input type="checkbox" title="Click to select"' + ((sortArray[i][0]) ? "checked":"") + ' onclick="selPersoQuest(this,' + i + ')"/></td><td width="20px" onclick="showRep(this,' + sortArray[i][1] + ')">' + sortArray[i][1] + '</td><td class="alignLeft"  onclick="showRep(this,' + sortArray[i][1] + ')">' + sortArray[i][2] + '</td><td class="qualColW" onclick="showRep(this,' + sortArray[i][1] + ')">' + sortArray[i][3] + '</td><td  class="qualColW" onclick="showRep(this,' + sortArray[i][1] + ')">' + sortArray[i][4] + '</td>';
+		else
+			trElem.innerHTML = '<td width="20px">' + sortArray[i][0] + '</td><td class="alignLeft">' + sortArray[i][1] + '</td class="qualColW"><td>' + sortArray[i][2] + '</td><td  class="qualColW">' + sortArray[i][3] + '</td>';			
+		tbodyElem.appendChild(trElem);
+	}
+	switch(noCol) {
+		case 0:
+			sortTitle = "&#10004;";
+			break;
+		case 1:
+			sortTitle = "No";
+			break;
+		case 2:
+			sortTitle = "Question";
+			break;
+		case 3:
+			sortTitle = "Category";
+			break;
+		case 4:
+			sortTitle = "Type";
+			break;
+	} 
+	thElem.childNodes[noCol].innerHTML = sortTitle + '<span class="sortInd">' + sortCar + '</span>';	
+}
+
+function showRep(tdObj, noQuest){   // Show answer options to question
+var divRepList = document.getElementById('divRepList');
+var repList = document.getElementById('repList');
+var chxList;
+var Q;
+
+if (divRepList.style.display == "inherit"){
+	divRepList.style.display = "none"
+	return false;
+}
+
+Q = JSON.parse(qList[noQuest - 1]);
+chxList = Q.questList;
+
+removeRowObj("repList");
+
+var tbodyElem = document.createElement("tbody");
+repList.appendChild(tbodyElem);
+
+var trElem = document.createElement("tr");
+trElem.innerHTML = '<td>Question #' + (noQuest) + ' : <span class="logoLegend cGreen"></span><span>Bonne réponse</span></td>';
+tbodyElem.appendChild(trElem);
+for(var i = 0; i < chxList.length ; i++){
+	var no = '&#' + (65 + eval(i)) + ";) ";
+	var trElem = document.createElement("tr");
+	trElem.innerHTML = '<td class="' + ( (chxList[i].rep == true) ? "cGreen":"") + '">' + no + chxList[i].enc + '</td>'
+	tbodyElem.appendChild(trElem);
+}
+if (Q.tip != null && Q.tip != ""){
+var trElem = document.createElement("tr");
+trElem.innerHTML = '<td><span class="rTip"> &#9997;</span><div class="alignv">' + Q.tip + '</div></td>' ;
+tbodyElem.appendChild(trElem);
+}
+
+divRepList.style.top = ( tdObj.offsetTop + tdObj.offsetHeight + 10) + "px";  // - 10 = margin
+divRepList.style.left = "0px";
+divRepList.style.display="inherit";
+
+}
+
+function listQuestions(checkBox){	
+	loadQuestion();
+	sortColl = -1;
+	for(var i = 0; i < qList.length ; i++){
+		Q = JSON.parse(qList[i]);
+		var catName = getCategoryName(Q.categ);
+		sortArray[i] = [ false, i+1, Q.quest, catName, getTypeName(Q), null ];
+	}
+
+sortTable(1, checkBox);
+}
+
+function getTypeName(Q){
+var typeName;
+	if (Q.typeChx == 0)
+		if (Q.questList.length == 2)
+			typeName = "T or F";
+		else
+			typeName = "Simple";
+	else
+		if (Q.typeChx == 1)
+			typeName = "Multiple";
+		else
+			typeName = "D & D";	
+	
+return typeName;
+}
+
+function selPersoQuest(id, no){
+	sortArray[no][0] = id.checked;
+}
+
+function listQuiz(result){
+var bModQuiz = document.getElementById('bModQuiz');
+var bExport  = document.getElementById('bExport');
+var laDate = new Date();
+
+bModQuiz.style.display="none";
+bExport.style.display="none";
+
+sortOrder = -1;
+sortArray = new Array();
+
+	for(var i = result.length - 1; i > -1 ; i--){
+		prevQuiz = JSON.parse(localStorage.getItem(result[i]));
+		if (prevQuiz[5] != null){
+			var remain = prevQuiz[5] - prevQuiz[6];
+			var min = Math.floor((remain/1000/60) << 0) + "";
+			var sec = Math.floor((remain/1000) % 60) + "";
+			if ( sec < 0 || (min == 0 && sec < 2) ){
+				sec = "00";
+				prevQuiz[6] = prevQuiz[5];
+			}else
+				prevQuiz[6] = 0;
+		}else{
+			var min = "00";
+			var sec = "00";
+		}
+		var TypeName = prevQuiz[8];
+		if (TypeName == null) // N'est pas un Quiz personnalisé
+			TypeName = ( (prevQuiz[3] == true) ? "Learning":"Real" );
+		laDate.setTime(prevQuiz[0]);
+		sortArray[i] = [ prevQuiz[0], laDate.toLocaleString("en-CA", {hour12: false}), TypeName, ( (prevQuiz[5] == null) ? "Terminated":"In progress" ), ((min.length < 2) ? "0":"") + min + ":" + ((sec.length < 2) ? "0":"") + sec, ( (prevQuiz[7] == null) ? "":prevQuiz[7] + "%" ) ];
+	}
+sortQuiz(1,'SavedQuiz');
+}
+
+function sortQuiz(noCol, entity){  // Sort Custom & Saved Quiz list
+var quizList = document.getElementById('quizList');
+var isPersoQuiz = false;
+
+if (sortColl == noCol) 
+	sortOrder *= -1; 
+
+sortColl = noCol;
+if (sortOrder == 1){
+	sortArray.sort(sortAsc);
+	sortCar = "&#9660;";
+	}
+else{
+	sortArray.sort(sortDes);
+	sortCar = "&#9650;";
+	}
+
+removeRowObj("quizList");
+
+var theadElem = document.createElement("thead");
+var tbodyElem = document.createElement("tbody");
+quizList.appendChild(theadElem);
+quizList.appendChild(tbodyElem);
+
+var thElem = document.createElement("tr");
+thElem.setAttribute('class', 'tblSelect');
+
+if (entity == "CreatedQuiz"){
+	var colTitle = ["Quiz Name", "Date Time", "Time Limit", "Number of Questions"];
+	thElem.innerHTML = '<th onclick="sortQuiz(1,\'CreatedQuiz\')">Quiz Name<span class="sortInd">&#8239;&#8239;&#8239;&#8239;&#8239;</span></th><th  onclick="sortQuiz(2,\'CreatedQuiz\')">Date Time<span class="sortInd">&#8239;&#8239;&#82</span239;&#8239;</span></th><th  onclick="sortQuiz(3,\'CreatedQuiz\')">Time Limit<span class="sortInd">&#8239;&#8239;&#8239;&#8239;&#8239;</span></th><th  onclick="sortQuiz(4,\'CreatedQuiz\')">Number of Questions<span class="sortInd">&#8239;&#8239;&#8239;&#8239;&#8239;</span></th>';
+	isPersoQuiz = true;
+}
+if (entity == "SavedQuiz"){
+	var colTitle = ["Date Time", "Mode / Name", "Status", "Remaining</br>Time", "Score"];
+	thElem.innerHTML = '<th onclick="sortQuiz(1,\'SavedQuiz\')">Date Time<span class="sortInd">&#8239;&#8239;&#8239;&#8239;&#8239;</span></th><th onclick="sortQuiz(2,\'SavedQuiz\')">Mode / Name<span class="sortInd">&#8239;&#8239;&#8239;&#8239;&#8239;</span></th><th onclick="sortQuiz(3,\'SavedQuiz\')">Status<span class="sortInd">&#8239;&#8239;&#8239;&#8239;&#8239;</span></th><th onclick="sortQuiz(4,\'SavedQuiz\')">Remaining</br>Time<span class="sortInd">&#8239;&#8239;&#8239;&#8239;&#8239;</span></th><th onclick="sortQuiz(5,\'SavedQuiz\')">Score<span class="sortInd">&#8239;&#8239;&#8239;&#8239;&#8239;</span></th>';
+}
+theadElem.appendChild(thElem);
+
+for(var i = 0; i < sortArray.length ; i++){
+	var trElem = document.createElement("tr");
+	trElem.setAttribute('onclick', 'savedQuizClick(this,' + sortArray[i][0] + ')');
+	trElem.setAttribute('ondblclick', 'savedQuiz(0,' + isPersoQuiz + ')');
+		if (i == 0){
+			trElem.setAttribute('class', 'tblSelect');
+			savedQuizSelect = sortArray[i][0];
+		}
+	if (entity == "CreatedQuiz")
+		trElem.innerHTML = '<td>' + sortArray[i][1] + '</td><td>' + sortArray[i][2] + '</td><td>' + sortArray[i][3] + '</td><td>' + sortArray[i][4] + '</td>';
+	if (entity == "SavedQuiz")
+		trElem.innerHTML = '<td>' + sortArray[i][1] + '</td><td>' + sortArray[i][2] + '</td><td>' + sortArray[i][3] + '</td><td>' + sortArray[i][4] + '</td><td>' + sortArray[i][5] + '</td>';
+	tbodyElem.appendChild(trElem);
+}
+var sortTitle = colTitle[noCol - 1];
+thElem.childNodes[noCol - 1].innerHTML = sortTitle + '<span class="sortInd">' + sortCar + '</span>';	
+
+}
+
+function analyseQ(){  // Overall Analysis
+var savedQuiz = document.getElementById("savedQuiz");
+var butCreer = document.getElementById("butCreer");
+var butPrev = document.getElementById("butPrev");
+var source = document.getElementById("source");
+
+sortArray = new Array();
+	sortColl = -1;
+	for(var i = 0; i < qList.length ; i++){
+		Q = JSON.parse(qList[i]);
+		sortArray[i] = [ false, i+1, Q.quest, getCategoryName(Q.categ), getTypeName(Q), null ];
+	}
+	for(var i = 0; i < quiz.listeQuest.length ; i++){
+		sortArray[quiz.listeQuest[i].JSONid][0] = true;
+		if (quiz.listeQuest[i].result != null){
+			sortArray[quiz.listeQuest[i].JSONid][5] = quiz.listeQuest[i].result;
+		}
+	}
+
+sortTable(1, true);
+butCreer.style.display="inherit";
+butPrev.style.display="none";
+source.value = "analyse";
+savedQuiz.style.display="inherit";
+
+}
+
+function showOptions(objOpt){
+var menuList = document.getElementById('menuList');
+
+menuList.left = objOpt.offsetLeft;
+menuList.top = objOpt.offsetTop;
+if (menuList.style.display == "inherit")
+	menuList.style.display = "none";
+else
+	menuList.style.display = "inherit";
+
+}
+
+function createQuiz(modify){
+var menuList = document.getElementById('menuList');
+var optTitle = document.getElementById('optTitle');
+var butPrev = document.getElementById('butPrev');
+var butCreer = document.getElementById('butCreer');
+var selForm = document.getElementById('selForm');
+
+sortArray = new Array();
+removeRowObj("quizList");
+
+if (modify){
+	optTitle.innerHTML = "Modify a Quiz";
+	savedQuizSelect = JSON.parse(localStorage.getItem(typeQuiz + "_QUIZ_" + savedQuizSelect));
+	listQuestions(savedQuizSelect);
+}else{
+	optTitle.innerHTML = "Create a custom Quiz";
+	selForm.nom_quiz.value = "";
+	savedQuizSelect = false;
+	listQuestions(true);
+}
+
+menuList.style.display="none";
+butPrev.style.display="none";
+butCreer.style.display="inherit";
+}
+
+function creerQuiz(theForm){
+var quizName = "";
+var quizQuestList = new Array();
+
+if (typeof (savedQuizSelect) == "object")
+	localStorage.removeItem(typeQuiz + "_QUIZ_" + savedQuizSelect[0]);
+
+var quizID = Date.now();
+
+for(var i = 0; i < sortArray.length ; i++){
+	if (sortArray[i][0] == true)
+		quizQuestList[quizQuestList.length] = (sortArray[i][1]) - 1;
+}
+
+quizName = theForm.nom_quiz.value;
+
+if (quizName.length == 0){
+	alert("Please type a name for the Quiz.");
+	return false;
+	}
+else
+	localStorage.setItem(typeQuiz + "_QUIZ_" + quizID,JSON.stringify([quizID, quizName, quizQuestList ]));
+
+if (theForm.source.value == "analyse")
+	document.location.reload(true);
+else{
+	valKey(0);
+	selectQuiz();
+}
+}
+
+function selectQuiz(){
+var menuList = document.getElementById('menuList');
+var quizList = document.getElementById('quizList');
+var optTitle = document.getElementById('optTitle');
+var butPrev = document.getElementById('butPrev');
+var butCreer = document.getElementById('butCreer');
+var bLoadQuiz = document.getElementById('bLoadQuiz');
+var bModQuiz = document.getElementById('bModQuiz');
+var bExport = document.getElementById('bExport');
+var quizData;
+var quizNbr = 1;
+var laDate = new Date();
+
+bLoadQuiz.setAttribute( "onClick", "javascript: savedQuiz(0, true)" );
+
+optTitle.innerHTML = "Custom Quiz List";
+bModQuiz.style.display="inherit";
+bExport.style.display="inherit";
+menuList.style.display="none";
+butPrev.style.display="inherit";
+butCreer.style.display="none";
+
+sortOrder = -1;
+sortArray = new Array();
+
+	for(var i = 0; i < storeKey.length; i++){
+		if (storeKey[i].indexOf(typeQuiz + "_QUIZ") != -1){
+			quizData = JSON.parse(localStorage.getItem(storeKey[i]));
+			laDate.setTime(quizData[0]);
+			sortArray[quizNbr - 1] = [ quizData[0], quizData[1], laDate.toLocaleString("en-CA", {hour12: false}), evalTime(duree * quizData[2].length / nbrQuestions).minSec, quizData[2].length ];
+			quizNbr += 1;
+		}
+	}
+sortQuiz(2, "CreatedQuiz");
+}
+
+function removeRowObj(objList){
+var tblList = document.getElementById(objList);
+
+if (tblList.childNodes[1])
+	tblList.childNodes[1].parentNode.removeChild(tblList.childNodes[1]);
+if (tblList.childNodes[0])
+	tblList.childNodes[0].parentNode.removeChild(tblList.childNodes[0]);
+
+}
+
+function clearQuiz(){
+var menuList = document.getElementById('menuList');
+menuList.style.display="none";
+
+if (confirm("All Custom Quiz and Saved Quiz Lists will be cleared.")){
+	localStorage.clear();
+	document.location.reload(true);
+}
+
+}
+
+function savedQuizClick(objTR, sqSelect){
+var quizList = document.getElementById("quizList");
+
+for(var i = 0; i < quizList.childNodes[1].childNodes.length ; i++){
+	if (quizList.childNodes[1].childNodes[i].tagName == "TR")
+		quizList.childNodes[1].childNodes[i].className = "";
+}
+
+objTR.className = "tblSelect";
+savedQuizSelect = sqSelect;
+
+}
+
+function savedQuiz(action, persoQuiz){
+var savedQuiz = document.getElementById('savedQuiz');
+var startInfo = document.getElementById('startInfo');
+	
+if (action == 0 && savedQuizSelect){	// Load saved Quiz
+	savedQuiz.style.display="none";
+	if (persoQuiz){
+		var pQuiz = JSON.parse(localStorage.getItem(typeQuiz + "_QUIZ_" + savedQuizSelect));
+		startTest(false, pQuiz);
+	}else{
+		prevQuiz = JSON.parse(localStorage.getItem(typeQuiz + "_" + savedQuizSelect));
+		startTest(prevQuiz);
+	}
+}
+
+if (action == 1){	// Delete saved Quiz
+	for(var i = 0; i < storeKey.length; i++){
+		if (storeKey[i].indexOf(savedQuizSelect) != -1)
+			localStorage.removeItem(storeKey[i]);
+	}
+	var quizList = document.getElementById("quizList");
+	for(var i = 0; i < quizList.childNodes[1].childNodes.length ; i++){
+		if (quizList.childNodes[1].childNodes[i].tagName == "TR")
+			if (quizList.childNodes[1].childNodes[i].className == "tblSelect")
+				quizList.childNodes[1].childNodes[i].parentNode.removeChild(quizList.childNodes[1].childNodes[i]);
+		}
+}
+
+if (action == 2){	// New Quiz
+	savedQuiz.style.display="none";
+	startInfo.style.visibility="visible";
+	animInfo();
+}
+
+if (action == 3){	// Modify Quiz
+	createQuiz(true);
+}
+//alert(action + "," + savedQuizSelect);
+}
+
+////////// End Manage storage //////////
+
+////  Start New, Saved, Custom Quiz ////
+function startTest(previous, personalQuiz){
+var startInfo = document.getElementById('startInfo');
+var quizInfo = document.getElementById('quizInfo');
+var aff_rep = document.getElementById('aff_rep');
+var titleProgress = document.getElementById("titleProgress");
+
+progressBar = document.getElementById("progressQ");
+progressBar.value = 0;
+startInfo.style.display="none";
+quizInfo.style.display="inherit";
+
+titleProgress.innerHTML="Loading... Questions";
+loadQuestion();
+progressBar.value = 0.1;
+
+setTimeout(function() {
+    startTest2(previous, personalQuiz)
+}, 500);
+
+}
+
+function startTest2(previous, personalQuiz){
+var aff_rep = document.getElementById('aff_rep');
+var pageContainer = document.getElementById('pageContainer');
+var titleProgress = document.getElementById("titleProgress");
+
+if (previous)
+	titleProgress.innerHTML="Recovering Questions";
+else
+	titleProgress.innerHTML="Randomize Questions";
+
+if (personalQuiz){
+	duree = duree * personalQuiz[2].length / nbrQuestions; //Proportional duration to 60 min/80 questions
+	nbrQuestions = personalQuiz[2].length;
+	affReponse = true;
+}else{
+	if (previous){
+		duree = duree * previous[2] / nbrQuestions; //Proportional duration to 60 min/80 questions
+		nbrQuestions = previous[2];
+		affReponse = previous[3];
+	}else{
+	//if(supportStorage)
+		//localStorage.clear();
+	affReponse = aff_rep.checked;
+	//nbrQuestions = qList.length;  ///// Temporaire à la place de 80
+	}
+}
+
+if (affReponse){
+	var bBack = document.getElementById('bBack');
+	bBack.style.display="none";
+}else{
+	var bCheck = document.getElementById('bCheck');
+	var resultat = document.getElementById('resultat');
+	bCheck.style.display="none";
+	resultat.style.display="none";
+}
+startTest3(1, previous, personalQuiz);
+}
+
+function startTest3(no, previous, personalQuiz){ // Create Summary list
+var titleProgress = document.getElementById("titleProgress");
+var aElem = document.createElement("a");
+aElem.setAttribute('id', 'Q' + no);
+aElem.setAttribute('class', 'pg');
+aElem.setAttribute('href', '#');
+aElem.setAttribute('onclick', 'nextQuestion(' + no + ');');
+aElem.innerHTML = no;
+pageContainer.appendChild(aElem);
+no += 1;
+progressBar.value += (0.6 / nbrQuestions);
+if (no <= nbrQuestions){
+	setTimeout(function() {
+		startTest3(no, previous, personalQuiz);  // Appel récurent jusqu'à <nbrQuestions>
+	}, 10);
+	}else{
+	titleProgress.innerHTML="Prepare Quiz";
+	progressBar.value = 0.8;
+	setTimeout(function() {
+		startTest4(nbrQuestions, qList, previous, personalQuiz);
+	}, 300);
+	}
+}
+
+function startTest4(nbrQuest, qList, previous, personalQuiz){
+var lQuest;
+var Q;
+
+curPersoName = null;
+
+if (!previous){
+	if (isRandom){
+		lQuest = tireRand(nbrQuest, qList.length);
+	}else{
+		lQuest = new Array(nbrQuestions);
+		for(var i = 0; i < lQuest.length; i++){
+			lQuest[i] = i;
+		}
+	}
+}
+
+if (previous){  // Si on présente le Quiz historique précédent
+	quiz.id = previous[0];
+	curPersoName = previous[8];
+	for(var i = 0; i < previous[2] ; i++){
+		lQuest = JSON.parse(localStorage.getItem(typeQuiz + "_" + quiz.id + "_Q" + (i + 1)));
+		Q = JSON.parse(qList[lQuest[0]]);
+		quiz.addQuest(lQuest[0], Q.typeChx, Q.categ, Q.quest, Q.hint, Q.tip, Q.questList, previous);
+		var repondu = false;
+		for(var ii = 1; ii < lQuest.length ; ii++){
+			quiz.listeQuest[i].setReponse(ii-1, lQuest[ii]);
+			repondu = true;
+		}
+		if (repondu){
+			var Qno = document.getElementById('Q' + (i + 1));
+			Qno.className = "pg  cTurquoise";
+			quiz.listeQuest[i].evalRep();
+		}
+	}
+	revQuest = JSON.parse(localStorage.getItem(typeQuiz + "_" + quiz.id + "_rev"));
+	for(var i = 0; i < revQuest.length ; i++){
+		var Qno = document.getElementById('Q' + revQuest[i]);
+		Qno.className = "pg  cGold";
+	}	
+	progressBar.value = 1;
+}else{ //Otherwise prepare else a new Custom Quiz or else a new standard Quiz 
+	if (personalQuiz){  // prepare a new Custom Quiz
+		curPersoName = personalQuiz[1];
+		quiz.id = Date.now();
+		if (isRandom){
+			lQuest = tireRand(nbrQuest, personalQuiz[2].length);
+		}else{
+			lQuest = new Array(nbrQuestions);
+			for(var i = 0; i < personalQuiz[2].length; i++){
+				lQuest[i] = personalQuiz[2][i];
+			}
+		}
+		for(var i = 0; i < nbrQuest ; i++){
+			var noQuest = (isRandom) ?  personalQuiz[2][lQuest[i]] : lQuest[i] ;
+			Q = JSON.parse(qList[noQuest]);
+			quiz.addQuest(noQuest, Q.typeChx, Q.categ, Q.quest, Q.hint, Q.tip, Q.questList, previous);
+			if (supportStorage)
+				if ( !setStorage(typeQuiz + "_" + quiz.id + "_Q" + (i+1),JSON.stringify([ noQuest ])) )
+					break;
+		}		
+	}else{  //Otherwise prepare a new standard Quiz
+		quiz.id = Date.now();
+		if (isRandom){
+			lQuest = tireRand(nbrQuest, qList.length);
+		}else{
+			lQuest = new Array(nbrQuestions);
+			for(var i = 0; i < lQuest.length; i++){
+				lQuest[i] = i;
+			}
+		}
+		for(var i = 0; i < nbrQuest; i++){
+			Q = JSON.parse(qList[lQuest[i]]);
+			quiz.addQuest(lQuest[i], Q.typeChx, Q.categ, Q.quest, Q.hint, Q.tip, Q.questList, previous);
+			if (supportStorage)
+				if (!setStorage(typeQuiz + "_" + quiz.id + "_Q" + (i+1),JSON.stringify([ lQuest[i] ])) )
+					break;
+		}		
+	}
+}
+progressBar.value = 0.9;
+setTimeout(function() {
+    startTest5(previous, personalQuiz)
+}, 300);
+}
+
+function startTest5(previous, personalQuiz){
+var quest_list = document.getElementById('quest_list');
+var titleProgress = document.getElementById("titleProgress");
+
+progressBar.value = 1;
+quest_list.style.display="inherit";
+
+// Milliseconds since 1970
+startTime = Date.now();
+if (previous){
+	startTime -= previous[6];
+	var quizName = previous[8];
+	if (quizName == null)
+		quizName = ( (previous[3] == true) ? "Learning mode":"Real mode" );
+	 if (previous[5] == null){
+		duree = null;
+		titleProgress.innerHTML="Review Quiz (" + quizName + ") - " + previous[1];
+		terminequiz(false, true);
+	}else{
+		titleProgress.innerHTML="Resume Quiz (" + quizName + ") - " + previous[1];
+		setTimeout(function() {
+			progressTime(previous)
+		}, 500);
+		}
+}else{
+	titleProgress.innerHTML=" ";
+	if (supportStorage){
+		writeQuizStorage();
+		localStorage.setItem(typeQuiz + "_" + quiz.id + "_rev", JSON.stringify(revQuest));
+		}
+	setTimeout("progressTime()", 500);
+}
+
+nextQuestion((previous) ? previous[4]:1);
+
+}
+//// END Start New, Saved, Custom Quiz ////
+
+
+function subQuestion(afficherReponses){  // Submit an answer
+var formRep = document.getElementById('formRep');
+var Qno = document.getElementById('Q' + actQuest);
+var result;
+var rep = "";
+
+if( duree != null ){
+	if(quiz.listeQuest[actQuest-1].typeChx < 2){ //Not type drag & drop (2 et 3)
+		for(var i = 0; i < formRep.length ; i++){
+			if (formRep[i].checked){
+				quiz.listeQuest[actQuest-1].setReponse(i,true)
+				rep += i;
+			}else{
+				quiz.listeQuest[actQuest-1].setReponse(i,false)
+			}	
+		}
+	}else{ //Si drag & drop
+		var repZone = document.getElementById('repZone');
+		var repId = 0;
+		for(var i = 0; i < repZone.childNodes.length ; i++)
+			if (repZone.childNodes[i].className == "repChx"){
+			var tmp = repZone.childNodes[i].childNodes[1].innerText;
+			quiz.listeQuest[actQuest-1].setReponse(repId, repZone.childNodes[i].childNodes[1].innerText);
+			repId += 1;
+		}
+	}
+	if (!afficherReponses)
+		Qno.className = "pg  cTurquoise";
+	result = quiz.listeQuest[actQuest-1].evalRep(true);
+}else{
+alert("Quiz ended, changes not saved.");
+}
+
+Qno.classList.add("qSelected");
+
+if (afficherReponses)     //If show result (Check button or Quiz review)
+	afficherReponse();
+
+}
+
+function afficherReponse(){   // Show response (Check button)
+var resultat = document.getElementById('resultat');
+
+result = quiz.listeQuest[actQuest-1].result;
+
+if (result)
+	resultat.innerHTML = '<p id="pResult"><span class="rTrue"> &#8239; &#9787;</span><div class="alignv"> Good answer !</div></p>';
+else{
+	resultat.innerHTML = '<p id="pResult"><span class="rFalse">&#8239; &#120;</span><div class="alignv"> Error - Answer :&#8239;' + quiz.listeQuest[actQuest-1].reponse + '</div></p>';
+	if (quiz.listeQuest[actQuest-1].tip != null && quiz.listeQuest[actQuest-1].tip != "")
+	resultat.innerHTML += '<div class="alignv tipZone"><span class="rTip"> &#9997;</span>' + quiz.listeQuest[actQuest-1].tip + '</div>' 
+}
+resultat.style.visibility="visible";
+resultat.scrollIntoView();
+}
+
+function revQuestion(){
+var Qno = document.getElementById('Q' + actQuest);
+
+if (Qno.className.indexOf("cGold") == -1){
+	Qno.className = "pg  cGold";
+	revQuest[revQuest.length] = actQuest;
+}else{
+	if (quiz.listeQuest[actQuest-1].result != null)
+		Qno.className = "pg  cTurquoise";
+	else
+		Qno.className = "pg";
+		
+	var index = revQuest.indexOf(actQuest);
+	if (index > -1) {
+		revQuest.splice(index, 1);
+	}
+	}
+Qno.classList.add("qSelected");
+
+if(supportStorage)
+	localStorage.setItem(typeQuiz + "_" + quiz.id + "_rev", JSON.stringify(revQuest));
+
+}
+
+function nextQuestion(questNo){  // Next button
+var pageCell = document.getElementById('pageCell');
+var formRep = document.getElementById('formRep');
+var noQuestion = document.getElementById('noQuestion');
+var catQuestion = document.getElementById('catQuestion');
+var encQuestion = document.getElementById('encQuestion');
+var hintQuestion = document.getElementById('hintQuestion');
+var resultat = document.getElementById('resultat');
+var tipZone = document.getElementById('tipZone');
+var bNext = document.getElementById('bNext');
+var pageContainer = document.getElementById("pageContainer");
+var quest_list = document.getElementById("quest_list");
+var nextQuest;
+var typeInput = "";
+var cat = "Category : Scrum ";
+
+if (tipZone)
+tipZone.style.display="none";
+resultat.style.visibility="hidden";
+if (quiz.listeQuest[actQuest - 1].typeChx > 1){  // If question type is drag & drop refresh display
+	var questDragType = document.getElementById('questDragType');
+	questDragType.style.display="none";
+	var quest_zone = document.getElementById('quest_zone');
+	quest_zone.style.height = "initial";
+}
+
+document.getElementById('Q' + actQuest).classList.remove("qSelected");
+
+if (!questNo)
+	questNo = actQuest + 1; 
+
+if (questNo > nbrQuestions)
+	questNo = 1;
+	
+if (questNo == -1)
+	questNo = actQuest - 1;
+
+if (questNo == 0)
+	questNo = nbrQuestions;
+	
+actQuest = questNo;
+document.getElementById('Q' + actQuest).classList.add("qSelected");
+
+// Adjust scroll pages
+if (pageContainer.style.height == "auto"){
+	pageContainer.style.height = "70px";
+	quest_list.style.display = "inherit";
+}
+var diff = document.getElementById('Q' + actQuest).offsetTop - pageCell.offsetTop;
+if (diff > 39)
+	document.getElementById('pageContainer').scrollTop  = diff - 6; 
+else
+if (diff <= 10)
+	document.getElementById('pageContainer').scrollTop = 0;
+
+removeObjForm(formRep, "repLine");  // Delete choices
+nextQuest = quiz.listeQuest[actQuest - 1];  // Identify actuals choices
+
+switch(nextQuest.typeChx) {
+    case 0:
+        typeInput = "radio";
+        break;
+    case 1:
+        typeInput = "checkbox";
+        break;
+} 
+
+cat += getCategoryName(nextQuest.categ);
+
+noQuestion.innerHTML = "Question " + actQuest + " / " + nbrQuestions;
+
+if (nextQuest.typeChx == 2 || nextQuest.typeChx == 3){  // Type drag & drop
+	encQuestion.innerHTML = "";
+	questDrag(nextQuest, cat);
+	bNext.focus();
+	return false;
+}
+
+//Create question type (radio or checkBox)
+catQuestion.innerHTML = cat;
+encQuestion.innerHTML = '<span class="noQ">' + actQuest + ')</span><div class="alignQ">' + nextQuest.enonce + '</div>';
+hintQuestion.innerHTML = nextQuest.hint;
+
+for(var i = nextQuest.listeChoix.length - 1; i > -1 ; i--){  // Create answer choices
+	var spanElem = document.createElement("p");
+	spanElem.setAttribute('class', 'repLine');
+	var isCheck = (nextQuest.listeChoix[i].reponse == true)  ? ' checked="checked" ':'';
+		isCheck += ' onclick="subQuestion()" '; // submit answer to each choice
+	spanElem.innerHTML = '<span class="noQ">' + nextQuest.listeChoix[i].noRep + ')</span><div class="alignQ"><label><input type="' + typeInput + '" name="chx"' + isCheck + '>' + nextQuest.listeChoix[i].chxRep + '</input></label></div>';
+	formRep.insertBefore(spanElem, formRep.firstChild);
+}
+if (affReponse && duree == null)  //If mode is Learning and quiz is ending, show answer in review mode
+	afficherReponse();
+	
+bNext.focus();
+}  // END Next button
+
+
+// Drag & drop question to Next button
+function questDrag(nextQuest, cat){
+var questDragType = document.getElementById('questDragType');
+var quest_zone = document.getElementById('quest_zone');
+var catQuestionD = document.getElementById('catQuestionD');
+var encQuestionD = document.getElementById('encQuestionD');
+var hintQuestionD = document.getElementById('hintQuestionD');
+var picsZone = document.getElementById('picsZone');
+var repZone = document.getElementById('repZone');
+var estChoisi = new Array();
+ 
+catQuestionD.innerHTML = cat;
+encQuestionD.innerHTML = actQuest + ") " + nextQuest.enonce;
+hintQuestionD.innerHTML = nextQuest.hint;
+questDragType.style.display="block";
+
+while (removeObjClass(picsZone, "bidon")){}
+
+var lQuest = tireRand(nextQuest.listeChoix.length, nextQuest.listeChoix.length);
+
+for(var i = 0; i < nextQuest.listeChoix.length ; i++){
+	var divElem = document.createElement("div");
+	divElem.setAttribute('id', 'place' + (i + 1));
+	divElem.setAttribute('class', 'bidon');
+	divElem.setAttribute('ondrop', 'dropIt(event);');
+	divElem.setAttribute('ondragover', 'event.preventDefault();');
+	divElem.innerHTML = '<div id="txt' + ( i + 1 ) + '" class="txtDiv" draggable="true" ondragstart="dragIt(event);">' + nextQuest.listeChoix[lQuest[i]].requis + '</div>';
+	picsZone.appendChild(divElem);
+	divElem.firstChild.addEventListener('touchstart', startTouch, false);  // Drag and drop for mobil
+	checkChoisi(estChoisi, 'txt' + (i + 1), nextQuest.listeChoix[lQuest[i]].requis, nextQuest.listeChoix);
+}
+
+while (removeObjClass(repZone, "repChx")){}
+
+if (nextQuest.typeChx == 3)
+	var listChxLength = 1;
+else
+	var listChxLength = nextQuest.listeChoix.length;
+
+for(var i = 0; i < listChxLength ; i++){
+	var divElem = document.createElement("div");
+	divElem.setAttribute('id', 'userChx' + (i + 1));
+	divElem.setAttribute('class', 'repChx');
+	divElem.innerHTML = '<div id="repQuest' + ( i + 1 ) + '">' + nextQuest.listeChoix[i].chxRep + '</div><div id="repQuestDrop' + ( i + 1 ) + '"  ondrop="dropIt(event);" ondragover="event.preventDefault();"></div>';
+	repZone.appendChild(divElem);
+	toAddRemove('repQuestDrop' + (i + 1), estChoisi, nextQuest.listeChoix[i].reponse);
+}
+
+quest_zone.style.height = questDragType.offsetHeight + "px";
+
+if (affReponse && duree == null)  //If result is show and quiz is terminated , we show answer in review mode
+	afficherReponse();
+}
+
+function toAddRemove( userChxID, estChoisi, quizChx){
+for(var i = 0; i < estChoisi.length ; i += 2){
+	if (estChoisi[i+1] == quizChx){
+		var userChxID = document.getElementById(userChxID);
+		var placeDiv = document.getElementById(estChoisi[i]);
+		userChxID.appendChild(placeDiv);
+		return true;
+	}
+}
+return false;
+}
+
+function checkChoisi(estChoisi, txtID, strChx, quizChx){
+
+for(var i = 0; i < quizChx.length ; i++){
+	if (quizChx[i].reponse == strChx){
+		estChoisi[estChoisi.length] = txtID;
+		estChoisi[estChoisi.length] = strChx;
+		return true;
+	}
+}
+return false;
+}
+// END Drag & drop question to Next button
+
+function removeObjForm(obj, nomClass){
+var trouveLine = false;
+
+do {
+    if (obj.childNodes[0].className == nomClass) {
+		obj.childNodes[0].parentNode.removeChild(obj.childNodes[0]);
+		trouveLine = true;
+    } else 
+		trouveLine = false;
+}while (trouveLine);
+
+}
+
+function removeObjClass(obj, nomClass){
+var trouveLine = false;
+
+for (var i = 0; i < obj.childNodes.length; i++) {
+    if (obj.childNodes[i].className == nomClass) {
+		obj.childNodes[i].parentNode.removeChild(obj.childNodes[i]);
+		trouveLine = true;
+    }
+}
+return trouveLine;
+}
+
+function progressTime(previous){
+var tempsEcoul = document.getElementById('tempsEcoul');
+var tempsReste = document.getElementById('tempsReste');
+var timeNow = Date.now();
+
+if (supportStorage && duree)
+	if (!previous && timeNow - precElapse > 2000){
+		writeQuizStorage();
+		precElapse = timeNow;
+	}
+
+var ms = timeNow - startTime;
+if (previous){
+	if (previous[6] != 0)
+		if (previous[6] > previous[5])
+			ms = previous[5];
+		else
+			ms = previous[6];
+}
+
+if ( previous && Math.abs(duree - ms) < 1000 ){
+	finDure = true;
+	tempsEcoul.innerHTML = evalTime(duree).minSec;
+	tempsReste.innerHTML = '00:00';
+}
+
+if (duree != null && !finDure){
+
+	tempsEcoul.innerHTML = evalTime(ms).minSec;
+	tempsReste.innerHTML = evalTime(duree - ms).minSec;
+
+	if (ms < duree){
+		progressBar.value = ms / duree;
+	}else{
+		if (!finDure){
+			tempsReste.innerHTML = '00:00';
+			finDure = true;
+			progressBar.value = 1;
+		}
+	}
+	setTimeout("progressTime()", 330);
+}else{			
+	if (affReponse){	// In learning mode show a message, otherwise ending the Quiz
+		if (duree != null && !previous)
+			alert("The time is up but you can continue the exercise. \r\nClick the <Ending the quiz> button to finish.");
+	}else{
+		terminequiz();
+	}
+}
+}
+
+function evalTime(ms){
+var time = {min:0, sec:0, minSec:""};
+
+	time.min = Math.round((ms/1000/60) << 0);
+	time.sec = Math.round((ms/1000) % 60)  + "";
+	var min = time.min + "";
+	var sec = time.sec + "";
+	time.minSec = ((min.length < 2) ? "0":"") + min + ':' + ((sec.length < 2) ? "0":"") +  sec;
+
+return (time);
+}
+
+function tireRand(nbrRequest, parmi){
+var randResult = new Array(nbrRequest);
+var nbrResult = 0;
+var randNo;
+
+while (nbrResult < nbrRequest) {
+	randNo = Math.floor(Math.random() * parmi);
+	if ( randResult.indexOf(randNo) == -1 ){
+		randResult[nbrResult] = randNo;
+		nbrResult += 1;
+	}
+}
+//alert(randResult);
+return randResult;
+}
+
+function tireRand2(nbrRequest, popColl){
+var randResult = new Array(nbrRequest);
+var nbrResult = 0;
+var randNo;
+var parmi = popColl.length;
+
+while (nbrResult < nbrRequest) {
+	randNo = getRandomIntInclusive(0, parmi - 1);
+	if ( randResult.indexOf(randNo) == -1 ){
+		randResult[nbrResult] = randNo;
+		nbrResult += 1;
+	}
+}
+//alert(randResult);
+return randResult;
+}
+
+function getRandomIntInclusive(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min +1)) + min;
+}
+
+function terminequiz(toConfirm, isPrevious){
+var butquiz = document.getElementById('butquiz');
+var somResult = document.getElementById('somResult');
+var bCheck = document.getElementById('bCheck');
+var infoResult = document.getElementById('infoResult');
+var sTheory = document.getElementById('sTheory');
+var somTheory = document.getElementById('somTheory');
+var sTeam = document.getElementById('sTeam');
+var somTeam = document.getElementById('somTeam');
+var sEvent = document.getElementById('sEvent');
+var somEvent = document.getElementById('somEvent');
+var sArtifact = document.getElementById('sArtifact');
+var somArtifact = document.getElementById('somArtifact');
+var enErreur = document.getElementById('enErreur');
+var quest_list = document.getElementById('quest_list');
+var nbrErreur = 0;
+var noRep = 0;
+var nonRep = "";
+var cat;
+var res = [[0,0],[0,0],[0,0],[0,0]];
+
+if (toConfirm)
+	if (!confirm("Ending the quiz ?")){return false;}
+
+duree = null;
+
+if (!affReponse)
+	bCheck.style.display="none";
+	
+butquiz.style.display="none";
+somResult.style.display="inherit";
+enErreur.style.display="inherit";
+quest_list.style.display = "inherit";
+
+for (var i = 0; i < quiz.listeQuest.length; i++) {
+	cat = quiz.listeQuest[i].categ;
+	res[cat][0] += 1;
+	if (quiz.listeQuest[i].result != true){
+		nbrErreur += 1;
+		res[cat][1] += 1;
+		if (quiz.listeQuest[i].result == null)
+			noRep += 1;
+		if (quiz.listeQuest[i].result == false){
+			var Qno = document.getElementById('Q' + (i + 1));
+			Qno.className = "pg  cRouge";
+		}
+	}
+}
+//round(1.005, 2); // 1.01
+var percentResult = Math.round( (i - nbrErreur) / i * 1000) / 10;
+var nomClass = (percentResult < 85) ? "rFalse":"rTrue";
+if (noRep > 0)
+	nonRep = '( ' + noRep + ' Unanswered questions )';
+infoResult.innerHTML = 'Results : </br>' + ( i - nbrErreur) + ' questions answered correctly of ' + i + ' questions = <span class="' + nomClass + ' rtext">&#8239;' + percentResult + '&#8239;%</span>&#8239;' + nonRep;
+
+// By category
+if (res[0][0] != 0){
+sTheory.innerHTML += (res[0][0] - res[0][1]) + ' sur ' + res[0][0] + ' = ' + Math.round( (res[0][0] - res[0][1]) / res[0][0] * 100, 2) + '&#8239;%';
+somTheory.value = (res[0][0] - res[0][1]) / res[0][0];
+}else{
+sTheory.innerHTML += "0 sur 0";
+somTheory.value = 0;
+}
+if (res[1][0] != 0){
+sTeam.innerHTML += (res[1][0] - res[1][1]) + ' sur ' + res[1][0] + ' = ' + Math.round( (res[1][0] - res[1][1]) / res[1][0] * 100, 2) + '&#8239;%';
+somTeam.value = (res[1][0] - res[1][1]) / res[1][0];
+}else{
+sTeam.innerHTML += "0 sur 0";
+somTeam.value = 0;
+}
+if (res[2][0] != 0){
+sEvent.innerHTML += (res[2][0] - res[2][1]) + ' sur ' + res[2][0] + ' = ' + Math.round( (res[2][0] - res[2][1]) / res[2][0] * 100, 2) + '&#8239;%';
+somEvent.value = (res[2][0] - res[2][1]) / res[2][0];
+}else{
+sEvent.innerHTML += "0 sur 0";
+somEvent.value = 0;
+}
+if (res[3][0] != 0){
+sArtifact.innerHTML += (res[3][0] - res[3][1]) + ' sur ' + res[3][0] + ' = ' + Math.round( (res[3][0] - res[3][1]) / res[3][0] * 100, 2) + '&#8239;%';
+somArtifact.value = (res[3][0] - res[3][1]) / res[3][0];
+}else{
+sArtifact.innerHTML += "0 sur 0";
+somArtifact.value = 0;
+}
+// Evaluate summary div heigth
+somResultHeight = (somArtifact.offsetTop + 10)  + "px";
+somResult.style.height = somResultHeight;
+
+if (supportStorage)
+	writeQuizStorage(percentResult);
+}
+
+function hideShowSom(){
+var somResult = document.getElementById('somResult');
+var hideSom = document.getElementById('hideSom');
+
+if (somResult.style.height=="0px"){
+	somResult.style.height=somResultHeight;
+	hideSom.innerHTML = "&#9650;";
+}else{
+	somResult.style.height="0px";
+	hideSom.innerHTML = "&#9660;";
+}
+//alert("ok");
+}
+
+function changeMode(chkBox){
+var infoIcon = document.getElementById('infoIcon');
+var infoZone = document.getElementById('infoZone');
+
+if (chkBox.checked){
+	infoIcon.title = "Uncheck  the check box <Learning mode> to change to real mode";
+	infoZone.innerHTML = "The correct answers will be given to each question with the button « Check ».</br>You will see the elapse 60 minutes  time allocated, but it is you who end the exercise with the button « Ending the quiz ».</br>The quiz presents 80 random questions out of 98.";
+}else{
+	infoIcon.title = "Check  the check box <Learning mode> to change to learning mode";
+	infoZone.innerHTML = "The exercise ends at the end of the timed period.</br>The quiz presents 80 random questions out of 98.</br>The time allocated for the exercise is 60 minutes.";
+}
+animInfo(1);
+}
+
+function animInfo(one){
+var infoIcon = document.getElementById('infoIcon');
+if (one){
+infoIcon.style.animation = "bounce 0.3s ease-in-out 1";
+infoIcon.style.webkitAnimation = "bounce 0.3s ease-in-out 1";
+}else{
+infoIcon.style.animation = "bounce 0.3s ease-in-out 3";
+infoIcon.style.webkitAnimation = "bounce 0.3s ease-in-out 3";
+}
+//infoIcon.style.fontSize = "20pt";
+setTimeout('infoIcon.style.animation = "";', 1500);
+}
+
+function summaryquiz(){
+var pageContainer = document.getElementById("pageContainer");
+var quest_list = document.getElementById("quest_list");
+
+if (pageContainer.style.height == "auto"){
+	pageContainer.style.height = "70px";
+	quest_list.style.display = "inherit";
+}else{
+	pageContainer.style.height = "auto";
+	quest_list.style.display = "none";
+}
+}
+
+// Functions for Drag and drop
+//function with mouse called when drag starts
+function dragIt(theEvent) {
+if (duree != null){
+	theEvent.dataTransfer.setData("Text", theEvent.target.id);
+	theEvent.target.classList.add("sdrag");
+	}
+}
+//function with mouse called when element drops
+function dropIt(theEvent) {
+var theData = theEvent.dataTransfer.getData("Text");
+var theDraggedElement = document.getElementById(theData);
+theEvent.target.appendChild(theDraggedElement);
+theDraggedElement.classList.remove("sdrag");
+theEvent.preventDefault();
+subQuestion();
+}
+
+// Drag & drop with touch event for mobil
+var offSetX = 0;
+var offSetY = 0;
+function startTouch(event) {
+	if (duree != null){
+	var touch = event.targetTouches[0];
+	offSetX = touch.pageX-this.parentElement.offsetLeft;
+	offSetY = touch.pageY-this.parentElement.offsetTop;
+	this.addEventListener('touchmove', moveTouch, false);
+	this.addEventListener('touchend', endTouch, false);
+	this.classList.add("sdrag");
+	}
+}
+
+function endTouch(ev) {   //Drop DIV
+
+verif: {
+    if ( isDropObj(ev.target, document.getElementById('repQuestDrop1')) )
+		break verif;
+    if ( isDropObj(ev.target, document.getElementById('repQuestDrop2')) )
+		break verif;
+    if ( isDropObj(ev.target, document.getElementById('repQuestDrop3')) )
+		break verif;
+    if ( isDropObj(ev.target, document.getElementById('repQuestDrop4')) )
+		break verif;
+	if ( isDropObj(ev.target, document.getElementById('place1')) ) 
+		break verif;
+	if ( isDropObj(ev.target, document.getElementById('place2')) ) 
+		break verif;
+	if ( isDropObj(ev.target, document.getElementById('place3')) ) 
+		break verif;
+	if ( isDropObj(ev.target, document.getElementById('place4')) ) 
+		break verif;
+}
+
+ev.target.style.top = "0px";
+ev.target.style.left = "0px";
+ev.target.classList.remove("sdrag");
+}
+
+function isDropObj(objToDrop, dropTarget){
+var dragObj;
+var targetObj;
+
+if (dropTarget == null)
+		return false;
+
+if (dropTarget.firstChild != null)
+	if (dropTarget.firstChild.nodeName == "DIV" || dropTarget.childNodes.length > 2)
+		return false;
+
+dragObj = posObj(objToDrop);
+targetObj = posObj(dropTarget);
+
+if ( ((((dragObj.x > targetObj.x) && (dragObj.x < targetObj.x + dropTarget.offsetWidth))  || (dragObj.x + objToDrop.offsetWidth > targetObj.x) && (dragObj.x + objToDrop.offsetWidth < targetObj.x + dropTarget.offsetWidth)) &&  (((dragObj.y > targetObj.y) && (dragObj.y < targetObj.y + dropTarget.offsetHeight))  || (dragObj.y + objToDrop.offsetHeight > targetObj.y) && (dragObj.y + objToDrop.offsetHeight < targetObj.y + dropTarget.offsetHeight))) ||  ( (dragObj.x < targetObj.x) && (dragObj.x + objToDrop.offsetWidth > targetObj.x + dropTarget.offsetWidth) && (((dragObj.y > targetObj.y) &&  (dragObj.y < targetObj.y + dropTarget.offsetHeight)) || (dragObj.y + objToDrop.offsetHeight < targetObj.y + dropTarget.offsetHeight) ) ) ){
+	dropTarget.appendChild(objToDrop);
+	subQuestion();
+	return true;
+}
+return false;
+}
+
+function moveTouch(event) {
+    var touch = event.targetTouches[0];
+    // Place element where the finger is
+    this.style.left = touch.pageX-this.parentElement.offsetLeft-offSetX + 'px';
+    this.style.top = touch.pageY-this.parentElement.offsetTop-offSetY + 'px';
+    event.preventDefault();
+}
+
+// END  Functions for Drag and drop
+
+function posObj(htmlelement){  // Return object position in screen
+
+var e = htmlelement; 
+var offset = {x:0,y:0}; 
+while (e) 
+{ 
+    offset.x += e.offsetLeft; 
+    offset.y += e.offsetTop; 
+    e = e.offsetParent; 
+} 
+return (offset);
+}
+
+
+function exportSavedQuiz(){
+var jsonCode ;
+
+jsonCode = JSON.stringify( eval('('+ localStorage.getItem(typeQuiz + "_QUIZ_" + savedQuizSelect) +')') );
+//alert(jsonCode);
+window.location.href = "mailto: destinataire@nexio.com?Subject=Export_Quiz&body=" + jsonCode;
+
+}
+
+function importSavedQuiz(){
+var divImport = document.getElementById('divImport');
+var menuList = document.getElementById('menuList');
+
+menuList.style.display="none";
+divImport.style.display="inherit";
+
+}
+
+function importQuiz(confirmed){
+var textToImport = document.getElementById('textToImport');
+var divImport = document.getElementById('divImport');
+var quizID = Date.now();
+var jsonCode, quizData ;
+
+if (confirmed){
+	if (textToImport.value != ""){
+		jsonCode = textToImport.value;
+		jsonCode = jsonCode.trim();
+		textToImport.value = "";
+		try{
+		quizData = JSON.parse(jsonCode);
+		quizData[0] = quizID;
+		localStorage.setItem(typeQuiz + "_QUIZ_" + quizID,JSON.stringify(quizData));
+		document.location.reload(true);
+		} catch (exception) {
+		alert("An error has occurred: " + exception.message);
+	}}else
+		alert("No data to import!");
+}
+divImport.style.display="none";
+
+}
+
+
+
+
+function printPage(){   // Print function for question list
+var quizList = document.getElementById('quizList');
+var Tprint = document.getElementById('Tprint');
+var selForm =  document.getElementById('selForm');
+var menuList = document.getElementById('menuList');
+menuList.style.display="none";
+
+
+if (sortArray.length != qList.length || sortArray.length == 0)
+	window.print();
+else{	// Otherwise print questions list.  
+  quizList.className = "print";
+  (function() { // THIS FUNCTION IS REQUIRED.
+
+      var formatForPrint = function(table) {
+        var tableParent = table.parentNode
+          , cell = table.querySelector("tbody > tr > td");
+        if(cell) {
+          var topFauxRow = document.createElement("table")
+            , fauxRowTable = topFauxRow.insertRow(0).insertCell(0).appendChild(table.cloneNode())
+            , colgroup = fauxRowTable.appendChild(document.createElement("colgroup"))
+            , headerHider = document.createElement("div")
+            , metricsRow = document.createElement("tr")
+            , cells = cell.parentNode.cells
+            , cellNum = cells.length
+            , colCount = 0
+            , tbods = table.tBodies
+            , tbodCount = tbods.length
+            , tbodNum = 0
+            , tbod = tbods[0];
+          for(; cellNum--; colCount += cells[cellNum].colSpan);
+          for(cellNum = colCount; cellNum--; metricsRow.appendChild(document.createElement("td")).style.padding = 0);
+          cells = metricsRow.cells;
+          tbod.insertBefore(metricsRow, tbod.firstChild);
+          for(; ++cellNum < colCount; colgroup.appendChild(document.createElement("col")).style.width = cells[cellNum].offsetWidth + "px");
+          var borderWidth = metricsRow.offsetHeight;
+          metricsRow.className = "metricsRow";
+          borderWidth -= metricsRow.offsetHeight;
+          tbod.removeChild(metricsRow);
+          tableParent.insertBefore(topFauxRow, table).className = "fauxRow";
+          if(table.tHead)
+            fauxRowTable.appendChild(table.tHead);
+          var fauxRow = topFauxRow.cloneNode(true)
+            , fauxRowCell = fauxRow.rows[0].cells[0];
+          fauxRowCell.insertBefore(headerHider, fauxRowCell.firstChild).style.marginBottom = -fauxRowTable.offsetHeight - borderWidth + "px";
+          if(table.caption)
+            fauxRowTable.insertBefore(table.caption, fauxRowTable.firstChild);
+          if(tbod.rows[0])
+            fauxRowTable.appendChild(tbod.cloneNode()).appendChild(tbod.rows[0]);
+          for(; tbodNum < tbodCount; tbodNum++) {
+            tbod = tbods[tbodNum];
+            rows = tbod.rows;
+            for(; rows[0]; tableParent.insertBefore(fauxRow.cloneNode(true), table).rows[0].cells[0].children[1].appendChild(tbod.cloneNode()).appendChild(rows[0]));
+          }
+          tableParent.removeChild(table);
+        }
+        else
+          tableParent.insertBefore(document.createElement("div"), table).appendChild(table).parentNode.className="fauxRow";
+      };
+	var tables = document.body.querySelectorAll("table.print")
+	  , tableNum = tables.length;
+	for(; tableNum--; formatForPrint(tables[tableNum]));	  
+  })();
+
+	window.print();
+
+	var tables = document.body.querySelectorAll("table.fauxRow")
+	  , tableNum = tables.length;
+	for(; tableNum--; tables[tableNum].parentNode.removeChild(tables[tableNum])  );
+
+	var tblElem = document.createElement("table")
+	tblElem.setAttribute('id', 'quizList');
+	selForm.insertBefore(tblElem, selForm.firstChild);
+	sortOrder = sortOrder * -1;
+	sortTable(sortColl, true);
+}
+
+}
+
+function adjustFontSize(sizeAD){
+var fs = document.body.style.fontSize;
+
+if (fs == "")
+	fs = "1em";
+
+fs = eval(fs.replace("em", "")) + sizeAD; 
+if (fs >= 1.6 || fs <= 0.5)
+	fs = 1;
+	
+document.body.style.fontSize = fs + "em";
+
+if (supportStorage)
+	localStorage.setItem(typeQuiz + "_fontSize", fs + "em");
+
+}
+
+function scrollRightNav(){
+var topValue;
+if (document.documentElement.scrollTop)
+	topValue = document.documentElement.scrollTop;
+else
+	topValue = document.body.scrollTop;
+//alert(topValue);
+	rightnav.style.top = topValue + 'px';
+}
+
+function showChxQuiz(){
+var chxPro = document.getElementById('chxPro');
+
+chxPro.style.display="inherit";
+
+}
+
+function chxQuiz(chx, fromInit){
+var chxPro = document.getElementById('chxPro');
+quizTitle1 = document.getElementById('quizTitle1');
+quizTitle2 = document.getElementById('quizTitle2');
+
+chxPro.style.display="none";
+if (chx == "PSM"){
+	quizTitle1.innerHTML = "Professional Scrum Master - Learning Quiz";
+	quizTitle2.innerHTML = "Professional Scrum Master - Learning Quiz";
+	typeQuiz = "PSM";	
+	nbrQuestions = 80;
+	duree = 3600000;
+}
+
+if (chx == "PSP"){
+	quizTitle1.innerHTML = "Professional Scrum Product Owner - Learning Quiz";
+	quizTitle2.innerHTML = "Professional Scrum Product Owner - Learning Quiz";
+	typeQuiz = "PSP";	////
+	nbrQuestions = 2;
+	duree = 90000;
+}
+
+if (!fromInit){
+	localStorage.setItem("QUIZ_TYPE" , typeQuiz );
+	document.location.reload(true);
+}
+
+}
+
+
+// -->
+</script> 
+</head>
+
+<body onload="initP();">
+
+<div class="entete">
+<div class="logoN"></div>
+<div class="title2"><h2 id="quizTitle1"> Professional Scrum Master - Learning Quiz</h2></div>
+</div>
+
+<div id="headInfo">
+<div id="startInfo">
+<div id="InfoSom"><p id="pResult"><span class="rTrue"><a id="infoIcon" title="The quiz presents 40 random questions out of 45.">&#8239; i</a></span><div id="infoZone" class="alignv"></div></p></div>
+
+	<form id="startForm">
+	<label><input id="aff_rep" type="checkbox" onclick="changeMode(this)">Learning mode</input></label></br>
+	<button id="startButton" onclick="startTest(); return false;">Start the quiz</button></br>
+	</form>
+</div>
+
+<div id="quizInfo">
+<div id="timeZone">
+<span id="tempsEcoule">Time elapsed&#8239;:&#8239; <span id="tempsEcoul" class= "timeBox"></span></span>
+<span id="titleProgress"></span>
+<span id="tempsRestant">Remaining time&#8239;:&#8239; <span id="tempsReste" class= "timeBox"></span></span>
+<progress id="progressQ" >0</progress>
+</div>
+<div id="pageCell" class="pages">
+<div id="pageContainer" class="pages">
+</div>
+<div id="questLegend"><lo><li><span class="logoLegend" style="background-color:white"></span><span>Not answered</span></li><li><span class="logoLegend cTurquoise"></span><span>Answered</span></li>
+<li><span class="logoLegend cGold"></span><span>To be reviewed</span></li><span  id="enErreur"><li><span class="logoLegend cRouge"></span><span>In error</span></li></span></lo></div>
+</div>
+
+<div id="butquiz">
+<button id="revQuest" onclick="revQuestion()">Review question</button>
+<button id="summaryQuiz" onclick="summaryquiz()">Summary quiz</button>
+<button id="terminequiz" onclick="terminequiz(true)">Ending the quiz</button>
+</div>
+<div id="somResult">
+<div id="hideSom" onclick="hideShowSom()">&#9650;</div>
+<div id="divButAnal"><button id="bAnalyse" onclick="analyseQ()">Overall analysis</button></div>
+<p id="infoResult"></p>
+<p><span id="sTheory">Scrum Theory:&#8239;</span><progress id="somTheory" >100%</progress></p>
+<p><span id="sTeam">Scrum Team:&#8239;</span><progress id="somTeam" >0</progress></p>
+<p><span id="sEvent">Scrum Events:&#8239;</span><progress id="somEvent" >0</progress></p>
+<p><span id="sArtifact">Scrum Artifacts:&#8239;</span><progress id="somArtifact" >0</progress></p>
+</div>
+</div>
+
+</div>
+
+<div id="quest_list">
+<p id="noQuestion"></p>
+<div id="quest_zone">
+<p id="catQuestion">Category: Scrum</p>
+<p id="encQuestion"></P>
+<p id="hintQuestion"></p>
+	<form id="formRep">
+	<!--Ne pas modifier - contenu généré automatiquement<span class="repLine"><span class="noQ">A)</span> <input type="radio" name="chx" value="A"> Its is likely to increase.</input></br></span> // -->
+	</form>
+
+<!-- Zone pour question type drag and drop // -->
+<div id="questDragType">
+<p id="catQuestionD">Category: Scrum</p>
+<p id="encQuestionD"></P>
+<p id="hintQuestionD"></p>
+	<div id="picsZone">
+	<!--Ne pas modifier - contenu généré automatiquement<div id="place1" class="bidon" ondrop="dropIt(event);" ondragover="event.preventDefault();">
+		<div id="txt1" class="txtDiv" draggable="true" ondragstart="dragIt(event);">8 hours or less</div>
+		</div>// -->
+	</div>
+	<div id="repZone">
+	<!--Ne pas modifier - contenu généré automatiquement<div class="repChx">
+	<div id="repQuest1">Daily Scrum</div><div id="repQuestDrop1"  ondrop="dropIt(event);" ondragover="event.preventDefault();"></div>
+	</div>// -->
+	</div>
+</div>
+<!-- END Zone pour question type drag and drop // -->
+</div>
+<div></br><div id="butQuest"><button id="bBack" onclick="nextQuestion(-1)">Back</button><button id="bCheck" onclick="subQuestion(true)">Check</button><button id="bNext" onclick="nextQuestion()">Next</button><button id="bReload" onclick="document.location.reload(true);">Quiz list</button></div>
+<div id="resultat"></div>
+</div>
+
+</div>
+
+<div id="savedQuiz">
+<div class="entete">
+<div onclick="showChxQuiz()" class="logoN"></div>
+<div class="title2"><h2 id="quizTitle2"> Professional Scrum Master - Learning Quiz</h2></div>
+</div>
+<div id="chxPro">
+<div onclick="chxQuiz('PSM')" class="logoPSM"></div>
+<div onclick="chxQuiz('PSP')" class="logoPSPO"></div>
+</div>
+
+<table id="quizHead"><tbody><tr>
+<td id="optMenu" class="cTurquoise" title="Click to menu" onclick="showOptions(this)">Options</td>
+<td id="tdMess"><h3 id="optTitle">      </h3></td>
+</tr></tbody></table>
+<div id="tableZone">
+<div id="menuList">
+<table><tbody>
+<tr><td onclick="createQuiz()" title="Create a Custom Quiz.">Create a Custom Quiz</td></tr>
+<tr><td onclick="selectQuiz()" title="Custom Quiz list">Custom Quiz List</td></tr>
+<tr><td onclick="document.location.reload(true);" title="Saved Quiz List">Saved Quiz List</td></tr>
+<tr><td onclick="importSavedQuiz();" title="Import a Custom Quiz exported.">Import...</td></tr>
+<tr><td onclick="printPage();" title="Print current page.">Print...</td></tr>
+<tr><td onclick="clearQuiz();">Clear all...</td></tr>
+</tbody></table>
+</div>
+
+
+</br>
+
+<form id="selForm">
+<table  id="quizList"></table>
+<div id="butCreer">
+<label>Quiz Name:&#8239;</label><input id="nom_quiz" type="text" width="20" maxlength="20" value=""/>
+<input id="source" type="hidden" value=""/>
+<button id="bcreerQuiz" onclick="creerQuiz(this.form)">Save Quiz</button> 
+</div>
+</form>
+<div id="divRepList" onclick="javascript:this.style.display='none'";"><table id="repList"></table></div>
+<div id="divImport">
+<h3>Import a Custom Quiz</h3>
+<p>Copy/paste the body of the export message to import.</p>
+<textarea id="textToImport" rows="5" cols="50"></textarea></br>
+<button id="bImportQuiz" onclick="importQuiz(true)">Ok</button><button id="cImportQuiz" onclick="importQuiz(false)">Cancel</button> 
+</div>
+
+<div></br>
+<div id="butPrev">
+<div id="sbutPrev"><button id="bLoadQuiz" onclick="savedQuiz(0)">Load</button><button id="bModQuiz" onclick="savedQuiz(3)">Modify</button><button id="bDelQuiz" onclick="savedQuiz(1)">Delete</button>
+<button id="bExport" onclick="exportSavedQuiz()">Export</button>
+</div>
+</br><button id="bNewQuiz" onclick="savedQuiz(2)">New Quiz</button>
+</div>
+</div>
+</div>
+</div>
+<div id="fontAdjust">
+<div onclick="adjustFontSize(0.1)"><div class="divFontSize">A</div><div class="fontLogo">&#8593;</div></div>
+<div onclick="adjustFontSize(-0.1)"><div class="divFontSize fontSmall">A</div><div class="fontLogo">&#8595;</div></div>
+</div>
+</body></html>
