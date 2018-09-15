@@ -28,7 +28,7 @@ if (GetCookie("userRole") != "ADM")
 else
 	pageZone.style.visibility="visible";
 userId = GetCookie("userID");
-o_messTip.init();
+window.oTip = new messTipObject();
 setFontSize();
 
 }
@@ -123,7 +123,7 @@ xmlhttp.send();
 
 function updUser(){
 var formIdent = document.getElementById('formIdent');
-o_messTip.show([0,20],false, "Saving account...", false, true);
+window.oTip.show([0,20],false, "Saving account...", false, true);
 var name = formIdent.nomUser.value;
 var email = formIdent.courUser.value;
 var role = formIdent.roleUser.options[formIdent.roleUser.selectedIndex].value;
@@ -132,23 +132,23 @@ getInfo("updUser?id=" + user_id + "&user=" + email + "&name=" + name + "&role=" 
 }
 
 function updRes(oRes){
-o_messTip.initMess("Account&nbsp;saved:</br>&nbsp;&nbsp;");
-o_messTip.addMess((oRes.nModified) ? "updated":"unchanged");
-o_messTip.fadeout(200);
+window.oTip.initMess("Account&nbsp;saved:</br>&nbsp;&nbsp;");
+window.oTip.addMess((oRes.nModified) ? "updated":"unchanged");
+window.oTip.fadeout(200);
 }
 
 function savePass(){
 var formPass = document.getElementById('formPass');
-o_messTip.show([0,20],false, "Saving&nbsp;password...", false, true);
+window.oTip.show([0,20],false, "Saving&nbsp;password...", false, true);
 	setTimeout(function() {
 		getInfo("savePass?id=" + user_id + "&pass=" + formPass.passUser.value + "&user_mail=" + user_mail + "&user_name=" + user_name, updPass);
 	}, 100);
 }
 
 function updPass(oRes){
-o_messTip.initMess("Password&nbsp;saved:</br>&nbsp;&nbsp;");
-o_messTip.addMess((oRes.nModified) ? "updated":"unchanged");
-o_messTip.fadeout(200);
+window.oTip.initMess("Password&nbsp;saved:</br>&nbsp;&nbsp;");
+window.oTip.addMess((oRes.nModified) ? "updated":"unchanged");
+window.oTip.fadeout(200);
 editUser(user_id);
 }
 

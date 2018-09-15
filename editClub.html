@@ -45,15 +45,13 @@ if (document.images)
  favOff.src="images/favorisOff.png";
 }
 
-function logUserOperation(e){
-x=1;
-}
 
 function initPage(){
 clubForm = document.getElementById('clubForm');
 var data = getURLdata();
-o_messTip.init();
-document.addEventListener('paste', logUserOperation);
+
+window.oTip = new messTipObject();
+window.oPick = new listPickerObject();
 
 setFontSize();
 
@@ -62,7 +60,7 @@ userId = GetCookie("userID");
 
 getInfo("getClubData?data=" + clubID + "$", getClubData);
 //Make the DIV element draggagle:
-dragElement(document.getElementById("divParse"));
+
 }
 
 function getClubData(odata){
@@ -81,7 +79,7 @@ for (var i = 0; i < reg.length; i++) {
 showClub(oClub);
 showBlock(oBlocColl);
 }
-
+/*
 function getBlocList(){
 var CourseList = "";
 for (var i = 0; i < clubCourse.length; i++) {
@@ -90,7 +88,7 @@ for (var i = 0; i < clubCourse.length; i++) {
 CourseList = CourseList.substring(0, CourseList.length - 1 );
 getInfo("getBloc?data=" + CourseList, showBlock);
 }
-
+*/
 
 function showClub(oClubParc){
 //Load club fields
@@ -191,15 +189,15 @@ else
 
 function delClub(oButDel){
 if (confirm("Remove course « " + clubForm.FclubName.value + " » and all data ?")){
-		o_messTip.show(oButDel, false, "&nbsp;<b>Deleting Club " + clubForm.FclubName.value + " ...</b>");
+		window.oTip.show(oButDel, false, "&nbsp;<b>Deleting Club " + clubForm.FclubName.value + " ...</b>");
 		getInfo("delClub?data=" + clubID , clubDeleted);
 }
 }
 
 function clubDeleted(oRep){
 if (oRep.ok){
-	o_messTip.initMess("&nbsp;<b>Club " + clubForm.FclubName.value + " deleted !</b>");
-	o_messTip.fadeout(300);
+	window.oTip.initMess("&nbsp;<b>Club " + clubForm.FclubName.value + " deleted !</b>");
+	window.oTip.fadeout(300);
 	setTimeout(function() {
 		addClub(true);
 	}, 3000);
@@ -210,8 +208,7 @@ function saveAll(oButSave){
 
 var data = {}, oClub = {};
 	var msg = "&nbsp;<b>Saving Club " + clubForm.FclubName.value + " ...</b>";
-	//o_messTip.initMess(msg);
-	o_messTip.show(oButSave, false, msg);
+	window.oTip.show(oButSave, false, msg);
 oClub.ID = clubID;
 oClub.name = clubForm.FclubName.value;
 oClub.prive = clubForm.Fprive.checked;
@@ -270,7 +267,7 @@ if (!oRes.ok && oRes.message){
 	else
 		var msg = "&nbsp;<b>Club " + clubForm.FclubName.value + " : " + ((oRes.nModified == 0) ? 'UNCHANGED':'<strong>UPDATED</strong>') + " </b></br>" ;
 	
-	o_messTip.initMess(msg);
+	window.oTip.initMess(msg);
 	var resCour = oRes.courses;
 	var resBloc = oRes.blocs;
 	for (var p = 0; p < resCour.length; p++){	// For each course
@@ -327,8 +324,8 @@ if (!oRes.ok && oRes.message){
 	for (var x = 0; x < delC.length; x+=3){
 		msg += "&nbsp;&nbsp;<b>Course " + delC[x+1] + " " + delC[x+2] + " verges<strong> REMOVED</strong></b></br>";
 	}	
-	o_messTip.initMess(msg);
-	o_messTip.fadeout(300);
+	window.oTip.initMess(msg);
+	window.oTip.fadeout(300);
 	delC = [];
 	delB = [];
 	if (oRes.upserted)
@@ -336,7 +333,7 @@ if (!oRes.ok && oRes.message){
 			document.location = "editClub.html?data=" + oRes.upserted;
 		}, 3000);
 }
-getBlocList();
+//getBlocList();
 }
 
 function addParc(){
@@ -657,7 +654,7 @@ for (var p = 0; p < bloc.length; p++) {
 }
 modLayer.style.height = document.documentElement.scrollHeight + "px";
 modLayer.style.visibility = "visible";
-changeBloc(clubForm.FBbloc, arrOpt);
+changeBloc(clubForm.FBbloc, arrOpt, true);
 }
 
 function selBloc(oSel){
@@ -755,6 +752,12 @@ function allowDrop(e) {
     e.preventDefault();
 }
 
+function dropParsedElem(e){
+var draggedElement = document.getElementById(dragID);
+e.target.value = draggedElement.value;
+e.preventDefault();
+}
+
 function reorderBloc(oP, nP){
 // Detect selected bloc and target
 for (var p = 0; p < bloc.length; p++) {
@@ -795,7 +798,7 @@ function copyCoord(oIcon){
 var tabText = document.getElementById('tabText');
 
 tabText.value = clubForm.Flat.value + ", " + clubForm.Flong.value;
-o_messTip.show(oIcon,200, "To clipboard : </br>" + tabText.value, 10);
+window.oTip.show(oIcon, 200, "To clipboard : </br>" + tabText.value, 10);
 
 tabText.select();
 document.execCommand("copy");
@@ -803,81 +806,73 @@ tabText.value = "";
 }
 
 function butParseData(oTxt){
-var divParse = document.getElementById('divParse');
-var parseContent = document.getElementById('parseContent');
-var op = posObj(clubForm.FclubName);
-divParse.style.top = op.y + "px";
-divParse.style.left = (op.x + clubForm.FclubName.offsetWidth) + "px";
-divParse.style.visibility = "visible";
+
+	function newParsedInput(data, id){
+		var inputElem = document.createElement("input");
+		inputElem.setAttribute('id', "pElem" + id);
+		inputElem.setAttribute('value', data.trim());
+		inputElem.setAttribute('draggable', true);
+		inputElem.setAttribute('ondragstart', "dragIt(event, this)");
+	return inputElem;
+	}
 
 var tTab = oTxt.tabText.value;
 var dat = tTab.split("\n");
-
+var objList = [];
 if (dat[0] != ""){
-	remChilds(parseContent);
 	for (var i = 0; i < dat.length; i++) {
-		parseContent.appendChild(newParsedInput(dat[i], i));
+		objList[objList.length] = newParsedInput(dat[i], i);
 		if (dat[i].indexOf(",") != -1){
 			var vData = dat[i].split(",");
 			for (var p = 0; p < vData.length; p++) {
-				parseContent.appendChild(newParsedInput(vData[p], i + "v" + p));
+				objList[objList.length] = newParsedInput(vData[p], i + "v" + p);
 			}
 		}
 	}
 }
-divParse.scrollIntoView({behavior: "instant", block: "end", inline: "nearest"});
+window.oPick.show(clubForm.FclubName, objList);
+//divParse.scrollIntoView({behavior: "instant", block: "end", inline: "nearest"});
 }
 
-function newParsedInput(data, id){
-	var inputElem = document.createElement("input");
-	inputElem.setAttribute('id', "pElem" + id);
-	inputElem.setAttribute('value', data.trim());
-	inputElem.setAttribute('draggable', true);
-	inputElem.setAttribute('ondragstart', "dragIt(event, this)");
-return inputElem;
-}
 
-function changeBloc(oB, arrBloc){
-var divParse = document.getElementById('divParse');
-var parseContent = document.getElementById('parseContent');
-var divParseheader = document.getElementById('divParseheader');
-if (arrBloc) // Add nwe bloc
-	divParseheader.style.display = "none";
-else	// Change bloc
-	divParseheader.style.display = "";
-	
-var op = posObj(oB);
+function changeBloc(oB, arrBloc, maskHead){
 
 if (!arrBloc)
 	arrBloc = ARRBLOCOPT;
-divParse.style.top = op.y + "px";
-divParse.style.left = (op.x + oB.offsetWidth) + "px";
+	
+var objList = [];
+		for (var i = 0; i < arrBloc.length; i++){
+			var inputElem = document.createElement("input");
+			inputElem.setAttribute('id', "bElem" + i);
+			inputElem.setAttribute('type', 'button');
+			var cInfo = arrBloc[i];
+			inputElem.setAttribute('value', cInfo);
+			cInfo = "B" + arrBloc[i] + ' blocDisplay';
+			inputElem.setAttribute('class', cInfo);
+			if (maskHead)
+				inputElem.setAttribute('onclick', "addNewBloc(this)");
+			else
+				inputElem.setAttribute('onclick', "modifyBloc(this)");
+			
+			objList[objList.length] = inputElem;
+		}
 
-remChilds(parseContent);
-
-for (var i = 0; i < arrBloc.length; i++){
-	var inputElem = document.createElement("input");
-	inputElem.setAttribute('id', "bElem" + i);
-	inputElem.setAttribute('type', 'button');
-	var cInfo = arrBloc[i];
-	inputElem.setAttribute('value', cInfo);
-	cInfo = "B" + arrBloc[i] + ' blocDisplay';
-	inputElem.setAttribute('class', cInfo);
-	inputElem.setAttribute('onclick', "modifyBloc(this)");
-	parseContent.appendChild(inputElem);
+window.oPick.show(oB, objList, maskHead);
 }
-divParse.style.visibility = "visible";
+
+function addNewBloc(cB){
+	window.oPick.closePicker();
+var modLayer = document.getElementById('modalDiv');
+
+	bloc[bloc.length-1].Bloc = cB.value;
+	initBlocs();
+	clubForm.FBid.value = clubForm.FBbloc.options[clubForm.FBbloc.length - 1].value;
+	showBloc();
+	clubForm.FBbloc.selectedIndex = clubForm.FBbloc.length-1;
+	modLayer.style.visibility="hidden";
 }
 
 function modifyBloc(cB){
-var divParseheader = document.getElementById('divParseheader');
-if (divParseheader.style.display == "none"){  // Add new bloc
-	divParseheader.style.display = "";
-	closeParseWin();
-	selBloc(cB);
-	return false;
-}
-	
 var bName = cB.className.split(" ");
 var actID = clubForm.FBid.value;
 bName = bName[0].substring(1);
@@ -889,68 +884,12 @@ for (var p = 0; p < bloc.length; p++) {
 		clubForm.FBbloc.selectedIndex = actCombo;
 		clubForm.FBid.value = actID;
 		showBloc(clubForm.FBbloc);	
-		closeParseWin();
+		//closeParseWin();
+		window.oPick.closePicker();
 		break;
 	}
 }
 }
-
-
-function dropParsedElem(e){
-var draggedElement = document.getElementById(dragID);
-e.target.value = draggedElement.value;
-e.preventDefault();
-}
-
-
-function dragElement(elmnt) {
-  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-  if (document.getElementById(elmnt.id + "header")) {
-    /* if present, the header is where you move the DIV from:*/
-    document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
-  } else {
-    /* otherwise, move the DIV from anywhere inside the DIV:*/
-    elmnt.onmousedown = dragMouseDown;
-  }
-
-  function dragMouseDown(e) {
-    e = e || window.event;
-    e.preventDefault();
-    // get the mouse cursor position at startup:
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    document.onmouseup = closeDragElement;
-    // call a function whenever the cursor moves:
-    document.onmousemove = elementDrag;
-  }
-
-  function elementDrag(e) {
-    e = e || window.event;
-    e.preventDefault();
-    // calculate the new cursor position:
-    pos1 = pos3 - e.clientX;
-    pos2 = pos4 - e.clientY;
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    // set the element's new position:
-    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
-  }
-
-  function closeDragElement() {
-    /* stop moving when mouse button is released:*/
-    document.onmouseup = null;
-    document.onmousemove = null;
-  }
-}
-
-function closeParseWin(){
-var op = document.getElementById('divParse');
-op.style.visibility = "hidden";
-clubForm.FBblocName.scrollIntoView({behavior: "instant", block: "end", inline: "nearest"});
-x=1;
-}
-
 
 
 // -->
@@ -1107,7 +1046,7 @@ line-height: 80%;
 <li class="listitem gras">
 	<div class="formLabel">	
 	<label for="FclubName">Club name</label></div>
-	<input id="FclubName" class="inputtext" type="text" size="20" maxlength="25" value="" ondrop="dropParsedElem(event);" />
+	<input id="FclubName" class="inputtext" type="text" size="20" maxlength="35" value="" ondrop="dropParsedElem(event);" />
 </li>
 <li class="listitem gras">
 	<div class="formLabel">	
@@ -1323,16 +1262,13 @@ line-height: 80%;
 
 <div id="modalDiv"></div>
 
- <!--Draggable DIV:-->
+ <!--Draggable DIV:
 <div id="divParse">
-  <!--Include a header DIV with the same name as the draggable DIV, followed by "header":-->
   <div id="divParseheader"><a href="#" onclick="closeParseWin()">✖️</a></div>
-
   <div id="parseContent">
   </div>
-
 </div> 
-
+-->
 </body>
 
 </html>

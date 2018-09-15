@@ -1,6 +1,5 @@
 
-var HOSTserv = "https://pytgolf-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Python 3.6.3 
-
+var HOSTserv = "https://pytgolf-cdore2.a3c1.starter-us-west-1.openshiftapps.com/";  // Python 3.6.3 
 // "http://127.0.0.1:3000/";		//Portable Windows 10 Local host Node JS v6.10.0
 // "http://192.168.2.195:3000/";    //Ubuntu workstation 16.04
 // "http://192.168.2.195:8080/";    //Ubuntu workstation 16.04 docker 1.12.6 Node JS v4.2.3  MongoDB server v3.4.9
@@ -234,11 +233,9 @@ function getOffset(el) {
 }
 
 // Tool tip message object
-var o_messTip = {
-	oID: "o_messTip",
-    oFr: null,
-	oMess: null,
-    init : function(){	// To call onload document event
+function messTipObject(){
+	this.oID = "o_messTip";
+
 		var bodyobj = document.getElementsByTagName('body')[0];
 		var odiv = document.createElement("div");
 		odiv.setAttribute('id', this.oID);
@@ -247,20 +244,20 @@ var o_messTip = {
 		bodyobj.appendChild(odiv);
 		this.oFr = odiv;
 		this.oMess = this.oFr.childNodes[0];
-		},
-    initMess : function(mess){
+
+    this.initMess = function(mess){
 		this.oMess.innerHTML = mess;
-		},
-    addMess : function(mess){
+		}
+    this.addMess = function(mess){
 		this.oMess.innerHTML += mess;
-		},
-    fadeout : function(milli){
+		}
+    this.fadeout = function(milli){
 		if (milli)
 			fadeOut(this.oID, milli);
 		else
 			fadeOut(this.oID, 100);
-		},
-	show : function(oPos, milli, mess, adj, noArrow){
+		}
+	this.show = function(oPos, milli, mess, adj, noArrow){
 		if (!adj)	// Top pixel adjust
 			adj = 0;
 		if (mess)
@@ -280,6 +277,88 @@ var o_messTip = {
 			fadeOut(this.oID, milli);
 		}
 }
+
+
+// List Picker object
+function listPickerObject(){
+	var oID = "divParse";
+
+		var bodyobj = document.getElementsByTagName('body')[0];
+		var odiv = document.createElement("div");
+		odiv.setAttribute('id', oID);
+		odiv.innerHTML = '<div id="divParseheader"><a href="#" onclick="this.close()">✖️</a></div><div id="parseContent"></div>'
+		bodyobj.appendChild(odiv);
+		this.oFr = odiv;
+		this.head = this.oFr.childNodes[0];
+		this.oClose = this.oFr.childNodes[0].childNodes[0];
+		this.content = this.oFr.childNodes[1];
+		dragElement(document.getElementById("divParse"));
+		
+    this.closePicker = function(){
+		document.getElementById(oID).style.visibility = 'hidden';
+		}
+		this.oClose.addEventListener('click', this.closePicker, false);
+		
+	this.show = function(oB, arrList, maskHead){
+		if (maskHead) 
+			this.head.style.display = "none"; 
+		else
+			this.head.style.display = "";
+			
+		op = posObj(oB);
+		this.oFr.style.top = op.y + "px";
+		this.oFr.style.left = (op.x + oB.offsetWidth) + "px";
+
+		remChilds(this.content);
+		for (var i = 0; i < arrList.length; i++){
+			this.content.appendChild(arrList[i]);
+		}
+		this.oFr.scrollIntoView({behavior: "instant", block: "end", inline: "nearest"});
+		this.oFr.style.visibility = "visible";
+		}
+}
+
+function dragElement(elmnt) {
+  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  if (document.getElementById(elmnt.id + "header")) {
+    /* if present, the header is where you move the DIV from:*/
+    document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+  } else {
+    /* otherwise, move the DIV from anywhere inside the DIV:*/
+    elmnt.onmousedown = dragMouseDown;
+  }
+
+  function dragMouseDown(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // get the mouse cursor position at startup:
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    document.onmouseup = closeDragElement;
+    // call a function whenever the cursor moves:
+    document.onmousemove = elementDrag;
+  }
+
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // calculate the new cursor position:
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    // set the element's new position:
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  }
+
+  function closeDragElement() {
+    /* stop moving when mouse button is released:*/
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+}
+
 
 function adjustScreen(hauteurUtil){
 	var divMap, dispH, pxRatio

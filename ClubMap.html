@@ -71,6 +71,8 @@ document.location = "golfGPS.html?data=" + courseID + "&" + clubName;
 function showHole(menuTxt){
 var setFlag = document.getElementById("setFlag");
 var navTrou = document.getElementById("navTrou");
+if (!window.oTip)
+	window.oTip = new messTipObject();
 if (GetCookie("userRole") == "ADM"){
 	if (!showLatLng){
 		showLatLng = true;
@@ -106,7 +108,7 @@ closeMenu();
 function setFlagCoord(butObj){
 var flagLatLng = holeMarker.getPosition();
 
-o_messTip.show(butObj, 200, "&nbsp;<b>Lat.: </b>" + flagLatLng.lat() + "&nbsp;</br>&nbsp;<b>Lng.: </b>" + flagLatLng.lng(), 10);
+window.oTip.show(butObj, 200, "&nbsp;<b>Lat.: </b>" + flagLatLng.lat() + "&nbsp;</br>&nbsp;<b>Lng.: </b>" + flagLatLng.lng(), 10);
 if (isMapped){
 	var data = courseID + "$" + trou + "$" + flagLatLng.lat() + "$" + flagLatLng.lng() + "$0$0";
 	trouCoord[trou - 1] = new google.maps.LatLng(flagLatLng.lat(), flagLatLng.lng());
@@ -158,7 +160,7 @@ var data = getURLdata();
 var ids = data.split('$');
 clubID = parseInt(ids[0]);
 courseID = parseInt(ids[1]);
-o_messTip.init();
+
 getInfo("getClubParcTrous?data=" + data, showCourse);
 }
 
