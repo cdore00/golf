@@ -22,6 +22,9 @@
 <style>
 #gameBut{
 visibility:hidden;
+
+.topBord{
+border: 1px solid #f00;
 }
 
 </style>
@@ -139,7 +142,6 @@ tb.appendChild(trElem);
 
 
 var trElem = document.createElement("tr");
-//trElem.setAttribute('rowspan', '2');
 
 var po = 0, pi = 0;   /// Les coups
 var tdH = '<th rowspan="2">' + GetCookie("userName") + '</th>';
@@ -170,7 +172,7 @@ trElem.innerHTML = tdH;
 tb.appendChild(trElem);
 
 var trElem = document.createElement("tr");
-var po = 0, pi = 0;   /// Le diff�rentiel
+var po = 0, pi = 0;   /// Le différentiel
 var tdH = "";
 for (var i= 1; i < 10; i++){
 	var s = eval("gameData.T" + i);
@@ -257,12 +259,51 @@ tdH += '<td>' + (po + pi) + '</td>';
 trElem.innerHTML = tdH;
 tb.appendChild(trElem);
 
+	function wLine(data){
+		var s = (data == 0) ? "":data;
+		if ( typeof s == "number" ){
+			tdH += '<td>' + ( (s==0) ? "":s) + '</td>';
+			po += s;
+		}else{
+			tdH += '<td></td>';
+		}
+	}
+
 var trElem = document.createElement("tr");
-var po = 0, pi = 0;   /// Les p�nalit�s
+var po = 0, pi = 0;   /// Les pénalité
 
 var tdH = '<th>' + langLbl["penal"] + '</th>';
 for (var i= 1; i < 10; i++){
-	var s = (eval("gameData.L" + i));
+	wLine( eval("gameData.L" + i) );
+}
+if (nt == 19){
+	tdH += '<td>' + po + '</td>';
+	for (var i= 10; i < nt; i++){
+		wLine( eval("gameData.L" + i) );
+	}
+	tdH += '<td>' + pi + '</td>';
+}
+tdH += '<td>' + (po + pi) + '</td>';
+trElem.innerHTML = tdH;
+tb.appendChild(trElem);
+
+if (gameData.others)
+	for (var i= 0; i < gameData.others.length; i++){
+		addPlayer(tb, nt, gameData.par, gameData.others[i]);
+	}
+return;
+
+}
+
+function addPlayer(tb, nt, parArr, oData){
+var trElem = document.createElement("tr");
+var par = parArr;
+var sData = oData.score;
+
+var po = 0, pi = 0;   /// Les coups
+var tdH = '<td rowspan="2" class="topBord">' + oData.name + '</td>';
+for (var i= 1; i < 10; i++){
+	var s = eval(sData[i-1].T);
 	if ( typeof s == "number" ){
 		tdH += '<td>' + s + '</td>';
 		po += s;
@@ -273,7 +314,7 @@ for (var i= 1; i < 10; i++){
 if (nt == 19){
 	tdH += '<td>' + po + '</td>';
 for (var i= 10; i < nt; i++){
-	var s = (eval("gameData.L" + i));
+	var s = eval(sData[i-1].T);
 	if ( typeof s == "number" ){
 		tdH += '<td>' + s + '</td>';
 		pi += s;
@@ -286,7 +327,123 @@ tdH += '<td>' + pi + '</td>';
 tdH += '<td>' + (po + pi) + '</td>';
 trElem.innerHTML = tdH;
 tb.appendChild(trElem);
-x=1;
+
+var trElem = document.createElement("tr");
+var po = 0, pi = 0;   /// Le différentiel
+var tdH = "";
+for (var i= 1; i < 10; i++){
+	var s = eval(sData[i-1].T);
+	var p = eval("par.T" + i);
+	if ( typeof s == "number" ){
+		var d = s - p;	
+		var className = "par";
+		if (d < 0)
+			className = "bird";
+		if (d < -1)
+			className = "eagl";
+		if (d > 0)
+			className = "bog";
+		if (d > 1)
+			className = "dbog";
+		if (d > 2)
+			className = "tbog";
+		po += d;
+		if (d == 0)
+			d = "-";
+		tdH += '<td class="' + className + '">' + d + '</td>';
+	}else{
+		tdH += '<td></td>';
+	}
+}
+if (nt == 19){
+	tdH += '<td>' + po + '</td>';
+for (var i= 10; i < nt; i++){
+	var s = eval(sData[i-1].T);
+	var p = eval("par.T" + i);
+	if ( typeof s == "number" ){
+		var d = s - p;	
+		var className = "par";
+		if (d < 0)
+			className = "bird";
+		if (d < -1)
+			className = "eagl";
+		if (d > 0)
+			className = "bog";
+		if (d > 1)
+			className = "dbog";
+		if (d > 2)
+			className = "tbog";
+		pi += d;
+		if (d == 0)
+			d = "-";
+		tdH += '<td class="' + className + '">' + d + '</td>';
+	}else{
+		tdH += '<td></td>';
+	}
+}
+tdH += '<td>' + pi + '</td>';
+}
+tdH += '<td>' + (po + pi) + '</td>';
+trElem.innerHTML = tdH;
+tb.appendChild(trElem);
+
+var trElem = document.createElement("tr");
+var po = 0, pi = 0;   /// Les puts
+var tdH = '<th>Putts</th>';
+for (var i= 1; i < 10; i++){
+	var s = eval(sData[i-1].P);
+	if ( typeof s == "number" ){
+		tdH += '<td>' + s + '</td>';
+		po += s;
+	}else{
+		tdH += '<td></td>';
+	}
+}
+if (nt == 19){
+	tdH += '<td>' + po + '</td>';
+for (var i= 10; i < nt; i++){
+	var s = eval(sData[i-1].P);
+	if ( typeof s == "number" ){
+		tdH += '<td>' + s + '</td>';
+		pi += s;
+	}else{
+		tdH += '<td></td>';
+	}
+}
+tdH += '<td>' + pi + '</td>';
+}
+tdH += '<td>' + (po + pi) + '</td>';
+trElem.innerHTML = tdH;
+tb.appendChild(trElem);
+
+	function wLine(data){
+		var s = (data == 0) ? "":data;
+		if ( typeof s == "number" ){
+			tdH += '<td>' + ( (s==0) ? "":s) + '</td>';
+			po += s;
+		}else{
+			tdH += '<td></td>';
+		}
+	}
+	
+	
+var trElem = document.createElement("tr");
+var po = 0, pi = 0;   /// Les pꯡlit곍
+
+var tdH = '<th>' + langLbl["penal"] + '</th>';
+for (var i= 1; i < 10; i++){
+	wLine( eval(sData[i-1].L) );
+}
+if (nt == 19){
+	tdH += '<td>' + po + '</td>';
+for (var i= 10; i < nt; i++){
+	wLine( eval(sData[i-1].L) );
+}
+tdH += '<td>' + pi + '</td>';
+}
+tdH += '<td>' + (po + pi) + '</td>';
+trElem.innerHTML = tdH;
+tb.appendChild(trElem);
 }
 
 // -->

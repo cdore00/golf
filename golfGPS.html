@@ -40,34 +40,21 @@ var once = 0;
 window.addEventListener('DOMActivate', function() {
     setTimeout(scrollTo, 0, 0, 1);
 }, true);
-var userId = null;
-var courseID = null;
-var currentGameID = null;
-var calltabScore = false;
-var clubName = "";
-var map;
-var PositionFlag = 0;
-var posMarker;
-var holeMarker;
-var piquetMarker;
-var holeDist;
-var watchId = null;
-var locTimer = null;
-var watchLoc = 0;
+var initialCall = true;
+var userId = null, courseID = null, currentGameID = null, calltabScore = false, clubName = "";
+var map, posMarker, holeMarker, piquetMarker, holeDist, polyLine;
+var locTimer = null, watchId = null;
+var watchLoc = 0, PositionFlag = 0;
 var trou = 1, sTrou = null;
-var curScore = {};
+var curScore = [];
 var blocID = 0;
-var polyLine;
 var clicListener;
 var chxDistPiq = 0;
 var touchin = false;
-// Pour la voix
+// For speaking
 if ('speechSynthesis' in window){
-var msg = new SpeechSynthesisUtterance();
-//var laVoix = function () {};
-var lastDist = 0;
-var actDist = 0;
-var lastTime = 0;
+	var msg = new SpeechSynthesisUtterance();
+	var lastDist = 0, actDist = 0, lastTime = 0;
 }
   if (document.images)
    {
@@ -79,7 +66,7 @@ var lastTime = 0;
 var trouCoord =  new Array();	
 var trouPar =  new Array();	
 var trouNormale = false;
-var aScore = [{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}];
+var scoreOkInds, setScore = null, othUser = 0, objScore = null, aScore = [{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}];
 google.maps.visualRefresh = true;
 
 function initialize() {
@@ -398,38 +385,60 @@ if (piquetMarker.getVisible())
 function showScoreFrame(nScore){
 var layerScore = document.getElementById('showScore');
 var scoreHole = document.getElementById('scoreHole');
-var scoreOk = document.getElementById('scoreOk');
-
-var hs = trou;
 
 if (!sTrou)
 	sTrou = trou;
-if (nScore){
-	sTrou = sTrou + nScore;
-	hs = sTrou;
+	
+if (!(nScore===false))
+	sTrou = validTrou(sTrou + nScore);
+
+var hPar = eval("trouNormale.T" + sTrou);
+scoreHole.innerHTML = "Trou " + sTrou + " par " + hPar;
+
+if (initialCall){	
+	initialCall = false;
+
+	scoreOkInds[othUser].classList.add("selOkInd");
 }
-hs = validTrou(hs);
-sTrou = hs;
-var hPar = eval("trouNormale.T" + hs);
-scoreHole.innerHTML = "Trou " + hs + " par " + hPar;
-
-sInfo = aScore[hs - 1];
-scoreOk.classList.remove("backGreen", "backRed");
-if (sInfo.T)
-	scoreOk.classList.add("backGreen");
-
-setHoleScore(hPar, sInfo);
+setHoleScore(hPar, userScore(othUser));
 layerScore.style.visibility="visible";
 
 }
 
-function setHoleScore(hPar, sInfo){
-var setScore = document.getElementById('setScore');
+function userScore(ui){
+if (ui == 0)
+	return objScore[sTrou-1];
+else
+	return objScore.others[ui-1].score[sTrou-1];
+}
 
-if (sInfo.T)
+function setOkInd(ui,initCall){
+sInfo = userScore(ui);
+if (curScore.length){
+	if (!sInfo.T){
+		scoreOkInds[ui].classList.remove("backGreen", "backRed");
+	}else{
+		if (!scoreOkInds[ui].classList.contains("backRed")){
+			if ( !initCall && ((!curScore[ui].score[sTrou-1].T && !curScore[ui].score[sTrou-1].P && !curScore[ui].score[sTrou-1].L) || 
+				!(curScore[ui].score[sTrou-1].T == setScore.nbrCoups.value && curScore[ui].score[sTrou-1].P == setScore.nbrPutts.value && curScore[ui].score[sTrou-1].L == setScore.nbrPen.value)))
+				scoreOkInds[ui].classList.add("backRed");
+			else{
+				scoreOkInds[ui].classList.add("backGreen");
+				if (curScore[ui].score[sTrou-1].T == setScore.nbrCoups.value && curScore[ui].score[sTrou-1].P == setScore.nbrPutts.value && curScore[ui].score[sTrou-1].L == setScore.nbrPen.value)
+					scoreOkInds[ui].classList.replace("backRed", "backGreen" );
+				}	
+		}
+	}
+//if (scoreOk.classList.contains("backRed"))
+}
+}
+
+function setHoleScore(hPar, sInfo){
+
+if (sInfo.T)	
 	var vc = sInfo.T;
 else
-	var vc = hPar;
+	var vc = hPar;	// Propose regulation
 if (sInfo.P || sInfo.P == 0)
 	var vp = sInfo.P;
 else
@@ -438,15 +447,15 @@ if (sInfo.L || sInfo.L == 0)
 	var vl = sInfo.L;
 else
 	var vl = "0";
-setScore.nbrCoups.value = vc;
-setScore.nbrPutts.value = vp;
-setScore.nbrPen.value = vl;
-curScore.T = vc;
-curScore.P = vp;
-curScore.L = vl;
+//setScore.nbrCoups.value = vc;
+//setScore.nbrPutts.value = vp;
+//setScore.nbrPen.value = vl;
 selPts(document.getElementById('tdC' + vc), true);
 selPts(document.getElementById('tdP' + vp), true);
 selPts(document.getElementById('tdL' + vl), true);
+	for (var i= 0; i < objScore.others.length + 1 ; i++){
+		setOkInd(i, true);
+	}
 }
 	    
 var offSetX = 0;
@@ -456,7 +465,6 @@ function startTouch(event) {
 	offSetX = touch.pageX-this.offsetLeft;
 	offSetY = touch.pageY-this.offsetTop;
 	this.addEventListener('touchmove', moveTouch, false);
-//	this.addEventListener('touchend', endTouch, false);
 }
 
 function moveTouch(event) {
@@ -473,49 +481,79 @@ layerScore.style.visibility="hidden";
 sTrou = null;
 }
 
-function saveScore(formRef){
-var score = formRef.nbrCoups.value;
-var putt = formRef.nbrPutts.value;
-var penal = formRef.nbrPen.value;
+function saveScore(){
+var score = setScore.nbrCoups.value;
+var putt = setScore.nbrPutts.value;
+var penal = setScore.nbrPen.value;
 
-var strData = userId + "$" + courseID + "$" + sTrou + "$" + score + "$" + putt + "$" + penal + "$" + clubName;
+var strData = userId + "$" + courseID + "$" + sTrou + "$" + score + "$" + putt + "$" + penal + "$" + clubName + "$" + JSON.stringify(objScore)  + ((objScore.others) ? ("$" + JSON.stringify(objScore.others)):"");
+	// + ((objScore.others) ? ("$" + JSON.stringify(objScore.others)):"");
 	
 getInfo("updateGame?data=" + strData, setMyScore);
 if (trou == sTrou)
 	trouSuivant(1);
+
+initialCall = true;
 closeScore();
 }
 
-function setMyScore(gData){
+function saveUserHole(os, t, p, l){
+	os.T = t;
+	os.P = p;
+	os.L = l;
+}
+
+function setInitialScore(gData){
+	setMyScore(gData, true);
+}
+
+function setMyScore(gData, initial){
 var myScore = document.getElementById('myScore');
 var tot = 0;
 var laN = 0;
 var score, pref, ts;
+
 if (gData.length > 0){
-currentGameID = gData[0]._id;
-for (var i= 1; i < 19 ; i++){
-	ts = eval("gData[0].T" + i);
-	
-	if (ts > 0){
-		tot += ts;
-		laN += eval(eval("trouNormale.T" + i));
-		aScore[i-1].T=ts;
-		aScore[i-1].P=eval("gData[0].P" + i);
-		aScore[i-1].L=eval("gData[0].L" + i);
-	}else{
-	
+	curScore[0] = {};
+	curScore[0].score = JSON.parse(JSON.stringify(aScore));
+	currentGameID = gData[0]._id;
+	for (var i= 1; i < 19 ; i++){
+		var ts = eval("gData[0].T" + i);
+		
+		if (ts > 0){
+			tot += ts;
+			laN += eval(eval("trouNormale.T" + i));
+			var ps = eval("gData[0].P" + i);
+			var ls = eval("gData[0].L" + i);
+			saveUserHole(objScore[i-1], ts, ps, ls);
+			saveUserHole(curScore[0].score[i-1], ts, ps, ls);
+		}
 	}
-}
-score = tot - laN;
-if (score == 0){
-	pref = "&nbsp;E";
-}else{
-	if (score > 0)
-		pref = "&nbsp;+" + (tot - laN);
-	else
-		pref = "&nbsp;" + (tot - laN);
-}
-myScore.innerHTML = tot + pref;
+	score = tot - laN;
+	if (score == 0){
+		pref = "&nbsp;E";
+	}else{
+		if (score > 0)
+			pref = "&nbsp;+" + (tot - laN);
+		else
+			pref = "&nbsp;" + (tot - laN);
+	}
+	myScore.innerHTML = tot + pref;
+	if (initial)
+		scoreOkInds[0].style.display = "inline-block";
+	if (initial && gData[0].others){
+		var oAdd = document.getElementById('addUserBut');
+		var oth=gData[0].others;
+		for (var i = 0; i < oth.length ; i++){
+			addUser(oAdd, oth[i]);
+			scoreOkInds[i+1].style.display = "inline-block";
+		}
+	}
+	if (gData[0].others){
+		var tmpS = JSON.parse(JSON.stringify(gData[0].others));
+		curScore.push.apply(curScore, tmpS);
+	}
+		
 }
 if (calltabScore){
 	calltabScore = false;
@@ -523,9 +561,9 @@ if (calltabScore){
 }
 }
 
-function tableauScore(formRef){
+function tableauScore(){
 	calltabScore = true;
-	saveScore(formRef, true);
+	saveScore();
 }
 
 function calltableauScore(){
@@ -587,6 +625,8 @@ if (Math.abs(laDistance - actDist) > 15){
 }
 
 function initPage(){
+setScore = document.getElementById('setScore');
+scoreOkInds = document.getElementsByClassName("wgInd");
 var titClub = document.getElementById('titClub'); 
 var changeScore = document.getElementById('changeScore'); 
 var holeDist = document.getElementById('holeDist');
@@ -599,7 +639,9 @@ if (userId)
 var data = getURLdata();
 data = data.split("&");
 courseID = data[0];
-clubName = decodeURI(data[1]);
+clubName = decodeURI(data[1]).replace("#","");
+objScore = JSON.parse(JSON.stringify(aScore));
+objScore.others = [];
 titClub.innerHTML = clubName;
 getInfo("getGolfGPS?data=" + courseID, showCourse);
 }
@@ -631,8 +673,10 @@ var noB = 0;
 for (var i= 0; i < bloc.length; i++){
 	if (!trouNormale && bloc[i].Bloc == "Normale"){
 		trouNormale = bloc[i];
-		if (userId)
-			getInfo("getGame?data=" + userId + "$" + courseID, setMyScore);
+		if (userId){
+			getInfo("getGame?data=" + userId + "$" + courseID, setInitialScore);
+			document.getElementById('userMem').value = GetCookie("userName");
+		}
 		}
 	if (bloc[i].Bloc != "Normale" && bloc[i].Bloc != "Hdcp" && bloc[i].Bloc !=  "" ){
 		trouPar[noB] = arrB(bloc[i], nt);
@@ -658,15 +702,9 @@ menuGPS.style.visibility = "visible";
 }
 
 function selPts(oOpt, initCall){
-var setScore = document.getElementById('setScore'); 
 var oList = oOpt.parentNode;
 var oVal = oOpt.innerHTML;
-var scoreOk = document.getElementById('scoreOk');
 
-if (!initCall  && !oOpt.classList.contains("selectedOpt")){
-	if (scoreOk.classList.contains("backGreen"))
-		scoreOk.classList.replace( "backGreen", "backRed" );
-}
 for (var i= 0; i < oList.childNodes.length ; i++){
 	if (oList.childNodes[i].classList)
 		oList.childNodes[i].classList.remove("selectedOpt");
@@ -679,35 +717,95 @@ if (oList.id == "lPut")
 	setScore.nbrPutts.value = oVal;
 if (oList.id == "lPen")
 	setScore.nbrPen.value = oVal;
-	
-if (scoreOk.classList.contains("backRed"))
-	if (curScore.T == setScore.nbrCoups.value && curScore.P == setScore.nbrPutts.value && curScore.L == setScore.nbrPen.value)
-		scoreOk.classList.replace("backRed", "backGreen" );
+
+if (!initCall){
+	if (othUser == 0)
+		saveUserHole(objScore[sTrou-1], setScore.nbrCoups.value, setScore.nbrPutts.value, setScore.nbrPen.value);
+	else
+		saveUserHole(objScore.others[othUser-1].score[sTrou-1], setScore.nbrCoups.value, setScore.nbrPutts.value, setScore.nbrPen.value);
+setOkInd(othUser);
+}
 }
 
 function nextScore(nx){
 showScoreFrame(nx);
 }
 
-function delScore(){
-
-if (confirm("Delete hole score ?")){
-	var formRef = document.getElementById('setScore'); 
-	formRef.nbrCoups.value = 0;
-	formRef.nbrPutts.value = 0;
-	formRef.nbrPen.value = 0;
-	if (!sTrou)
-		sTrou = trou;
-	aScore[sTrou - 1].T = null;
-	saveScore(formRef);
+function delScore(oI){
+if (!sTrou)
+	sTrou = trou;
+sInfo = userScore(oI);
+if (oI == 0)
+	var playerName = GetCookie("userName");
+else
+	var playerName = objScore.others[oI-1].name;
+if (confirm("Delete " + playerName + "'s hole score #" + sTrou + " ?")){
+	setScore.nbrCoups.value = 0;
+	setScore.nbrPutts.value = 0;
+	setScore.nbrPen.value = 0;
+	sInfo.T = null;
+	sInfo.P = null;
+	sInfo.L = null;
+	saveScore();
 }
 
+}
+
+function selectUser(oInput){
+//alert(oInput.name);
+for (var i= 0; i < oInput.parentNode.childNodes.length ; i++){
+	if (oInput.parentNode.childNodes[i].classList)
+		oInput.parentNode.childNodes[i].classList.remove("selectedOpt");
+}
+oInput.classList.add("selectedOpt");
+scoreOkInds[othUser].classList.remove("selectedOpt", "selOkInd");
+othUser = (oInput.name=="") ? 0:eval(oInput.name);
+scoreOkInds[othUser].classList.add("selOkInd");
+oInput.blur();
+showScoreFrame(0);
+}
+
+function editUser(oInput){
+oInput.addEventListener('change', function () {
+	objScore.others[othUser-1].name = oInput.value;
+	this.removeEventListener('change', this);
+})
+oInput.focus();
+}
+
+function addUser(oAdd, playerData){
+	var iElem = document.createElement("input");
+	iElem.setAttribute('class', 'userInput');
+	iElem.setAttribute('onclick', 'selectUser(this)');
+	iElem.setAttribute('ondblclick', 'editUser(this)');
+	iElem.setAttribute('name', (oAdd.parentNode.children.length - 1) );
+	if (playerData){
+		iElem.setAttribute('value', playerData.name);
+		objScore.others[objScore.others.length] = playerData;
+	}else{
+		objScore.others[objScore.others.length] = {};
+		objScore.others[objScore.others.length-1].score = JSON.parse(JSON.stringify(aScore));
+	}
+		
+	oAdd.parentNode.insertBefore(iElem, oAdd);
+	//objScore.others[objScore.others.length] = {};
+	
+	iElem.focus();
+if (oAdd.parentNode.children.length == 5)
+	oAdd.style.display = "none";
+//alert(oAdd);
 }
  
 // -->
 </script> 
 
 <style>
+
+.userInput{
+max-width: 45%;
+
+}
+
 #prefOptions, #identOptions {
     font-size: inherit;
 	}
@@ -731,6 +829,10 @@ text-shadow: 2px 2px #bbb;
 
 #menuGPS{
 visibility: hidden;
+}
+
+.selOkInd{
+border: 2px solid #f00;
 }
  
 </style>
@@ -761,7 +863,7 @@ visibility: hidden;
 
 <div id="holeDist" class="unselectable" onmousedown="PositionFlag=1;" onmouseup="PositionFlag=0;once=0;"></div>
 
-<div id="changeScore" class="unselectable" onmousedown="PositionFlag=1;" onmouseup="PositionFlag=0;once=0;"><img onclick="showScoreFrame()" alt="R&eacute;glages" src="images/reglages.png" /><div id="myScore"></div></div>
+<div id="changeScore" class="unselectable" onmousedown="PositionFlag=1;" onmouseup="PositionFlag=0;once=0;"><img onclick="showScoreFrame(false)" alt="R&eacute;glages" src="images/reglages.png" /><div id="myScore"></div></div>
 
 <div id="piquetDist" onclick="chxPiqDist(this)"></div>
 <div id="chxPiqDist"><a href="#" onclick="setChxPiqDist(0)"><img id="imgLoc" height="16" width="16" alt="Distance de ma position" src="images/ici.png" /></a><a href="#" onclick="setChxPiqDist(1)"><img id="imgLoc" height="25" width="16" alt="Distance du drapeau" src="images/flag.png" /></a></div>
@@ -802,15 +904,27 @@ visibility: hidden;
 
 <div><a href="#" onclick="nextScore(-1)">&#9664;&nbsp;</a><span id="scoreHole">Trou par </span><a href="#" onclick="nextScore(1)">&nbsp;&#9654;</a></div>
 </div>
+
+
 <form id="setScore">
 <input id="nbrCoups" type="hidden" value="0"/>
 <input id="nbrPutts" type="hidden" value="0"/>
 <input id="nbrPen" type="hidden" value="0"/>
 
+<div id="userList">
+<input id="userMem" class="userInput selectedOpt" type="text" onclick="selectUser(this)" value=""/><a id="addUserBut" href="#" onclick="addUser(this)">&nbsp;&#10010;</a>
+</div>
+
+
 <div id="prefOptions">
 
 <div class="selScore">
-<div id="scoreOk" class="wgInd" onclick="delScore()"></div>
+<div id="scoreInds">
+<div id="scoreOk" class="wgInd" onclick="delScore(0)"></div>
+<div id="scoreOk2" class="wgInd" onclick="delScore(1)"></div>
+<div id="scoreOk3" class="wgInd" onclick="delScore(2)"></div>
+<div id="scoreOk4" class="wgInd" onclick="delScore(3)"></div>
+</div>
 <label>&nbsp;<text id="coups"></text></label>
 
 </div>
@@ -866,9 +980,9 @@ visibility: hidden;
 </div>
 
 <div>
-<button id="okPref" class="bouton" type="button" onClick="saveScore(this.form); return false;">&nbsp;<text id="_okok">Ok</text>&nbsp;</button><button id="annulePref" class="bouton" type="button" onClick="closeScore(); return false;">&nbsp;<text id="_canc">Cancel</text>&nbsp;</button>
+<button id="okPref" class="bouton" type="button" onClick="saveScore(); return false;">&nbsp;<text id="_okok">Ok</text>&nbsp;</button><button id="annulePref" class="bouton" type="button" onClick="closeScore(); return false;">&nbsp;<text id="_canc">Cancel</text>&nbsp;</button>
 </br>
-<button id="tabScore" class="bouton" type="button" onClick="tableauScore(this.form); return false;">&nbsp;<text id="scard">Carte de pointage</text>&nbsp;</button>
+<button id="tabScore" class="bouton" type="button" onClick="tableauScore(); return false;">&nbsp;<text id="scard">Carte de pointage</text>&nbsp;</button>
 </div>
 </form>
 </div>

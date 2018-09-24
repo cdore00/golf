@@ -264,9 +264,13 @@ color: #ff1822;
  color: #ff1822 !important;
  background: #999 !important;
  }
+ 
+ #scoreInds{
+ float: right;
+ }
 
  .wgInd{
- float: right;
+display: none;
  width: 0.9em;
  height: 0.9em;
  background: white;
