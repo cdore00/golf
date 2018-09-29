@@ -66,7 +66,7 @@ if ('speechSynthesis' in window){
 var trouCoord =  new Array();	
 var trouPar =  new Array();	
 var trouNormale = false;
-var scoreOkInds, setScore = null, othUser = 0, objScore = null, aScore = [{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}];
+var scoreOkInds, setScore = null, actPlayer = 0, objScore = null, aScore = [{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}];
 google.maps.visualRefresh = true;
 
 function initialize() {
@@ -395,42 +395,13 @@ if (!(nScore===false))
 var hPar = eval("trouNormale.T" + sTrou);
 scoreHole.innerHTML = "Trou " + sTrou + " par " + hPar;
 
+setHoleScore(hPar, userScore(actPlayer));
+
 if (initialCall){	
 	initialCall = false;
-
-	scoreOkInds[othUser].classList.add("selOkInd");
-}
-setHoleScore(hPar, userScore(othUser));
-layerScore.style.visibility="visible";
-
-}
-
-function userScore(ui){
-if (ui == 0)
-	return objScore[sTrou-1];
-else
-	return objScore.others[ui-1].score[sTrou-1];
-}
-
-function setOkInd(ui,initCall){
-sInfo = userScore(ui);
-if (curScore.length){
-	if (!sInfo.T){
-		scoreOkInds[ui].classList.remove("backGreen", "backRed");
-	}else{
-		if (!scoreOkInds[ui].classList.contains("backRed")){
-			if ( !initCall && ((!curScore[ui].score[sTrou-1].T && !curScore[ui].score[sTrou-1].P && !curScore[ui].score[sTrou-1].L) || 
-				!(curScore[ui].score[sTrou-1].T == setScore.nbrCoups.value && curScore[ui].score[sTrou-1].P == setScore.nbrPutts.value && curScore[ui].score[sTrou-1].L == setScore.nbrPen.value)))
-				scoreOkInds[ui].classList.add("backRed");
-			else{
-				scoreOkInds[ui].classList.add("backGreen");
-				if (curScore[ui].score[sTrou-1].T == setScore.nbrCoups.value && curScore[ui].score[sTrou-1].P == setScore.nbrPutts.value && curScore[ui].score[sTrou-1].L == setScore.nbrPen.value)
-					scoreOkInds[ui].classList.replace("backRed", "backGreen" );
-				}	
-		}
+	scoreOkInds[actPlayer].classList.add("selOkInd");
 	}
-//if (scoreOk.classList.contains("backRed"))
-}
+layerScore.style.visibility="visible";
 }
 
 function setHoleScore(hPar, sInfo){
@@ -447,17 +418,47 @@ if (sInfo.L || sInfo.L == 0)
 	var vl = sInfo.L;
 else
 	var vl = "0";
-//setScore.nbrCoups.value = vc;
-//setScore.nbrPutts.value = vp;
-//setScore.nbrPen.value = vl;
+setScore.nbrCoups.value = vc;
+setScore.nbrPutts.value = vp;
+setScore.nbrPen.value = vl;
 selPts(document.getElementById('tdC' + vc), true);
 selPts(document.getElementById('tdP' + vp), true);
 selPts(document.getElementById('tdL' + vl), true);
 	for (var i= 0; i < objScore.others.length + 1 ; i++){
+		if (initialCall)
+			scoreOkInds[i].classList.remove("backGreen", "backRed");
 		setOkInd(i, true);
 	}
 }
-	    
+
+function userScore(ui){
+if (ui == 0)
+	return objScore[sTrou-1];
+else
+	return objScore.others[ui-1].score[sTrou-1];
+}
+
+function setOkInd(ui,initCall){
+sInfo = userScore(ui);
+if (curScore.length){
+	if (!sInfo.T){
+		scoreOkInds[ui].classList.remove("backGreen", "backRed");
+	}else{
+		if ( !scoreOkInds[ui].classList.contains("backRed")){
+			if ( !initCall && ((!curScore[ui].score[sTrou-1].T && !curScore[ui].score[sTrou-1].P && !curScore[ui].score[sTrou-1].L) || 
+				!(curScore[ui].score[sTrou-1].T == setScore.nbrCoups.value && curScore[ui].score[sTrou-1].P == setScore.nbrPutts.value && curScore[ui].score[sTrou-1].L == setScore.nbrPen.value)))
+				scoreOkInds[ui].classList.add("backRed");
+			else{
+				scoreOkInds[ui].classList.add("backGreen");
+				if (curScore[ui].score[sTrou-1].T == setScore.nbrCoups.value && curScore[ui].score[sTrou-1].P == setScore.nbrPutts.value && curScore[ui].score[sTrou-1].L == setScore.nbrPen.value)
+					scoreOkInds[ui].classList.replace("backRed", "backGreen" );
+				}	
+		}
+	}
+//if (scoreOk.classList.contains("backRed"))
+}
+}
+
 var offSetX = 0;
 var offSetY = 0;
 function startTouch(event) {
@@ -713,17 +714,17 @@ oOpt.classList.add("selectedOpt");
 
 if (oList.id == "lPts")
 	setScore.nbrCoups.value = oVal;
-if (oList.id == "lPut")
+else if (oList.id == "lPut")
 	setScore.nbrPutts.value = oVal;
-if (oList.id == "lPen")
-	setScore.nbrPen.value = oVal;
+	else if (oList.id == "lPen")
+		setScore.nbrPen.value = oVal;
 
 if (!initCall){
-	if (othUser == 0)
+	if (actPlayer == 0)
 		saveUserHole(objScore[sTrou-1], setScore.nbrCoups.value, setScore.nbrPutts.value, setScore.nbrPen.value);
 	else
-		saveUserHole(objScore.others[othUser-1].score[sTrou-1], setScore.nbrCoups.value, setScore.nbrPutts.value, setScore.nbrPen.value);
-setOkInd(othUser);
+		saveUserHole(objScore.others[actPlayer-1].score[sTrou-1], setScore.nbrCoups.value, setScore.nbrPutts.value, setScore.nbrPen.value);
+setOkInd(actPlayer);
 }
 }
 
@@ -758,16 +759,16 @@ for (var i= 0; i < oInput.parentNode.childNodes.length ; i++){
 		oInput.parentNode.childNodes[i].classList.remove("selectedOpt");
 }
 oInput.classList.add("selectedOpt");
-scoreOkInds[othUser].classList.remove("selectedOpt", "selOkInd");
-othUser = (oInput.name=="") ? 0:eval(oInput.name);
-scoreOkInds[othUser].classList.add("selOkInd");
+scoreOkInds[actPlayer].classList.remove("selectedOpt", "selOkInd");
+actPlayer = (oInput.name=="") ? 0:eval(oInput.name);
+scoreOkInds[actPlayer].classList.add("selOkInd");
 oInput.blur();
 showScoreFrame(0);
 }
 
 function editUser(oInput){
 oInput.addEventListener('change', function () {
-	objScore.others[othUser-1].name = oInput.value;
+	objScore.others[actPlayer-1].name = oInput.value;
 	this.removeEventListener('change', this);
 })
 oInput.focus();
@@ -832,7 +833,7 @@ visibility: hidden;
 }
 
 .selOkInd{
-border: 2px solid #f00;
+border: 3px solid #f00;
 }
  
 </style>
