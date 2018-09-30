@@ -238,7 +238,7 @@ margin:3px
 
  
 .selScore{
-  overflow-x: scroll;
+/*  overflow-x: scroll; */
   overflow-y: hidden;
   white-space: nowrap;
 }

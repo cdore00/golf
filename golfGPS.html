@@ -508,50 +508,83 @@ function setInitialScore(gData){
 	setMyScore(gData, true);
 }
 
+function showPlayer(oSc){
+var myScore = document.getElementById('myScore');
+if (oSc.innerHTML == "&nbsp;▬"){
+	oSc.innerHTML = "&nbsp;✚";
+	myScore.style.maxHeight = "1em";
+}else{
+	oSc.innerHTML = "&nbsp;▬";
+	myScore.style.maxHeight = "";
+}
+}
+
 function setMyScore(gData, initial){
 var myScore = document.getElementById('myScore');
-var tot = 0;
-var laN = 0;
-var score, pref, ts;
+var arrScore = [];
+arrScore[0] = {};
+arrScore[0].tot = 0;
+var laN = 0, ts = 0;
+var oth = gData[0].others;
 
 if (gData.length > 0){
+	if (initial && oth){
+		var oAdd = document.getElementById('addUserBut');
+		
+		for (var i = 0; i < oth.length ; i++){
+			addUser(oAdd, oth[i]);
+			scoreOkInds[i+1].style.display = "inline-block";
+			arrScore[i+1] = {};
+			arrScore[i+1].tot = 0;
+		}
+	}
 	curScore[0] = {};
 	curScore[0].score = JSON.parse(JSON.stringify(aScore));
 	currentGameID = gData[0]._id;
 	for (var i= 1; i < 19 ; i++){
-		var ts = eval("gData[0].T" + i);
-		
+		ts = eval("gData[0].T" + i);
 		if (ts > 0){
-			tot += ts;
+			arrScore[0].tot += ts;
 			laN += eval(eval("trouNormale.T" + i));
 			var ps = eval("gData[0].P" + i);
 			var ls = eval("gData[0].L" + i);
 			saveUserHole(objScore[i-1], ts, ps, ls);
 			saveUserHole(curScore[0].score[i-1], ts, ps, ls);
+			if (oth){
+				for (var j = 0; j < oth.length ; j++){
+					ts = eval(eval("oth[0].score[" + j + "].T"));
+					if (ts > 0){
+						arrScore[j+1].tot += ts; 
+					}
+				}
+			}
 		}
 	}
-	score = tot - laN;
-	if (score == 0){
-		pref = "&nbsp;E";
-	}else{
-		if (score > 0)
-			pref = "&nbsp;+" + (tot - laN);
-		else
-			pref = "&nbsp;" + (tot - laN);
+	
+	function playScore(aS, laN){
+		aS.score = aS.tot - laN;
+		if (aS.score == 0){
+			aS.diff = "&nbsp;E";
+		}else{
+			if (aS.score > 0)
+				aS.diff = "&nbsp;+" + (aS.tot - laN);
+			else
+				aS.diff = "&nbsp;" + (aS.tot - laN);
+		}
+		return aS.tot + aS.diff + '</br>';
 	}
-	myScore.innerHTML = tot + pref;
+	var actScore = playScore(arrScore[0], laN);
+			if (oth){
+				for (var j = 0; j < oth.length ; j++){
+					actScore += oth[j].name.substring(0, 1) + ":&nbsp;" + playScore(arrScore[j+1], laN);
+				}
+			}
+	myScore.innerHTML = actScore;
 	if (initial)
 		scoreOkInds[0].style.display = "inline-block";
-	if (initial && gData[0].others){
-		var oAdd = document.getElementById('addUserBut');
-		var oth=gData[0].others;
-		for (var i = 0; i < oth.length ; i++){
-			addUser(oAdd, oth[i]);
-			scoreOkInds[i+1].style.display = "inline-block";
-		}
-	}
-	if (gData[0].others){
-		var tmpS = JSON.parse(JSON.stringify(gData[0].others));
+
+	if (oth){
+		var tmpS = JSON.parse(JSON.stringify(oth));
 		curScore.push.apply(curScore, tmpS);
 	}
 		
@@ -802,9 +835,14 @@ if (oAdd.parentNode.children.length == 5)
 
 <style>
 
+#myScore{
+overflow: hidden;
+
+}
+
 .userInput{
 max-width: 45%;
-
+color: #33d;
 }
 
 #prefOptions, #identOptions {
@@ -864,7 +902,9 @@ border: 3px solid #f00;
 
 <div id="holeDist" class="unselectable" onmousedown="PositionFlag=1;" onmouseup="PositionFlag=0;once=0;"></div>
 
-<div id="changeScore" class="unselectable" onmousedown="PositionFlag=1;" onmouseup="PositionFlag=0;once=0;"><img onclick="showScoreFrame(false)" alt="R&eacute;glages" src="images/reglages.png" /><div id="myScore"></div></div>
+<div id="changeScore" class="unselectable" onmousedown="PositionFlag=1;" onmouseup="PositionFlag=0;once=0;"><img onclick="showScoreFrame(false)" alt="R&eacute;glages" src="images/reglages.png" />
+<a id="showPlay" href="#" onclick="showPlayer(this)">&nbsp;&#9644;</a>
+<div id="myScore"></div></div>
 
 <div id="piquetDist" onclick="chxPiqDist(this)"></div>
 <div id="chxPiqDist"><a href="#" onclick="setChxPiqDist(0)"><img id="imgLoc" height="16" width="16" alt="Distance de ma position" src="images/ici.png" /></a><a href="#" onclick="setChxPiqDist(1)"><img id="imgLoc" height="25" width="16" alt="Distance du drapeau" src="images/flag.png" /></a></div>
