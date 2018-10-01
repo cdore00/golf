@@ -490,7 +490,7 @@ var penal = setScore.nbrPen.value;
 var strData = userId + "$" + courseID + "$" + sTrou + "$" + score + "$" + putt + "$" + penal + "$" + clubName + "$" + JSON.stringify(objScore)  + ((objScore.others) ? ("$" + JSON.stringify(objScore.others)):"");
 	// + ((objScore.others) ? ("$" + JSON.stringify(objScore.others)):"");
 	
-getInfo("updateGame?data=" + strData, setMyScore);
+getInfo("updateGame?data=" + strData, initScore);
 if (trou == sTrou)
 	trouSuivant(1);
 
@@ -505,7 +505,7 @@ function saveUserHole(os, t, p, l){
 }
 
 function setInitialScore(gData){
-	setMyScore(gData, true);
+	initScore(gData, true);
 }
 
 function showPlayer(oSc){
@@ -519,21 +519,27 @@ if (oSc.innerHTML == "&nbsp;▬"){
 }
 }
 
-function setMyScore(gData, initial){
+function initScore(gData, initial){
 var myScore = document.getElementById('myScore');
 var arrScore = [];
 arrScore[0] = {};
 arrScore[0].tot = 0;
 var laN = 0, ts = 0;
-var oth = gData[0].others;
 
 if (gData.length > 0){
-	if (initial && oth){
+	var oth = gData[0].others;
+	//if (initial){
+		scoreOkInds[0].style.display = "inline-block";
+
+	if (oth && oth.length > 0){
 		var oAdd = document.getElementById('addUserBut');
-		
+		if (initial)
+			document.getElementById('showPlay').style.visibility = "visible";
 		for (var i = 0; i < oth.length ; i++){
-			addUser(oAdd, oth[i]);
-			scoreOkInds[i+1].style.display = "inline-block";
+			if (initial)
+				addUser(oAdd, oth[i]);
+				//scoreOkInds[i+1].style.display = "inline-block";
+			
 			arrScore[i+1] = {};
 			arrScore[i+1].tot = 0;
 		}
@@ -550,9 +556,9 @@ if (gData.length > 0){
 			var ls = eval("gData[0].L" + i);
 			saveUserHole(objScore[i-1], ts, ps, ls);
 			saveUserHole(curScore[0].score[i-1], ts, ps, ls);
-			if (oth){
+			if (oth && oth.length > 0){
 				for (var j = 0; j < oth.length ; j++){
-					ts = eval(eval("oth[0].score[" + j + "].T"));
+					ts = eval(eval("oth[j].score[" + (i-1) + "].T"));
 					if (ts > 0){
 						arrScore[j+1].tot += ts; 
 					}
@@ -574,16 +580,14 @@ if (gData.length > 0){
 		return aS.tot + aS.diff + '</br>';
 	}
 	var actScore = playScore(arrScore[0], laN);
-			if (oth){
+			if (oth && oth.length > 0){
 				for (var j = 0; j < oth.length ; j++){
-					actScore += oth[j].name.substring(0, 1) + ":&nbsp;" + playScore(arrScore[j+1], laN);
+					actScore += ((oth[j].name) ? oth[j].name.substring(0, 1):"") + ":&nbsp;" + playScore(arrScore[j+1], laN);
 				}
 			}
 	myScore.innerHTML = actScore;
-	if (initial)
-		scoreOkInds[0].style.display = "inline-block";
 
-	if (oth){
+	if (oth && oth.length > 0){
 		var tmpS = JSON.parse(JSON.stringify(oth));
 		curScore.push.apply(curScore, tmpS);
 	}
@@ -668,8 +672,7 @@ holeDist.addEventListener('touchstart', startTouch, false);  // Drag and drop fo
 changeScore.addEventListener('touchstart', startTouch, false);  // Drag and drop for mobil
 userId = GetCookie("userID");
 setLanguage();
-if (userId)
-	changeScore.style.visibility = "visible";
+
 var data = getURLdata();
 data = data.split("&");
 courseID = data[0];
@@ -678,6 +681,8 @@ objScore = JSON.parse(JSON.stringify(aScore));
 objScore.others = [];
 titClub.innerHTML = clubName;
 getInfo("getGolfGPS?data=" + courseID, showCourse);
+if (userId)
+	changeScore.style.visibility = "visible";
 }
 
 function showCourse(oGps){
@@ -807,6 +812,11 @@ oInput.addEventListener('change', function () {
 oInput.focus();
 }
 
+function changeName(oInput){
+	objScore.others[actPlayer-1].name = oInput.value;
+	this.removeEventListener('change', this);
+}
+
 function addUser(oAdd, playerData){
 	var iElem = document.createElement("input");
 	iElem.setAttribute('class', 'userInput');
@@ -822,10 +832,14 @@ function addUser(oAdd, playerData){
 	}
 		
 	oAdd.parentNode.insertBefore(iElem, oAdd);
-	//objScore.others[objScore.others.length] = {};
-	
+	scoreOkInds[oAdd.parentNode.children.length - 2].style.display = "inline-block";
+
+	iElem.addEventListener('change', function () {
+		objScore.others[actPlayer-1].name = iElem.value;
+		this.removeEventListener('change', this);
+	})	
 	iElem.focus();
-if (oAdd.parentNode.children.length == 5)
+if (oAdd.parentNode.children.length == 5)	// 4 some reached
 	oAdd.style.display = "none";
 //alert(oAdd);
 }
@@ -838,6 +852,10 @@ if (oAdd.parentNode.children.length == 5)
 #myScore{
 overflow: hidden;
 
+}
+
+#showPlay{
+visibility: hidden;
 }
 
 .userInput{
@@ -871,7 +889,7 @@ visibility: hidden;
 }
 
 .selOkInd{
-border: 3px solid #f00;
+border: 2px solid #ff1822;
 }
  
 </style>
