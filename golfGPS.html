@@ -395,6 +395,7 @@ if (!(nScore===false))
 var hPar = eval("trouNormale.T" + sTrou);
 scoreHole.innerHTML = "Trou " + sTrou + " par " + hPar;
 
+console.log("showScoreFrame actPlayer=" + actPlayer);
 setHoleScore(hPar, userScore(actPlayer));
 
 if (initialCall){	
@@ -526,10 +527,13 @@ arrScore[0] = {};
 arrScore[0].tot = 0;
 var laN = 0, ts = 0;
 
+if (initial)
+		scoreOkInds[0].style.display = "inline-block";
+
 if (gData.length > 0){
 	var oth = gData[0].others;
 	//if (initial){
-		scoreOkInds[0].style.display = "inline-block";
+		//scoreOkInds[0].style.display = "inline-block";
 
 	if (oth && oth.length > 0){
 		var oAdd = document.getElementById('addUserBut');
@@ -812,10 +816,6 @@ oInput.addEventListener('change', function () {
 oInput.focus();
 }
 
-function changeName(oInput){
-	objScore.others[actPlayer-1].name = oInput.value;
-	this.removeEventListener('change', this);
-}
 
 function addUser(oAdd, playerData){
 	var iElem = document.createElement("input");
@@ -829,19 +829,22 @@ function addUser(oAdd, playerData){
 	}else{
 		objScore.others[objScore.others.length] = {};
 		objScore.others[objScore.others.length-1].score = JSON.parse(JSON.stringify(aScore));
+		curScore[objScore.others.length] = {};
+		curScore[objScore.others.length].score = JSON.parse(JSON.stringify(aScore));
+		//actPlayer = objScore.others.length;
 	}
 		
 	oAdd.parentNode.insertBefore(iElem, oAdd);
 	scoreOkInds[oAdd.parentNode.children.length - 2].style.display = "inline-block";
 
-	iElem.addEventListener('change', function () {
-		objScore.others[actPlayer-1].name = iElem.value;
-		this.removeEventListener('change', this);
-	})	
-	iElem.focus();
 if (oAdd.parentNode.children.length == 5)	// 4 some reached
 	oAdd.style.display = "none";
-//alert(oAdd);
+
+if (!playerData){
+	selectUser(iElem);
+	editUser(iElem);
+}
+console.log("addUse actPlayer=" + actPlayer);
 }
  
 // -->
@@ -920,7 +923,8 @@ border: 2px solid #ff1822;
 
 <div id="holeDist" class="unselectable" onmousedown="PositionFlag=1;" onmouseup="PositionFlag=0;once=0;"></div>
 
-<div id="changeScore" class="unselectable" onmousedown="PositionFlag=1;" onmouseup="PositionFlag=0;once=0;"><img onclick="showScoreFrame(false)" alt="R&eacute;glages" src="images/reglages.png" />
+<div id="changeScore" class="unselectable" onmousedown="PositionFlag=1;" onmouseup="PositionFlag=0;once=0;">
+<img onclick="showScoreFrame(false)" alt="R&eacute;glages" src="images/reglages.png" />
 <a id="showPlay" href="#" onclick="showPlayer(this)">&nbsp;&#9644;</a>
 <div id="myScore"></div></div>
 
