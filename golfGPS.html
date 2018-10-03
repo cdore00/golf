@@ -457,7 +457,9 @@ if (curScore.length){
 		}
 	}
 //if (scoreOk.classList.contains("backRed"))
-}
+}else
+	if (!initCall)	// First entry
+		scoreOkInds[ui].classList.add("backRed");
 }
 
 var offSetX = 0;
