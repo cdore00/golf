@@ -158,7 +158,7 @@ min-width: 0px !important;
 
 #menuList, #submenu1{
 position: absolute;
-background: #eee;
+background: #ccc;
 overflow: hidden;
 height: 0px;
 transition: width 0.4s, height 0.4s, transform 2s, ease-in-out;
@@ -172,7 +172,7 @@ height: auto;
 
 #menuList td, #submenu1 td{
 border: buttonhighlight 2px inset;
-background: #eee;
+background: #ccc;
 cursor: pointer;
 text-align: left;
 padding: 5px;
@@ -182,6 +182,7 @@ width: auto;
 
 #menuList td:hover, #submenu1 td:hover{
 background: #999 ;
+color: #d33;
 cursor: pointer;
 }
 
