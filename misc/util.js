@@ -1,5 +1,5 @@
 
-var HOSTserv = "https://pytgolf-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Python 3.6.3 
+var HOSTserv = "https://pytgolf-cdore2.a3c1.starter-us-west-1.openshiftapps.com/";  // Python 3.6.3 
 // "http://127.0.0.1:3000/";		//Portable Windows 10 Local host Node JS v6.10.0
 // "http://192.168.2.195:3000/";    //Ubuntu workstation 16.04
 // "http://192.168.2.195:8080/";    //Ubuntu workstation 16.04 docker 1.12.6 Node JS v4.2.3  MongoDB server v3.4.9
@@ -272,7 +272,7 @@ function changeStylesheetRule(selector, property, value, stylesheet) {
 // 	window.oTip.fadeout(millisecond);
 function messTipObject(){
 	this.oID = "o_messTip";
-
+	
 		var bodyobj = document.getElementsByTagName('body')[0];
 		var odiv = document.createElement("div");
 		odiv.setAttribute('id', this.oID);
@@ -292,7 +292,7 @@ function messTipObject(){
 		if (milli)
 			fadeOut(this.oID, milli);
 		else
-			fadeOut(this.oID, 100);
+			fadeOut(this.oID, 0);
 		}
 	this.show = function(mess, oPos, showArrow, milli, adj){
 		if (!adj)	// Top pixel adjust
@@ -623,6 +623,8 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["M0008"] = "Code postal non retrouv&eacute; : ";
 		langLbl["M0009"] = "L'adresse de courriel n'est pas valide.";
 		langLbl["M0010"] = "Supprimer cette partie?";
+		langLbl["M0011"] = "Suppression en cours...";
+		langLbl["M0012"] = "Rafraîchir la liste...";
 		langLbl["I0001"] = "&nbsp;&#224; moins de ";
 		langLbl["I0002"] = "&nbsp;kilom&#232;tres du code postal &#171;&nbsp;";
 		langLbl["I0003"] = "&nbsp;dans la r&eacute;gion &#171;";
@@ -740,7 +742,9 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["M0007"] = "Elija una distancia para el c&oacute;digo postal.";
 		langLbl["M0008"] = "Código postal no encontrado:";
 		langLbl["M0009"] = "La dirección de correo electrónico es inválida.";
-		langLbl["M0010"] = "¿Eliminar esa puntuación?";
+		langLbl["M0010"] = "¿Eliminar el puntaje de este juego?";
+		langLbl["M0011"] = "Eliminando en progreso...";
+		langLbl["M0012"] = "Actualizar la lista...";		
 		langLbl["I0001"] = "&nbsp;a menos de ";
 		langLbl["I0002"] = "&nbsp;kil&oacute;metros del c&oacute;digo postal&nbsp;&#171;&nbsp;";
 		langLbl["I0003"] = "&nbsp;en la regi&oacute;n &#171;";
@@ -857,7 +861,9 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["M0007"] = "Choose a distance for the postal code.";
 		langLbl["M0008"] = "Postal code not found :";
 		langLbl["M0009"] = "The email address is invalid.";
-		langLbl["M0010"] = "Delete that score?";
+		langLbl["M0010"] = "Remove this game's score?";
+		langLbl["M0011"] = "Removing in progress...";
+		langLbl["M0012"] = "Refreshing the list...";
 		langLbl["I0001"] = "&nbsp;within ";
 		langLbl["I0002"] = "&nbsp;kilometers of the postal code &#171;&nbsp;";		
 		langLbl["I0003"] = "&nbsp;in the region &#171;";

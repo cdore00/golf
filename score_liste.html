@@ -244,8 +244,9 @@ divOptions.insertBefore(selElem, divOptions.firstChild);
 function getGroup(oParc){
 //alert(oParc)
 var formPref = document.getElementById('formPref');
-window.oTip = new messTipObject();
-window.oTip.show("Reading your courses...", oParc, false, 20, true);
+if (!window.oTip)
+	window.oTip = new messTipObject();
+window.oTip.show("Reading your courses...", oParc, false, false, 20);
 
 nbrTrous = parseInt(formPref.prefTrous.value);
 
@@ -530,15 +531,21 @@ if (editMode){
 }
 
 function delGame(rChilds, id){
+	
 	if (confirm(langLbl["M0010"] + "\n - Date: " + rChilds[0].innerHTML + " \n - Club: " + rChilds[1].innerHTML + "\n - Score: " + rChilds[2].innerHTML)){
+		if (!window.oTip)
+			window.oTip = new messTipObject();
+		window.oTip.show(langLbl["M0011"] + " </br> - Club: " + rChilds[1].innerHTML + "</br> - Score: " + rChilds[2].innerHTML, [10,10]);
 		getInfo("endDelGame?data=" + id + "$0", showDelRes);
 	}
 }
 
 function showDelRes(oRes){
 if (oRes.ok){
+	window.oTip.show(langLbl["M0012"], [10,10],false, 100);
 	getGameList(false, 99);
 }else{
+	window.oTip.fadeout();
 	if (oRes.message){
 		var modLayer = document.getElementById('modalDiv');
 		alert(langLbl[oRes.message]);
