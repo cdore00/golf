@@ -189,7 +189,7 @@ else
 
 function delClub(oButDel){
 if (confirm("Remove course « " + clubForm.FclubName.value + " » and all data ?")){
-		window.oTip.show("&nbsp;<b>Deleting Club " + clubForm.FclubName.value + " ...</b>", oButDel);
+		window.oTip.show("&nbsp;<b>Deleting Club " + clubForm.FclubName.value + " ...</b>", oButDel, true);
 		getInfo("delClub?data=" + clubID , clubDeleted);
 }
 }
@@ -208,7 +208,7 @@ function saveAll(oButSave){
 
 var data = {}, oClub = {};
 	var msg = "&nbsp;<b>Saving Club " + clubForm.FclubName.value + " ...</b>";
-	window.oTip.show(msg, oButSave);
+	window.oTip.show(msg, oButSave, true);
 oClub.ID = clubID;
 oClub.name = clubForm.FclubName.value;
 oClub.prive = clubForm.Fprive.checked;
@@ -798,7 +798,7 @@ function copyCoord(oIcon){
 var tabText = document.getElementById('tabText');
 
 tabText.value = clubForm.Flat.value + ", " + clubForm.Flong.value;
-window.oTip.show("To clipboard : </br>" + tabText.value, oIcon, 200, 10);
+window.oTip.show("To clipboard : </br>" + tabText.value, oIcon, true, 200, 5);
 
 tabText.select();
 document.execCommand("copy");
@@ -961,7 +961,7 @@ overflow: scroll;
     background-size: 10px 20px;
 }
 
-#divParse {
+#listPickerObj {
     position: absolute;
     z-index: 1100;
     background-color: #f1f1f1;
@@ -971,7 +971,7 @@ overflow: scroll;
 	border: buttonhighlight 4px outset;
 }
 
-#divParseheader {
+#listPickerObjHeader {
     padding: 3px;
     cursor: pointer;
     z-index: 10;
@@ -980,12 +980,12 @@ overflow: scroll;
 	font-weight: bold;
 }
 
-#divParseheader a{
+#listPickerObjHeader a{
 text-decoration: none;
 
 }
 
-#parseContent input{
+#listPickerObjContent input{
 display: block;
 cursor: move;
 

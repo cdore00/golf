@@ -108,7 +108,7 @@ closeMenu();
 function setFlagCoord(butObj){
 var flagLatLng = holeMarker.getPosition();
 
-window.oTip.show("&nbsp;<b>Lat.: </b>" + flagLatLng.lat() + "&nbsp;</br>&nbsp;<b>Lng.: </b>" + flagLatLng.lng(), butObj, 200, 10);
+window.oTip.show("&nbsp;<b>Lat.: </b>" + flagLatLng.lat() + "&nbsp;</br>&nbsp;<b>Lng.: </b>" + flagLatLng.lng(), butObj, true, 200, 10);
 if (isMapped){
 	var data = courseID + "$" + trou + "$" + flagLatLng.lat() + "$" + flagLatLng.lng() + "$0$0";
 	trouCoord[trou - 1] = new google.maps.LatLng(flagLatLng.lat(), flagLatLng.lng());

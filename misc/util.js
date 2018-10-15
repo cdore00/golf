@@ -232,13 +232,44 @@ function getOffset(el) {
     return { top: _y, left: _x };
 }
 
+//console.log(s);
+function addStylesheetRule(selector, property, value, stylesheet) {
+	if (stylesheet)
+		var s = stylesheet;
+	else
+		var s = document.styleSheets[1];
+	
+	s.insertRule(selector + " { " + property + ": " + value + "; }", 0);
+}
+
+function changeStylesheetRule(selector, property, value, stylesheet) {
+	if (stylesheet)
+		var s = stylesheet;
+	else
+		var s = document.styleSheets[1];
+	
+	selector = selector.toLowerCase();
+	property = property.toLowerCase();
+	value = value.toLowerCase();
+
+	for(var i = 0; i < s.cssRules.length; i++) {
+		var rule = s.cssRules[i];
+		if(rule.selectorText === selector) {
+			rule.style[property] = value;
+			return;
+		}
+	}
+  
+	addStylesheetRule(selector, property, value, stylesheet);
+}
+
 // Tool tip message object
 // USAGE :
 // onload()
 // window.oTip = new messTipObject();
-// window.oTip.show()
-// window.oTip.initMess("&nbsp;<b>Club " + clubForm.FclubName.value + " deleted !</b>");
-// window.oTip.fadeout(milisecond);
+// 	window.oTip.show()
+// 	window.oTip.initMess();
+// 	window.oTip.fadeout(millisecond);
 function messTipObject(){
 	this.oID = "o_messTip";
 
@@ -263,7 +294,7 @@ function messTipObject(){
 		else
 			fadeOut(this.oID, 100);
 		}
-	this.show = function(mess, oPos, milli, adj, noArrow){
+	this.show = function(mess, oPos, showArrow, milli, adj){
 		if (!adj)	// Top pixel adjust
 			adj = 0;
 		if (mess)
@@ -281,8 +312,9 @@ function messTipObject(){
 			this.oFr.style.top = (pos.y - oPos.offsetHeight + adj) + "px";
 			this.oFr.style.left = pos.x + "px";
 		}
-		if (noArrow)	// Not show top arrow
-			this.oMess.classList.add("noArrow");
+		//addStylesheetRule("yArrow::after", "border-width", "10px !important");
+		if (showArrow)	// Not show top arrow
+			this.oMess.classList.add("showArrow");
 		this.oFr.style.visibility = 'visible';
 		if (milli)
 			fadeOut(this.oID, milli);
@@ -292,18 +324,18 @@ function messTipObject(){
 
 // List Picker object
 function listPickerObject(){
-	var oID = "divParse";
+	var oID = "listPickerObj";
 
 		var bodyobj = document.getElementsByTagName('body')[0];
 		var odiv = document.createElement("div");
 		odiv.setAttribute('id', oID);
-		odiv.innerHTML = '<div id="divParseheader"><a href="#" onclick="this.close()">✖️</a></div><div id="parseContent"></div>'
+		odiv.innerHTML = '<div id="listPickerObjHeader"><a href="#" onclick="this.close()">✖️</a></div><div id="listPickerObjContent"></div>'
 		bodyobj.appendChild(odiv);
 		this.oFr = odiv;
 		this.head = this.oFr.childNodes[0];
 		this.oClose = this.oFr.childNodes[0].childNodes[0];
 		this.content = this.oFr.childNodes[1];
-		dragElement(document.getElementById("divParse"));
+		dragElement(document.getElementById("listPickerObj"));
 		
     this.closePicker = function(){
 		document.getElementById(oID).style.visibility = 'hidden';

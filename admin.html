@@ -123,7 +123,7 @@ xmlhttp.send();
 
 function updUser(){
 var formIdent = document.getElementById('formIdent');
-window.oTip.show([0,20],false, "Saving account...", false, true);
+window.oTip.show("Saving account...", [0,20]);
 var name = formIdent.nomUser.value;
 var email = formIdent.courUser.value;
 var role = formIdent.roleUser.options[formIdent.roleUser.selectedIndex].value;
@@ -139,7 +139,7 @@ window.oTip.fadeout(200);
 
 function savePass(){
 var formPass = document.getElementById('formPass');
-window.oTip.show([0,20],false, "Saving&nbsp;password...", false, true);
+window.oTip.show("Saving&nbsp;password...", [0,20]);
 	setTimeout(function() {
 		getInfo("savePass?id=" + user_id + "&pass=" + formPass.passUser.value + "&user_mail=" + user_mail + "&user_name=" + user_name, updPass);
 	}, 100);
