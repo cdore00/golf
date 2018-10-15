@@ -236,7 +236,7 @@ var divOptions = document.getElementById('divOptions');
 var optStr = '<option value="0">Tous les clubs</option>';
 var selElem = document.createElement("select");
 selElem.setAttribute('id', 'selParc');
-selElem.setAttribute('onclick', 'getGroup(this)');
+selElem.setAttribute('onclick', 'getGroup(this); return false;');
 selElem.innerHTML = optStr;
 divOptions.insertBefore(selElem, divOptions.firstChild);
 }
@@ -244,6 +244,9 @@ divOptions.insertBefore(selElem, divOptions.firstChild);
 function getGroup(oParc){
 //alert(oParc)
 var formPref = document.getElementById('formPref');
+window.oTip = new messTipObject();
+window.oTip.show("Reading your courses...", oParc, false, 20, true);
+
 nbrTrous = parseInt(formPref.prefTrous.value);
 
 getInfo("countUserGame?data=" + userId + "$" + nbrTrous + "$1", addGroup);
@@ -264,7 +267,11 @@ oGroup.sort(function(a, b) {
 for (var i = 0; i < oGroup.length; i++) {
 	optStr += '<option value="' + oGroup[i]._id.parcours + '" >' + oGroup[i]._id.name + ' (' + oGroup[i].count + ')</option>';
 }
+//alert("Ok")
 selElem.innerHTML = optStr;
+
+window.oTip.addMess("Completed !");
+window.oTip.fadeout(100);
 }
 
 
@@ -557,6 +564,10 @@ adjDivOpt();
 
 #selParc{
 max-width: 20em;
+}
+
+#o_messTipTxt{
+/*display: contents;*/
 }
  
 </style>

@@ -189,7 +189,7 @@ else
 
 function delClub(oButDel){
 if (confirm("Remove course « " + clubForm.FclubName.value + " » and all data ?")){
-		window.oTip.show(oButDel, false, "&nbsp;<b>Deleting Club " + clubForm.FclubName.value + " ...</b>");
+		window.oTip.show("&nbsp;<b>Deleting Club " + clubForm.FclubName.value + " ...</b>", oButDel);
 		getInfo("delClub?data=" + clubID , clubDeleted);
 }
 }
@@ -208,7 +208,7 @@ function saveAll(oButSave){
 
 var data = {}, oClub = {};
 	var msg = "&nbsp;<b>Saving Club " + clubForm.FclubName.value + " ...</b>";
-	window.oTip.show(oButSave, false, msg);
+	window.oTip.show(msg, oButSave);
 oClub.ID = clubID;
 oClub.name = clubForm.FclubName.value;
 oClub.prive = clubForm.Fprive.checked;
@@ -798,7 +798,7 @@ function copyCoord(oIcon){
 var tabText = document.getElementById('tabText');
 
 tabText.value = clubForm.Flat.value + ", " + clubForm.Flong.value;
-window.oTip.show(oIcon, 200, "To clipboard : </br>" + tabText.value, 10);
+window.oTip.show("To clipboard : </br>" + tabText.value, oIcon, 200, 10);
 
 tabText.select();
 document.execCommand("copy");

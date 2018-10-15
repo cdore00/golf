@@ -1,5 +1,5 @@
 
-var HOSTserv = "https://nodegolf-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Openshift default docker Node Js -v 6.11.3
+var HOSTserv = "https://pytgolf-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Python 3.6.3 
 // "http://127.0.0.1:3000/";		//Portable Windows 10 Local host Node JS v6.10.0
 // "http://192.168.2.195:3000/";    //Ubuntu workstation 16.04
 // "http://192.168.2.195:8080/";    //Ubuntu workstation 16.04 docker 1.12.6 Node JS v4.2.3  MongoDB server v3.4.9
@@ -12,7 +12,7 @@ var HOSTserv = "https://nodegolf-cd-serv.1d35.starter-us-east-1.openshiftapps.co
 // "https://pytgolf-cdore2.a3c1.starter-us-west-1.openshiftapps.com/";  // Python 3.6.3 
 
 var progressBar, langSet;
-var THCall = "GET";
+var THCall = "POST";
 var tryLog = 0;
 
 function is_touch_device() {
@@ -233,6 +233,12 @@ function getOffset(el) {
 }
 
 // Tool tip message object
+// USAGE :
+// onload()
+// window.oTip = new messTipObject();
+// window.oTip.show()
+// window.oTip.initMess("&nbsp;<b>Club " + clubForm.FclubName.value + " deleted !</b>");
+// window.oTip.fadeout(milisecond);
 function messTipObject(){
 	this.oID = "o_messTip";
 
@@ -257,14 +263,19 @@ function messTipObject(){
 		else
 			fadeOut(this.oID, 100);
 		}
-	this.show = function(oPos, milli, mess, adj, noArrow){
+	this.show = function(mess, oPos, milli, adj, noArrow){
 		if (!adj)	// Top pixel adjust
 			adj = 0;
 		if (mess)
 			this.initMess(mess);
-		if (oPos.length){
+		if (!oPos || typeof oPos[0] == "number"){
+			if (!oPos){
+				this.oFr.style.top = "0px";
+				this.oFr.style.left = "0px";			
+			}else{
 			this.oFr.style.top = oPos[0] + "px";
-			this.oFr.style.left = oPos[1] + "px";
+			this.oFr.style.left = oPos[1] + "px";				
+			}
 		}else{
 			var pos=posObj(oPos);
 			this.oFr.style.top = (pos.y - oPos.offsetHeight + adj) + "px";
