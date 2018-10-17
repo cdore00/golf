@@ -256,7 +256,7 @@ function getCurrentBloc(){
 
 function clubSaved(oRes){
 
-if (true || (!oRes.ok && oRes.message)){
+if (!oRes.ok && oRes.message){
 	var modLayer = document.getElementById('modalDiv');
 	window.oTip.fadeout();
 	alert(langLbl[oRes.message]);
