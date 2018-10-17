@@ -532,6 +532,14 @@ function authentifier(){
 var authLayer = document.getElementById('authLayer');
 var userMail = GetCookie("userMail");
 
+if (!authLayer){
+	var bodyobj = document.getElementsByTagName('body')[0];
+	var authLayer = document.createElement("div");
+	authLayer.setAttribute('id', 'authLayer');
+	authLayer.innerHTML = '<div id="divLoad"><img id="imgLoad" alt="Chargement en cours..." height="64" width="64" src="images/loading.gif" /></div>'
+	bodyobj.appendChild(authLayer);
+}
+
 var xmlhttp = new XMLHttpRequest();
   xmlhttp.onloadend = function() {
     authLayer.innerHTML = xmlhttp.responseText;
