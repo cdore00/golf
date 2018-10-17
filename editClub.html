@@ -258,6 +258,7 @@ function clubSaved(oRes){
 
 if (!oRes.ok && oRes.message){
 	var modLayer = document.getElementById('modalDiv');
+	window.oTip.fadeout();
 	alert(langLbl[oRes.message]);
 	authentifier();
 	modLayer.style.visibility="visible";
@@ -1259,16 +1260,11 @@ line-height: 80%;
 <a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2018</a>
 </div>
 
-
 <div id="modalDiv"></div>
+<div id="authLayer">
+<div id="divLoad"><img id="imgLoad" alt="Chargement en cours..." height="64" width="64" src="images/loading.gif" /></div>
+</div>
 
- <!--Draggable DIV:
-<div id="divParse">
-  <div id="divParseheader"><a href="#" onclick="closeParseWin()">✖️</a></div>
-  <div id="parseContent">
-  </div>
-</div> 
--->
 </body>
 
 </html>
