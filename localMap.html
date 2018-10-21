@@ -20,8 +20,8 @@
 	<script type="text/javascript" src="misc/markerLabel.js"></script>
 	<script type="text/javascript" src="misc/geoLocal.js"></script>
 	
-    <script type="text/javascript"> 
-	<!--
+<script type="text/javascript"> 
+<!--
 
 var map;
 var posMarker;
@@ -37,7 +37,7 @@ var speedTime = {
 	lastTime : 0,
 	lastPos : null,
 	calcul : function (accPos,accTime) {
-		var sp = "";
+		var sp = 0;
 		if (this.lastPos)
 			var dist = calculDistance(this.lastPos, accPos);
 		this.lastPos = accPos;
@@ -54,7 +54,7 @@ var speedTime = {
 function initialize() { 
 	locCollection = opener.locColl.coord;
 	window.oTip = new messTipObject();
-	window.oTip.show();
+	window.oTip.show(false, false, false, false, 20);
 	
 	AffLoc = GetCookie("AffLoc");
 	if (AffLoc)
@@ -101,10 +101,9 @@ function setMyPosition(map, lat, lng) {
         shape: shape,
         title: "Ma localisation",
         zIndex: 1000
-		});
-
-}	
-
+		})
+}
+/*
 function setMarkers(map, locations) {
   // Add markers to the map
   var image = new google.maps.MarkerImage('images/ici.png',
@@ -128,27 +127,25 @@ function setMarkers(map, locations) {
        labelInBackground: false
 		});
 	}
-};
-   function log(h) {
-     document.getElementById("log").innerHTML += h + "<br />";
-   };
+}
+*/
 
-   function lister() {
-   var divLayer = document.getElementById("prefLayer");
-   
-   if (divLayer.style.visibility == "visible" ){
-		divLayer.style.visibility="hidden";
-   }else{
-     divLayer.style.visibility="visible";
-		var donn = "";
-		for (var i=0;i<locCollection.length;i++)
-		{
-		donn = donn + "</br>" + (i+1) + ": " + locCollection[i].lat + ", " + locCollection[i].lng + ", Pr&eacute;c: " + locCollection[i].acc;
-		}
-	divLayer.innerHTML = donn;
+function lister() {
+var divLayer = document.getElementById("prefLayer");
+
+if (divLayer.style.visibility == "visible" ){
+	divLayer.style.visibility="hidden";
+}else{
+ divLayer.style.visibility="visible";
+	var donn = "";
+	for (var i=0;i<locCollection.length;i++)
+	{
+	donn = donn + "</br>" + (i+1) + ": " + locCollection[i].lat + ", " + locCollection[i].lng + ", Pr&eacute;c: " + locCollection[i].acc;
 	}
-	 //alert(locCollection.length);
-   };
+divLayer.innerHTML = donn;
+}
+ //alert(locCollection.length);
+}
 
 function localiser(){
 
@@ -168,6 +165,10 @@ function clearGeo(){
 navigator.geolocation.clearWatch(watchId);
 }
 
+function padStr(lng, chr, start){
+
+}
+
 function onLocSuccess(position) {
 var myLatLng = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
 var elaps = "";
@@ -182,7 +183,7 @@ if (AffLoc){
 		elaps = aT - lastTime;
 	}
 	lastTime = aT;
-	var tim = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() + ((recenter) ? " Center":"");
+	var tim = d.getHours() + ":" + (d.getMinutes()+"").padStart(2, '0') + ":" + (d.getSeconds()+"").padStart(2, '0') + ((recenter) ? " Center":"");
 	window.oTip.initMess("&nbsp;<b>Lat.: </b>" + position.coords.latitude + "&nbsp;</br>&nbsp;<b>Lng.: </b>" + position.coords.longitude + "&nbsp;</br>&nbsp;<b>Diff: </b>" + elaps + " Speed: " + sp + "&nbsp;</br>&nbsp;<b>Time: </b>" + tim);
 }
 if (recenter)
@@ -199,12 +200,9 @@ else
 }
 
 function quitter(){
-
 	clearTimeout(locTimer);
 	clearGeo();
-	//alert(watchId);
 	window.close();
-	
 }
 
 function getLocalisation(){
@@ -214,7 +212,6 @@ function getLocalisation(){
 
 		navigator.geolocation.getCurrentPosition(onLocSuccess, onLocAffError, options);
 	}						
-
 }
 
 	// -->
@@ -244,8 +241,9 @@ font-weight: bold;
 
 <div id="mapzone">
 
-<div id="menuGPS"><form id="typeLoc" name="typeLoc" ><input type="radio" checked name="typeLoc">Watch</input>
-&nbsp;<input type="radio" name="typeLoc" value="Get">Get</input></form></div>
+<div id="menuGPS"><form id="typeLoc" name="typeLoc" >
+<input type="radio" checked name="typeLoc">Watch</input>&nbsp;
+<input type="radio" name="typeLoc" value="Get">Get</input></form></div>
 	
 <div id="map_canvas" ></div> 
 </div>
@@ -255,7 +253,7 @@ font-weight: bold;
 <button class="boutonZoom" title="Zoom out" onclick="zoomMap(-1); return false;">-</button>
 </div>
 
- <div id="log"></div>
+
  <div id="prefLayer"></div>
   </body> 
 </html>
