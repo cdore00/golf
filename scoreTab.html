@@ -82,9 +82,19 @@ getInfo("getGameTab?data=" + gameID, showGame);
 
 }
 
+function showClub(pID){
+getInfo("getParcInfo?data=" + pID, callFicheClub);
+}
+
+function callFicheClub(pData){
+var parcData = pData[0];
+document.location.href = "ficheClub.html?data=" + parcData.CLUB_ID;
+}
+
 function showGame(gData){
 var gameData = gData[0];
 var par = gameData.par;
+var parcID = gameData.PARCOURS_ID;
 var tb = document.getElementById('gameCard'); 
 var gameBut = document.getElementById('gameBut');
 var tabTitle = document.getElementById('tabTitle');
@@ -92,10 +102,17 @@ var divLoad = document.getElementById('divLoad');
 
 divLoad.style.display = "none";
 
+	function showClubName(cName, pID){
+	if (THCall == "GET")
+		return cName;
+	else
+		return '<a href="javascript:showClub(' + pID + ');">' + cName + '</a>' 
+	}
+
 if (gameData.score_date != null){
-	tabTitle.innerHTML = (gameData.score_date) + "&nbsp;-&nbsp;" +  clubName;
+	tabTitle.innerHTML = (gameData.score_date) + "&nbsp;-&nbsp;" +  showClubName(clubName, parcID);
 }else{
-	tabTitle.innerHTML = getDateTime() + "&nbsp;-&nbsp;" +  clubName;
+	tabTitle.innerHTML = getDateTime() + "&nbsp;-&nbsp;" +  showClubName(clubName, parcID);
 	gameBut.style.visibility = "visible";
 }
 
