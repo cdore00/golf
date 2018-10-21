@@ -4,7 +4,7 @@ function getLocalisationErr(){
 	if (navigator.geolocation) {
 
 			//var options = { enableHighAccuracy:true, maximumAge:10000, timeout:10000, frequency: 2000 };
-			var options = { enableHighAccuracy:true, maximumAge:1000};
+			var options = { enableHighAccuracy:true, maximumAge:500, timeout:10000, frequency: 20};
 
 		watchId = navigator.geolocation.watchPosition(onLocSuccess, onLocAffError, options);
 		//watchId = navigator.geolocation.watchPosition(onLocSuccess);
@@ -180,4 +180,27 @@ if (rep){
 	}
 
 }
+
+function calculDistance(pt1, pt2){
+var lat1 = pt1.lat();
+var lat2 = pt2.lat();
+var lon1 = pt1.lng();
+var lon2 = pt2.lng();
+var R = 6967410.324; // Rayon moyen en verge
+var rLat1 = lat1 * (Math.PI / 180);
+var rLat2 = lat2 * (Math.PI / 180);
+var dLat = (lat2-lat1) * (Math.PI / 180);
+var dLon = (lon2-lon1) * (Math.PI / 180);
+var a = Math.sin(rLat1) * Math.sin(rLat2) + Math.cos(rLat1) * Math.cos(rLat2) * Math.cos(dLon);
+    a = Math.acos(a);
+var d = R * a ;
+	d = Math.round(d);
+	if ( d > 1760){
+	  d = d / 1760;
+	  d = Math.round(d * 100) / 100;
+	  d = d + 'M';
+	  }
+	return d;
+}
+
 //-->

@@ -32,26 +32,17 @@ var locTimer;
 var resultLocalisation = 1000;
 var affL, LocT;
 
-//var HOSTserv = "http://127.0.0.1:3000/";
-// "http://192.168.2.188:8080/";
-// "http://127.0.0.1:3000/";
-// "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";
-// "http://192.168.20.130:8080/";
-// "http://192.168.20.130:32768/";
-// the locColl object
+// locColl object
 var locColl = {
-    // setup properties of locColl object
-    id:"locColl",
-    coord : new Array()
-}
-locColl.addLoc = function (lat,lng,acc) {
-	this.coord[this.coord.length] = new addCoord(lat,lng,acc);
-}
-function addCoord(lat,lng,acc)
-{
-this.lat=lat;
-this.lng=lng;
-this.acc=acc;
+	id:"locColl",
+	coord : [],
+	addLoc : function (lat,lng,acc) {
+		var oLoc = {};
+		oLoc.lat=lat;
+		oLoc.lng=lng;
+		oLoc.acc=acc;
+		this.coord[this.coord.length] = oLoc;
+	}
 }
 
 function manageIdent(action){
@@ -260,6 +251,7 @@ else{
 		}else{
 			resultLocalisation = -1;
 			setLatLng(coord[0],coord[1],true);
+			locColl.addLoc(coord[0],coord[1],true);
 		}
 	}else{
 		if (LocT > 0)
@@ -368,6 +360,7 @@ if (!notNew)
 function setResult(result){
 resultLocalisation = result;
 }
+
 function criteres(){
 	if (document.critere.Mots.value.length == 0 && document.critere.IdRegion.value == 0){
 		return false;
@@ -375,6 +368,7 @@ function criteres(){
 		return true;
 	}
 }
+
 function showLocalisation(){
 var oDivLocalisation, oDivLocaliser, oDivLocalise;
 oDivLocalisation = document.getElementById('localisation');
@@ -401,6 +395,7 @@ if ( LocT == 0 ){
 	}
 	}
 }
+
 function localiser(){
 var oDivlocaliser = document.getElementById('localiser');
 var oDivLocalise = document.getElementById('localise');
@@ -412,6 +407,7 @@ oBody.style.cursor="wait";
 	locTimer = setTimeout("clearGeo(false);", LocT);
 	getLocalisationErr();
 }
+
 function clearGeo(interrupt){
 var oBody = document.getElementById('content');
 var localisation = document.getElementById('localisation');
@@ -433,6 +429,7 @@ navigator.geolocation.clearWatch(watchId);
 			alert(locColl.coord.length + "\nResult:" + resultLocalisation + donn);
 	}
 }
+
 function getLocalisationOld(){
 	if (navigator.geolocation) {
 			var oBody = document.getElementById('content');
@@ -442,12 +439,14 @@ function getLocalisationOld(){
 		watchId = navigator.geolocation.watchPosition(onLocSuccess, onLocError);
 	}
 }
+
 function onLocSuccess(position) {
 	//console.log("onLocSuccess");
 	setResult(-1);
 	setLatLng(position.coords.latitude,position.coords.longitude);
 	locColl.addLoc(position.coords.latitude,position.coords.longitude,position.coords.accuracy);
 }
+
 // the tooltip object
 var tooltip = {
     // setup properties of tooltip object

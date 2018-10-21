@@ -23,38 +23,64 @@
     <script type="text/javascript"> 
 	<!--
 
-var map
+var map;
 var posMarker;
 var watchId = null;
 var locTimer = null;
 var locCollection = null;
 var watchLoc = false;
+var AffLoc = false, recenter = true;
+var lastTime = 0;
 
-      function initialize() { 
-	   locCollection = opener.locColl.coord;
-	   //alert(locCollection.length);
-	   
-        var myOptions = { 
-          center: new google.maps.LatLng(locCollection[locCollection.length-1].lat,locCollection[locCollection.length-1].lng), 
-          zoom: 19, 
-		  panControl: false,    
-		  zoomControl: false, 	  
-		  scaleControl: false,
-		  streetViewControl: false,
-		  fullscreenControl: false, 
-		  mapTypeControl: true,    
-		  mapTypeControlOptions: {        
-		  style: google.maps.MapTypeControlStyle.DROPDOWN_MENU    },
-          mapTypeId: google.maps.MapTypeId.HYBRID
-        }; 
-        map = new google.maps.Map(document.getElementById("map_canvas"), myOptions); 
+var speedTime = {
+	coord2 : [],
+	lastTime : 0,
+	lastPos : null,
+	calcul : function (accPos,accTime) {
+		var sp = "";
+		if (this.lastPos)
+			var dist = calculDistance(this.lastPos, accPos);
+		this.lastPos = accPos;
+		if (dist){
+			var elapsMilli = accTime - this.lastTime; 
+			sp = (dist / 1760) / elapsMilli * 3600000;
+			sp = Math.round(sp * 1.609344);
+		}
+		this.lastTime = accTime;
+		return sp; 
+	}
+};
+
+function initialize() { 
+	locCollection = opener.locColl.coord;
+	window.oTip = new messTipObject();
+	window.oTip.show();
 	
+	AffLoc = GetCookie("AffLoc");
+	if (AffLoc)
+	AffLoc = eval(AffLoc);
+	//alert(locCollection.length);
+
+	var myOptions = { 
+	  center: new google.maps.LatLng(locCollection[locCollection.length-1].lat,locCollection[locCollection.length-1].lng), 
+	  zoom: 19, 
+	  panControl: false,    
+	  zoomControl: false, 	  
+	  scaleControl: false,
+	  streetViewControl: false,
+	  fullscreenControl: false, 
+	  mapTypeControl: true,    
+	  mapTypeControlOptions: { style: google.maps.MapTypeControlStyle.DROPDOWN_MENU, position: google.maps.ControlPosition.TOP_CENTER   },
+	  mapTypeId: google.maps.MapTypeId.HYBRID
+	}; 
+	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions); 
+
 	adjustScreen(31);
 	setFontSize();
-	setMarkers(map, locCollection);
+	//setMarkers(map, locCollection);
 	setMyPosition(map, locCollection[locCollection.length-1].lat,locCollection[locCollection.length-1].lng);
 	//alert(locCollection[locCollection.length-1].lat);
-	}
+}
 
 function setMyPosition(map, lat, lng) {
   // Add markers to the map
@@ -117,7 +143,7 @@ function setMarkers(map, locations) {
 		var donn = "";
 		for (var i=0;i<locCollection.length;i++)
 		{
-		donn = donn + "</br>" + (i+1) + ": " + locCollection[i].lat + ", " + locCollection[i].lng + ", Préc:" + locCollection[i].acc;
+		donn = donn + "</br>" + (i+1) + ": " + locCollection[i].lat + ", " + locCollection[i].lng + ", Pr&eacute;c: " + locCollection[i].acc;
 		}
 	divLayer.innerHTML = donn;
 	}
@@ -144,11 +170,32 @@ navigator.geolocation.clearWatch(watchId);
 
 function onLocSuccess(position) {
 var myLatLng = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+var elaps = "";
+
 posMarker.setPosition(myLatLng);
-map.setCenter(myLatLng);
 //alert(myLatLng);
+if (AffLoc){
+	var d = new Date();
+	var aT = d.getTime();
+	var sp = speedTime.calcul(myLatLng, aT);
+	if (lastTime){
+		elaps = aT - lastTime;
+	}
+	lastTime = aT;
+	var tim = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() + ((recenter) ? " Center":"");
+	window.oTip.initMess("&nbsp;<b>Lat.: </b>" + position.coords.latitude + "&nbsp;</br>&nbsp;<b>Lng.: </b>" + position.coords.longitude + "&nbsp;</br>&nbsp;<b>Diff: </b>" + elaps + " Speed: " + sp + "&nbsp;</br>&nbsp;<b>Time: </b>" + tim);
+}
+if (recenter)
+	map.setCenter(myLatLng);
 if (!watchLoc)
 	locTimer = setTimeout("getLocalisation();", 500);
+}
+
+function resetAff(){
+if (recenter)
+	recenter = false;
+else
+	recenter = true;
 }
 
 function quitter(){
@@ -171,7 +218,19 @@ function getLocalisation(){
 }
 
 	// -->
-    </script> 
+    </script>
+
+<style>
+
+#menuGPS, #typeLoc {
+margin: 0.4em;
+font-family: Roboto, Arial, sans-serif;
+font-size: 0.9em;
+font-weight: bold;
+}
+
+</style>
+
   </head>
   <body onload='initialize()' onUnload='clearGeo()'> 
 
@@ -179,13 +238,14 @@ function getLocalisation(){
 <div id="duobutton">
 <a href="#"  onclick="quitter(); return false;">Fermer</a>
 <a href="#" onclick="lister(); return false;">Lister</a>
-<a href="javascript:localiser()">Localiser</a>
+<a href="javascript:localiser()" ondblclick="resetAff()">Localiser</a>
 </div></div>
 
 
 <div id="mapzone">
 
-<div id="menuGPS"><form id="typeLoc" name="typeLoc" ><input type="radio" checked name="typeLoc" value="Watch">Watch<input type="radio" name="typeLoc" value="Get">Get</form></div>
+<div id="menuGPS"><form id="typeLoc" name="typeLoc" ><input type="radio" checked name="typeLoc">Watch</input>
+&nbsp;<input type="radio" name="typeLoc" value="Get">Get</input></form></div>
 	
 <div id="map_canvas" ></div> 
 </div>
