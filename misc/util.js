@@ -301,7 +301,7 @@ function messTipObject(){
 			this.initMess(mess);
 		if (!oPos || typeof oPos[0] == "number"){
 			if (!oPos){
-				this.oFr.style.top = "0px";
+				this.oFr.style.top = adj + "px";
 				this.oFr.style.left = "0px";			
 			}else{
 			this.oFr.style.top = oPos[0] + "px";
