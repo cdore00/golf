@@ -70,7 +70,7 @@ function initialize() {
 	  streetViewControl: false,
 	  fullscreenControl: false, 
 	  mapTypeControl: true,    
-	  mapTypeControlOptions: { style: google.maps.MapTypeControlStyle.DROPDOWN_MENU, position: google.maps.ControlPosition.TOP_CENTER   },
+	  mapTypeControlOptions: { style: google.maps.MapTypeControlStyle.DROPDOWN_MENU, position: google.maps.ControlPosition.TOP_RIGHT   },
 	  mapTypeId: google.maps.MapTypeId.HYBRID
 	}; 
 	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions); 
@@ -232,7 +232,12 @@ font-weight: bold;
   <body onload='initialize()' onUnload='clearGeo()'> 
 
 <div id="triButton">
+
 <div id="duobutton">
+<div id="fontAdjust">
+<div class="divFont" onclick="setFontSize(0.2, this)"><div class="divFontSize">A</div><div class="fontLogo">&#8593;</div></div>
+<div class="divFont" onclick="setFontSize(-0.2, this)"><div class="divFontSize fontSmall">A</div><div class="fontLogo">&#8595;</div></div>
+</div>
 <a href="#"  onclick="quitter(); return false;">Fermer</a>
 <a href="#" onclick="lister(); return false;">Lister</a>
 <a href="javascript:localiser()" ondblclick="resetAff()">Localiser</a>
