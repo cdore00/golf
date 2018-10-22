@@ -33,7 +33,7 @@ var AffLoc = false, recenter = true;
 var lastTime = 0;
 
 var speedTime = {
-	coord2 : [],
+	hist : [0,0,0],
 	lastTime : 0,
 	lastPos : null,
 	calcul : function (accPos,accTime) {
@@ -47,7 +47,18 @@ var speedTime = {
 			sp = Math.round(sp * 1.609344);
 		}
 		this.lastTime = accTime;
-		return sp; 
+		
+		this.hist.shift()
+		this.hist[this.hist.length] = sp;
+		var tot = 0, n = 0;
+		for (var i = 0; i < this.hist.length; i++) {
+			tot += this.hist[i];
+			if (this.hist[i] > 0)
+				n++;
+		}
+		console.log(this.hist)
+		
+		return Math.round( (tot == 0) ? 0:tot/n ); 
 	}
 };
 
