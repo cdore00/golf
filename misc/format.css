@@ -162,7 +162,7 @@ background: #ccc;
 overflow: hidden;
 height: 0px;
 transition: width 0.4s, height 0.4s, transform 2s, ease-in-out;
-z-index: 1000;
+z-index: 2001;
 }
 
 #submenu1{
@@ -184,6 +184,18 @@ width: auto;
 background: #999 ;
 color: #d33;
 cursor: pointer;
+}
+
+#submenu1 a, #menuList a {
+    text-decoration: none;
+    color: #000;
+}
+
+#submenu1 a:hover, a:focus, #menuList a:hover, a:focus {
+    transition-property: background-color, border, color;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-out;
+    background: #999;
 }
 
 .inputButton {
@@ -422,7 +434,7 @@ text-shadow: 2px 2px #999;
 position: absolute;
 visibility: hidden;
 display: inline;
-z-index: 2001;
+z-index: 2000;
 }
 .o_messTip .o_messTipTxt{
 	position: absolute;

@@ -17,7 +17,7 @@
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA15nyiYmWG_0IkG9H5r4Qc8KhZxwRw_xA&sensor=false"> 
     </script> 
 	<script type="text/javascript" src="misc/util.js"></script>
-	<script type="text/javascript" src="misc/markerLabel.js"></script>
+	<!--<script type="text/javascript" src="misc/markerLabel.js"></script> // -->
 	<script type="text/javascript" src="misc/geoLocal.js"></script>
 	
 <script type="text/javascript"> 
@@ -29,8 +29,9 @@ var watchId = null;
 var locTimer = null;
 var locCollection = null;
 var watchLoc = false;
-var AffLoc = false, recenter = true;
+var AffLoc = false, recenter = true, showST = true;
 var lastTime = 0;
+var nbrMitem = 4;
 
 var speedTime = {
 	hist : [0,0,0],
@@ -56,7 +57,7 @@ var speedTime = {
 			if (this.hist[i] > 0)
 				n++;
 		}
-		console.log(this.hist)
+		//console.log(this.hist)
 		
 		return Math.round( (tot == 0) ? 0:tot/n ); 
 	}
@@ -65,11 +66,11 @@ var speedTime = {
 function initialize() { 
 	locCollection = opener.locColl.coord;
 	window.oTip = new messTipObject();
-	window.oTip.show(false, false, false, false, 10);
+	window.oTip.show(false, false, false, false, -30);
 	
 	AffLoc = GetCookie("AffLoc");
 	if (AffLoc)
-	AffLoc = eval(AffLoc);
+		AffLoc = eval(AffLoc);
 	//alert(locCollection.length);
 
 	var myOptions = { 
@@ -141,13 +142,15 @@ function setMarkers(map, locations) {
 }
 */
 
-function lister() {
+function lister(optLister) {
 var divLayer = document.getElementById("prefLayer");
 
 if (divLayer.style.visibility == "visible" ){
 	divLayer.style.visibility="hidden";
+	optLister.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;" + langLbl["mlist"];
 }else{
  divLayer.style.visibility="visible";
+ optLister.innerHTML = "&#10004;&nbsp;" + langLbl["mlist"];
 	var donn = "";
 	for (var i=0;i<locCollection.length;i++)
 	{
@@ -176,9 +179,9 @@ function clearGeo(){
 navigator.geolocation.clearWatch(watchId);
 }
 
-function padStr(lng, chr, start){
+//function padStr(lng, chr, start){
 
-}
+//}
 
 function onLocSuccess(position) {
 var myLatLng = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
@@ -186,7 +189,7 @@ var elaps = "";
 
 posMarker.setPosition(myLatLng);
 //alert(myLatLng);
-if (AffLoc){
+if (showST){
 	var d = new Date();
 	var aT = d.getTime();
 	var sp = speedTime.calcul(myLatLng, aT);
@@ -195,7 +198,8 @@ if (AffLoc){
 	}
 	lastTime = aT;
 	var tim = d.getHours() + ":" + (d.getMinutes()+"").padStart(2, '0') + ":" + (d.getSeconds()+"").padStart(2, '0') + ((recenter) ? " Center":"");
-	window.oTip.initMess("&nbsp;<b>Lat.: </b>" + position.coords.latitude + "&nbsp;</br>&nbsp;<b>Lng.: </b>" + position.coords.longitude + "&nbsp;</br>&nbsp;<b>Diff: </b>" + elaps + " Speed: " + sp + "&nbsp;</br>&nbsp;<b>Time: </b>" + tim);
+	//window.oTip.initMess("&nbsp;<b>Lat.: </b>" + position.coords.latitude + "&nbsp;</br>&nbsp;<b>Lng.: </b>" + position.coords.longitude + "&nbsp;</br>&nbsp;<b>Diff: </b>" + elaps + " Speed: " + sp + "&nbsp;</br>&nbsp;<b>Time: </b>" + tim);
+	window.oTip.initMess("Last: " + elaps + "ms Speed: <b>" + sp + "</b></br>Time: " + tim);
 }
 if (recenter)
 	map.setCenter(myLatLng);
@@ -203,11 +207,25 @@ if (!watchLoc)
 	locTimer = setTimeout("getLocalisation();", 500);
 }
 
-function resetAff(){
-if (recenter)
+function resetAff(optCenter){
+if (recenter){
 	recenter = false;
-else
+	optCenter.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;" + langLbl["mcent"];
+}else{
 	recenter = true;
+	optCenter.innerHTML = "&#10004;&nbsp;" + langLbl["mcent"];
+}
+}
+
+function showSTeedTime(optST){
+if (showST){
+	showST = false;
+	optST.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;Speed/Time";
+	window.oTip.initMess("");
+}else{
+	showST = true;
+	optST.innerHTML = "&#10004;&nbsp;Speed/Time";
+}
 }
 
 function quitter(){
@@ -225,16 +243,30 @@ function getLocalisation(){
 	}						
 }
 
+function showMenu(){
+var menuList = document.getElementById('menuList');
+
+if (menuList.style.height != "0px" && menuList.style.height != ""){
+	menuList.style.height = "0px";
+}else{
+	var adj = menuList.childNodes[1].offsetHeight;
+	menuList.style.height = (nbrMitem * adj * .75) + "pt";
+}
+//menuOn = true;
+}
+
+function closeMenu(){
+	var menuList = document.getElementById('menuList');
+	menuList.style.height = "0px";
+}
+
 	// -->
     </script>
 
 <style>
 
-#menuGPS, #typeLoc {
-margin: 0.4em;
-font-family: Roboto, Arial, sans-serif;
-font-size: 0.9em;
-font-weight: bold;
+#butMenu {
+visibility: visible;
 }
 
 </style>
@@ -242,24 +274,31 @@ font-weight: bold;
   </head>
   <body onload='initialize()' onUnload='clearGeo()'> 
 
-<div id="triButton">
+
 
 <div id="duobutton">
 <div id="fontAdjust">
 <div class="divFont" onclick="setFontSize(0.2, this)"><div class="divFontSize">A</div><div class="fontLogo">&#8593;</div></div>
 <div class="divFont" onclick="setFontSize(-0.2, this)"><div class="divFontSize fontSmall">A</div><div class="fontLogo">&#8595;</div></div>
 </div>
+<a href="#" id="butMenu" title="Menu" onmouseover="showMenu()" onclick="showMenu();"><img id="logomenu" alt="Menu" src="images/menu.png" width="64" height="32"></a>
 <a href="#"  onclick="quitter(); return false;">Fermer</a>
-<a href="#" onclick="lister(); return false;">Lister</a>
-<a href="javascript:localiser()" ondblclick="resetAff()">Localiser</a>
-</div></div>
-
+<a href="javascript:localiser()" >Localiser</a>
+</div>
+<div id="menuList">
+<a class="inputButton" onclick="resetAff(this)" href="#">&#10004;&nbsp;<text id="mcent"></text></a>
+<a class="inputButton" onclick="lister(this)" href="#">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mlist"></text></a>
+<a class="inputButton" onclick="showSTeedTime(this)" href="#">&#10004;&nbsp;Speed/Time</a>
+<a class="inputButton" href="#">
+<form id="typeLoc" name="typeLoc" >
+<input id="chxWatch" type="radio" checked name="typeLoc"><label for="chxWatch">Watch</label></input>&nbsp;
+<input id="chxGet" type="radio" name="typeLoc" value="Get"><label for="chxGet">Get</label></input></form>
+</a>
+</div>
 
 <div id="mapzone">
 
-<div id="menuGPS"><form id="typeLoc" name="typeLoc" >
-<input type="radio" checked name="typeLoc">Watch</input>&nbsp;
-<input type="radio" name="typeLoc" value="Get">Get</input></form></div>
+
 	
 <div id="map_canvas" ></div> 
 </div>

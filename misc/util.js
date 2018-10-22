@@ -664,6 +664,7 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["modid"] = "Modifier la destination";
 		langLbl["medit"] = "&Eacute;diter";
 		langLbl["mcent"] = "Centrer";
+		langLbl["mlist"] = "Lister";
 		langLbl["majou"] = "Ajouter un club";
 		langLbl["mrefr"] = "Actualiser";
 		langLbl["mopti"] = "Options";
@@ -784,6 +785,7 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["modid"] = "Cambiar destino";
 		langLbl["medit"] = "Editar";
 		langLbl["mcent"] = "Centrar";
+		langLbl["mlist"] = "Listar";
 		langLbl["majou"] = "Agregar club";
 		langLbl["mrefr"] = "Refrescar";
 		langLbl["mopti"] = "Opciones";
@@ -903,6 +905,7 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["modid"] = "Change destination";
 		langLbl["medit"] = "Edit";
 		langLbl["mcent"] = "Center";
+		langLbl["mlist"] = "List";
 		langLbl["majou"] = "Add club";
 		langLbl["mrefr"] = "Refresh";
 		langLbl["mopti"] = "Options";
