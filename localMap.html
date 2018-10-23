@@ -35,6 +35,7 @@ var nbrMitem = 4;
 
 var speedTime = {
 	hist : [0,0,0],
+	locHist : locCollection,
 	lastTime : 0,
 	lastPos : null,
 	calcul : function (accPos,accTime) {
@@ -42,6 +43,7 @@ var speedTime = {
 		if (this.lastPos)
 			var dist = calculDistance(this.lastPos, accPos);
 		this.lastPos = accPos;
+		
 		if (dist){
 			var elapsMilli = accTime - this.lastTime; 
 			sp = (dist / 1760) / elapsMilli * 3600000;
@@ -260,6 +262,18 @@ function closeMenu(){
 	menuList.style.height = "0px";
 }
 
+function resizeImg(fs){
+	setTimeout("adjMenu()", 10);
+	//alert(fs)
+}
+
+function adjMenu(){
+var menuList = document.getElementById('menuList');
+
+	var adj = menuList.childNodes[1].offsetHeight;
+	menuList.style.height = (nbrMitem * adj * .75) + "pt";
+}
+
 	// -->
     </script>
 
@@ -298,8 +312,6 @@ visibility: visible;
 
 <div id="mapzone">
 
-
-	
 <div id="map_canvas" ></div> 
 </div>
 
