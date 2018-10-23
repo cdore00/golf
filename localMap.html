@@ -42,25 +42,22 @@ function clMenu(){
 	}
 
 	this.close = function(){
-		this.menu.style.height = "0px";
+		this.menu.style.height = "0px";	// Close menu NOT USED
 	}
-	
 	this.opened = function(){
 		if (this.menu.style.height != "" && this.menu.style.height != "0px")
 			return true;
 		else
 			return false;
 	}
-
 	this.show = function(){
 		if (this.opened()){
-			this.menu.style.height = "0px";
+			this.menu.style.height = "0px";	// Close menu
 		}else{
 			var adj = this.menu.childNodes[1].offsetHeight;
-			this.menu.style.height = (this.nbrOpt * adj * .75) + "pt";
+			this.menu.style.height = (this.nbrOpt * adj * .75) + "pt";	// Open menu
 		}
 	}
-	
 	this.resize = function(){
 		if (this.opened()){
 			var adj = this.menu.childNodes[1].offsetHeight;
