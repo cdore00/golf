@@ -31,7 +31,43 @@ var locCollection = null;
 var watchLoc = false;
 var AffLoc = false, recenter = true, showST = true;
 var lastTime = 0;
-var nbrMitem = 4;
+
+// Menu object
+function clMenu(){
+	this.menu = document.getElementById('menuList');
+	this.nbrOpt = 0;
+	for (var i = 0; i < this.menu.childNodes.length; i++) {
+		if (this.menu.childNodes[i].classList && this.menu.childNodes[i].classList.contains("inputButton"))
+			this.nbrOpt++;
+	}
+
+	this.close = function(){
+		this.menu.style.height = "0px";
+	}
+	
+	this.opened = function(){
+		if (this.menu.style.height != "" && this.menu.style.height != "0px")
+			return true;
+		else
+			return false;
+	}
+
+	this.show = function(){
+		if (this.opened()){
+			this.menu.style.height = "0px";
+		}else{
+			var adj = this.menu.childNodes[1].offsetHeight;
+			this.menu.style.height = (this.nbrOpt * adj * .75) + "pt";
+		}
+	}
+	
+	this.resize = function(){
+		if (this.opened()){
+			var adj = this.menu.childNodes[1].offsetHeight;
+			this.menu.style.height = (this.nbrOpt * adj * .75) + "pt";
+		}
+	}
+}
 
 var speedTime = {
 	hist : [0,0,0],
@@ -69,6 +105,7 @@ function initialize() {
 	locCollection = opener.locColl.coord;
 	window.oTip = new messTipObject();
 	window.oTip.show(false, false, false, false, -30);
+	window.oMenu = new clMenu();
 	
 	AffLoc = GetCookie("AffLoc");
 	if (AffLoc)
@@ -240,39 +277,18 @@ function getLocalisation(){
 	if (navigator.geolocation) {
 			//var options = { enableHighAccuracy:true, maximumAge:10000, timeout:10000, frequency: 2000 };
 		var options = { enableHighAccuracy:true, maximumAge:0, timeout:400 };
-
 		navigator.geolocation.getCurrentPosition(onLocSuccess, onLocAffError, options);
 	}						
 }
 
-function showMenu(){
-var menuList = document.getElementById('menuList');
-
-if (menuList.style.height != "0px" && menuList.style.height != ""){
-	menuList.style.height = "0px";
-}else{
-	var adj = menuList.childNodes[1].offsetHeight;
-	menuList.style.height = (nbrMitem * adj * .75) + "pt";
-}
-//menuOn = true;
-}
-
-function closeMenu(){
-	var menuList = document.getElementById('menuList');
-	menuList.style.height = "0px";
+function closeMenu2(){
+// Not used
+	window.oMenu.close();
 }
 
 function resizeImg(fs){
-	setTimeout("adjMenu()", 10);
+	setTimeout("window.oMenu.resize()", 10);
 	//alert(fs)
-}
-
-function adjMenu(){
-var menuList = document.getElementById('menuList');
-if (menuList.style.height != "" && menuList.style.height != "0px"){
-	var adj = menuList.childNodes[1].offsetHeight;
-	menuList.style.height = (nbrMitem * adj * .75) + "pt";
-}
 }
 
 	// -->
@@ -296,7 +312,7 @@ visibility: visible;
 <div class="divFont" onclick="setFontSize(0.2, this)"><div class="divFontSize">A</div><div class="fontLogo">&#8593;</div></div>
 <div class="divFont" onclick="setFontSize(-0.2, this)"><div class="divFontSize fontSmall">A</div><div class="fontLogo">&#8595;</div></div>
 </div>
-<a href="#" id="butMenu" title="Menu" onmouseover="showMenu()" onclick="showMenu();"><img id="logomenu" alt="Menu" src="images/menu.png" width="64" height="32"></a>
+<a href="#" id="butMenu" title="Menu" onmouseover="window.oMenu.show()" onclick="window.oMenu.show();"><img id="logomenu" alt="Menu" src="images/menu.png" width="64" height="32"></a>
 <a href="#"  onclick="quitter(); return false;">Fermer</a>
 <a href="javascript:localiser()" >Localiser</a>
 </div>
