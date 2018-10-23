@@ -269,9 +269,10 @@ function resizeImg(fs){
 
 function adjMenu(){
 var menuList = document.getElementById('menuList');
-
+if (menuList.style.height != "" && menuList.style.height != "0px"){
 	var adj = menuList.childNodes[1].offsetHeight;
 	menuList.style.height = (nbrMitem * adj * .75) + "pt";
+}
 }
 
 	// -->
