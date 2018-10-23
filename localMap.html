@@ -30,7 +30,6 @@ var locTimer = null;
 var locCollection = null;
 var watchLoc = false;
 var AffLoc = false, recenter = true, showST = true;
-var lastTime = 0;
 
 // Menu object
 function clMenu(){
@@ -71,14 +70,23 @@ var speedTime = {
 	locHist : locCollection,
 	lastTime : 0,
 	lastPos : null,
-	calcul : function (accPos,accTime) {
-		var sp = 0;
+	calcul : function (position, mapsLatLng, accTime) {
+		var sp = 0, elapsMilli = 0;
 		if (this.lastPos)
-			var dist = calculDistance(this.lastPos, accPos);
-		this.lastPos = accPos;
-		
+			var dist = calculDistance(this.lastPos, mapsLatLng);
+		this.lastPos = mapsLatLng;
+		if (this.locHist.length > 19)
+			this.locHist.shift();
+		var oLoc = {};
+		oLoc.lat=position.coords.latitude;
+		oLoc.lng=position.coords.longitude;
+		oLoc.acc=position.coords.accuracy;
+		oLoc.time=accTime;
+		oLoc.LatLng = mapsLatLng;
+		this.locHist[this.locHist.length] = oLoc;
+		if (this.lastTime)
+			elapsMilli = accTime - this.lastTime; 
 		if (dist){
-			var elapsMilli = accTime - this.lastTime; 
 			sp = (dist / 1760) / elapsMilli * 3600000;
 			sp = Math.round(sp * 1.609344);
 		}
@@ -94,12 +102,13 @@ var speedTime = {
 		}
 		//console.log(this.hist)
 		*/
-		return sp;	//Math.round( (tot == 0) ? 0:tot/n ); 
+		return {'s':sp, 'e':elapsMilli};	//Math.round( (tot == 0) ? 0:tot/n );
 	}
 };
 
 function initialize() { 
 	locCollection = opener.locColl.coord;
+	speedTime.locHist = locCollection;
 	window.oTip = new messTipObject();
 	window.oTip.show(false, false, false, false, -30);
 	window.oMenu = new clMenu();
@@ -188,9 +197,9 @@ if (divLayer.style.visibility == "visible" ){
  divLayer.style.visibility="visible";
  optLister.innerHTML = "&#10004;&nbsp;" + langLbl["mlist"];
 	var donn = "";
-	for (var i=0;i<locCollection.length;i++)
+	for (var i=0;i<speedTime.locHist.length;i++)
 	{
-	donn = donn + "</br>" + (i+1) + ": " + locCollection[i].lat + ", " + locCollection[i].lng + ", Pr&eacute;c: " + locCollection[i].acc;
+	donn = donn + "</br>" + (i+1) + ": " + speedTime.locHist[i].lat + ", " + speedTime.locHist[i].lng + ", Pr&eacute;c: " + speedTime.locHist[i].acc;
 	}
 divLayer.innerHTML = donn;
 }
@@ -215,27 +224,16 @@ function clearGeo(){
 navigator.geolocation.clearWatch(watchId);
 }
 
-//function padStr(lng, chr, start){
-
-//}
-
 function onLocSuccess(position) {
 var myLatLng = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
-var elaps = "";
 
 posMarker.setPosition(myLatLng);
-//alert(myLatLng);
 if (showST){
-	var d = new Date();
-	var aT = d.getTime();
-	var sp = speedTime.calcul(myLatLng, aT);
-	if (lastTime){
-		elaps = aT - lastTime;
-	}
-	lastTime = aT;
-	var tim = d.getHours() + ":" + (d.getMinutes()+"").padStart(2, '0') + ":" + (d.getSeconds()+"").padStart(2, '0') + ((recenter) ? " Center":"");
+	var aT = Date.now();
+	var sp = speedTime.calcul(position, myLatLng, aT);
+	var tim = formatDateTime.time(aT) + ((recenter) ? " Center":"");
 	//window.oTip.initMess("&nbsp;<b>Lat.: </b>" + position.coords.latitude + "&nbsp;</br>&nbsp;<b>Lng.: </b>" + position.coords.longitude + "&nbsp;</br>&nbsp;<b>Diff: </b>" + elaps + " Speed: " + sp + "&nbsp;</br>&nbsp;<b>Time: </b>" + tim);
-	window.oTip.initMess("Last: " + elaps + "ms Speed: <b>" + sp + "</b></br>Time: " + tim);
+	window.oTip.initMess( sp.e + "ms Speed: <b>" + sp.s + "</b></br>" + tim);
 }
 if (recenter)
 	map.setCenter(myLatLng);

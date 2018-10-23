@@ -70,6 +70,19 @@ function getDateTime(dateTime){
 	return intlDateTime;
 }
 
+var formatDateTime = {
+	getDateTime : function(milliTime){
+			if (milliTime)
+				return new Date(milliTime);
+			else
+				return new Date();
+	},
+	time : function(milliTime) {
+		var dt = this.getDateTime(milliTime);
+		return dt.getHours() + ":" + (dt.getMinutes()+"").padStart(2, '0') + ":" + (dt.getSeconds()+"").padStart(2, '0')
+	}
+}
+
 function DelCookie(name) {
     document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
