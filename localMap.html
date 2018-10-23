@@ -83,7 +83,7 @@ var speedTime = {
 			sp = Math.round(sp * 1.609344);
 		}
 		this.lastTime = accTime;
-		
+		/*
 		this.hist.shift()
 		this.hist[this.hist.length] = sp;
 		var tot = 0, n = 0;
@@ -93,8 +93,8 @@ var speedTime = {
 				n++;
 		}
 		//console.log(this.hist)
-		
-		return Math.round( (tot == 0) ? 0:tot/n ); 
+		*/
+		return sp;	//Math.round( (tot == 0) ? 0:tot/n ); 
 	}
 };
 
