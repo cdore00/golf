@@ -23,13 +23,25 @@
 <script type="text/javascript"> 
 <!--
 
-var map;
+var userId, savCollList, map, markers = [];
 var posMarker;
 var watchId = null;
 var locTimer = null;
-var locCollection = null;
+var locCollection = [];
 var watchLoc = false;
-var AffLoc = false, recenter = true, showST = true;
+var AffLoc = false, recenter = true, showST = true, showSR = false;
+var path, polyLine = new google.maps.Polyline({
+strokeColor: '#0000ff',
+clickable: false,
+strokeOpacity: 1.0,
+strokeWeight: 2
+});
+
+
+function savedPos(res){
+if (showST)
+	window.oTip.addMess('</br><text class="fontGreen">SAVED</text>');
+}
 
 // Menu object
 function clMenu(){
@@ -65,32 +77,50 @@ function clMenu(){
 	}
 }
 
+// Speed Time object
 var speedTime = {
 	hist : [0,0,0],
 	locHist : locCollection,
+	startTime : null,
+	saveFreq : 60000,	
 	lastTime : 0,
+	lastSaveTime : 0,
 	lastPos : null,
 	calcul : function (position, mapsLatLng, accTime) {
-		var sp = 0, elapsMilli = 0;
-		if (this.lastPos)
+		var sp = 0, elapsMilli = 0, startLoc = false;
+		if (this.lastPos){
 			var dist = calculDistance(this.lastPos, mapsLatLng);
+		}else{
+			this.startTime = accTime;	// Start
+			this.lastSaveTime = accTime;
+			startLoc = true;
+		}	
 		this.lastPos = mapsLatLng;
 		if (this.locHist.length > 19)
 			this.locHist.shift();
-		var oLoc = {};
-		oLoc.lat=position.coords.latitude;
-		oLoc.lng=position.coords.longitude;
-		oLoc.acc=position.coords.accuracy;
-		oLoc.time=accTime;
-		oLoc.LatLng = mapsLatLng;
-		this.locHist[this.locHist.length] = oLoc;
+
 		if (this.lastTime)
 			elapsMilli = accTime - this.lastTime; 
 		if (dist){
 			sp = (dist / 1760) / elapsMilli * 3600000;
 			sp = Math.round(sp * 1.609344);
 		}
+		if (startLoc || accTime - this.lastSaveTime > this.saveFreq){
+			if (position.coords.accuracy < 50){
+				var oLoc = {};
+				oLoc.lat=position.coords.latitude;
+				oLoc.lng=position.coords.longitude;
+				oLoc.acc=position.coords.accuracy;
+				oLoc.time=accTime;
+				this.locHist[this.locHist.length] = oLoc;		
+				var info = userId + "$" + this.startTime + "$" + accTime + "$" + oLoc.lat + "$" + oLoc.lng + "$" + oLoc.acc;
+				if (userId)
+					getInfo("setPosition?data=" + info, savedPos);
+				this.lastSaveTime = accTime;
+			}
+		}
 		this.lastTime = accTime;
+
 		/*
 		this.hist.shift()
 		this.hist[this.hist.length] = sp;
@@ -107,7 +137,9 @@ var speedTime = {
 };
 
 function initialize() { 
-	locCollection = opener.locColl.coord;
+	userId = GetCookie("userID");
+	if (opener.locColl)
+		locCollection = opener.locColl.coord;
 	speedTime.locHist = locCollection;
 	window.oTip = new messTipObject();
 	window.oTip.show(false, false, false, false, -30);
@@ -131,10 +163,10 @@ function initialize() {
 	  mapTypeId: google.maps.MapTypeId.HYBRID
 	}; 
 	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions); 
-
+	polyLine.setMap(map);
+	path = polyLine.getPath();
 	adjustScreen(31);
 	setFontSize();
-	//setMarkers(map, locCollection);
 	setMyPosition(map, locCollection[locCollection.length-1].lat,locCollection[locCollection.length-1].lng);
 	//alert(locCollection[locCollection.length-1].lat);
 }
@@ -160,9 +192,14 @@ function setMyPosition(map, lat, lng) {
         zIndex: 1000
 		})
 }
-/*
-function setMarkers(map, locations) {
-  // Add markers to the map
+
+function setMarkers(map, locations, mmXY) {
+if (!mmXY.maxX){
+	mmXY.maxX = locations[0].lat;
+	mmXY.minX = locations[0].lat;
+	mmXY.maxY = locations[0].lng;
+	mmXY.minY = locations[0].lng;
+}
   var image = new google.maps.MarkerImage('images/ici.png',
       new google.maps.Size(25, 25),
       new google.maps.Point(0,0),
@@ -171,22 +208,142 @@ function setMarkers(map, locations) {
       coord: [1, 1, 1, 25, 25, 25, 25 , 1],
       type: 'poly'
   };
-  for (var i = 0; i < locations.length - 1; i++) {
-    var beach = locations[i];
-    var myLatLng = new google.maps.LatLng(beach.lat, beach.lng);
-    var marker = new MarkerWithLabel({
+  for (var i = 0; i < locations.length; i++) {
+    var loc = locations[i];
+    var myLatLng = new google.maps.LatLng(loc.lat, loc.lng);
+    var marker = new google.maps.Marker({
         position: myLatLng,
-        map: map,
+        //map: map,
 		draggable: true,
-       labelContent: i ,
-       labelAnchor: new google.maps.Point(3, 30),
-       labelClass: "markLabels", // the CSS class for the label
-       labelInBackground: false
+		title: formatDateTime.time(loc.time, true) + " A:" + loc.acc,
+		label: i + ''
 		});
+	markers[markers.length] = marker;
+	mmXY.maxX = Math.max(mmXY.maxX, loc.lat);
+	mmXY.minX = Math.min(mmXY.minX, loc.lat);
+	mmXY.maxY = Math.max(mmXY.maxY, loc.lng);
+	mmXY.minY = Math.min(mmXY.minY, loc.lng);
 	}
 }
-*/
 
+function setMapOnAll(map){
+for (var i = 0; i < markers.length; i++) {
+  markers[i].setMap(map);
+  if (map)
+	path.push(markers[i].getPosition());
+}
+}
+
+function clearMarkers(){
+path.clear();
+setMapOnAll(null);
+markers = [];
+}
+
+function showRoute(){
+if (userId && !showSR){
+	window.oMenu.close();
+	showSpeedTime(true);
+	var divLayer = document.getElementById("prefLayer");
+	var valDate = (speedTime.startTime) ?  formatDateTime.date(speedTime.startTime):"";	//2018/10/28
+	var htmlCode = '<text>Start date</text></br>';
+	htmlCode += '<form><input id="prefDate" value="' + valDate +'" placeholder="aaaa/mm/jj"/></br>';
+	htmlCode += '<input class="bouton" type="submit" onclick="showMarker(true,this.form)" value="Ok"/><input class="bouton" type="button" onclick="showMarker(false)" value="Cancel"/></form>';
+	divLayer.innerHTML = htmlCode;
+	divLayer.style.visibility="visible";
+}else{
+	showMarker(true);
+}
+}
+
+function showMarker(isShow, oForm){
+var optSR = document.getElementById("optSR");
+var mmXY = {};
+if (isShow){
+	clearMarkers();
+	if (showSR){
+		showSR = false;
+		optSR.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;Show route";
+	}else{
+		showSR = true;
+		optSR.innerHTML = "&#10004;&nbsp;Show route";
+		if (userId && oForm && oForm.prefDate.value != ""){
+			var dt = Date.parse(oForm.prefDate.value);
+			var info = userId + "$" + dt;	//speedTime.startTime;
+			getInfo("getPosition?data=" + info, getPosList);		
+		}else{
+			setMarkers(map, locCollection, mmXY);
+			window.oTip.initMess(markers.length + " locations " + ( (watchId) ? '<a class="itin" href="javascript:showFollow();">' + langLbl["mWatc"] + '</a>':'' ));
+			setMapOnAll(map);
+		}
+	}
+}
+	var divLayer = document.getElementById("prefLayer");
+	divLayer.style.visibility="hidden";
+
+}
+
+function getPosList(oPos){
+var divLayer = document.getElementById("prefLayer");
+savCollList = oPos;
+if (oPos && oPos.length > 1 && oPos[0].locList){
+	var htmlCode = '<form><ul id="pageZone" class="pageitem">';
+	for (var i=0;i<oPos.length;i++){
+		var chk = (i == oPos.length-1) ? "checked":"";
+		htmlCode += '<li class="listitem"><a href="#"><input id="chx' + i + '" type="checkbox" ' + chk + '>&nbsp;&nbsp;<label for="chx' + i + '">' + formatDateTime.date(oPos[i].startTime) + '&nbsp;&nbsp;' + formatDateTime.time(oPos[i].startTime,true) + '&nbsp;(' + oPos[i].locList.length + ')&nbsp;' + formatDateTime.time(oPos[i].locList[oPos[i].locList.length-1].time,true) + '</label></input></a></li>';
+	}
+	htmlCode += '<input class="bouton" type="submit" onclick="getRoute(this.form)" value="Ok"/><input class="bouton" type="button" onclick="getRoute(false, true)" value="Cancel"/></ul></form>';
+	divLayer.innerHTML = htmlCode;
+	divLayer.style.visibility="visible";
+}else
+	getRoute();
+
+}
+
+function getRoute(oForm, cancel){
+var mmXY = {}, startDT;
+var divLayer = document.getElementById("prefLayer");
+divLayer.style.visibility="hidden";
+if (cancel)
+	return;
+if (savCollList && savCollList.length > 0){
+	if (oForm){
+		for (var i=0; i < oForm.length; i++){
+			if (oForm[i].type == "checkbox" && oForm[i].checked){
+				if (!startDT)
+					startDT = formatDateTime.datetime(savCollList[i].startTime);
+				setMarkers(map, savCollList[i].locList, mmXY);
+			}
+		}
+	}else{
+		if (!startDT)
+			startDT = formatDateTime.datetime(savCollList[0].startTime);
+		setMarkers(map, savCollList[0].locList, mmXY);
+	}
+	
+setMapOnAll(map);
+// Locations center
+var vLat = ((mmXY.maxX + mmXY.minX) / 2);
+var vLng = ((mmXY.maxY + mmXY.minY) / 2);
+var maxLoc = new google.maps.LatLng(mmXY.maxX, mmXY.maxY);
+var minLoc = new google.maps.LatLng(mmXY.minX, mmXY.minY);
+var centerLatLng = new google.maps.LatLng(vLat, vLng);
+var intM = calculDistance(maxLoc, minLoc);
+
+map.setCenter(centerLatLng);
+if (watchId)
+	resetAff(true);
+intZoom = 21
+if (intM)
+	intZoom = 22 - parseInt(Math.log(intM));
+map.setZoom(intZoom);
+//https://stackoverflow.com/questions/11454229/how-to-set-zoom-level-in-google-map
+//running = '<a class="itin" href="javascript:showSpeedTime();">Speed time</a>';
+window.oTip.initMess(startDT + ', ' + markers.length + " locations " + ( (watchId) ? '<a class="itin" href="javascript:showFollow();">' + langLbl["mWatc"] + '</a>':'' ));
+}
+}
+
+// https://stackoverflow.com/questions/13987365/how-to-insert-an-element-to-mongodb-internal-list
 function lister(optLister) {
 var divLayer = document.getElementById("prefLayer");
 
@@ -197,9 +354,8 @@ if (divLayer.style.visibility == "visible" ){
  divLayer.style.visibility="visible";
  optLister.innerHTML = "&#10004;&nbsp;" + langLbl["mlist"];
 	var donn = "";
-	for (var i=0;i<speedTime.locHist.length;i++)
-	{
-	donn = donn + "</br>" + (i+1) + ": " + speedTime.locHist[i].lat + ", " + speedTime.locHist[i].lng + ", Pr&eacute;c: " + speedTime.locHist[i].acc;
+	for (var i=0;i<speedTime.locHist.length;i++){
+	donn = donn + "</br>" + (i+1) + ": " + speedTime.locHist[i].lat + ", " + speedTime.locHist[i].lng + ", Pr&eacute;c: " + Math.round(speedTime.locHist[i].acc);
 	}
 divLayer.innerHTML = donn;
 }
@@ -220,7 +376,6 @@ if (watchLoc){
 }
 
 function clearGeo(){
-//alert(watchId);
 navigator.geolocation.clearWatch(watchId);
 }
 
@@ -228,34 +383,40 @@ function onLocSuccess(position) {
 var myLatLng = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
 
 posMarker.setPosition(myLatLng);
+
+var aT = Date.now();
+var sp = speedTime.calcul(position, myLatLng, aT);
 if (showST){
-	var aT = Date.now();
-	var sp = speedTime.calcul(position, myLatLng, aT);
-	var tim = formatDateTime.time(aT) + ((recenter) ? " Center":"");
+	var tim = formatDateTime.time(aT) + ((recenter) ? '&nbsp;&nbsp;&nbsp;<img alt="Watch" src="images/ici.png" width="14" height="14">':'');
 	//window.oTip.initMess("&nbsp;<b>Lat.: </b>" + position.coords.latitude + "&nbsp;</br>&nbsp;<b>Lng.: </b>" + position.coords.longitude + "&nbsp;</br>&nbsp;<b>Diff: </b>" + elaps + " Speed: " + sp + "&nbsp;</br>&nbsp;<b>Time: </b>" + tim);
-	window.oTip.initMess( sp.e + "ms Speed: <b>" + sp.s + "</b></br>" + tim);
+	window.oTip.initMess( '<span class="txtSpeed">' + (Math.round(sp.e * .01)/10) + '</span>s&nbsp;Speed:<span class="txtSpeed"><b>' + sp.s + '</b></span></br>' + tim);
+	//(Math.round(sp.e * .01)*.1)
 }
+
 if (recenter)
 	map.setCenter(myLatLng);
 if (!watchLoc)
 	locTimer = setTimeout("getLocalisation();", 500);
 }
 
-function resetAff(optCenter){
-if (recenter){
+function resetAff(forceOff){
+optCenter = document.getElementById("optCE");
+if (recenter || forceOff){
 	recenter = false;
-	optCenter.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;" + langLbl["mcent"];
+	optCenter.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;" + langLbl["mWatc"] + '&nbsp;&nbsp;&nbsp;<img alt="Watch" src="images/ici.png" width="14" height="14">';
 }else{
 	recenter = true;
-	optCenter.innerHTML = "&#10004;&nbsp;" + langLbl["mcent"];
+	optCenter.innerHTML = "&#10004;&nbsp;" + langLbl["mWatc"] + '&nbsp;&nbsp;&nbsp;<img alt="Watch" src="images/ici.png" width="14" height="14">';
 }
 }
 
-function showSTeedTime(optST){
-if (showST){
+function showSpeedTime(forceClose){
+var optST = document.getElementById("optST");
+window.oTip.initMess("");
+if (showST || forceClose){
 	showST = false;
 	optST.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;Speed/Time";
-	window.oTip.initMess("");
+	//window.oTip.initMess("");
 }else{
 	showST = true;
 	optST.innerHTML = "&#10004;&nbsp;Speed/Time";
@@ -272,18 +433,18 @@ function getLocalisation(){
 	if (navigator.geolocation) {
 			//var options = { enableHighAccuracy:true, maximumAge:10000, timeout:10000, frequency: 2000 };
 		var options = { enableHighAccuracy:true, maximumAge:0, timeout:400 };
-		navigator.geolocation.getCurrentPosition(onLocSuccess, onLocAffError, options);
+		watchId = navigator.geolocation.getCurrentPosition(onLocSuccess, onLocAffError, options);
 	}						
-}
-
-function closeMenu2(){
-// Not used
-	window.oMenu.close();
 }
 
 function resizeImg(fs){
 	setTimeout("window.oMenu.resize()", 10);
 	//alert(fs)
+}
+
+function showFollow(){
+resetAff();
+showSpeedTime();
 }
 
 	// -->
@@ -293,6 +454,24 @@ function resizeImg(fs){
 
 #butMenu {
 visibility: visible;
+}
+
+.fontGreen{
+color: #0e0;
+}
+
+input[type=checkbox] {
+  transform: scale(2);
+}
+
+#pageZone {
+    visibility: inherit;
+}
+
+.txtSpeed{
+width: 1.5em;
+display: inline-block;
+text-align: right;
 }
 
 </style>
@@ -312,9 +491,10 @@ visibility: visible;
 <a href="javascript:localiser()" >Localiser</a>
 </div>
 <div id="menuList">
-<a class="inputButton" onclick="resetAff(this)" href="#">&#10004;&nbsp;<text id="mcent"></text></a>
+<a id="optCE" class="inputButton" onclick="resetAff()" href="#">&#10004;&nbsp;<text id="mWatc"></text>&nbsp;&nbsp;&nbsp;<img alt="Watch" src="images/ici.png" width="14" height="14"></a>
 <a class="inputButton" onclick="lister(this)" href="#">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mlist"></text></a>
-<a class="inputButton" onclick="showSTeedTime(this)" href="#">&#10004;&nbsp;Speed/Time</a>
+<a id="optST" class="inputButton" onclick="showSpeedTime()" href="#">&#10004;&nbsp;Speed/Time</a>
+<a id="optSR" class="inputButton" onclick="showRoute()" href="#">&nbsp;&nbsp;&nbsp;&nbsp;Show route</a>
 <a class="inputButton" href="#">
 <form id="typeLoc" name="typeLoc" >
 <input id="chxWatch" type="radio" checked name="typeLoc"><label for="chxWatch">Watch</label></input>&nbsp;
