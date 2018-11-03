@@ -84,7 +84,7 @@ progress::-webkit-progress-bar { background: #fff; }
 }
 
 #mapzone{position:relative}
-#map_canvas{width:100%; height:327px;}
+#map_canvas{width:100%; height:230px;}
 
 #titrePref{font-weight:bold;color:#228;}
 #titrePref,#titre{font-size:24px;font-weight:bold;color:#ccf;padding-top:5px;display: inline-block;}
@@ -433,7 +433,7 @@ text-shadow: 2px 2px #999;
 #o_messTip{
 position: absolute;
 visibility: hidden;
-display: inline;
+
 z-index: 2000;
 }
 .o_messTip .o_messTipTxt{
@@ -444,7 +444,8 @@ z-index: 2000;
 	padding: 5px;
 	background-color: #777;
 	border-radius: 6px;
-	color: #eee;
+	display: inline-block;
+	color: red;
 }
 .o_messTip .o_messTipTxt::after {
     content: "";

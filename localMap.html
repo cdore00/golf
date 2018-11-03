@@ -29,14 +29,15 @@ var watchId = null;
 var locTimer = null;
 var locCollection = [];
 var watchLoc = false;
-var AffLoc = false, recenter = true, showST = true, showSR = false;
+var AffLoc = false, recenter = true, showST = true, showSR = false, showIT = false;
 var path, polyLine = new google.maps.Polyline({
 strokeColor: '#0000ff',
 clickable: false,
 strokeOpacity: 1.0,
 strokeWeight: 2
 });
-
+var directionsDisplay = new google.maps.DirectionsRenderer();
+var directionsService = new google.maps.DirectionsService();
 
 function savedPos(res){
 if (showST)
@@ -148,10 +149,11 @@ function initialize() {
 	AffLoc = GetCookie("AffLoc");
 	if (AffLoc)
 		AffLoc = eval(AffLoc);
-	//alert(locCollection.length);
-
+	var isCenter = null;
+	if (locCollection.length > 0)
+		isCenter = new google.maps.LatLng(locCollection[locCollection.length-1].lat,locCollection[locCollection.length-1].lng);
 	var myOptions = { 
-	  center: new google.maps.LatLng(locCollection[locCollection.length-1].lat,locCollection[locCollection.length-1].lng), 
+	  center: isCenter, 
 	  zoom: 19, 
 	  panControl: false,    
 	  zoomControl: false, 	  
@@ -165,10 +167,29 @@ function initialize() {
 	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions); 
 	polyLine.setMap(map);
 	path = polyLine.getPath();
-	adjustScreen(31);
+	adjustScreen(0);
 	setFontSize();
-	setMyPosition(map, locCollection[locCollection.length-1].lat,locCollection[locCollection.length-1].lng);
+	if (isCenter)
+		setMyPosition(map, locCollection[locCollection.length-1].lat,locCollection[locCollection.length-1].lng);
+	else
+		setMyPosition(map, 0, 0);
 	//alert(locCollection[locCollection.length-1].lat);
+}
+
+function placeRoute(position) {
+
+  var request = {
+    origin: posMarker.getPosition(),
+    destination: position,
+    travelMode: google.maps.TravelMode.DRIVING
+  };
+  directionsService.route(request, function(response, status) {
+    if (status == google.maps.DirectionsStatus.OK) {
+      directionsDisplay.setDirections(response);
+	  window.oTip.initMess('A:&nbsp;' + response.routes[0].legs[0].start_address.replace(" ","&nbsp;") + '</br>B: ' + response.routes[0].legs[0].end_address + '</br>' + response.routes[0].legs[0].distance.text + ', ' + response.routes[0].legs[0].duration.text);
+	  
+    }
+  });
 }
 
 function setMyPosition(map, lat, lng) {
@@ -273,7 +294,7 @@ if (isShow){
 			getInfo("getPosition?data=" + info, getPosList);		
 		}else{
 			setMarkers(map, locCollection, mmXY);
-			window.oTip.initMess(markers.length + " locations " + ( (watchId) ? '<a class="itin" href="javascript:showFollow();">' + langLbl["mWatc"] + '</a>':'' ));
+			window.oTip.initMess(markers.length + "&nbsp;locations " + ( (watchId) ? '<a class="itin" href="javascript:showFollow();">' + langLbl["mWatc"] + '</a>':'' ));
 			setMapOnAll(map);
 		}
 	}
@@ -410,13 +431,32 @@ if (recenter || forceOff){
 }
 }
 
+
+function showItin(optIT){
+//var optST = document.getElementById("optST");
+window.oTip.initMess("");
+if (showIT){
+	showIT = false;
+	optIT.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;Itinéraire";
+	directionsDisplay.setMap(null);
+	google.maps.event.clearListeners(map, 'click');
+}else{
+	showSpeedTime(true);
+	showIT = true;
+	optIT.innerHTML = "&#10004;&nbsp;Itinéraire";
+	map.addListener('click', function(e) {
+		placeRoute(e.latLng);
+	});
+	directionsDisplay.setMap(map);
+}
+}
+
 function showSpeedTime(forceClose){
 var optST = document.getElementById("optST");
 window.oTip.initMess("");
 if (showST || forceClose){
 	showST = false;
 	optST.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;Speed/Time";
-	//window.oTip.initMess("");
 }else{
 	showST = true;
 	optST.innerHTML = "&#10004;&nbsp;Speed/Time";
@@ -493,6 +533,7 @@ text-align: right;
 <div id="menuList">
 <a id="optCE" class="inputButton" onclick="resetAff()" href="#">&#10004;&nbsp;<text id="mWatc"></text>&nbsp;&nbsp;&nbsp;<img alt="Watch" src="images/ici.png" width="14" height="14"></a>
 <a class="inputButton" onclick="lister(this)" href="#">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mlist"></text></a>
+<a id="optIT" class="inputButton" onclick="showItin(this)" href="#">&nbsp;&nbsp;&nbsp;&nbsp;Itinéraire</a>
 <a id="optST" class="inputButton" onclick="showSpeedTime()" href="#">&#10004;&nbsp;Speed/Time</a>
 <a id="optSR" class="inputButton" onclick="showRoute()" href="#">&nbsp;&nbsp;&nbsp;&nbsp;Show route</a>
 <a class="inputButton" href="#">
