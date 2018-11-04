@@ -422,9 +422,7 @@ var aT = Date.now();
 var sp = speedTime.calcul(position, myLatLng, aT);
 if (showST){
 	var tim = formatDateTime.time(aT) + ((recenter) ? '&nbsp;&nbsp;&nbsp;<img alt="Watch" src="images/ici.png" width="14" height="14">':'');
-	//window.oTip.initMess("&nbsp;<b>Lat.: </b>" + position.coords.latitude + "&nbsp;</br>&nbsp;<b>Lng.: </b>" + position.coords.longitude + "&nbsp;</br>&nbsp;<b>Diff: </b>" + elaps + " Speed: " + sp + "&nbsp;</br>&nbsp;<b>Time: </b>" + tim);
-	window.oTip.initMess( '<span class="txtSpeed">' + (Math.round(sp.e * .01)/10) + '</span>s&nbsp;Speed:<span class="txtSpeed"><b>' + sp.s + '</b></span></br>' + tim);
-	//(Math.round(sp.e * .01)*.1)
+	window.oTip.initMess( '<div><span class="txtSpeed">' + (Math.round(sp.e * .01)/10) + '</span>s&nbsp;Speed:<span class="txtSpeed"><b>' + sp.s + '</b></span></div><div>' + tim + '</div>');
 }
 
 if (recenter)
