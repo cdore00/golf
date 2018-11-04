@@ -41,7 +41,7 @@ var directionsService = new google.maps.DirectionsService();
 
 function savedPos(res){
 if (showST)
-	window.oTip.addMess('</br><text class="fontGreen">SAVED</text>');
+	window.oTip.addMess('<text class="fontGreen">SAVED</text>');
 }
 
 // Menu object
@@ -422,7 +422,7 @@ var aT = Date.now();
 var sp = speedTime.calcul(position, myLatLng, aT);
 if (showST){
 	var tim = formatDateTime.time(aT) + ((recenter) ? '&nbsp;&nbsp;&nbsp;<img alt="Watch" src="images/ici.png" width="14" height="14">':'');
-	window.oTip.initMess( '<div><span class="txtSpeed">' + (Math.round(sp.e * .01)/10) + '</span>s&nbsp;Speed:<span class="txtSpeed"><b>' + sp.s + '</b></span></div><div>' + tim + '</div>');
+	window.oTip.initMess( '<div><p><span class="txtSpeed">' + (Math.round(sp.e * .01)/10) + '</span>s&nbsp;Speed:<span class="txtSpeed"><b>' + sp.s + '</b></span></p></div><div>' + tim + '</div>');
 }
 
 if (recenter)
@@ -526,6 +526,8 @@ width: 1.5em;
 display: inline-block;
 text-align: right;
 }
+
+
 
 </style>
 
