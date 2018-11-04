@@ -186,10 +186,11 @@ function placeRoute(position) {
   directionsService.route(request, function(response, status) {
     if (status == google.maps.DirectionsStatus.OK) {
       directionsDisplay.setDirections(response);
-	  window.oTip.initMess('A:&nbsp;' + response.routes[0].legs[0].start_address.replace(" ","&nbsp;") + '</br>B: ' + response.routes[0].legs[0].end_address + '</br>' + response.routes[0].legs[0].distance.text + ', ' + response.routes[0].legs[0].duration.text);
+	  window.oTip.initMess('A:&nbsp;' + response.routes[0].legs[0].start_address.replace(/ /g,"&nbsp;") + '</br>B: ' + response.routes[0].legs[0].end_address + '</br>' + response.routes[0].legs[0].distance.text + ', ' + response.routes[0].legs[0].duration.text);
 	  
     }
   });
+ directionsDisplay.setMap(map);
 }
 
 function setMyPosition(map, lat, lng) {
@@ -288,23 +289,37 @@ if (isShow){
 	}else{
 		showSR = true;
 		optSR.innerHTML = "&#10004;&nbsp;Show route";
-		if (userId && oForm && oForm.prefDate.value != ""){
-			var dt = Date.parse(oForm.prefDate.value);
-			var info = userId + "$" + dt;	//speedTime.startTime;
-			getInfo("getPosition?data=" + info, getPosList);		
+		if (userId && oForm){
+			var dt = oForm.prefDate.value;
+			if (dt == '*' || dt == "")
+				dt = 0;
+			if (dt !== 0){
+				dt = Date.parse(dt);
+				if (!dt){
+					showSR = false;
+					optSR.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;Show route";
+					alert("(" + oForm.prefDate.value + ") Not valid a date!");
+					return false;
+				}
+			}
+			getInfo("getPosition?data=" + userId + "$" + dt, getPosList);
 		}else{
-			setMarkers(map, locCollection, mmXY);
-			window.oTip.initMess(markers.length + "&nbsp;locations " + ( (watchId) ? '<a class="itin" href="javascript:showFollow();">' + langLbl["mWatc"] + '</a>':'' ));
-			setMapOnAll(map);
+		setMarkers(map, locCollection, mmXY);
+		window.oTip.initMess(markers.length + "&nbsp;locations " + ( (watchId) ? '<a class="itin" href="javascript:showFollow();">' + langLbl["mWatc"] + '</a>':'' ));
+		setMapOnAll(map);
 		}
 	}
 }
 	var divLayer = document.getElementById("prefLayer");
 	divLayer.style.visibility="hidden";
-
 }
 
 function getPosList(oPos){
+if (oPos.length == 0){
+	showMarker(true);
+	window.oTip.initMess("0 record after" + formatDateTime.date(oPos.timeStart));
+	return;
+}
 var divLayer = document.getElementById("prefLayer");
 savCollList = oPos;
 if (oPos && oPos.length > 1 && oPos[0].locList){
@@ -318,7 +333,6 @@ if (oPos && oPos.length > 1 && oPos[0].locList){
 	divLayer.style.visibility="visible";
 }else
 	getRoute();
-
 }
 
 function getRoute(oForm, cancel){
@@ -354,12 +368,11 @@ var intM = calculDistance(maxLoc, minLoc);
 map.setCenter(centerLatLng);
 if (watchId)
 	resetAff(true);
-intZoom = 21
+intZoom = 21;
 if (intM)
 	intZoom = 22 - parseInt(Math.log(intM));
 map.setZoom(intZoom);
 //https://stackoverflow.com/questions/11454229/how-to-set-zoom-level-in-google-map
-//running = '<a class="itin" href="javascript:showSpeedTime();">Speed time</a>';
 window.oTip.initMess(startDT + ', ' + markers.length + " locations " + ( (watchId) ? '<a class="itin" href="javascript:showFollow();">' + langLbl["mWatc"] + '</a>':'' ));
 }
 }
@@ -438,6 +451,8 @@ window.oTip.initMess("");
 if (showIT){
 	showIT = false;
 	optIT.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;Itinéraire";
+	//placeRoute(posMarker.getPosition());
+	//directionsDisplay.setPanel(null);
 	directionsDisplay.setMap(null);
 	google.maps.event.clearListeners(map, 'click');
 }else{
@@ -447,7 +462,7 @@ if (showIT){
 	map.addListener('click', function(e) {
 		placeRoute(e.latLng);
 	});
-	directionsDisplay.setMap(map);
+	//directionsDisplay.setMap(map);
 }
 }
 

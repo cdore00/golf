@@ -1,5 +1,5 @@
 
-var HOSTserv = "https://pytgolf-cdore2.a3c1.starter-us-west-1.openshiftapps.com/";  // Python 3.6.3 
+var HOSTserv = "https://pytgolf-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Python 3.6.3 
 // "http://127.0.0.1:3000/";		//Portable Windows 10 Local host Node JS v6.10.0
 // "http://192.168.2.195:3000/";    //Ubuntu workstation 16.04
 // "http://192.168.2.195:8080/";    //Ubuntu workstation 16.04 docker 1.12.6 Node JS v4.2.3  MongoDB server v3.4.9
@@ -333,6 +333,7 @@ function messTipObject(){
 			this.oFr.style.left = pos.x + "px";
 		}
 		//addStylesheetRule("yArrow::after", "border-width", "10px !important");
+		this.oMess.style.maxWidth = (document.getElementsByTagName('body')[0].clientWidth - 10) + "px";
 		if (showArrow)	// Not show top arrow
 			this.oMess.classList.add("showArrow");
 		this.oFr.style.visibility = 'visible';
