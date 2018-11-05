@@ -95,6 +95,8 @@ var speedTime = {
 			this.startTime = accTime;	// Start
 			this.lastSaveTime = accTime;
 			startLoc = true;
+			if (window.oTip)
+				window.oTip.show(false, false, false, false, -40);
 		}	
 		this.lastPos = mapsLatLng;
 		if (this.locHist.length > 19)
@@ -143,7 +145,7 @@ function initialize() {
 		locCollection = opener.locColl.coord;
 	speedTime.locHist = locCollection;
 	window.oTip = new messTipObject();
-	window.oTip.show(false, false, false, false, -30);
+	
 	window.oMenu = new clMenu();
 	
 	AffLoc = GetCookie("AffLoc");
@@ -527,14 +529,13 @@ display: inline-block;
 text-align: right;
 }
 
-.o_messTipTxt span{
+.o_messTipTxt span, o_messTipTxt div{
 display: inline-block;
 }
 
-.o_messTipTxt div{
-display: table-cell;
+.o_messTipTxt{
+min-width: 7em;
 }
-
 
 </style>
 

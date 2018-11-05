@@ -431,8 +431,7 @@ text-shadow: 2px 2px #999;
 /* o_messTip definition */
 #o_messTip{
 position: absolute;
-visibility: hidden;
-
+	visibility: hidden;
 z-index: 2000;
 }
 .o_messTip .o_messTipTxt{
@@ -447,6 +446,11 @@ z-index: 2000;
 	word-wrap: break-word !important;
 	color: #eee;
 }
+
+.o_messTipTxt{
+	
+}
+
 .o_messTip .o_messTipTxt::after {
     content: "";
     position: absolute;
