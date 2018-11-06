@@ -87,8 +87,9 @@ var speedTime = {
 	lastTime : 0,
 	lastSaveTime : 0,
 	lastPos : null,
-	calcul : function (position, mapsLatLng, accTime) {
+	calcul : function (position, mapsLatLng) {
 		var sp = 0, elapsMilli = 0, startLoc = false;
+		var accTime = Date.now();
 		if (this.lastPos){
 			var dist = calculDistance(this.lastPos, mapsLatLng);
 		}else{
@@ -135,13 +136,13 @@ var speedTime = {
 		}
 		//console.log(this.hist)
 		*/
-		return {'s':sp, 'e':elapsMilli};	//Math.round( (tot == 0) ? 0:tot/n );
+		return {'s':sp, 'e':elapsMilli, 't':accTime};	//Math.round( (tot == 0) ? 0:tot/n );
 	}
 };
 
 function initialize() { 
 	userId = GetCookie("userID");
-	if (opener.locColl)
+	if (opener && opener.locColl)
 		locCollection = opener.locColl.coord;
 	speedTime.locHist = locCollection;
 	window.oTip = new messTipObject();
@@ -162,6 +163,7 @@ function initialize() {
 	  scaleControl: false,
 	  streetViewControl: false,
 	  fullscreenControl: false, 
+	  tilt: 0,
 	  mapTypeControl: true,    
 	  mapTypeControlOptions: { style: google.maps.MapTypeControlStyle.DROPDOWN_MENU, position: google.maps.ControlPosition.TOP_RIGHT   },
 	  mapTypeId: google.maps.MapTypeId.HYBRID
@@ -218,6 +220,8 @@ function setMyPosition(map, lat, lng) {
 }
 
 function setMarkers(map, locations, mmXY) {
+if (locations.length == 0)
+	return;
 if (!mmXY.maxX){
 	mmXY.maxX = locations[0].lat;
 	mmXY.minX = locations[0].lat;
@@ -265,7 +269,7 @@ markers = [];
 }
 
 function showRoute(){
-if (userId && !showSR){
+if (userId && !showSR && THCall == "POST"){
 	window.oMenu.close();
 	showSpeedTime(true);
 	var divLayer = document.getElementById("prefLayer");
@@ -288,10 +292,12 @@ if (isShow){
 	if (showSR){
 		showSR = false;
 		optSR.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;Show route";
+		if (!showST)
+			window.oTip.initMess("");
 	}else{
 		showSR = true;
 		optSR.innerHTML = "&#10004;&nbsp;Show route";
-		if (userId && oForm){
+		if (userId && oForm && THCall == "POST"){
 			var dt = oForm.prefDate.value;
 			if (dt == '*' || dt == "")
 				dt = 0;
@@ -306,9 +312,9 @@ if (isShow){
 			}
 			getInfo("getPosition?data=" + userId + "$" + dt, getPosList);
 		}else{
-		setMarkers(map, locCollection, mmXY);
-		window.oTip.initMess(markers.length + "&nbsp;locations " + ( (watchId) ? '<a class="itin" href="javascript:showFollow();">' + langLbl["mWatc"] + '</a>':'' ));
-		setMapOnAll(map);
+			setMarkers(map, locCollection, mmXY);
+			window.oTip.initMess(markers.length + "&nbsp;locations " + ( (watchId) ? '<a class="itin" href="javascript:showFollow();">' + langLbl["mWatc"] + '</a>':'' ));
+			setMapOnAll(map);
 		}
 	}
 }
@@ -319,7 +325,7 @@ if (isShow){
 function getPosList(oPos){
 if (oPos.length == 0){
 	showMarker(true);
-	window.oTip.initMess("0 record after" + formatDateTime.date(oPos.timeStart));
+	window.oTip.initMess("0 record after " + formatDateTime.date(oPos.timeStart));
 	return;
 }
 var divLayer = document.getElementById("prefLayer");
@@ -375,7 +381,7 @@ if (intM)
 	intZoom = 22 - parseInt(Math.log(intM));
 map.setZoom(intZoom);
 //https://stackoverflow.com/questions/11454229/how-to-set-zoom-level-in-google-map
-window.oTip.initMess(startDT + ', ' + markers.length + " locations " + ( (watchId) ? '<a class="itin" href="javascript:showFollow();">' + langLbl["mWatc"] + '</a>':'' ));
+window.oTip.show(startDT + ', ' + markers.length + " locations " + ( (watchId) ? '<a class="itin" href="javascript:showFollow();">' + langLbl["mWatc"] + '</a>':'' ) , false, false, false, -40);
 }
 }
 
@@ -399,7 +405,8 @@ divLayer.innerHTML = donn;
 }
 
 function localiser(){
-
+if (!showST)
+	showSpeedTime();
 watchLoc = document.typeLoc.typeLoc[0].checked;
 
 //navigator.geolocation.stop();
@@ -409,6 +416,9 @@ if (watchLoc){
 	getLocalisationErr();
 	}else
 	getLocalisation();
+	
+if (watchId == 0)
+	localiser();
 }
 
 function clearGeo(){
@@ -420,10 +430,9 @@ var myLatLng = new google.maps.LatLng(position.coords.latitude,position.coords.l
 
 posMarker.setPosition(myLatLng);
 
-var aT = Date.now();
-var sp = speedTime.calcul(position, myLatLng, aT);
+var sp = speedTime.calcul(position, myLatLng);
 if (showST){
-	var tim = formatDateTime.time(aT) + ((recenter) ? '&nbsp;&nbsp;&nbsp;<img alt="Watch" src="images/ici.png" width="14" height="14">':'');
+	var tim = formatDateTime.time(sp.t) + ((recenter) ? '&nbsp;&nbsp;&nbsp;<img alt="Watch" src="images/ici.png" width="14" height="14">':'');
 	window.oTip.initMess( '<div><span><span class="txtSpeed">' + (Math.round(sp.e * .01)/10) + '</span>s.&nbsp;Speed:<span class="txtSpeed"><b>' + sp.s + '</b></span></span></div><div>' + tim + '</div>');
 }
 

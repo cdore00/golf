@@ -69,6 +69,47 @@ var trouNormale = false;
 var scoreOkInds, setScore = null, actPlayer = 0, objScore = null, aScore = [{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}];
 google.maps.visualRefresh = true;
 
+function savedPos(oResp) {
+		window.oTip.show('<text class="fontGreen">Saved</text>', false, false, 300, -20);
+	}
+	
+// oTrajet object
+var oTrajet = {
+	startTime : null,
+	saveFreq : 60000,	
+	lastTime : 0,
+	lastSaveTime : 0,
+	lastPos : null,
+
+	savePos : function (position, mapsLatLng) {
+		var startLoc = false;
+		var accTime = Date.now();
+		if (!this.lastPos){
+			this.startTime = accTime;	// Start
+			this.lastSaveTime = accTime;
+			startLoc = true;
+		}	
+		this.lastPos = mapsLatLng;
+
+		if (startLoc || accTime - this.lastSaveTime > this.saveFreq){
+			if (position.coords.accuracy < 62){
+				var oLoc = {};
+				oLoc.lat=position.coords.latitude;
+				oLoc.lng=position.coords.longitude;
+				oLoc.acc=position.coords.accuracy;
+				oLoc.time=accTime;	
+				var info = userId + "$" + this.startTime + "$" + accTime + "$" + oLoc.lat + "$" + oLoc.lng + "$" + oLoc.acc;
+				if (userId)
+					getInfo("setPosition?data=" + info, savedPos);
+				this.lastSaveTime = accTime;
+			}
+		}
+		this.lastTime = accTime;
+
+		return accTime;
+	}
+};
+
 function initialize() {
 var myOptions = { 
   center: trouCoord[0], 
@@ -168,19 +209,21 @@ blockName = 'B' + trouPar[blocID][0]
 document.getElementById("holeBloc").className = blockName;
 afficheTrou(trou, true);
 }
+
 function showBlocs(oDivHole){
 var blocForm = document.getElementById('blocForm');
 blocForm.style.left = oDivHole.offsetLeft + "px";
 blocForm.style.visibility="visible";
 }
 
-function calcPosDist(myLatLng, precision){
+function calcPosDist(position, myLatLng, precision){
 var distance = calculDistance( posMarker.getPosition(), holeMarker.getPosition()) + '';
 	holeDist.innerHTML = distance + '<p id="accu">' + precision + '&apos;</p>';
 //alert(watchLoc);
 	if (distance.indexOf('M') != -1)
 		map.setCenter(myLatLng);
-		
+oTrajet.savePos(position, myLatLng);
+
 	if (piquetMarker.getVisible())
 		traceLine(piquetMarker.getPosition());
 		
@@ -194,12 +237,14 @@ function holePosChange(){
 		traceLine(piquetMarker.getPosition());
 }
 
-function localiser(chx){
+function localiser(){
 if (watchLoc == 0){
 	clearGeo();
 	getLocalisationErr();  //utils.js
   }else
 	getLocalisation();
+if (watchId == 0)
+	localiser();
 }
 
 function clearGeo(){
@@ -210,24 +255,28 @@ lastDist = 1;
 if ('speechSynthesis' in window)
 	window.speechSynthesis.cancel();
 }
+
 function onLocSuccess(position) {
 var myLatLng = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
-var precision = Math.round(position.coords.accuracy * 3.280839895013123);
+var precision = Math.round(position.coords.accuracy * 3.28084);
 var boutonLoc = document.getElementById('boutonLoc');
 posMarker.setPosition(myLatLng);
 boutonLoc.className='itin';
 if (watchLoc == 2)
 	locTimer = setTimeout("getLocalisation();", 1000);
-calcPosDist(myLatLng, precision);
+calcPosDist(position, myLatLng, precision);
 }
+
 function getLocalisation(){
 	if (navigator.geolocation) {
 			//var options = { enableHighAccuracy:true, maximumAge:10000, timeout:10000, frequency: 2000 };
 		var options = { enableHighAccuracy:true, maximumAge:1000};
 		
 		navigator.geolocation.getCurrentPosition(onLocSuccess, onLocAffError, options);
+		
 	}
 }
+
 function trouSuivant(p_m){
 trou = trou + p_m;
 trou = validTrou(trou);
@@ -667,8 +716,11 @@ objScore = JSON.parse(JSON.stringify(aScore));
 objScore.others = [];
 titClub.innerHTML = clubName;
 getInfo("getGolfGPS?data=" + courseID, showCourse);
-if (userId)
+if (userId){
 	changeScore.style.visibility = "visible";
+	window.oTip = new messTipObject();
+}
+
 }
 
 function showCourse(oGps){
@@ -875,6 +927,12 @@ visibility: hidden;
 
 .selOkInd{
 border: 2px solid #ff1822;
+}
+
+.fontGreen{
+color: #0e0;
+font-size: 0.5em;
+display: block;
 }
  
 </style>
