@@ -195,11 +195,7 @@ var a = Math.sin(rLat1) * Math.sin(rLat2) + Math.cos(rLat1) * Math.cos(rLat2) * 
     a = Math.acos(a);
 var d = R * a ;
 	d = Math.round(d);
-	if ( d > 1760){
-	  d = d / 1760;
-	  d = Math.round(d * 100) / 100;
-	  d = d + 'M';
-	  }
+
 	return d;
 }
 
