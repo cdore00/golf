@@ -31,11 +31,9 @@
     <script type="text/javascript"> 
 	<!--
 //Touch move
-var diff_x;
-var diff_y;
-var move_x;
-var move_y;
-var once = 0;
+var diff_x, diff_y, move_x, move_y, once = 0;
+
+var locColl; // For showTrajet
 	
 window.addEventListener('DOMActivate', function() {
     setTimeout(scrollTo, 0, 0, 1);
@@ -80,8 +78,7 @@ var oTrajet = {
 	lastTime : 0,
 	lastSaveTime : 0,
 	lastPos : null,
-
-	savePos : function (position, mapsLatLng) {
+	savePos : function (position, mapsLatLng, dist) {
 		var startLoc = false;
 		var accTime = Date.now();
 		if (!this.lastPos){
@@ -92,7 +89,7 @@ var oTrajet = {
 		this.lastPos = mapsLatLng;
 
 		if (startLoc || accTime - this.lastSaveTime > this.saveFreq){
-			if (position.coords.accuracy < 62){
+			if (position.coords.accuracy < 62 && dist > 50){
 				var oLoc = {};
 				oLoc.lat=position.coords.latitude;
 				oLoc.lng=position.coords.longitude;
@@ -219,16 +216,17 @@ blocForm.style.visibility="visible";
 function calcPosDist(position, myLatLng, precision){
 var distance = calculDistance( posMarker.getPosition(), holeMarker.getPosition()) + '';
 //alert(watchLoc);
-	if ( distance > 1760){
-	  var d = distance / 1760;
+	var d = distance
+	if ( d > 1760){
+	  d = d / 1760;
 	  d = Math.round(d * 100) / 100;
 	  distance = d + 'M';
 	}else{
 		map.setCenter(myLatLng);
+		//oTrajet.savePos(position, myLatLng, d);
 	}
+oTrajet.savePos(position, myLatLng, d);	// To delete
 	holeDist.innerHTML = distance + '<p id="accu">' + precision + '&apos;</p>';
-		
-oTrajet.savePos(position, myLatLng);
 
 	if (piquetMarker.getVisible())
 		traceLine(piquetMarker.getPosition());
@@ -270,7 +268,8 @@ posMarker.setPosition(myLatLng);
 boutonLoc.className='itin';
 if (watchLoc == 2)
 	locTimer = setTimeout("getLocalisation();", 1000);
-calcPosDist(position, myLatLng, precision);
+if (userId)
+	calcPosDist(position, myLatLng, precision);
 }
 
 function getLocalisation(){
@@ -369,23 +368,28 @@ traceLine(piquetMarker.getPosition());
 
 
 function getLoc(bLoc){
-var locForm = document.getElementById('locForm');
+//var locForm = document.getElementById('locForm');
 var imgLoc = document.getElementById('imgLoc');
 var image = new google.maps.MarkerImage(iciOff.src);
 var boutonLoc = document.getElementById('boutonLoc');
 boutonLoc.className='itin';
 posMarker.setIcon(image);
 	clearGeo();
+	
+/*
 	if ( locForm.style.visibility == "visible"){
 		locForm.style.visibility="hidden";
 	}else{
 		locForm.style.left = (bLoc.offsetLeft + bLoc.offsetWidth - locForm.offsetWidth ) + "px";
 		locForm.style.visibility="visible";
 	}
+*/
+
+window.oMenu.show();
+	
 imgLoc.src=iciOff.src;
 var sh = posMarker.getIcon();
 posMarker.setIcon(sh);
-//alert(sh);
 }
 
 function goTract(chx){
@@ -398,7 +402,9 @@ if (watchLoc == 3 )
 	initVoice();
 posMarker.setIcon(image);
 boutonLoc.className='itinS';
-locForm.style.visibility="hidden";
+//locForm.style.visibility="hidden";
+if (window.oMenu)
+	window.oMenu.close();
 imgLoc.src=iciOn.src;
 localiser(watchLoc);
 }
@@ -725,8 +731,10 @@ getInfo("getGolfGPS?data=" + courseID, showCourse);
 if (userId){
 	changeScore.style.visibility = "visible";
 	window.oTip = new messTipObject();
+}else{
+	remChilds(false,document.getElementById('chxTrajet'));
 }
-
+window.oMenu = new menuObject(document.getElementById('boutonLoc'), true);
 }
 
 function showCourse(oGps){
@@ -886,6 +894,17 @@ if (!playerData){
 }
 console.log("addUse actPlayer=" + actPlayer);
 }
+
+function showTrajet(){
+var myP = posMarker.getPosition();
+locColl = {coord:[{'lat': myP.lat() , 'lng': myP.lng(), 'acc':0 }]};
+var dt = Date.now();
+dt = formatDateTime.date(dt);
+//alert(dt)
+dt = Date.parse(dt);
+var localWindow = window.open('localMap.html?data=' + dt, 'localMap');
+localWindow.document.close();
+}
  
 // -->
 </script> 
@@ -976,7 +995,7 @@ display: block;
 
 <div id="piquetDist" onclick="chxPiqDist(this)"></div>
 <div id="chxPiqDist"><a href="#" onclick="setChxPiqDist(0)"><img id="imgLoc" height="16" width="16" alt="Distance de ma position" src="images/ici.png" /></a><a href="#" onclick="setChxPiqDist(1)"><img id="imgLoc" height="25" width="16" alt="Distance du drapeau" src="images/flag.png" /></a></div>
-
+<!--
 <div id="locForm">
 <table id="typeLocList">
 <tr><td><a href="#"; onclick="goTract(0)">&nbsp;<text id="mWatc"></text></a></td></tr>
@@ -984,6 +1003,12 @@ display: block;
 <tr><td><a href="#"; onclick="goTract(2)">&nbsp;<text id="mFoll"></text></a></td></tr>
 <tr><td><a id="chxParler" href="#"; onclick="goTract(3)">&nbsp;<text id="mSpea"></text></a></td></tr>
 </table>
+</div>
+// -->
+<div id="menuList">
+<a class="inputButton" href="#"; onclick="goTract(0)">&nbsp;<text id="mWatc"></text></a>
+<a class="inputButton" id="chxParler" href="#"; onclick="goTract(3)">&nbsp;<text id="mSpea"></text></a>
+<a class="inputButton" id="chxTrajet" href="#"; onclick="showTrajet()">&nbsp;<text id="direc"></text></a>
 </div>
 
 <div id="listeTrous">

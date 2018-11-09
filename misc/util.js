@@ -283,6 +283,52 @@ function changeStylesheetRule(selector, property, value, stylesheet) {
 	addStylesheetRule(selector, property, value, stylesheet);
 }
 
+
+// Menu class
+function menuObject(oAlign, alignRight){
+	this.menu = document.getElementById('menuList');
+	this.nbrOpt = 0;
+	this.oAlign = oAlign;
+	this.alignRight = alignRight;
+	for (var i = 0; i < this.menu.childNodes.length; i++) {
+		if (this.menu.childNodes[i].classList && this.menu.childNodes[i].classList.contains("inputButton"))
+			this.nbrOpt++;
+	}
+
+
+	this.close = function(){
+		this.menu.style.height = "0px";	
+	}
+	this.opened = function(){
+		if (this.menu.style.height != "" && this.menu.style.height != "0px")
+			return true;
+		else
+			return false;
+	}
+	this.showVisible = function(){
+		var adj = this.menu.childNodes[1].offsetHeight;
+		this.menu.style.height = (this.nbrOpt * adj * .75) + "pt";
+		if (this.oAlign){
+			if (this.alignRight)
+				this.menu.style.left = (this.oAlign.offsetLeft + this.oAlign.offsetWidth - this.menu.offsetWidth ) + "px";
+			else
+				this.menu.style.left = (this.oAlign.offsetLeft) + "px";
+		}
+		},
+	this.show = function(){
+		if (this.opened()){
+			this.close();	// Close menu
+		}else{
+			this.showVisible();	// Open menu
+		}
+	}
+	this.resize = function(){
+		if (this.opened()){
+			this.showVisible();
+		}
+	}
+}
+
 // Tool tip message object
 // USAGE :
 // onload()
@@ -488,9 +534,14 @@ if (progressBar.value >= 1){
 	}
 }
 
-function remChilds(eItem){
-while (eItem.childNodes.length > 0){
-	eItem.removeChild(eItem.childNodes[0]);
+function remChilds(eItem, eItemToRemove){
+if (eItem){
+	while (eItem.childNodes.length > 0){
+		eItem.removeChild(eItem.childNodes[0]);
+	}
+}
+if (eItemToRemove){
+	eItemToRemove.parentNode.removeChild(eItemToRemove);
 }
 }
 

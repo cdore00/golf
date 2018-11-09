@@ -28,7 +28,7 @@ var posMarker;
 var watchId = null;
 var locTimer = null;
 var locCollection = [];
-var watchLoc = false;
+var watchLoc = false, paramDate;
 var AffLoc = false, recenter = true, showST = true, showSR = false, showIT = false;
 var path, polyLine = new google.maps.Polyline({
 strokeColor: '#0000ff',
@@ -39,44 +39,27 @@ strokeWeight: 2
 var directionsDisplay = new google.maps.DirectionsRenderer();
 var directionsService = new google.maps.DirectionsService();
 
+function initPage(){
+	userId = GetCookie("userID");
+	if (opener && opener.locColl)
+		locCollection = opener.locColl.coord;
+	speedTime.locHist = locCollection;
+	window.oTip = new messTipObject();
+	window.oMenu = new menuObject();
+	
+	AffLoc = GetCookie("AffLoc");
+setFontSize();
+paramDate = getURLdata();
+initialize();
+if (paramDate)
+	showMarker(true);
+}
+
 function savedPos(res){
 if (showST)
 	window.oTip.addMess('<text class="fontGreen">Saved</text>');
 }
 
-// Menu object
-function clMenu(){
-	this.menu = document.getElementById('menuList');
-	this.nbrOpt = 0;
-	for (var i = 0; i < this.menu.childNodes.length; i++) {
-		if (this.menu.childNodes[i].classList && this.menu.childNodes[i].classList.contains("inputButton"))
-			this.nbrOpt++;
-	}
-
-	this.close = function(){
-		this.menu.style.height = "0px";	// Close menu NOT USED
-	}
-	this.opened = function(){
-		if (this.menu.style.height != "" && this.menu.style.height != "0px")
-			return true;
-		else
-			return false;
-	}
-	this.show = function(){
-		if (this.opened()){
-			this.menu.style.height = "0px";	// Close menu
-		}else{
-			var adj = this.menu.childNodes[1].offsetHeight;
-			this.menu.style.height = (this.nbrOpt * adj * .75) + "pt";	// Open menu
-		}
-	}
-	this.resize = function(){
-		if (this.opened()){
-			var adj = this.menu.childNodes[1].offsetHeight;
-			this.menu.style.height = (this.nbrOpt * adj * .75) + "pt";
-		}
-	}
-}
 
 // Speed Time object
 var speedTime = {
@@ -141,15 +124,7 @@ var speedTime = {
 };
 
 function initialize() { 
-	userId = GetCookie("userID");
-	if (opener && opener.locColl)
-		locCollection = opener.locColl.coord;
-	speedTime.locHist = locCollection;
-	window.oTip = new messTipObject();
-	
-	window.oMenu = new clMenu();
-	
-	AffLoc = GetCookie("AffLoc");
+
 	if (AffLoc)
 		AffLoc = eval(AffLoc);
 	var isCenter = null;
@@ -297,23 +272,27 @@ if (isShow){
 	}else{
 		showSR = true;
 		optSR.innerHTML = "&#10004;&nbsp;Show route";
-		if (userId && oForm && THCall == "POST"){
-			var dt = oForm.prefDate.value;
-			if (dt == '*' || dt == "")
-				dt = 0;
-			if (dt !== 0){
-				dt = Date.parse(dt);
-				if (!dt){
-					showSR = false;
-					optSR.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;Show route";
-					alert("(" + oForm.prefDate.value + ") Not valid a date!");
-					return false;
-				}
+		if (userId && (oForm || paramDate) && THCall == "POST"){
+			if (paramDate)
+				dt = eval(paramDate);
+			else{
+				var dt = oForm.prefDate.value;
+				if (dt == '*' || dt == "")
+					dt = 0;
+				if (dt !== 0){
+					dt = Date.parse(dt);
+					if (!dt){
+						showSR = false;
+						optSR.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;Show route";
+						alert("(" + oForm.prefDate.value + ") Not valid a date!");
+						return false;
+					}
+				}			
 			}
 			getInfo("getPosition?data=" + userId + "$" + dt, getPosList);
 		}else{
 			setMarkers(map, locCollection, mmXY);
-			window.oTip.initMess(markers.length + "&nbsp;locations " + ( (watchId) ? '<a class="itin" href="javascript:showFollow();">' + langLbl["mWatc"] + '</a>':'' ));
+			window.oTip.initMess(markers.length + "&nbsp;locations&nbsp;" + ( (watchId) ? '<a class="itin" href="javascript:showFollow();">' + langLbl["mWatc"] + '</a>':'' ));
 			setMapOnAll(map);
 		}
 	}
@@ -381,7 +360,7 @@ if (intM)
 	intZoom = 22 - parseInt(Math.log(intM));
 map.setZoom(intZoom);
 //https://stackoverflow.com/questions/11454229/how-to-set-zoom-level-in-google-map
-window.oTip.show(startDT + ', ' + markers.length + " locations " + ( (watchId) ? '<a class="itin" href="javascript:showFollow();">' + langLbl["mWatc"] + '</a>':'' ) , false, false, false, -40);
+window.oTip.show(startDT + ',&nbsp;' + markers.length + "&nbsp;locations&nbsp;" + ( (watchId) ? '<a class="itin" href="javascript:showFollow();">' + langLbl["mWatc"] + '</a>':'' ) , false, false, false, -40);
 }
 }
 
@@ -549,7 +528,7 @@ min-width: 7.5em;
 </style>
 
   </head>
-  <body onload='initialize()' onUnload='clearGeo()'> 
+  <body  onload="initPage();" onUnload='clearGeo()'> 
 
 
 
