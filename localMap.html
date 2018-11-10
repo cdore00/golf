@@ -225,21 +225,20 @@ if (!mmXY.maxX){
   for (var i = 0; i < locations.length; i++) {
     var loc = locations[i];
     var myLatLng = new google.maps.LatLng(loc.lat, loc.lng);
+	var col = (loc.hot) ? "#f99":"#fff";
     var marker = new google.maps.Marker({
         position: myLatLng,
         //map: map,
 		draggable: true,
-/*		title: formatDateTime.time(loc.time, true) + " A:" + loc.acc,  */
+		title: "Acc:" + loc.acc,
 		//label: i + '', 
-		icon: pinSymbol("#FFF"),
-		//label: i + '', 
-
-  label: {
-    text: formatDateTime.time(loc.time, true),
-    color: "#000",
-    fontSize: "16px",
-    fontWeight: "bold",
-  }
+		icon: pinSymbol(col),
+		  label: {
+			text: formatDateTime.time(loc.time, true),
+			color: "#000",
+			fontSize: "16px",
+			fontWeight: "bold",
+		  }
 		});
 	markers[markers.length] = marker;
 	mmXY.maxX = Math.max(mmXY.maxX, loc.lat);
