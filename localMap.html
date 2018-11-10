@@ -195,6 +195,17 @@ function setMyPosition(map, lat, lng) {
 }
 
 function setMarkers(map, locations, mmXY) {
+
+	function pinSymbol(color) {
+		return {	//path: 'M 0,0 -1,-2 V -43 H 1 V -2 z M 1,-40 H 30 V -20 H 1 z',
+					  path: 'M 0,0 -1,-2 V -23 H 1 V -2 z M 1,-20 H 30 V -5 H 1 z',
+			fillColor: color,
+			fillOpacity: 1,
+			labelOrigin: new google.maps.Point(15, -12),
+			scale: 1.5,
+	   };
+	}
+
 if (locations.length == 0)
 	return;
 if (!mmXY.maxX){
@@ -218,8 +229,17 @@ if (!mmXY.maxX){
         position: myLatLng,
         //map: map,
 		draggable: true,
-		title: formatDateTime.time(loc.time, true) + " A:" + loc.acc,
-		label: i + ''
+/*		title: formatDateTime.time(loc.time, true) + " A:" + loc.acc,  */
+		//label: i + '', 
+		icon: pinSymbol("#FFF"),
+		//label: i + '', 
+
+  label: {
+    text: formatDateTime.time(loc.time, true),
+    color: "#000",
+    fontSize: "16px",
+    fontWeight: "bold",
+  }
 		});
 	markers[markers.length] = marker;
 	mmXY.maxX = Math.max(mmXY.maxX, loc.lat);
