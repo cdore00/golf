@@ -52,7 +52,10 @@ xhr.send();
 
 function getURLdata(){
 var urlInfo = document.location.href;
-return decodeURI(urlInfo.substring(urlInfo.indexOf("data=") + 5));
+if (urlInfo.indexOf("data=") == -1)
+	return '';
+else
+	return decodeURI(urlInfo.substring(urlInfo.indexOf("data=") + 5));
 }
 
 //var dt =  new Intl.DateTimeFormat("fr-CA", { year: "numeric", month: "2-digit", day: "numeric", hour: "2-digit", minute: "2-digit"});
