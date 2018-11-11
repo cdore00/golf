@@ -78,6 +78,7 @@ var oTrajet = {
 	lastTime : 0,
 	lastSaveTime : 0,
 	lastPos : null,
+	isHot: 0,
 	savePos : function (position, mapsLatLng, dist) {
 		var startLoc = false;
 		var accTime = Date.now();
@@ -89,14 +90,22 @@ var oTrajet = {
 		this.lastPos = mapsLatLng;
 
 		if (startLoc || accTime - this.lastSaveTime > this.saveFreq){
-			if (position.coords.accuracy < 62 && dist > 50){
+			if (position.coords.accuracy < 62){
 				var oLoc = {};
 				oLoc.lat=position.coords.latitude;
 				oLoc.lng=position.coords.longitude;
 				oLoc.acc=position.coords.accuracy;
 				oLoc.time=accTime;	
-				var info = userId + "$" + this.startTime + "$" + accTime + "$" + oLoc.lat + "$" + oLoc.lng + "$" + oLoc.acc;
-				if (userId)
+				if (dist < 50){
+					if (this.isHot == 0){
+						this.isHot = 1;
+						var info = userId + "$" + this.startTime + "$" + accTime + "$" + oLoc.lat + "$" + oLoc.lng + "$" + oLoc.acc + "$" + this.isHot;
+					}
+				}else{
+					var info = userId + "$" + this.startTime + "$" + accTime + "$" + oLoc.lat + "$" + oLoc.lng + "$" + oLoc.acc;
+					this.isHot = 0;
+				}
+				if (userId && info)
 					getInfo("setPosition?data=" + info, savedPos);
 				this.lastSaveTime = accTime;
 			}
@@ -904,6 +913,7 @@ dt = formatDateTime.date(dt);
 dt = Date.parse(dt);
 var localWindow = window.open('localMap.html?data=' + dt, 'localMap');
 localWindow.document.close();
+window.oMenu.close();
 }
  
 // -->
