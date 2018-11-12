@@ -5,14 +5,16 @@
 <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type" />
 <meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
 <meta name="format-detection" content="telephone=no" />
+
 <link rel="shortcut icon" type="image/x-icon" href="images/golf.png">
 <link rel="shortcut icon" type="image/x-icon" href="images/golf.png?">
+<link href="misc/init.css" rel="stylesheet" media="screen" type="text/css" />
 <link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
 <link href="misc/golfGPS.css" rel="stylesheet" media="screen" type="text/css" />
 
 <title>Golfs du Qu&eacute;bec</title>
-<meta content="Golf, Québec, Canada, Golf du Québec, Clubs de golf au Québec, Québec golf" name="keywords" />
-<meta content="Répertoire des clubs de golf du Québec." name="description" />
+<meta content="Golf GPS, Qu&eacute;bec, Canada, Golf du Qu&eacute;bec, Clubs de golf au Qu&eacute;bec, Qu&eacute;bec golf" name="keywords" />
+<meta content="R&eacute;pertoire des clubs de golf du Qu&eacute;bec. GPS golf." name="description" />
 
 <meta name="viewport" content="initial-scale=1.0, user-scalable=no" /> 
 
@@ -50,12 +52,12 @@ width: 1% !important;
 <!--
 
 var editMode = false;
-var menuOn = false;
+//var menuOn = false;
 
 if (isTouchDevice){
 	document.getElementById('p1').addEventListener('touchstart', function(event) {
 	event.preventDefault();
-	closeMenu();
+	//closeMenu();
 	}, false);
 	document.getElementById('p1').addEventListener('touchend', function(event) {
 	event.preventDefault();
@@ -92,14 +94,14 @@ formPref.prefNb.value = "";
 
 var p1 = document.getElementById('p1');
 p1.addEventListener("mouseover", function() {
-    closeMenu();
+    //closeMenu();
 }); 
 
 setFontSize();
 userId = GetCookie("userID");
 
 var data = getURLdata();
-
+window.oMenu = new menuObject(document.getElementById('butMenu'));
 initCount();
 
 if (eval(localStorage.getItem('optOpen')))
@@ -430,37 +432,27 @@ var prefNb = document.getElementById('prefNb');
 prefNb.value = oNbr.value;
 }
 
-function optGameList(objOpt){
-var menuList = document.getElementById('menuList');
 
-menuList.style.left = objOpt.offsetLeft + "px";
-menuList.style.width = menuList.childNodes[1].offsetWidth + "px";
-
-if (menuList.style.height != "0px"){
-	closeMenu();
-}else{
-	menuList.style.height = "150px";
-	}
-}
 
 function showMenu(){
-var menuList = document.getElementById('menuList');
+/*var menuList = document.getElementById('menuList');
 
 if (menuList.style.height != "0px"){
 	menuList.style.height = "0px";
 }else{
 	var adj = menuList.childNodes[1].offsetHeight;
 	menuList.style.height = (adj * .75) + "pt";
-	}
-menuOn = true;
+	}*/
+//menuOn = true;
+	window.oMenu.show();
 }
 
 function showSubmenu(objOpt, state){
 var submenu = document.getElementById('submenu1');
 
 if (objOpt){
-	submenu.style.left = objOpt.offsetWidth + "px";
-	submenu.style.top = (objOpt.offsetTop + 32) + "px";
+	submenu.style.left = (objOpt.offsetWidth * .92) + "px";
+	submenu.style.top = (objOpt.offsetTop + 35) + "px";
 }
 
 submenu.style.display = state;
@@ -468,14 +460,8 @@ submenu.style.display = state;
 }
 
 function closeMenu(){
-if (menuOn){
-	var menuList = document.getElementById('menuList');
-	var submenu = document.getElementById('submenu1');
-
-	submenu.style.display = "none";
-	menuList.style.height = "0px";
-	menuOn = false;
-}
+//alert("closeMenu");
+window.oMenu.close();
 }
 
 function showOptions(menuOpt){
@@ -561,6 +547,7 @@ var refImg = document.getElementById('refImg');
 
 refImg.width = fs * 17;
 adjDivOpt();
+//setTimeout("window.oMenu.resize()", 10);
 }
 
 // -->
@@ -590,7 +577,7 @@ max-width: 15em;
 <div class="divFont" onclick="setFontSize(-0.2, this)"><div class="divFontSize fontSmall">A</div><div class="fontLogo">&#8595;</div></div>
 </div>
 </div>
-
+<!--
 <div id="menuList">
 <table><tbody>
 
@@ -600,6 +587,13 @@ max-width: 15em;
 <tr><td onclick="showSubmenu(this, 'inherit');" onmouseover="showSubmenu(this, 'inherit');" onmouseout="showSubmenu(this, 'none');" title="T&eacute;l&eacute;charger un fichier...">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mdown"></text>&nbsp;&#9658;</td></tr>
 <tr><td onclick="telGameList(0);">&nbsp;&nbsp;&nbsp;&nbsp;<text id="_canc">Annuler</text></td></tr>
 </tbody></table>
+</div>
+// -->
+<div id="menuList">
+<a class="inputButton" href="#" onclick="location.reload();" title="Actualiser la page.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mrefr">Actualiser</text></a>
+<a class="inputButton" href="#" onclick="editGame(this);" title="&Eacute;diter la liste.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="medit"></text></a>
+<a id="menuOpt" class="inputButton" href="#" onclick="showOptions(this);" title="Options de recherche.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mopti">Options</text></a>
+<a class="inputButton" href="#" onclick="showSubmenu(this, 'inherit');" onmouseover="showSubmenu(this, 'inherit');" onmouseout="showSubmenu(this, 'none');" title="T&eacute;l&eacute;charger un fichier...">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mdown"></text>&nbsp;&#9658;</a>
 </div>
 
 <div id="submenu1">

@@ -176,6 +176,10 @@ resizeImg(fs);
 document.body.style.fontSize = fs + "em";	
 if (pageZone)
 	pageZone.style.visibility = "visible";
+if (window.oMenu)
+window.oMenu.resize();
+//	setTimeout("window.oMenu.resize()", 10);
+
 }
 
 function resizeImg(fs){
@@ -301,6 +305,9 @@ function menuObject(oAlign, alignRight){
 
 	this.close = function(){
 		this.menu.style.height = "0px";	
+		var submenu = document.getElementById('submenu1');
+		if (submenu)
+			submenu.style.display = "none";
 	}
 	this.opened = function(){
 		if (this.menu.style.height != "" && this.menu.style.height != "0px")

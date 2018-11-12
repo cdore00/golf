@@ -8,11 +8,12 @@
 
 <link rel="shortcut icon" type="image/x-icon" href="images/golf.png">
 <link rel="shortcut icon" type="image/x-icon" href="images/golf.png?">
+<link href="misc/init.css" rel="stylesheet" media="screen" type="text/css" />
+<link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" /> 
+
 <title>Golfs du Qu&eacute;bec</title>
 <meta content="Golf GPS, Qu&eacute;bec, Canada, Golf du Qu&eacute;bec, Clubs de golf au Qu&eacute;bec, Qu&eacute;bec golf" name="keywords" />
 <meta content="R&eacute;pertoire des clubs de golf du Qu&eacute;bec. GPS golf." name="description" />
-<link href="misc/init.css" rel="stylesheet" media="screen" type="text/css" />
-<link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" /> 
 
     <script type="text/javascript" 
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA15nyiYmWG_0IkG9H5r4Qc8KhZxwRw_xA&sensor=false"> 
@@ -146,7 +147,7 @@ afficheTrou(trou);
 }
 
 function initPage(){
-var butMenu = document.getElementById("butMenu");
+//var butMenu = document.getElementById("butMenu");
 var trEdit = document.getElementById("trEdit");
 if ( GetCookie("userRole") == "ADM"){
 	trEdit.style.visibility = "visible";
@@ -155,6 +156,7 @@ if ( GetCookie("userRole") == "ADM"){
 	
 setFontSize();
 userId = GetCookie("userID");
+window.oMenu = new menuObject(document.getElementById('butMenu'));
 
 var data = getURLdata();
 var ids = data.split('$');
@@ -229,21 +231,7 @@ if (isMapped){	// If GPS holes availables
 }
 
 function showMenu(){
-var menuList = document.getElementById('menuList');
-
-if (menuList.style.height != "0px" && menuList.style.height != ""){
-	menuList.style.height = "0px";
-}else{
-	var adj = menuList.childNodes[1].offsetHeight;
-	menuList.style.height = (nbrMitem * adj * .75) + "pt";
-	x=1;
-	}
-//menuOn = true;
-}
-
-function closeMenu(){
-	var menuList = document.getElementById('menuList');
-	menuList.style.height = "0px";
+	window.oMenu.show();
 }
 
 function changeCourse(fParc){

@@ -79,18 +79,20 @@ var oTrajet = {
 	lastSaveTime : 0,
 	lastPos : null,
 	isHot: 0,
-	savePos : function (position, mapsLatLng, dist) {
+	savePos : function (position, mapsLatLng) {
 		var startLoc = false;
 		var accTime = Date.now();
 		if (!this.lastPos){
 			this.startTime = accTime;	// Start
 			this.lastSaveTime = accTime;
 			startLoc = true;
-		}	
-		this.lastPos = mapsLatLng;
+		}
 
 		if (startLoc || accTime - this.lastSaveTime > this.saveFreq){
 			if (position.coords.accuracy < 62){
+				var dist = 0;
+				if (this.lastPos)
+					dist = calculDistance( this.lastPos, mapsLatLng);
 				var oLoc = {};
 				oLoc.lat=position.coords.latitude;
 				oLoc.lng=position.coords.longitude;
@@ -105,8 +107,10 @@ var oTrajet = {
 					var info = userId + "$" + this.startTime + "$" + accTime + "$" + oLoc.lat + "$" + oLoc.lng + "$" + oLoc.acc;
 					this.isHot = 0;
 				}
-				if (userId && info)
+				if (userId && info){
+					this.lastPos = mapsLatLng;
 					getInfo("setPosition?data=" + info, savedPos);
+				}
 				this.lastSaveTime = accTime;
 			}
 		}
@@ -234,7 +238,7 @@ var distance = calculDistance( posMarker.getPosition(), holeMarker.getPosition()
 		map.setCenter(myLatLng);
 		//oTrajet.savePos(position, myLatLng, d);
 	}
-oTrajet.savePos(position, myLatLng, d);	// To delete
+oTrajet.savePos(position, myLatLng);	// To delete
 	holeDist.innerHTML = distance + '<p id="accu">' + precision + '&apos;</p>';
 
 	if (piquetMarker.getVisible())
@@ -1005,16 +1009,7 @@ display: block;
 
 <div id="piquetDist" onclick="chxPiqDist(this)"></div>
 <div id="chxPiqDist"><a href="#" onclick="setChxPiqDist(0)"><img id="imgLoc" height="16" width="16" alt="Distance de ma position" src="images/ici.png" /></a><a href="#" onclick="setChxPiqDist(1)"><img id="imgLoc" height="25" width="16" alt="Distance du drapeau" src="images/flag.png" /></a></div>
-<!--
-<div id="locForm">
-<table id="typeLocList">
-<tr><td><a href="#"; onclick="goTract(0)">&nbsp;<text id="mWatc"></text></a></td></tr>
-<tr><td><a href="#"; onclick="goTract(1)">&nbsp;<text id="mLoca"></text></a></td></tr>
-<tr><td><a href="#"; onclick="goTract(2)">&nbsp;<text id="mFoll"></text></a></td></tr>
-<tr><td><a id="chxParler" href="#"; onclick="goTract(3)">&nbsp;<text id="mSpea"></text></a></td></tr>
-</table>
-</div>
-// -->
+
 <div id="menuList">
 <a class="inputButton" href="#"; onclick="goTract(0)">&nbsp;<text id="mWatc"></text></a>
 <a class="inputButton" id="chxParler" href="#"; onclick="goTract(3)">&nbsp;<text id="mSpea"></text></a>

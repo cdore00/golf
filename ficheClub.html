@@ -83,6 +83,7 @@ if ( GetCookie("userRole") == "ADM")
 var data = getURLdata();
 
 setFontSize();
+window.oMenu = new menuObject(document.getElementById('butMenu'));
 
 clubID = parseInt(data);
 userId = GetCookie("userID");
@@ -92,20 +93,7 @@ getInfo("getClubParc?data=" + clubID + "$" + userId, showClub);
 }
 
 function showMenu(){
-var menuList = document.getElementById('menuList');
-
-if (menuList.style.height != "0px" && menuList.style.height != ""){
-	menuList.style.height = "0px";
-}else{
-	var adj = menuList.childNodes[1].offsetHeight;
-	menuList.style.height = (adj * .75) + "pt";
-	}
-//menuOn = true;
-}
-
-function closeMenu(){
-	var menuList = document.getElementById('menuList');
-	menuList.style.height = "0px";
+	window.oMenu.show();
 }
 
 function editClub(currentClub){
@@ -298,11 +286,10 @@ showProgress(1);
 <a href="#" id="butMenu" title="Menu" onmouseover="showMenu()" onclick="showMenu();"><img id="logomenu" alt="Menu" src="images/menu.png" width="64" height="32"></a>
 <a href="#" onclick="majFav('listeResult.html');"><text id="mlist"></text></a>
 <a id="mapLink" target="_blank" href="ClubMap.html?data=" onclick="majFav();"><text id="mmaps"></text></a></div>
+
 <div id="menuList">
-<table><tbody>
-<tr id="trEdit"><td onclick="editClub(true);" title="&Eacute;diter la fiche du club.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="medit"></text></td></tr>
-<tr><td onclick="editClub(false);" title="Ajouter un club de golf.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="majou"></text></td></tr>
-</tbody></table>
+<a class="inputButton" href="#"; onclick="editClub(true);" title="&Eacute;diter la fiche du club.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="medit"></text></a>
+<a class="inputButton" href="#"; onclick="editClub(false);" title="Ajouter un club de golf.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="majou"></text></a>
 </div>
 
 <div id="content">
