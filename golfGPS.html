@@ -89,7 +89,7 @@ var oTrajet = {
 		}
 
 		if (startLoc || accTime - this.lastSaveTime > this.saveFreq){
-			if (position.coords.accuracy < 62){
+			if (position.coords.accuracy < 12){
 				var dist = 0;
 				if (this.lastPos)
 					dist = calculDistance( this.lastPos, mapsLatLng);

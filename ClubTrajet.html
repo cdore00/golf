@@ -117,13 +117,12 @@ detailWindow.document.close();
 
 function modifierTrajet(reqPt){
 var rPt = "directionsDisplay.directions.request." + reqPt + ".location";
-var menuList = document.getElementById('menuList');
 
 	directionsDisplay.setOptions({draggable: true});
 	map.setCenter(eval(rPt));
 	map.setZoom(15);
 	golfMarker.setOptions({draggable: true});
-	menuList.style.height = "0px";
+	window.oMenu.close();
 }
 
 function initPage(){
@@ -142,18 +141,12 @@ golfPos = new google.maps.LatLng(strClubLat, strClubLng);
 
 
 initialize();
+window.oMenu = new menuObject(document.getElementById('butMenu'));
+
 }
 
 function showMenu(){
-var menuList = document.getElementById('menuList');
-
-if (menuList.style.height != "0px"){
-	menuList.style.height = "0px";
-}else{
-	var adj = menuList.childNodes[1].offsetHeight;
-	menuList.style.height = (adj * .75) + "pt";
-	}
-//menuOn = true;
+	window.oMenu.show();
 }
 
 	// -->
@@ -179,13 +172,9 @@ visibility: visible;
 </div>
 </div>
 
-
-
 <div id="menuList">
-<table><tbody>
-<tr><td onclick="modifierTrajet('origin');" title="Modifier la position d'origine">&nbsp;&nbsp;&nbsp;&nbsp;<text id="modio"></text></td></tr>
-<tr><td onclick="modifierTrajet('destination');" title="Modifier la position de destination">&nbsp;&nbsp;&nbsp;&nbsp;<text id="modid"></text></td></tr>
-</tbody></table>
+<a class="inputButton" href="#"; onclick="modifierTrajet('origin');" title="Modifier la position d'origine">&nbsp;&nbsp;&nbsp;&nbsp;<text id="modio"></text></a>
+<a class="inputButton" href="#"; onclick="modifierTrajet('destination');" title="Modifier la position de destination">&nbsp;&nbsp;&nbsp;&nbsp;<text id="modid"></text></a>
 </div>
 
 <div id="map_canvas"></div>

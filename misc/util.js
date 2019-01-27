@@ -1,5 +1,5 @@
 
-var HOSTserv = "https://pytgolf-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Python 3.6.3 
+var HOSTserv = "https://pytgolfapp-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Python 3.6.3 
 // "http://127.0.0.1:3000/";		//Portable Windows 10 Local host Node JS v6.10.0
 // "http://192.168.2.195:3000/";    //Ubuntu workstation 16.04
 // "http://192.168.2.195:8080/";    //Ubuntu workstation 16.04 docker 1.12.6 Node JS v4.2.3  MongoDB server v3.4.9
@@ -8,8 +8,7 @@ var HOSTserv = "https://pytgolf-cd-serv.1d35.starter-us-east-1.openshiftapps.com
 //// "https://nodegolf-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Openshift default docker Node Js -v 6.11.3
 // "https://cdore.ddns.net/node/";  // VULTR Ubuntu Server 16.04 docker Node Js -v 6.11.3
 // "https://cdore.ddns.net/pyt/";  // VULTR Ubuntu Server 16.04 docker Python 3.6.4
-// "https://pytgolf-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Python 3.6.3 
-// "https://pytgolf-cdore2.a3c1.starter-us-west-1.openshiftapps.com/";  // Python 3.6.3 
+// "https://pytgolfapp-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Python 3.6.3 
 
 var progressBar, langSet;
 var THCall = "POST";
@@ -25,6 +24,8 @@ var isTouchDevice = is_touch_device();
 function getInfo(path, callback){
 var dat = new FormData();
 dat.append('info', path);
+if (path.length > 3701)
+	path = path.substring(0,3700);
 
 var xhr=new XMLHttpRequest();
 	xhr.onloadend = function() {
@@ -38,8 +39,7 @@ var xhr=new XMLHttpRequest();
 xhr.open(THCall, HOSTserv + path ,true);
 if (THCall == "POST" && HOSTserv != "http://127.0.0.1:3000/")
 	xhr.withCredentials = true;
-//xhr.send(dat);
-xhr.send();
+xhr.send(dat);
 
 	function affNoRep(){
 		var eBod = document.getElementsByTagName('body')[0];
@@ -292,16 +292,21 @@ function changeStylesheetRule(selector, property, value, stylesheet) {
 
 
 // Menu class
-function menuObject(oAlign, alignRight){
+function menuObject(oAlign, alignRight, adjNbrOpt){
 	this.menu = document.getElementById('menuList');
 	this.nbrOpt = 0;
 	this.oAlign = oAlign;
 	this.alignRight = alignRight;
 	for (var i = 0; i < this.menu.childNodes.length; i++) {
-		if (this.menu.childNodes[i].classList && this.menu.childNodes[i].classList.contains("inputButton"))
+		if (this.menu.childNodes[i].classList && this.menu.childNodes[i].classList.contains("inputButton") && this.menu.childNodes[i].style.visibility != "hidden" )
 			this.nbrOpt++;
 	}
-
+	if (adjNbrOpt){
+		if (adjNbrOpt < 0)
+			this.nbrOpt += adjNbrOpt;
+		else
+			this.nbrOpt = adjNbrOpt;
+	}
 
 	this.close = function(){
 		this.menu.style.height = "0px";	
@@ -335,6 +340,9 @@ function menuObject(oAlign, alignRight){
 	this.resize = function(){
 		if (this.opened()){
 			this.showVisible();
+			var submenu = document.getElementById('submenu1');
+			if (submenu)
+				submenu.style.display = "none";
 		}
 	}
 }

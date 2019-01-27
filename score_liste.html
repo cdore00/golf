@@ -432,18 +432,7 @@ var prefNb = document.getElementById('prefNb');
 prefNb.value = oNbr.value;
 }
 
-
-
 function showMenu(){
-/*var menuList = document.getElementById('menuList');
-
-if (menuList.style.height != "0px"){
-	menuList.style.height = "0px";
-}else{
-	var adj = menuList.childNodes[1].offsetHeight;
-	menuList.style.height = (adj * .75) + "pt";
-	}*/
-//menuOn = true;
 	window.oMenu.show();
 }
 
@@ -451,17 +440,14 @@ function showSubmenu(objOpt, state){
 var submenu = document.getElementById('submenu1');
 
 if (objOpt){
-	submenu.style.left = (objOpt.offsetWidth * .92) + "px";
+	submenu.style.left = (objOpt.offsetWidth * .91) + "px";
 	submenu.style.top = (objOpt.offsetTop + 35) + "px";
 }
-
 submenu.style.display = state;
-
 }
 
 function closeMenu(){
-//alert("closeMenu");
-window.oMenu.close();
+	window.oMenu.close();
 }
 
 function showOptions(menuOpt){
@@ -595,12 +581,17 @@ max-width: 15em;
 <a id="menuOpt" class="inputButton" href="#" onclick="showOptions(this);" title="Options de recherche.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mopti">Options</text></a>
 <a class="inputButton" href="#" onclick="showSubmenu(this, 'inherit');" onmouseover="showSubmenu(this, 'inherit');" onmouseout="showSubmenu(this, 'none');" title="T&eacute;l&eacute;charger un fichier...">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mdown"></text>&nbsp;&#9658;</a>
 </div>
-
+<!--
 <div id="submenu1">
 <table><tbody>
 <tr><td onclick="telGameList(1);" onmouseover="showSubmenu(false, 'inherit');" title="T&eacute;l&eacute;charger un fichier csv.">Format csv...</td></tr>
 <tr><td onclick="telGameList(2);" onmouseover="showSubmenu(false, 'inherit');" title="T&eacute;l&eacute;charger un fichier json.">Format json...</td></tr>
 </tbody></table>
+</div>
+// -->
+<div id="submenu1">
+<a class="inputButton" href="#" onclick="telGameList(1);" onmouseover="showSubmenu(false, 'inherit');" title="T&eacute;l&eacute;charger un fichier csv.">Format csv...</a>
+<a class="inputButton" href="#" onclick="telGameList(2);" onmouseover="showSubmenu(false, 'inherit');" title="T&eacute;l&eacute;charger un fichier json.">Format json...</a>
 </div>
 
 <form id="formPref" action="#">

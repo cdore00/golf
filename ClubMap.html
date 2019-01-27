@@ -31,7 +31,6 @@ var showLatLng = false;
 var affCenter = false;
 var trouCoord =  new Array();
 var nbrTrous, clubID, courseID, clubName, isMapped;
-var nbrMitem = 2;
 
 function initialize() { 
 	var leCentre = new google.maps.LatLng(intLat,intLng)
@@ -51,7 +50,6 @@ function initialize() {
 	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions); 
 
 	//adjustScreen(31);
-	//setFontSize();
 }
 	
 	
@@ -147,11 +145,9 @@ afficheTrou(trou);
 }
 
 function initPage(){
-//var butMenu = document.getElementById("butMenu");
 var trEdit = document.getElementById("trEdit");
-if ( GetCookie("userRole") == "ADM"){
-	trEdit.style.visibility = "visible";
-	nbrMitem++;
+if ( GetCookie("userRole") != "ADM"){
+	trEdit.style.visibility = "hidden";
 }
 	
 setFontSize();
@@ -178,7 +174,6 @@ function showCourse(oClub){
 	}
 	
 	var submenu1 = document.getElementById("submenu1");
-	//var Fparc = document.getElementById("Fparc");
 	var cntC = 0;
 	for (var p = 0; p < collCcourse.length; p++) {
 		cntC ++
@@ -188,24 +183,17 @@ function showCourse(oClub){
 		var url = "ClubMap.html?data=" + clubID + "$" + collCcourse[p]._id;
 		aElem.setAttribute('href', url);
 		
-		//var optElem = document.createElement("option");
-		//optElem.setAttribute('value', collCcourse[p]._id);
 		lbl = collCcourse[p].PARCOURS;
 		if (lbl == "")
 			lbl = collCcourse[p].TROUS + " trous, " + collCcourse[p].VERGES + " verges";
-		//optElem.innerHTML = lbl;
-		//Fparc.appendChild(optElem);		ERASE Fparc & changeCourse(fParc) & style
 		
 		var pref = "&nbsp;&nbsp;&nbsp;&nbsp;";
 		if (collCcourse[p]._id == courseID)
 			pref = "&#10004;&nbsp;";
-			//Fparc.selectedIndex = p;
+
 		aElem.innerHTML = pref + lbl;
 		submenu1.appendChild(aElem);
 	}
-//	if (cntC > 1)
-	//	Fparc.style.display = "inline";	
-	
 	
 	initialize();
 	if (oClub[0].trous)
@@ -219,7 +207,6 @@ if (isMapped){	// If GPS holes availables
 	var trous = oClub[0].trous;
 	intLat = trous[0].latitude;
 	intLng = trous[0].longitude;
-	//courseID = trous[0].Parcours_id;
 	for (var i = 0; i < nbrTrous; i++) {
 		trouCoord[i] = new google.maps.LatLng(trous[i].latitude, trous[i].longitude);
 	}
@@ -235,71 +222,18 @@ function showMenu(){
 }
 
 function changeCourse(fParc){
-
 var courID = fParc.options[fParc.selectedIndex].value;
 document.location = "ClubMap.html?data=" + clubID + "$" + courID;
-
 }
 
 function showSubmenu(objOpt, state){
 var submenu = document.getElementById('submenu1');
 
 if (objOpt){
-	submenu.style.left = (objOpt.offsetWidth * .92) + "px";
-	submenu.style.top = (objOpt.offsetTop + 35) + "px";
+	submenu.style.left = (objOpt.offsetWidth * .91) + "px";
+	submenu.style.top = (objOpt.offsetTop + 37) + "px";
 }
-
 submenu.style.display = state;
-
-}
-
-function showSubMenu(oOpt){
-var ht = 0;
-var docBody = document.getElementsByTagName("BODY")[0];
-var parent = oOpt.parentNode;
-var subName = oOpt.id + "sub";
-var subOptions = false;
-var subElem = document.getElementById(subName);
-// Close other sub menu
-var othSub = document.getElementsByClassName("submenu");
-if (subName != "logomenusub")
-	for (i = 0; i < othSub.length; i++) {
-		outSub(othSub[i])
-	}
-if (subElem){
-	//alert(subElem.id + subElem.offsetHeight);
-	if (logomenuOpen){
-		outSub(subElem);
-		return false;
-	}else
-	ht = subElem.childNodes.length;
-}else{
-	for (i = 0; i < subMenus.length; i++) {
-		if (subMenus[i].parent == oOpt.id)
-			subOptions = subMenus[i].options;
-	}
-	if (subOptions){
-		var divElem = document.createElement("div");
-		divElem.setAttribute('id', subName);
-		divElem.setAttribute('class', 'submenu');		
-		if (subName != "logomenusub")
-			divElem.setAttribute('onmouseleave', 'outSub(this)');
-		for (i = 0; i < subOptions.length; i++) {
-			opt = addMenuOpt(subOptions[i]);
-			ht += 1;
-			divElem.appendChild(opt);
-		}
-		docBody.appendChild(divElem);
-		subElem = divElem;
-	}
-}
-if (subElem){
-		subElem.style.top = parent.offsetHeight + "px" ;
-		subElem.style.left = parent.offsetLeft + "px" ;
-		subElem.style.height = (ht * (optHeight)) + "em";
-		if (subElem.id == "logomenusub")
-			logomenuOpen = true;
-	}
 }
 
 	// -->
@@ -357,10 +291,6 @@ visibility:hidden;
     border-width: 10px;
     border-style: solid;
     border-color: transparent transparent #fff transparent;
-}
-
-#divCoor, #trEdit{
-visibility: hidden;
 }
 
 
