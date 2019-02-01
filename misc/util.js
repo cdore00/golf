@@ -11,7 +11,7 @@ var HOSTserv = "https://nodejs-mongo-persistent-cd-serv.1d35.starter-us-east-1.o
 // "https://pytgolfapp-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Python 3.6.3 
 
 var progressBar, langSet;
-var THCall = "POST";
+var THCall = "GET";
 var tryLog = 0;
 
 function is_touch_device() {
