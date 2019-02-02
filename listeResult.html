@@ -134,7 +134,11 @@ for (var i = 0; i < result.length; i++) {
 
 idList = idList.substring(0, idList.length - 1 )
 localStorage.setItem('idList', idList);
-callMap.href += lat + "," + lng + "," + km + "," + idList;
+
+if (oResult.length == 0)
+	callMap.style.display = "none";
+else
+	callMap.href += lat + "," + lng + "," + km + "," + idList;
 
 showProgress(1);
 if (clubPos)
