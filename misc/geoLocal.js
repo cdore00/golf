@@ -199,4 +199,150 @@ var d = R * a ;
 	return d;
 }
 
+
+
+
+// Picket distance object
+// USAGE :
+// HTML = <button id="UIid" ...
+// window.oPicket = new piquetObject("UIid", Google map object, Hole marker object, [Hole marker object OR default from object distance 0=Position, 1=Hole]);
+// window.oPicket.show()
+function piquetObject(UIid, map, holeMark, posMarker){
+	this.UIcontrol = document.getElementById(UIid);
+	this.map = map;
+	this.holeMarker = holeMark;
+	this.posMarker = posMarker;
+	this.path = null;
+	this.clicListener = null;
+	this.chxDistPiq = 0;
+	this.defaultDistObj = (typeof posMarker == "number") ? posMarker:false;
+	this.UIpiquetDist = null;
+	this.UIchxPiqDist = null;
+	this.open = false;
+	
+	  var polyOptions = {
+		strokeColor: '#ffffff',
+		clickable: false,
+		strokeOpacity: 1.0,
+		strokeWeight: 2
+		}
+	this.polyLine = new google.maps.Polyline(polyOptions);
+	this.polyLine.setMap(map);
+	
+	  var image = {url:'images/piquet.png',
+				size: new google.maps.Size(40, 40),
+				origin: new google.maps.Point(0,0),
+				anchor: new google.maps.Point(0, 15)};
+
+	this.piquetMarker = new google.maps.Marker({
+		position: map.getCenter(),
+		icon: image,
+		visible: false,
+		draggable: true,
+		map: map
+	  });	
+
+		var bodyobj = document.getElementsByTagName('body')[0];
+		var odiv = document.createElement("div");
+		odiv.setAttribute('id', 'piquetDist');
+		odiv.setAttribute('onclick', "window.oPicket.chxPiqDist(this)");
+	this.UIpiquetDist = odiv;
+		bodyobj.appendChild(odiv);
+		pos = getOffset(this.UIcontrol);	
+		odiv.style.left = pos.left + "px";
+		odiv.style.top = (pos.top + this.UIcontrol.offsetHeight - 1) + "px";
+
+		var odiv = document.createElement("div");
+		odiv.setAttribute('id', 'chxPiqDist');
+		odiv.innerHTML = '<a href="#" onclick="window.oPicket.setChxPiqDist(0)"><img id="imgLoc" height="16" width="16" alt="Distance de ma position" src="images/ici.png" /></a><a href="#" onclick="window.oPicket.setChxPiqDist(1)"><img id="imgLoc" height="25" width="16" alt="Distance du drapeau" src="images/flag.png" /></a>';
+	this.UIchxPiqDist = odiv;
+		bodyobj.appendChild(odiv);
+		odiv.style.left = pos.left + "px";
+		odiv.style.top = (pos.top + this.UIcontrol.offsetHeight) + "px";	
+	
+	//	Object functions
+	this.show = function (){
+		this.UIcontrol.style.visibility="visible";
+		if (this.open)
+			this.UIpiquetDist.style.visibility="visible";
+	}
+	this.hide = function (){
+		this.UIcontrol.style.visibility="hidden";
+		this.UIpiquetDist.style.visibility="hidden";
+		this.UIchxPiqDist.style.visibility="hidden";
+	}
+	this.getPiquet = function (bPiq){
+		 this.path = this.polyLine.getPath();
+		//var imgPiquet = document.getElementById('imgPiquet');
+		  if (this.clicListener){
+			google.maps.event.removeListener(this.clicListener);
+			this.clicListener = null;
+			this.UIpiquetDist.style.visibility="hidden";
+			this.UIchxPiqDist.style.visibility="hidden";
+			this.path.clear();
+			this.piquetMarker.setVisible(false);
+			imgPiquet.width="3";
+			this.holeMarker.position_changed = "";
+			this.piquetMarker.position_changed = "";
+			this.open = false;
+		  }else{
+			imgPiquet.width="16";
+			this.UIpiquetDist.innerHTML = '';
+			this.UIpiquetDist.style.visibility="visible";
+			this.clicListener = google.maps.event.addListener(map, 'click', this.addLatLng);
+			if (typeof this.defaultDistObj != "number"){
+				this.chxPiqDist(this.UIpiquetDist);
+			}else{
+				this.setChxPiqDist(this.defaultDistObj);
+				this.open = true;
+			}
+		  }
+	}
+	this.addLatLng = function (event) {
+		latLng = (event.latLng);
+		window.oPicket.piquetMarker.setPosition(latLng);
+		window.oPicket.piquetMarker.setVisible(true);
+	}
+	this.chxPiqDist = function (oPiqDist){
+		if (!this.defaultDistObj){
+			this.UIchxPiqDist.style.visibility="visible";
+		}}
+	this.setChxPiqDist = function (chx){
+		this.chxDistPiq = chx;
+		this.UIchxPiqDist.style.visibility="hidden";
+		if (this.piquetMarker.getVisible())
+			this.traceLine(this.piquetMarker.getPosition());
+		this.holeMarker.position_changed = this.stopHoleDrag;
+		this.piquetMarker.position_changed = this.stopPiquetDrag;
+		this.open = true;
+		}
+	this.traceLine = function (piquetLatLng, holeLatLng){
+		if (!this.path)
+			return false;
+
+		  this.path.clear();
+			if (!piquetLatLng)
+				piquetLatLng = this.piquetMarker.getPosition();
+			if (!holeLatLng)
+				holeLatLng = this.holeMarker.getPosition();
+		  this.path.push(piquetLatLng);
+
+		  if (this.chxDistPiq == 0){
+			this.path.push(this.posMarker.getPosition());
+			this.UIpiquetDist.innerHTML = calculDistance(piquetLatLng, this.posMarker.getPosition());
+		  }else{
+			this.path.push(holeLatLng);
+			this.UIpiquetDist.innerHTML = calculDistance(piquetLatLng, holeLatLng);
+		  }
+		}
+	this.stopPiquetDrag = function (){
+		window.oPicket.traceLine(this.getPosition());
+		}
+	this.stopHoleDrag = function (){
+		window.oPicket.traceLine(false,this.getPosition());
+		return false;
+		}
+}
+
+
 //-->

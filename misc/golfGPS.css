@@ -236,7 +236,6 @@ margin:3px
 }
 
 
- 
 .selScore{
 /*  overflow-x: scroll; */
   overflow-y: hidden;
@@ -260,14 +259,31 @@ background: #999 ;
 color: #ff1822;
  } 
  
+ .selScore td,a {
+color: #33d;
+}
+ 
+.selScore a {
+text-shadow: 2px 2px #bbb;
+}
+ 
 .selectedOpt{
  color: #ff1822 !important;
  background: #999 !important;
  }
  
- #scoreInds{
- float: right;
- }
+#scoreInds{
+float: right;
+}
+
+#myScore{
+overflow: hidden;
+}
+
+.userInput{
+max-width: 45%;
+color: #33d;
+}
 
  .wgInd{
 display: none;
@@ -281,6 +297,17 @@ margin-right: 0.2em;
  border: 2px solid #eee;
  }
  
+ 
+.selOkInd{
+border: 2px solid #ff1822;
+}
+
+.fontGreen{
+color: #0e0;
+font-size: 0.5em;
+display: block;
+}
+
  .backGreen{
  background-color:#3A9D23;
  }
@@ -288,3 +315,16 @@ margin-right: 0.2em;
  background-color:#ff1822;
  }
 
+#showPlay{
+visibility: hidden;
+background: transparent !important;
+}
+
+#blocScore{
+width: 0.7em;
+height: 0.7em;
+background: #eee;
+display: inline-block;
+visibility: hidden;
+border: buttonhighlight 2px inset;
+}

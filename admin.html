@@ -40,6 +40,7 @@ getInfo("getUser?word=" + word, initListUser);
 }
 
 function initListUser(oList){
+// Add manage S0062 error not auth
 var pageZone = document.getElementById('pageZone');
 remChilds(pageZone);
 for (var i = 0; i < oList.length; i++){

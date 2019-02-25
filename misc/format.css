@@ -247,6 +247,7 @@ background:-moz-linear-gradient(top,#3A9D23,#00bb00)}
 
 #pageZone{
 	visibility: hidden;
+	overflow:hidden;
 }
 
 .pageitem{-webkit-border-radius:8px;background-color:#f0f0f0;border:#444444 solid 1px;overflow:auto;padding:1px;padding-bottom:5px;position:relative;display:block;margin:10px 8px;list-style:none;border-radius: 20px;}
@@ -348,20 +349,20 @@ table.cartePts th{background-color: #999;text-align:center}
 .entete{background-color: #999;text-align:center}
 .titre{font-weight:bold;text-align:left}
 
-.BOr{color: black;background-color: gold}
-.BArgent{color: white;background-color: silver}
-.BBronze{color: white;background-color: #A67D3D }
-.BCuivre{color: white;background-color:  #b87333 }
-.BBleu{color: white;background-color: blue}
-.BRouge{color: white;background-color: red}
-.BNoir{color: white;background-color: black}
-.BBlanc{color: black;background-color: white}
+.BOr{color: black;background-color: gold !important}
+.BArgent{color: white;background-color: silver !important}
+.BBronze{color: white;background-color: #A67D3D !important}
+.BCuivre{color: white;background-color:  #b87333 !important}
+.BBleu{color: white;background-color: blue !important}
+.BRouge{color: white;background-color: red !important}
+.BNoir{color: white;background-color: black !important}
+.BBlanc{color: black;background-color: white !important}
 .B{}
-.BVert{color: white;background-color: forestgreen}
-.BNormale,.BHdcp{text-align:center}
-.BJaune{color: black;background-color: yellow}
-.BOrange{color: black;background-color: orange}
-.BRose{color: black;background-color: pink}
+.BVert{color: white;background-color: forestgreen !important}
+.BNormale,.BHdcp{text-align:center !important}
+.BJaune{color: black;background-color: yellow !important}
+.BOrange{color: black;background-color: orange !important}
+.BRose{color: black;background-color: pink !important}
 
 #layerContent{padding-top:7px}
 #layerContent p{border:0px; margin:0px;width:250px}
@@ -645,7 +646,7 @@ display: none;
 .boutonZoom{
 background-color:#ccc;
 opacity: 0.66;
-font-size:18pt;
+font-size:22pt;
 margin:5px;
 width:40px;
 }

@@ -15,16 +15,73 @@
 <link href="misc/golfGPS.css" rel="stylesheet" media="screen" type="text/css" />
 <link href="misc/tabScore.css" rel="stylesheet" media="screen" type="text/css" />
 
+   <script type="text/javascript" 
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA15nyiYmWG_0IkG9H5r4Qc8KhZxwRw_xA&sensor=false"> 
+    </script> 
 <script type="text/javascript" src="misc/util.js"></script>
 <script type="text/javascript" src="misc/utilGolfGPS.js"></script>
 <script type="text/javascript" src="misc/geoLocal.js"></script>
 
 <style>
+#map_canvas{
+position: absolute;
+ 
+height:0px;
+transition: height 0.4s ease-in-out;
+width: 100%;
+}
+
+#fullMap{
+position: absolute;
+top: 35px;
+left: 16px;
+visibility: hidden;
+}
+
+#mapZoom {
+top: 35px;
+right: 16px;
+visibility: hidden;
+}
+
+.boutonZoom {
+    background-color: #fff;
+    opacity: 1;
+}
+
 #gameBut{
 visibility:hidden;
+}
 
 .topBord{
 border: 1px solid #f00;
+}
+
+.holeSel{
+color: #500;
+background: #eef !important;
+}
+
+#Gmap{
+background: #eef !important;
+}
+
+#fullDiv{ 
+visibility:hidden;
+position:absolute;
+top: 60px;
+left: 0px;
+width:100%;
+height:100%;
+text-align:center;
+z-index: 110;
+}
+
+#boutonPiquet {
+    position: absolute;
+    top: 1px;
+    right: 100px;
+	visibility: hidden;
 }
 
 </style>
@@ -32,9 +89,27 @@ border: 1px solid #f00;
 <script type="text/javascript"> 
 <!--
 
-var gameID;
+var gameID, nbrTrou, courseID, gameData, bloc, holeMarker, filterBloc, markers = [];
 var userId;
 var clubName = "";
+var trouCoord = [];
+
+function initialize(latlng) { 
+	var myOptions = { 
+	  center: latlng, 
+	  zoom: 18, 
+	  panControl: false,    
+	  zoomControl: false, 	  
+	  scaleControl: false,
+	  streetViewControl: false,
+	  fullscreenControl: false, 
+	  mapTypeControl: false,    
+	  mapTypeControlOptions: {        
+		style: google.maps.MapTypeControlStyle.DROPDOWN_MENU    },
+	  mapTypeId: google.maps.MapTypeId.SATELLITE
+	}; 
+	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+}
 
 function askSaveGame(action){
 if (action){
@@ -60,11 +135,44 @@ function closePage(oRes){
 	}
 }
 
-function setIdent(){
+function showHole(oTH){
+if (!document.getElementById("blocParc"))
+	return false;
+var x = document.getElementsByTagName("th");
 
+for (var i = 0; i < x.length; i++) {
+    x[i].classList.remove("holeSel");
+  }
+oTH.classList.add("holeSel");
+afficheTrou(parseInt(oTH.innerHTML))
 }
 
-function identified(){
+function afficheTrou(noTrou, Gmap){
+	holeMarker.setPosition(trouCoord[noTrou-1]);
+	map.setCenter(trouCoord[noTrou-1]);
+	document.getElementById("titleSpan").innerHTML = clubName + " - " + langLbl["hole"] + " " + noTrou;
+}
+
+function showMap(oCtl, init){
+if (!init && oCtl.innerHTML == "")
+	return false;
+var map_canvas = document.getElementById("map_canvas");
+var elemLi = document.getElementById("liMap");
+if (map_canvas.style.height == "0px" || map_canvas.style.height == ""){
+	map_canvas.style.height = "230px";
+	elemLi.style.height = "230px";
+	oCtl.innerHTML = "&#9650;";
+	document.getElementById('mapZoom').style.visibility = 'visible';
+	document.getElementById('fullMap').style.visibility = 'visible';
+	window.oPicket.show();
+}else{
+	map_canvas.style.height = "0px";
+	elemLi.style.height = "0px";
+	oCtl.innerHTML = "&#9660;";
+	document.getElementById('mapZoom').style.visibility = 'hidden';
+	document.getElementById('fullMap').style.visibility = 'hidden';
+	window.oPicket.hide();
+}
 
 }
 
@@ -83,18 +191,209 @@ getInfo("getGameTab?data=" + gameID, showGame);
 }
 
 function showClub(pID){
-getInfo("getParcInfo?data=" + pID, callFicheClub);
+getInfo("getParcInfo?data=" + pID, getCourseInfo);
+//getInfo("getParcInfo?data=" + pID, callFicheClub);
+//window.opener.opener.location.href = 'ficheClub.html?data=' + pID;
 }
 
-function callFicheClub(pData){
-var parcData = pData[0];
-document.location.href = "ficheClub.html?data=" + parcData.CLUB_ID;
+function getCourseInfo(oData){
+if (!oData.courseInfo){	// Not web service call 
+	var parcData = oData[0];
+	document.location.href = "ficheClub.html?data=" + parcData.CLUB_ID;
+	return false;
+}
+var tabTitle = document.getElementById('tabTitle');
+var data = oData.courseInfo[0].parc;
+var ci = oData.courseInfo;
+var nbrTrous = ci.length;
+var holePos = new google.maps.LatLng(ci[0].latitude, ci[0].longitude);
+initialize(holePos);
+setHole(map, holePos);
+window.oPicket = new piquetObject('boutonPiquet', map, holeMarker, 1);
+
+for (var i = 0; i < nbrTrous; i++) 
+	trouCoord[i] = new google.maps.LatLng(ci[i].latitude, ci[i].longitude);
+
+showMap(document.getElementById('Gmap'), true);
+showBlock(data);
+showHole(document.getElementById('th1'));
+
+window.oPicket.show();
+
+
+//dt = Date.parse('2018/09/29');
+dt = Date.parse(tabTitle.innerHTML.substring(0,10));
+getInfo("getPosition?data=" + userId + "$" + dt, getRoute);
+
+/*
+1539403200000    2018/10/13
+1538215600001    2018/09/29
+insert({"USER_ID" : 80, "startTime" : NumberLong("1539403200000"), "locList" : [ 
+{ "time" : NumberLong("1538215700001"), "lat" : 46.925927324740876, "lng" : -71.36348632442309, "acc" : 46, "hot" : 1 }, 
+{ "time" : NumberLong("1538215800001"), "lat" : 46.92572240735917, "lng" :-71.3612539602965, "acc" : 46, "hot" : 1 },
+{ "time" : NumberLong("1538215900001"), "lat" : 46.92525346356866, "lng" : -71.360084517166, "acc" : 46, "hot" : 1 },
+{ "time" : NumberLong("1538216100001"), "lat" : 46.92499206226536, "lng" : -71.36007781164346, "acc" : 46, "hot" : 1 },
+{ "time" : NumberLong("1538216200001"), "lat" : 46.92507449449065, "lng" : -71.36012877361475, "acc" : 46, "hot" : 1 }] })
+*/
+}
+
+function getRoute(savCollList){
+
+for (var i = 0; i < savCollList.length; i++) {
+	setMarkers(map, savCollList[i].locList);
+}
+setMapOnAll(map);
+}
+
+function setMapOnAll(map){
+var path, polyLine = new google.maps.Polyline({
+	strokeColor: '#0000ff',
+	clickable: false,
+	strokeOpacity: 1.0,
+	strokeWeight: 2
+});
+polyLine.setMap(map);
+path = polyLine.getPath();
+for (var i = 0; i < markers.length; i++) {
+  markers[i].setMap(map);
+  if (map)
+	path.push(markers[i].getPosition());
+}
+}
+
+function setMarkers(map, locations, mmXY) {
+
+	function pinSymbol(color) {
+		return {	//path: 'M 0,0 -1,-2 V -43 H 1 V -2 z M 1,-40 H 30 V -20 H 1 z',
+					  path: 'M 0,0 -1,-2 V -23 H 1 V -2 z M 1,-20 H 30 V -5 H 1 z',
+			fillColor: color,
+			fillOpacity: 1,
+			labelOrigin: new google.maps.Point(15, -12),
+			scale: 1.5,
+	   };
+	}
+
+if (locations.length == 0)
+	return;
+
+  var image = new google.maps.MarkerImage('images/ici.png',
+      new google.maps.Size(25, 25),
+      new google.maps.Point(0,0),
+      new google.maps.Point(0, 25));
+  var shape = {
+      coord: [1, 1, 1, 25, 25, 25, 25 , 1],
+      type: 'poly'
+  };
+  for (var i = 0; i < locations.length; i++) {
+    var loc = locations[i];
+    var myLatLng = new google.maps.LatLng(loc.lat, loc.lng);
+	var col = (loc.hot) ? "#f99":"#fff";
+    var marker = new google.maps.Marker({
+        position: myLatLng,
+		clickable: false,
+		draggable: false,
+		title: "Acc:" + loc.acc, 
+		icon: pinSymbol(col),
+		  label: {
+			text: formatDateTime.time(loc.time, true),
+			color: "#000",
+			fontSize: "16px",
+			fontWeight: "bold",
+		  }
+		});
+	markers[markers.length] = marker;
+
+	}
+}
+
+function showBlocFilter(){
+if (!document.getElementById("blocParc"))
+	return false;
+var blocScore = document.getElementById('blocScore');
+if (blocScore.className != ""){
+	filterBloc = false;
+	blocScore.className = "";
+}else{
+	filterBloc = gameData.bloc;
+	blocScore.className = gameData.bloc;
+}
+showBlock();
+}
+
+
+function showBlock(oBlock){
+if (oBlock)
+	bloc = oBlock;
+
+var blockElem = document.getElementById('blocParc');
+if (blockElem)
+	blockElem.parentNode.removeChild(blockElem);
+	
+// Course list
+var pageZone = document.getElementById('pageZone');
+if (bloc.length > 0){
+//var nextCourse = 0;
+var b = 0;
+	if (bloc[b]){
+
+		var liElem = document.createElement("li");
+		liElem.setAttribute('class', 'listitem gras');
+		var divElem = document.createElement("div");
+		divElem.setAttribute('id', 'blocParc');
+		divElem.setAttribute('class', 'cartePts');
+
+		var htmlCode = '<table class="cartePts"><tr><td  class="titre" colspan="14"><b>' + langLbl["cours"] + nbrTrou + langLbl["holes"] + '</b></td></tr>';
+		//+ clubCourse[p].PARCOURS + "&nbsp;" + nbrTrou + langLbl["holes"] + '</b></td></tr>';
+		if(nbrTrou == 9)
+			htmlCode += '<tr class="entete"><th>' + langLbl["hole"] + '</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>Total</th></tr>';
+		else
+			htmlCode += '<tr class="entete"><th>' + langLbl["hole"] + '</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>' + langLbl["goout"] + '</th><td></td><td></td><td></td></tr>';
+
+		do{
+			var cName = 'B' + bloc[b].Bloc;
+			if (!filterBloc || (filterBloc == cName || cName == 'BNormale' || cName == 'BHdcp') ){
+				htmlCode += '<tr><td class="' + cName + '">' + langLbl[bloc[b].Bloc] + '</td>';
+				for (var i = 1; i < 10; i++) {
+					var x = "bloc[b].T" + i;
+					htmlCode += '<td class="' + cName + '">' + eval(x) + '</td>';
+				}
+				if(nbrTrou == 9)
+					htmlCode += '<td class="' + cName + '">' + ((bloc[b].Aller == null) ? "":bloc[b].Aller) + '</td>';
+				else
+					htmlCode += '<td class="' + cName + '">' + ((bloc[b].Aller == null) ? "":bloc[b].Aller) + '</td><td></td><td></td><td></td>';
+			}
+		b += 1;
+		} while ( bloc[b] && bloc[b].PARCOURS_ID == courseID);
+
+		if(nbrTrou == 18){
+			htmlCode += '<tr class="entete"><th>' + langLbl["hole"] + '</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th><th>16</th><th>17</th><th>18</th><th>' + langLbl["goin"] + '</th><th>Total</th><th>Eval.</th><th>Slope</th></tr>';
+			var b = 0;
+			do{
+				var cName = 'B' + bloc[b].Bloc;
+				if (!filterBloc || (filterBloc == cName || cName == 'BNormale' || cName == 'BHdcp') ){
+					htmlCode += '<tr><td class="' + cName + '">' + langLbl[bloc[b].Bloc] + '</td>';
+					for (var i = 10; i < 19; i++) {
+						var x = "bloc[b].T" + i;
+						htmlCode += '<td class="' + cName + '">' + eval(x) + '</td>';
+					}
+					htmlCode += '<td class="' + cName + '">' + ((bloc[b].Retour == null) ? "":bloc[b].Retour) + '</td><td class="' + cName + '">' + ((bloc[b].Total == null) ? "":bloc[b].Total) + '</td><td class="' + cName + '">' + bloc[b].Eval + '</td><td class="' + cName + '">' + bloc[b].Slope + '</td>';
+				}
+			b += 1;
+			} while ( bloc[b] && bloc[b].PARCOURS_ID == courseID);
+		}
+		//nextCourse = b;
+		htmlCode += '</table>';
+		divElem.innerHTML = htmlCode;
+		liElem.appendChild(divElem);
+		pageZone.appendChild(liElem);
+	}
+}
 }
 
 function showGame(gData){
-var gameData = gData[0];
+gameData = gData[0];
 var par = gameData.par;
-var parcID = gameData.PARCOURS_ID;
+courseID = gameData.PARCOURS_ID;
 var tb = document.getElementById('gameCard'); 
 var gameBut = document.getElementById('gameBut');
 var tabTitle = document.getElementById('tabTitle');
@@ -104,32 +403,40 @@ divLoad.style.display = "none";
 
 	function showClubName(cName, pID){
 	if (THCall == "GET")
-		return cName;
+		return cName + '&nbsp;';
 	else
-		return '<a href="javascript:showClub(' + pID + ');">' + cName + '</a>' 
+		return '<a href="javascript:showClub(' + pID + ');">' + cName + '</a>';
 	}
 
 if (gameData.score_date != null){
-	tabTitle.innerHTML = (gameData.score_date) + "&nbsp;-&nbsp;" +  showClubName(clubName, parcID);
+	tabTitle.innerHTML = (gameData.score_date) + '&nbsp;-&nbsp;<span id=\"titleSpan\">' +  showClubName(clubName, courseID) + '</span>';
 }else{
-	tabTitle.innerHTML = getDateTime() + "&nbsp;-&nbsp;" +  showClubName(clubName, parcID);
+	tabTitle.innerHTML = getDateTime() + '&nbsp;-&nbsp;<span id=\"titleSpan\">' +  showClubName(clubName, courseID) + '</span>&nbsp;<div id="blocScore" onclick="showBlocFilter()"></div>';
 	gameBut.style.visibility = "visible";
 }
+
+if (gameData.bloc){
+	var blocScore = document.getElementById('blocScore');
+	blocScore.className = gameData.bloc;
+	blocScore.style.visibility = "visible";
+	filterBloc = gameData.bloc;
+}
+	
 
 var nt = 19;
 if(par.T14 == null || par.T14 == 0)
 	nt = 10;
 	
 var trElem = document.createElement("tr");
-//trElem.setAttribute('class', 'listitem');
-var tdH = '<th></th>';
+//trElem.setAttribute('class', 'listitem');  &#8689; 
+var tdH = '<th id="Gmap" onclick="showMap(this)"></th>';
 for (var i= 1; i < 10; i++){
-	tdH += '<th>' + i + '</th>';
+	tdH += '<th id="th' + i + '" onclick="showHole(this)">' + i + '</th>';
 }
 if (nt == 19){
 tdH += '<th>Out</th>';
 for (var i= 10; i < nt; i++){
-	tdH += '<th>' + i + '</th>';
+	tdH += '<th onclick="showHole(this)">' + i + '</th>';
 }
 tdH += '<th>In</th>';
 }
@@ -157,9 +464,7 @@ tdH += '<td>' + (po + pi) + '</td>';
 trElem.innerHTML = tdH;
 tb.appendChild(trElem);
 
-
 var trElem = document.createElement("tr");
-
 var po = 0, pi = 0;   /// Les coups
 var tdH = '<th rowspan="2">' + GetCookie("userName") + '</th>';
 for (var i= 1; i < 10; i++){
@@ -308,6 +613,11 @@ if (gameData.others)
 	for (var i= 0; i < gameData.others.length; i++){
 		addPlayer(tb, nt, gameData.par, gameData.others[i]);
 	}
+
+if (nt == 19)
+	nbrTrou = 18;
+else
+	nbrTrou = 9;
 return;
 
 }
@@ -443,7 +753,6 @@ tb.appendChild(trElem);
 		}
 	}
 	
-	
 var trElem = document.createElement("tr");
 var po = 0, pi = 0;   /// Les pꯡlit곍
 
@@ -463,8 +772,31 @@ trElem.innerHTML = tdH;
 tb.appendChild(trElem);
 }
 
+function showFullMap(){
+var elemFull = document.getElementById("fullDiv");
+var elemLi = document.getElementById("liMap");
+var pt1 = document.getElementById("pt1");
+if (elemLi.children.length == 0){
+	document.getElementById("map_canvas").style.height = "230px";
+	pt1.style.display = "";
+	setTimeout(function() {
+			elemFull.style.visibility = "hidden";
+			elemLi.appendChild(document.getElementById("mapZone"));
+			document.getElementById("fullMap").innerHTML = "&#8689";
+		}, 350);
+}else{
+	elemFull.appendChild(document.getElementById("mapZone"));
+	elemFull.style.visibility = "visible";
+	//document.getElementById("map_canvas").style.height = "100%";
+	document.getElementById("map_canvas").style.height = (elemFull.offsetHeight-60) + "px";
+	document.getElementById("fullMap").innerHTML = "&#8690";
+	pt1.style.display = "none";
+}
+}
+
 // -->
 </script> 
+
 </head>
 <body onload="initPage()">
 <div id="duobutton">
@@ -478,13 +810,31 @@ tb.appendChild(trElem);
 
 
 <form id="setScore">
-<ul class="pageitem">
+<ul id="pageZone" class="pageitem">
 <li id="tabTitle" class="listitem">
 
 </li>
+<button id="boutonPiquet" class="itin" title="Placer un piquet" onclick="window.oPicket.getPiquet(this); return false;"><img id="imgPiquet" height="18" width="3" src="images/piquet.png" /></button>
+
+<!--  <div id="piquetDist" onclick="window.oPicket.chxPiqDist(this)"></div>
+
+<div id="chxPiqDist"><a href="#" onclick="window.oPicket.setChxPiqDist(0)"><img id="imgLoc" height="16" width="16" alt="Distance de ma position" src="images/ici.png" /></a><a href="#" onclick="window.oPicket.setChxPiqDist(1)"><img id="imgLoc" height="25" width="16" alt="Distance du drapeau" src="images/flag.png" /></a></div>
+// -->
+
+<li id="liMap" class="listitem">
+<div id="mapZone" >
+<div id="map_canvas" ></div>
+<button id="fullMap" class="boutonZoom" title="Full screen" onclick="showFullMap(); return false;">&#8689;</button>
+<div id="mapZoom">
+<button class="boutonZoom" title="Zoom in" onclick="zoomMap(1); return false;">+</button>
+<button class="boutonZoom" title="Zoom out" onclick="zoomMap(-1); return false;">-</button>
+</div>
+</div>
+</li>
+
 
 <li class="listitem">
-<div id="p1" name="p1" class="cartePts">
+<div id="pt1" class="cartePts">
 	<table class="cartePts">
 	<tbody id="gameCard">
 <div id="divLoad"><img id="imgLoad" alt="Chargement en cours..." height="64" width="64" src="images/loading.gif" /></div>
@@ -492,6 +842,8 @@ tb.appendChild(trElem);
 	</table>
 </div>
 </li>
+
+
 </ul>
 <div id="gameBut">
 <center>
@@ -502,7 +854,7 @@ tb.appendChild(trElem);
 
 </form>
 
-
+<div id="fullDiv"></div>
 <div id="modalDiv"></div>
 <div id="authLayer">
 <!--

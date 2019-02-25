@@ -164,7 +164,9 @@ event.preventDefault();
 document.getElementById('holePlay').addEventListener('touchend', function(event) {
 event.preventDefault();
 }, false);
-holeMarker.position_changed = holePosChange;
+//holeMarker.position_changed = holePosChange;
+
+window.oPicket = new piquetObject('boutonPiquet', map, holeMarker, posMarker);
 }
 
 function setMyPosition(map, lat, lng) {
@@ -207,7 +209,7 @@ function setpiquetMarker(map, location) {
 	draggable: true,
     map: map
   });
-  piquetMarker.position_changed = stopPiquetDrag;
+  //piquetMarker.position_changed = stopPiquetDrag;
 }
 
 function changeBloc(B_id){
@@ -217,6 +219,7 @@ blocForm.style.visibility="hidden";
 blocID = B_id;
 blockName = 'B' + trouPar[blocID][0]
 document.getElementById("holeBloc").className = blockName;
+document.getElementById("blocScore").className = blockName;
 afficheTrou(trou, true);
 }
 
@@ -315,21 +318,18 @@ var holePar = document.getElementById("holePar");
 var holePlay = document.getElementById("holePlay");
 var layerHoles = document.getElementById('listeTrous');
 layerHoles.style.visibility="hidden";
-holeMarker.position_changed = null;
+//holeMarker.position_changed = null;
 if (!keepPosition)
 	map.setCenter(trouCoord[noTrou-1]);
 holeMarker.setPosition(trouCoord[noTrou-1]);
 holePar.innerHTML = trouPar[blocID][noTrou];
 holePlay.innerHTML = noTrou;
 trou = noTrou;
-holeMarker.position_changed = holePosChange;
-//holeDist.innerHTML = ' ';
-//var hea =google.maps.geometry.spherical.computeHeading( posMarker.getPosition(), holeMarker.getPosition());
-//alert(hea);
-//map.setHeading( hea );
-//map.setTilt(45);
-//alert(google.maps.geometry.spherical.computeHeading(posMarker.getPosition(),holeMarker.getPosition()));
+//holeMarker.position_changed = holePosChange;
+
 }
+
+/*
 function getPiquet(bPiq){
 var path = polyLine.getPath();
 var imgPiquet = document.getElementById('imgPiquet');
@@ -353,6 +353,7 @@ var chxPiquetDist = document.getElementById('chxPiqDist');
 	chxPiqDist(piquetDist);
   }
 }
+
 function addLatLng(event) {
 	movePiquet(event.latLng);
 }
@@ -378,7 +379,7 @@ function stopPiquetDrag(){
 traceLine(piquetMarker.getPosition());
 //alert("Move");
 }
-
+*/
 
 function getLoc(bLoc){
 //var locForm = document.getElementById('locForm');
@@ -422,6 +423,7 @@ imgLoc.src=iciOn.src;
 localiser(watchLoc);
 }
 
+/*
 function chxPiqDist(oPiqDist){
 var chxPiqD = document.getElementById('chxPiqDist');
 chxPiqD.style.left = oPiqDist.offsetLeft + "px";
@@ -435,7 +437,7 @@ chxPiqD.style.visibility="hidden";
 if (piquetMarker.getVisible())
 	traceLine(piquetMarker.getPosition());
 }
-
+*/
 function showScoreFrame(nScore){
 var layerScore = document.getElementById('showScore');
 var scoreHole = document.getElementById('scoreHole');
@@ -540,11 +542,13 @@ sTrou = null;
 }
 
 function saveScore(){
+var holeBlocName = document.getElementById('holeBloc').className;
 var score = setScore.nbrCoups.value;
 var putt = setScore.nbrPutts.value;
 var penal = setScore.nbrPen.value;
 
-var strData = userId + "$" + courseID + "$" + sTrou + "$" + score + "$" + putt + "$" + penal + "$" + clubName + "$" + JSON.stringify(objScore)  + ((objScore.others) ? ("$" + JSON.stringify(objScore.others)):"");
+
+var strData = userId + "$" + courseID + "$" + sTrou + "$" + score + "$" + putt + "$" + penal + "$" + clubName + "$" + holeBlocName + "$" + JSON.stringify(objScore)  + ((objScore.others) ? ("$" + JSON.stringify(objScore.others)):"");
 	// + ((objScore.others) ? ("$" + JSON.stringify(objScore.others)):"");
 	
 getInfo("updateGame?data=" + strData, initScore);
@@ -585,6 +589,11 @@ var laN = 0, ts = 0;
 
 if (initial)
 		scoreOkInds[0].style.display = "inline-block";
+		
+if (gData[0].bloc){
+	document.getElementById(gData[0].bloc).click();
+	document.getElementById("blocScore").className = gData[0].bloc;
+}
 
 if (gData.length > 0){
 	var oth = gData[0].others;
@@ -785,6 +794,7 @@ for (var i= 0; i < bloc.length; i++){
 	if (bloc[i].Bloc != "Normale" && bloc[i].Bloc != "Hdcp" && bloc[i].Bloc !=  "" ){
 		trouPar[noB] = arrB(bloc[i], nt);
 		var divElem = document.createElement("div");
+		divElem.setAttribute('id', 'B' + bloc[i].Bloc);
 		divElem.setAttribute('onclick', 'changeBloc(' + noB + ')');
 		divElem.setAttribute('class', 'B' + bloc[i].Bloc);
 		divElem.innerHTML = langLbl[bloc[i].Bloc];
@@ -919,25 +929,13 @@ var localWindow = window.open('localMap.html?data=' + dt, 'localMap');
 localWindow.document.close();
 window.oMenu.close();
 }
+
+
  
 // -->
 </script> 
 
 <style>
-
-#myScore{
-overflow: hidden;
-
-}
-
-#showPlay{
-visibility: hidden;
-}
-
-.userInput{
-max-width: 45%;
-color: #33d;
-}
 
 #prefOptions, #identOptions {
     font-size: inherit;
@@ -952,27 +950,11 @@ color: #33d;
  text-decoration:none;
  }
  
-.selScore td,a {
-color: #33d;
-}
- 
-.selScore a {
-text-shadow: 2px 2px #bbb;
-}
-
 #menuGPS{
 visibility: hidden;
 }
 
-.selOkInd{
-border: 2px solid #ff1822;
-}
 
-.fontGreen{
-color: #0e0;
-font-size: 0.5em;
-display: block;
-}
  
 </style>
 
@@ -985,7 +967,7 @@ display: block;
 <a class="bouton-prec-suiv" href="#" onclick="trouSuivant(1)">&#9654;</a>
 
 <div id="hole" onclick="showBlocs(this);" ><div id="holePar"></div><div id="holeBloc" ></div></div>
-<button id="boutonPiquet" class="itin" title="Placer un piquet" onclick="getPiquet(this); return false;"><img id="imgPiquet" height="18" width="3" src="images/piquet.png" /></button>
+<button id="boutonPiquet" class="itin" title="Placer un piquet" onclick="window.oPicket.getPiquet(this); return false;"><img id="imgPiquet" height="18" width="3" src="images/piquet.png" /></button>
 <button id="boutonLoc" class="itin" title="Localiser" onclick="getLoc(this); return false;"><img id="imgLoc" height="18" width="18" alt="Localiser" src="images/ici.png" /></button>
 <!--
 <div id="boutonTaille"><button type="button" id="rightnav" title="Taille de police" onclick="changeTaille()"><img id="imgTaille" alt="Taille de police" height="20" width="45" src="images/taille.png" /></button></div>
@@ -1007,9 +989,12 @@ display: block;
 <a id="showPlay" href="#" onclick="showPlayer(this)">&nbsp;&#9644;</a>
 <div id="myScore"></div></div>
 
+<!--
+
+
 <div id="piquetDist" onclick="chxPiqDist(this)"></div>
 <div id="chxPiqDist"><a href="#" onclick="setChxPiqDist(0)"><img id="imgLoc" height="16" width="16" alt="Distance de ma position" src="images/ici.png" /></a><a href="#" onclick="setChxPiqDist(1)"><img id="imgLoc" height="25" width="16" alt="Distance du drapeau" src="images/flag.png" /></a></div>
-
+// -->
 <div id="menuList">
 <a class="inputButton" href="#"; onclick="goTract(0)">&nbsp;<text id="mWatc"></text></a>
 <a class="inputButton" id="chxParler" href="#"; onclick="goTract(3)">&nbsp;<text id="mSpea"></text></a>
@@ -1041,7 +1026,7 @@ display: block;
 
 <div class="selScore">
 
-<div><a href="#" onclick="nextScore(-1)">&#9664;&nbsp;</a><span id="scoreHole">Trou par </span><a href="#" onclick="nextScore(1)">&nbsp;&#9654;</a></div>
+<div><a href="#" onclick="nextScore(-1)">&#9664;&nbsp;</a><div id="blocScore"></div><span id="scoreHole">Trou par </span><a href="#" onclick="nextScore(1)">&nbsp;&#9654;</a></div>
 </div>
 
 

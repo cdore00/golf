@@ -22,6 +22,35 @@ function is_touch_device() {
 var isTouchDevice = is_touch_device();
 
 function getInfo(path, callback){
+var pos = path.indexOf("?");
+if (pos != -1){
+	var serv = path.substring(0,pos);
+	var param = path.substring(pos + 1);
+}else{
+	var serv = path;
+	var param = "";
+}
+var dat = new FormData();
+dat.append('info', param);
+
+var xhr=new XMLHttpRequest();
+	xhr.onloadend = function() {
+	var text = xhr.responseText;
+	if (text == "")
+		affNoRep();
+	var data=JSON.parse(text);
+	//alert(text);
+	if (callback)
+		callback(data);
+	};
+	
+xhr.open(THCall, HOSTserv + serv ,true);
+if (THCall == "POST" && HOSTserv != "http://127.0.0.1:3000/")
+	xhr.withCredentials = true;
+xhr.send(dat);
+}
+
+function getInfo2(path, callback){
 var dat = new FormData();
 dat.append('info', path);
 if (path.length > 3701)
@@ -41,14 +70,14 @@ if (THCall == "POST" && HOSTserv != "http://127.0.0.1:3000/")
 	xhr.withCredentials = true;
 xhr.send(dat);
 
-	function affNoRep(){
+}
+
+function affNoRep(){
 		var eBod = document.getElementsByTagName('body')[0];
 		var divErr = document.createElement("div");
 		divErr.innerHTML = HOSTserv;
 		eBod.insertBefore(divErr, eBod.firstChild);
 	}
-}
-
 
 function getURLdata(){
 var urlInfo = document.location.href;
@@ -68,7 +97,7 @@ function getDateTime(dateTime){
 	
 	intlDateTime.setUTCHours(intlDateTime.getUTCHours());
 	//intlDateTime = dt.format(intlDateTime);
-	intlDateTime = intlDateTime.toLocaleString();
+	intlDateTime = intlDateTime.toLocaleString("en-CA");
 	intlDateTime = intlDateTime.substring(0, 10);
 	return intlDateTime;
 }
@@ -511,13 +540,14 @@ map.setZoom(mapZoom + p_m);
 
 function setHole(map, location) {
   var image = {url:'images/flag.png',
-			size: new google.maps.Size(50, 50),
+			size: new google.maps.Size(40, 40),
 			origin: new google.maps.Point(0,0),
-			anchor: new google.maps.Point(5, 20)};
+			anchor: new google.maps.Point(5, 20)
+			};
   var shape = {
-      coord: [1, 1, 50, 50],
+      coord: [1, 1, 40, 40],
       type: 'rect'
-  };
+};
     holeMarker = new google.maps.Marker({
         position: location,
         map: map,
@@ -702,7 +732,8 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["ldela"] = "D&eacute;lai de localisation";
 		langLbl["pplay"] = "Mes parties";
 		langLbl["macco"] = "Mon compte";
-		langLbl["niden"] = "Nouvelle identification";
+		langLbl["updat"] = "Mettre &agrave; jour";
+		langLbl["niden"] = "Cr&eacute;er un compte";
 		langLbl["aiden"] = "Authentification";
 		langLbl["email"] = "Courriel";
 		langLbl["uname"] = "Nom";
@@ -769,9 +800,9 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["S0052"] = "Courriel de confirmation envoyé à : %1.\r\nVeuillez confirmer votre inscription par le lien dans le courriel.";  //" + doc.ops[0].courriel + "
 		langLbl["S0054"] = "Courriel de récupération du mot de passe envoyé à : %1"; //+ email
 		langLbl["S0055"] = "Il n'existe aucun compte avec l'adresse de courriel : %1"; // + email
-		langLbl["S0056"] = "Un compte utilise déjà cette adresse courriel.";
+		langLbl["S0056"] = "Un compte utilise d&eacute;j&agrave; cette adresse courriel.";
 		langLbl["S0057"] = "Utilisateur inexistant.";
-		langLbl["S0058"] = "Ce compte existe déjà.";
+		langLbl["S0058"] = "Ce compte existe d&eacute;j&agrave;.";
 		langLbl["S0059"] = "Mote de passe actuel incorrect.";
 		langLbl["S0060"] = "Vous devez vous authentifier pour terminer la partie.";
 		langLbl["S0061"] = "Vous devez vous authentifier pour supprimer la partie.";
@@ -823,7 +854,8 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["ldela"] = "Localizar demora";
 		langLbl["pplay"] = "Mis juegos";
 		langLbl["macco"] = "Mi cuenta";
-		langLbl["niden"] = "Nueva cuenta";
+		langLbl["niden"] = "Crear una cuenta";
+		langLbl["updat"] = "Update";
 		langLbl["aiden"] = "Autenticaci&oacute;n";
 		langLbl["email"] = "Correo electr&oacute;nico";
 		langLbl["uname"] = "Nombre";
@@ -943,7 +975,8 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["ldela"] = "Locate delay";
 		langLbl["pplay"] = "My games";
 		langLbl["macco"] = "My account";
-		langLbl["niden"] = "New account";
+		langLbl["updat"] = "Update";
+		langLbl["niden"] = "Create account";
 		langLbl["aiden"] = "Authentication";
 		langLbl["email"] = "E-mail";
 		langLbl["uname"] = "Name";
