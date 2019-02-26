@@ -21,7 +21,7 @@ function is_touch_device() {
 
 var isTouchDevice = is_touch_device();
 
-function getInfo(path, callback){
+function getInfo2(path, callback){
 var pos = path.indexOf("?");
 if (pos != -1){
 	var serv = path.substring(0,pos);
@@ -50,7 +50,7 @@ if (THCall == "POST" && HOSTserv != "http://127.0.0.1:3000/")
 xhr.send(dat);
 }
 
-function getInfo2(path, callback){
+function getInfo(path, callback){
 var dat = new FormData();
 dat.append('info', path);
 if (path.length > 3701)
