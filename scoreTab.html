@@ -218,10 +218,9 @@ showMap(document.getElementById('Gmap'), true);
 showBlock(data);
 showHole(document.getElementById('th1'));
 
+
 window.oPicket.show();
 
-
-//dt = Date.parse('2018/09/29');
 dt = Date.parse(tabTitle.innerHTML.substring(0,10));
 getInfo("getPosition?data=" + userId + "$" + dt, getRoute);
 
@@ -326,8 +325,12 @@ if (oBlock)
 	bloc = oBlock;
 
 var blockElem = document.getElementById('blocParc');
-if (blockElem)
-	blockElem.parentNode.removeChild(blockElem);
+if (blockElem && blockElem.parentNode){
+	el = blockElem.parentNode;
+	el.parentNode.removeChild(el);
+}
+	
+//	remChilds(blockElem.parentNode);
 	
 // Course list
 var pageZone = document.getElementById('pageZone');
@@ -415,11 +418,12 @@ if (gameData.score_date != null){
 	gameBut.style.visibility = "visible";
 }
 
+var blocScore = document.getElementById('blocScore');
 if (gameData.bloc){
-	var blocScore = document.getElementById('blocScore');
 	blocScore.className = gameData.bloc;
-	blocScore.style.visibility = "visible";
 	filterBloc = gameData.bloc;
+}else{
+	blocScore.style.visibility = "hidden";
 }
 	
 
