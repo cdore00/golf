@@ -412,7 +412,7 @@ divLoad.style.display = "none";
 	}
 
 if (gameData.score_date != null){
-	tabTitle.innerHTML = (gameData.score_date) + '&nbsp;-&nbsp;<span id=\"titleSpan\">' +  showClubName(clubName, courseID) + '</span>';
+	tabTitle.innerHTML = (gameData.score_date) + '&nbsp;-&nbsp;<span id=\"titleSpan\">' +  showClubName(clubName, courseID) + '</span>&nbsp;<div id="blocScore" onclick="showBlocFilter()"></div>';
 }else{
 	tabTitle.innerHTML = getDateTime() + '&nbsp;-&nbsp;<span id=\"titleSpan\">' +  showClubName(clubName, courseID) + '</span>&nbsp;<div id="blocScore" onclick="showBlocFilter()"></div>';
 	gameBut.style.visibility = "visible";
