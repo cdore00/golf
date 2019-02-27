@@ -242,6 +242,15 @@ function piquetObject(UIid, map, holeMark, posMarker){
 		map: map
 	  });	
 
+	this.resize = function (fStop){
+		//console.log("window.oPicket.resizeImg "); 
+		pos = getOffset(this.UIcontrol);	
+		this.UIpiquetDist.style.left = (pos.left - this.UIcontrol.offsetWidth*.35) + "px";
+		this.UIpiquetDist.style.top = (pos.top + this.UIcontrol.offsetHeight - 1) + "px";
+		if (!fStop)
+			setTimeout("window.oPicket.resize(true);", 50);
+	}
+	
 		var bodyobj = document.getElementsByTagName('body')[0];
 		var odiv = document.createElement("div");
 		odiv.setAttribute('id', 'piquetDist');
@@ -249,9 +258,7 @@ function piquetObject(UIid, map, holeMark, posMarker){
 	this.UIpiquetDist = odiv;
 		bodyobj.appendChild(odiv);
 		pos = getOffset(this.UIcontrol);	
-		odiv.style.left = pos.left + "px";
-		odiv.style.top = (pos.top + this.UIcontrol.offsetHeight - 1) + "px";
-
+		this.resize(); 
 		var odiv = document.createElement("div");
 		odiv.setAttribute('id', 'chxPiqDist');
 		odiv.innerHTML = '<a href="#" onclick="window.oPicket.setChxPiqDist(0)"><img id="imgLoc" height="16" width="16" alt="Distance de ma position" src="images/ici.png" /></a><a href="#" onclick="window.oPicket.setChxPiqDist(1)"><img id="imgLoc" height="25" width="16" alt="Distance du drapeau" src="images/flag.png" /></a>';
@@ -260,9 +267,14 @@ function piquetObject(UIid, map, holeMark, posMarker){
 		odiv.style.left = pos.left + "px";
 		odiv.style.top = (pos.top + this.UIcontrol.offsetHeight) + "px";	
 	
+	
+	
 	//	Object functions
+
 	this.show = function (){
 		this.UIcontrol.style.visibility="visible";
+		//window.addEventListener("resize", window.oPicket.resize());
+		
 		if (this.open)
 			this.UIpiquetDist.style.visibility="visible";
 	}

@@ -23,6 +23,11 @@
 <script type="text/javascript" src="misc/geoLocal.js"></script>
 
 <style>
+
+#pageZone li{
+overflow: auto;
+}
+
 #map_canvas{
 position: absolute;
  
@@ -31,17 +36,20 @@ transition: height 0.4s ease-in-out;
 width: 100%;
 }
 
-#fullMap{
-position: absolute;
-top: 35px;
-left: 16px;
-visibility: hidden;
+#fullMap {
+position: relative;
+top: 10px;
+left: 10px;
+float: left;
+display: none;
 }
 
 #mapZoom {
-top: 35px;
-right: 16px;
-visibility: hidden;
+float: right;
+position: relative;
+right: 10px;
+top: 10px;
+display: none;
 }
 
 .boutonZoom {
@@ -77,11 +85,16 @@ text-align:center;
 z-index: 110;
 }
 
+#tabTitle{
+display: contents;
+}
+
 #boutonPiquet {
-    position: absolute;
-    top: 1px;
-    right: 100px;
-	visibility: hidden;
+float: right;
+margin-right: 3em;
+visibility: hidden;
+min-width: 30px;
+min-height: 30px;
 }
 
 </style>
@@ -150,7 +163,7 @@ afficheTrou(parseInt(oTH.innerHTML))
 function afficheTrou(noTrou, Gmap){
 	holeMarker.setPosition(trouCoord[noTrou-1]);
 	map.setCenter(trouCoord[noTrou-1]);
-	document.getElementById("titleSpan").innerHTML = clubName + " - " + langLbl["hole"] + " " + noTrou;
+	document.getElementById("titleSpan").innerHTML = clubName + " - " + langLbl["hole"] + "&#8239;" + noTrou;
 }
 
 function showMap(oCtl, init){
@@ -162,15 +175,15 @@ if (map_canvas.style.height == "0px" || map_canvas.style.height == ""){
 	map_canvas.style.height = "230px";
 	elemLi.style.height = "230px";
 	oCtl.innerHTML = "&#9650;";
-	document.getElementById('mapZoom').style.visibility = 'visible';
-	document.getElementById('fullMap').style.visibility = 'visible';
+	document.getElementById('mapZoom').style.display = 'inherit';
+	document.getElementById('fullMap').style.display = 'inherit';
 	window.oPicket.show();
 }else{
 	map_canvas.style.height = "0px";
 	elemLi.style.height = "0px";
 	oCtl.innerHTML = "&#9660;";
-	document.getElementById('mapZoom').style.visibility = 'hidden';
-	document.getElementById('fullMap').style.visibility = 'hidden';
+	document.getElementById('mapZoom').style.display = 'none';
+	document.getElementById('fullMap').style.display = 'none';
 	window.oPicket.hide();
 }
 
@@ -188,6 +201,12 @@ clubName = (data[1]);
 
 getInfo("getGameTab?data=" + gameID, showGame);
 
+}
+
+function resizeImg(fs){
+	//console.log("call window.oPicket.resizeImg "); 
+	if (window.oPicket)
+	window.oPicket.resize(); 
 }
 
 function showClub(pID){
@@ -210,6 +229,7 @@ var holePos = new google.maps.LatLng(ci[0].latitude, ci[0].longitude);
 initialize(holePos);
 setHole(map, holePos);
 window.oPicket = new piquetObject('boutonPiquet', map, holeMarker, 1);
+window.onresize = resizeImg;
 
 for (var i = 0; i < nbrTrous; i++) 
 	trouCoord[i] = new google.maps.LatLng(ci[i].latitude, ci[i].longitude);
@@ -417,6 +437,7 @@ if (gameData.score_date != null){
 	tabTitle.innerHTML = getDateTime() + '&nbsp;-&nbsp;<span id=\"titleSpan\">' +  showClubName(clubName, courseID) + '</span>&nbsp;<div id="blocScore" onclick="showBlocFilter()"></div>';
 	gameBut.style.visibility = "visible";
 }
+var gameBut = document.getElementById('gameBut');
 
 var blocScore = document.getElementById('blocScore');
 if (gameData.bloc){
@@ -815,10 +836,10 @@ if (elemLi.children.length == 0){
 
 <form id="setScore">
 <ul id="pageZone" class="pageitem">
-<li id="tabTitle" class="listitem">
-
-</li>
+<li><div id="tabTitle" class="listitem"></div>
 <button id="boutonPiquet" class="itin" title="Placer un piquet" onclick="window.oPicket.getPiquet(this); return false;"><img id="imgPiquet" height="18" width="3" src="images/piquet.png" /></button>
+</li>
+
 
 <!--  <div id="piquetDist" onclick="window.oPicket.chxPiqDist(this)"></div>
 
