@@ -1,5 +1,5 @@
 
-var HOSTserv = "https://pytgolfapp-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Python 3.6.3 
+var HOSTserv = "https://cdore.ddns.net/pyt/";  // VULTR Ubuntu Server 16.04 docker Python 3.6.4
 // "http://127.0.0.1:3000/";		//Portable Windows 10 Local host Node JS v6.10.0
 // "http://192.168.2.195:3000/";    //Ubuntu workstation 16.04
 // "http://192.168.2.195:8080/";    //Ubuntu workstation 16.04 docker 1.12.6 Node JS v4.2.3  MongoDB server v3.4.9
@@ -21,7 +21,7 @@ function is_touch_device() {
 
 var isTouchDevice = is_touch_device();
 
-function getInfo2(path, callback){
+function getInfo(path, callback){
 var pos = path.indexOf("?");
 if (pos != -1){
 	var serv = path.substring(0,pos);
@@ -50,7 +50,7 @@ if (THCall == "POST" && HOSTserv != "http://127.0.0.1:3000/")
 xhr.send(dat);
 }
 
-function getInfo(path, callback){
+function getInfo2(path, callback){
 var dat = new FormData();
 dat.append('info', path);
 if (path.length > 3701)
@@ -766,7 +766,8 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 
 		langLbl["fgame"] = "Terminer la partie";
 		langLbl["rgame"] = "Supprimer la partie";
-		langLbl["scard"] = "Carte de pointage";
+		langLbl["scard"] = "Carte";
+		langLbl["sball"] = "Set balle";
 		langLbl["searc"] = "Recherche";
 		langLbl["load"] = "Chargement";
 		langLbl["mlist"] = "Liste";
@@ -888,7 +889,8 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 
 		langLbl["fgame"] = "Termina el juego";
 		langLbl["rgame"] = "Eliminar el juego";
-		langLbl["scard"] = "Tarjeta se&ntilde;alando";
+		langLbl["scard"] = "Tarjeta";
+		langLbl["sball"] = "Set bola";
 		langLbl["searc"] = "Buscando";
 		langLbl["load"] = "Cargando";
 		langLbl["mlist"] = "Lista";
@@ -1009,7 +1011,8 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		
 		langLbl["fgame"] = "Finish the game";
 		langLbl["rgame"] = "Remove the game";
-		langLbl["scard"] = "Score Card";
+		langLbl["scard"] = "Card";
+		langLbl["sball"] = "Set ball";
 		langLbl["searc"] = "Searching";
 		langLbl["load"] = "Loading";
 		langLbl["mlist"] = "List";

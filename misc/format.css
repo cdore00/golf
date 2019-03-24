@@ -153,6 +153,8 @@ min-width: 0px !important;
     z-index: 1000;
     cursor: pointer;
 	margin-right: .1em;
+	-moz-user-select: none;
+	-webkit-user-select: none;
 }
 
 #menuList, #submenu1{
@@ -268,7 +270,12 @@ box-shadow: 1px 1px 1px #ccccdd, 2px 2px 2px #aaaaaa inset;
    inset 2px 2px 2px rgba(255,255,255,0.75);
 border-radius:40px;
 background-color:#777;color:#eee;font-weight:bold;
-cursor:pointer}
+cursor:pointer
+    float: inherit;
+    /*font-size: 0.6em;*/
+	height: 50px;
+	min-width: 6em;
+}
 
 #Rechercher{display: inline-block;position: relative;float: right;}
 #okPref, #annulePref{margin: 5px 10px 0px 10px}

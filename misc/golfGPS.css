@@ -75,6 +75,7 @@ background-color:#fff;
 left:3.5em;
 z-index: 1010;
 cursor: pointer;
+background: transparent;
 }
 
 #chxPiqDist a{

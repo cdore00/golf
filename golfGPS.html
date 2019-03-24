@@ -42,7 +42,7 @@ var initialCall = true;
 var userId = null, courseID = null, currentGameID = null, calltabScore = false, clubName = "";
 var map, posMarker, holeMarker, piquetMarker, holeDist, polyLine;
 var locTimer = null, watchId = null;
-var watchLoc = 0, PositionFlag = 0;
+var watchLoc = 0, PositionFlag = 0, ballToMark = 0, GPStime = 0;
 var trou = 1, sTrou = null;
 var curScore = [];
 var blocID = 0;
@@ -89,7 +89,7 @@ var oTrajet = {
 		}
 
 		if (startLoc || accTime - this.lastSaveTime > this.saveFreq){
-			if (position.coords.accuracy < 12){
+			if (true || position.coords.accuracy < 12){
 				var dist = 0;
 				if (this.lastPos)
 					dist = calculDistance( this.lastPos, mapsLatLng);
@@ -241,7 +241,19 @@ var distance = calculDistance( posMarker.getPosition(), holeMarker.getPosition()
 		map.setCenter(myLatLng);
 		//oTrajet.savePos(position, myLatLng, d);
 	}
-oTrajet.savePos(position, myLatLng);	// To delete
+//oTrajet.savePos(position, myLatLng);	// To delete
+	if (ballToMark){
+		ballToMark = 0;
+		var oLoc = {};
+		oLoc.lat=position.coords.latitude;
+		oLoc.lng=position.coords.longitude;
+		oLoc.acc=position.coords.accuracy;
+		oLoc.time=position.timestamp;	
+		var info = userId + "$" + GPStime + "$" + oLoc.time + "$" + oLoc.lat + "$" + oLoc.lng + "$" + oLoc.acc + "$2";
+		getInfo("setBallPosition?data=" + info, markedBall);
+	}
+console.log("Pos=" + position);		
+
 	holeDist.innerHTML = distance + '<p id="accu">' + precision + '&apos;</p>';
 
 	if (piquetMarker.getVisible())
@@ -329,57 +341,6 @@ trou = noTrou;
 
 }
 
-/*
-function getPiquet(bPiq){
-var path = polyLine.getPath();
-var imgPiquet = document.getElementById('imgPiquet');
-var piquetDist = document.getElementById('piquetDist');
-var chxPiquetDist = document.getElementById('chxPiqDist');
-//alert(clicListener);
-  if (clicListener){
-	google.maps.event.removeListener(clicListener);
-	clicListener = null;
-	piquetDist.style.visibility="hidden";
-	chxPiquetDist.style.visibility="hidden";
-	path.clear();
-    piquetMarker.setVisible(false);
-	imgPiquet.width="3";
-  }else{
-	imgPiquet.width="16";
-	piquetDist.innerHTML = '';
-	piquetDist.style.left = bPiq.offsetLeft + "px";
-	piquetDist.style.visibility="visible";
-	clicListener = google.maps.event.addListener(map, 'click', addLatLng);
-	chxPiqDist(piquetDist);
-  }
-}
-
-function addLatLng(event) {
-	movePiquet(event.latLng);
-}
-function movePiquet(latLng){
-	piquetMarker.setPosition(latLng);
-	piquetMarker.setVisible(true);
-}
-function traceLine(piquetLatLng){
-var path = polyLine.getPath();
-var piquetDist = document.getElementById('piquetDist');
-  path.clear();
-  path.push(piquetLatLng);
-  
-  if (chxDistPiq == 0){
-	path.push(posMarker.getPosition());
-	piquetDist.innerHTML = calculDistance(piquetLatLng, posMarker.getPosition());
-  }else{
-	path.push(holeMarker.getPosition());
-	piquetDist.innerHTML = calculDistance(piquetLatLng, holeMarker.getPosition());
-  }
-}
-function stopPiquetDrag(){
-traceLine(piquetMarker.getPosition());
-//alert("Move");
-}
-*/
 
 function getLoc(bLoc){
 //var locForm = document.getElementById('locForm');
@@ -389,15 +350,6 @@ var boutonLoc = document.getElementById('boutonLoc');
 boutonLoc.className='itin';
 posMarker.setIcon(image);
 	clearGeo();
-	
-/*
-	if ( locForm.style.visibility == "visible"){
-		locForm.style.visibility="hidden";
-	}else{
-		locForm.style.left = (bLoc.offsetLeft + bLoc.offsetWidth - locForm.offsetWidth ) + "px";
-		locForm.style.visibility="visible";
-	}
-*/
 
 window.oMenu.show();
 	
@@ -423,21 +375,6 @@ imgLoc.src=iciOn.src;
 localiser(watchLoc);
 }
 
-/*
-function chxPiqDist(oPiqDist){
-var chxPiqD = document.getElementById('chxPiqDist');
-chxPiqD.style.left = oPiqDist.offsetLeft + "px";
-chxPiqD.style.visibility="visible";
-}
-
-function setChxPiqDist(chx){
-var chxPiqD = document.getElementById('chxPiqDist');
-chxDistPiq = chx;
-chxPiqD.style.visibility="hidden";
-if (piquetMarker.getVisible())
-	traceLine(piquetMarker.getPosition());
-}
-*/
 function showScoreFrame(nScore){
 var layerScore = document.getElementById('showScore');
 var scoreHole = document.getElementById('scoreHole');
@@ -451,7 +388,7 @@ if (!(nScore===false))
 var hPar = eval("trouNormale.T" + sTrou);
 scoreHole.innerHTML = "Trou " + sTrou + " par " + hPar;
 
-console.log("showScoreFrame actPlayer=" + actPlayer);
+//console.log("showScoreFrame actPlayer=" + actPlayer);
 setHoleScore(hPar, userScore(actPlayer));
 
 if (initialCall){	
@@ -590,12 +527,12 @@ var laN = 0, ts = 0;
 if (initial)
 		scoreOkInds[0].style.display = "inline-block";
 		
-if (gData[0].bloc){
+if (gData[0] && gData[0].bloc){
 	document.getElementById(gData[0].bloc).click();
 	document.getElementById("blocScore").className = gData[0].bloc;
 }
 
-if (gData.length > 0){
+if (gData[0] && gData.length > 0){
 	var oth = gData[0].others;
 	//if (initial){
 		//scoreOkInds[0].style.display = "inline-block";
@@ -915,7 +852,7 @@ if (!playerData){
 	selectUser(iElem);
 	editUser(iElem);
 }
-console.log("addUse actPlayer=" + actPlayer);
+//console.log("addUse actPlayer=" + actPlayer);
 }
 
 function showTrajet(){
@@ -930,7 +867,20 @@ localWindow.document.close();
 window.oMenu.close();
 }
 
+function markBall(){
+closeScore();
+if (confirm("Mark Ball ?")){
+	ballToMark = 1;
+}
+}
 
+function markedBall(res){
+
+if (res.ok)
+	GPStime = res.startTime;
+else
+	alert(res.message)
+}
  
 // -->
 </script> 
@@ -940,11 +890,13 @@ window.oMenu.close();
 #prefOptions, #identOptions {
     font-size: inherit;
 	}
+/*
 .bouton {
     float: inherit;
     font-size: 0.6em;
 	height: 50px;
-}
+	min-width: 6em;
+}*/
  
  a{
  text-decoration:none;
@@ -1104,9 +1056,11 @@ visibility: hidden;
 </div>
 
 <div>
-<button id="okPref" class="bouton" type="button" onClick="saveScore(); return false;">&nbsp;<text id="_okok">Ok</text>&nbsp;</button><button id="annulePref" class="bouton" type="button" onClick="closeScore(); return false;">&nbsp;<text id="_canc">Cancel</text>&nbsp;</button>
+<button id="okPref" class="bouton" type="button" onClick="saveScore(); return false;">&nbsp;<text id="_okok">Ok</text>&nbsp;</button>
+<button id="annulePref" class="bouton" type="button" onClick="closeScore(); return false;">&nbsp;<text id="_canc">Cancel</text>&nbsp;</button>
 </br>
-<button id="tabScore" class="bouton" type="button" onClick="tableauScore(); return false;">&nbsp;<text id="scard">Carte de pointage</text>&nbsp;</button>
+<button id="tabScore" class="bouton" type="button" onClick="tableauScore(); return false;">&nbsp;<text id="scard">Carte</text>&nbsp;</button>
+<button id="butMarkBall" class="bouton" type="button" onClick="markBall(); return false;">&nbsp;<text id="sball">Set</text>&nbsp;</button>
 </div>
 </form>
 </div>

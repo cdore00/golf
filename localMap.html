@@ -52,7 +52,11 @@ setFontSize();
 paramDate = getURLdata();
 initialize();
 if (paramDate)
-	showMarker(true);
+	var paramList = paramDate.split("$")
+	if (paramList.length > 1)
+		getInfo("getPosition?data=" + paramList[0] + "$" + paramList[1] + "$1", getPosList);
+	else
+		showMarker(true);
 }
 
 function savedPos(res){
@@ -93,7 +97,7 @@ var speedTime = {
 			sp = Math.round(sp * 1.609344);
 		}
 		if (startLoc || accTime - this.lastSaveTime > this.saveFreq){
-			if (position.coords.accuracy < 50){
+			if (position.coords.accuracy < 500){
 				var oLoc = {};
 				oLoc.lat=position.coords.latitude;
 				oLoc.lng=position.coords.longitude;
@@ -226,6 +230,8 @@ if (!mmXY.maxX){
     var loc = locations[i];
     var myLatLng = new google.maps.LatLng(loc.lat, loc.lng);
 	var col = (loc.hot) ? "#f99":"#fff";
+	if (loc.hot && loc.hot == 2)
+		col = "#99f";
     var marker = new google.maps.Marker({
         position: myLatLng,
         //map: map,
