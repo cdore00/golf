@@ -256,7 +256,7 @@ margin:3px
 .selScore td:hover{
 transition: color 0.9s ease 0s;
 transition: background 0.9s ease 0s;
-background: #999 ;
+background: #bbb ;
 color: #ff1822;
  } 
  
@@ -270,7 +270,7 @@ text-shadow: 2px 2px #bbb;
  
 .selectedOpt{
  color: #ff1822 !important;
- background: #999 !important;
+ background: #bbb !important;
  }
  
 #scoreInds{

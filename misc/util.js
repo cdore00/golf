@@ -768,7 +768,6 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["rgame"] = "Supprimer la partie";
 		langLbl["scard"] = "Carte";
 		langLbl["sball"] = "Set balle";
-		langLbl["searc"] = "Recherche";
 		langLbl["load"] = "Chargement";
 		langLbl["mlist"] = "Liste";
 		langLbl["mmaps"] = "Carte";
@@ -891,7 +890,6 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["rgame"] = "Eliminar el juego";
 		langLbl["scard"] = "Tarjeta";
 		langLbl["sball"] = "Set bola";
-		langLbl["searc"] = "Buscando";
 		langLbl["load"] = "Cargando";
 		langLbl["mlist"] = "Lista";
 		langLbl["mmaps"] = "Mapa";
@@ -1013,7 +1011,6 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["rgame"] = "Remove the game";
 		langLbl["scard"] = "Card";
 		langLbl["sball"] = "Set ball";
-		langLbl["searc"] = "Searching";
 		langLbl["load"] = "Loading";
 		langLbl["mlist"] = "List";
 		langLbl["mmaps"] = "Map";
