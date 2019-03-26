@@ -60,8 +60,8 @@ if (paramDate)
 }
 
 function savedPos(res){
-if (showST)
-	window.oTip.addMess('<text class="fontGreen">Saved</text>');
+//if (showST)
+	window.oTip.show('<text class="fontGreen">Saved</text>', false, false, 300, -60);
 }
 
 
@@ -198,17 +198,53 @@ function setMyPosition(map, lat, lng) {
 		})
 }
 
-function setMarkers(map, locations, mmXY) {
-
 	function pinSymbol(color) {
 		return {	//path: 'M 0,0 -1,-2 V -43 H 1 V -2 z M 1,-40 H 30 V -20 H 1 z',
-					  path: 'M 0,0 -1,-2 V -23 H 1 V -2 z M 1,-20 H 30 V -5 H 1 z',
-			fillColor: color,
-			fillOpacity: 1,
-			labelOrigin: new google.maps.Point(15, -12),
-			scale: 1.5,
+					  "path": "M 0,0 -1,-2 V -23 H 1 V -2 z M 1,-20 H 30 V -5 H 1 z",
+			"fillColor": color,
+			"fillOpacity": 1,
+			"labelOrigin": new google.maps.Point(15, -12),
+			"scale": 1.5,
 	   };
 	}
+	
+	function getMarkerColor(hot){
+		col = (hot) ? "#f99":"#fff";
+		if (hot == 2)
+			col = "#99f";
+	return col;
+	}
+
+function addMarker(id, t, mLL, ac, hot){
+
+//addMarker(markers.length, loc.time, myLatLng, loc.acc, loc.hot);
+	//if (!hot)
+	var col = getMarkerColor(hot);
+    var marker = new google.maps.Marker({
+        position: mLL,
+		draggable: true,
+		title: "Acc:" + ac,
+		icon: pinSymbol(col),
+		  label: {
+			text: formatDateTime.time(t, true),
+			color: "#000",
+			fontSize: "16px",
+			fontWeight: "bold",
+		  }
+		});
+		if (savCollList.length == 1){
+			marker.id = id;
+			marker.time = t;
+			marker.hot = hot;
+			marker.addListener('click', function() {
+			  editMark(this);
+			});		
+		}
+return marker;
+}
+
+
+function setMarkers(map, locations, mmXY) {
 
 if (locations.length == 0)
 	return;
@@ -229,24 +265,8 @@ if (!mmXY.maxX){
   for (var i = 0; i < locations.length; i++) {
     var loc = locations[i];
     var myLatLng = new google.maps.LatLng(loc.lat, loc.lng);
-	var col = (loc.hot) ? "#f99":"#fff";
-	if (loc.hot && loc.hot == 2)
-		col = "#99f";
-    var marker = new google.maps.Marker({
-        position: myLatLng,
-        //map: map,
-		draggable: true,
-		title: "Acc:" + loc.acc,
-		//label: i + '', 
-		icon: pinSymbol(col),
-		  label: {
-			text: formatDateTime.time(loc.time, true),
-			color: "#000",
-			fontSize: "16px",
-			fontWeight: "bold",
-		  }
-		});
-	markers[markers.length] = marker;
+	
+	markers[markers.length] = addMarker(markers.length, loc.time, myLatLng, loc.acc, loc.hot);
 	mmXY.maxX = Math.max(mmXY.maxX, loc.lat);
 	mmXY.minX = Math.min(mmXY.minX, loc.lat);
 	mmXY.maxY = Math.max(mmXY.maxY, loc.lng);
@@ -262,10 +282,11 @@ for (var i = 0; i < markers.length; i++) {
 }
 }
 
-function clearMarkers(){
+function clearMarkers(noClear){
 path.clear();
 setMapOnAll(null);
-markers = [];
+if (!noClear)
+	markers = [];
 }
 
 function showRoute(){
@@ -283,6 +304,69 @@ if (userId && !showSR && THCall == "POST"){
 	showMarker(true);
 }
 }
+
+function editMark(oMark){
+var divLayer = document.getElementById("prefLayer");
+var htmlCode = '<h2>Édit marker</h2><form action="#">';
+
+//htmlCode += ' <svg height="210" width="400">  <path d="M150 0 L75 200 L225 200 Z" /> </svg> ';
+
+htmlCode += '<div>' + formatDateTime.datetime(oMark.time) + ' <img onclick="saveMarker(false, ' + oMark.id + ')" src="images/delete.png" width="16" height="16"></br>';
+htmlCode += '<input id="mId" type="hidden" value="' + oMark.id + '" />'
+htmlCode += '<input id="lat" type="hidden" value="' + oMark.position.lat() + '" />'
+htmlCode += '<input id="lng" type="hidden" value="' + oMark.position.lng() + '" />'
+htmlCode += '<input id="time" type="hidden" value="' + oMark.time + '" />'
+htmlCode += '<div>';
+htmlCode += '<input id="chxW" type="radio" ' + ((oMark.hot == "0") ? "checked":'') + ' name="typeHot" value="0"><label for="chxW"><svg height="40" width="60"><polyline points="0,5 0,5 50,5 50,30 0,30 0,0" style="fill:#fff;stroke:black;stroke-width:1" /><rect width="3" height="39" style="fill:rgb(0,0,255);stroke-width:1;stroke:rgb(0,0,0)" /></svg></label></input>';
+htmlCode += '<input id="chxR" type="radio" ' + ((oMark.hot == "1") ? "checked":'') + ' name="typeHot" value="1"><label for="chxR"><svg height="40" width="60"><polyline points="0,5 0,5 50,5 50,30 0,30 0,0" style="fill:#f99;stroke:black;stroke-width:1" /><rect width="3" height="39" style="fill:rgb(0,0,255);stroke-width:1;stroke:rgb(0,0,0)" /></svg></label></input>';
+htmlCode += '<input id="chxB" type="radio" ' + ((oMark.hot == "2") ? "checked":'') + ' name="typeHot" value="2"><label for="chxB"><svg height="40" width="60"><polyline points="0,5 0,5 50,5 50,30 0,30 0,0" style="fill:#99f;stroke:black;stroke-width:1" /><rect width="3" height="39" style="fill:rgb(0,0,255);stroke-width:1;stroke:rgb(0,0,0)" /></svg></label></input>';
+htmlCode += '</div>';
+htmlCode += '<input class="bouton" type="button" onclick="saveMarker(this.form)" value="Ok"/><input class="bouton" type="button" onclick="saveMarker(); return false;" value="Cancel"/></form>';
+divLayer.innerHTML = htmlCode;
+divLayer.style.visibility="visible";
+//alert(oMark.time);
+return false;
+}
+
+function saveMarker(oForm, del){
+var divLayer = document.getElementById("prefLayer");
+var st = savCollList[0].startTime
+	function finfInd(id){
+		for (var i=0; i < markers.length; i++){
+			if (markers[i].id == id){
+				break;}
+		}
+		return i;}
+		
+if (oForm){
+	hotVal = parseInt(oForm.typeHot.value)
+	m = markers[finfInd(oForm.mId.value)];
+	m.hot = hotVal;
+	p = pinSymbol(getMarkerColor(hotVal));
+	ot = {"text": formatDateTime.time(oForm.time.value, true), "color": "#000","fontSize": "16px", "fontWeight": "bold" }
+	m.setIcon(p, {"label": ot})
+
+	var info = userId + "$" + st + "$" + oForm.time.value + "$" + oForm.lat.value + "$" + oForm.lng.value + "$1$" + hotVal + "$" + oForm.time.value;
+	getInfo("setPosition?data=" + info, savedPos);
+}else{
+	if (del !== false){
+		del = finfInd(del);
+		if (confirm("Delete marker: \n" + formatDateTime.datetime(markers[del].time) + " ?")){
+			var info = userId + "$" + st + "$" + markers[del].time ;
+			getInfo("delPosition?data=" + info, savedPos);	
+			markers[del].setMap(null);
+			d = markers.splice(del,1);
+		}
+	}
+}
+if (oForm || del){
+	clearMarkers(true)
+	setMapOnAll(map)
+}
+divLayer.style.visibility="hidden";
+return false;
+}
+
 
 function showMarker(isShow, oForm){
 var optSR = document.getElementById("optSR");
@@ -344,6 +428,7 @@ if (oPos && oPos.length > 1 && oPos[0].locList){
 	divLayer.innerHTML = htmlCode;
 	divLayer.style.visibility="visible";
 }else
+	//startList[0] = oPos;
 	getRoute();
 }
 

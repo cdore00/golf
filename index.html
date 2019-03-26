@@ -784,13 +784,13 @@ display: none;
 		</div>
 		    <div class="formrow1">
 				<div id="locDiv">
-				<span id="localisation"  onmouseover="tooltip.show();" title="Localisation actuelle">
+				<span id="localisation"  class="unselectable" onmouseover="tooltip.show();" title="Localisation actuelle">
 					<text id="locat">Localisation</text>&nbsp;&nbsp;<img id="iciLogo" alt="localisation"  height="14" width="14" src="images/ici.png" />
 				</span>
-				<span id="localiser">
+				<span id="localiser"   class="unselectable">
 					<a id="hrefLocaliser" href="javascript:localiser();"><text id="local">Localiser</text> &#63;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
 				</span>
-				<span id="localise" onClick="clearGeo(true);">
+				<span id="localise" class="unselectable" onClick="clearGeo(true);">
 					<text id="loca.">Localise</text>...&nbsp;&nbsp;&nbsp;&nbsp;
 					<img alt="localise" style="margin-left: -10px;" height="16" width="16" src="images/localise.gif" />
 				</span>
