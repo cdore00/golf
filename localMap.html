@@ -317,11 +317,11 @@ htmlCode += '<input id="lat" type="hidden" value="' + oMark.position.lat() + '" 
 htmlCode += '<input id="lng" type="hidden" value="' + oMark.position.lng() + '" />'
 htmlCode += '<input id="time" type="hidden" value="' + oMark.time + '" />'
 htmlCode += '<div>';
-htmlCode += '<input id="chxW" type="radio" ' + ((oMark.hot == "0") ? "checked":'') + ' name="typeHot" value="0"><label for="chxW"><svg height="40" width="60"><polyline points="0,5 0,5 50,5 50,30 0,30 0,0" style="fill:#fff;stroke:black;stroke-width:1" /><rect width="3" height="39" style="fill:rgb(0,0,255);stroke-width:1;stroke:rgb(0,0,0)" /></svg></label></input>';
-htmlCode += '<input id="chxR" type="radio" ' + ((oMark.hot == "1") ? "checked":'') + ' name="typeHot" value="1"><label for="chxR"><svg height="40" width="60"><polyline points="0,5 0,5 50,5 50,30 0,30 0,0" style="fill:#f99;stroke:black;stroke-width:1" /><rect width="3" height="39" style="fill:rgb(0,0,255);stroke-width:1;stroke:rgb(0,0,0)" /></svg></label></input>';
-htmlCode += '<input id="chxB" type="radio" ' + ((oMark.hot == "2") ? "checked":'') + ' name="typeHot" value="2"><label for="chxB"><svg height="40" width="60"><polyline points="0,5 0,5 50,5 50,30 0,30 0,0" style="fill:#99f;stroke:black;stroke-width:1" /><rect width="3" height="39" style="fill:rgb(0,0,255);stroke-width:1;stroke:rgb(0,0,0)" /></svg></label></input>';
+htmlCode += '<input id="chxW" type="radio" ' + ((oMark.hot == "0") ? "checked":'') + ' name="typeHot" value="0"><label for="chxW"><svg height="40" width="60"><polyline points="0,5 0,5 50,5 50,30 0,30 0,0" style="fill:#fff;stroke:black;stroke-width:1" /><rect width="3" height="39" style="fill:#fff;stroke-width:1;stroke:rgb(0,0,0)" /></svg></label></input>';
+htmlCode += '<input id="chxR" type="radio" ' + ((oMark.hot == "1") ? "checked":'') + ' name="typeHot" value="1"><label for="chxR"><svg height="40" width="60"><polyline points="0,5 0,5 50,5 50,30 0,30 0,0" style="fill:#f99;stroke:black;stroke-width:1" /><rect width="3" height="39" style="fill:#f99;stroke-width:1;stroke:rgb(0,0,0)" /></svg></label></input>';
+htmlCode += '<input id="chxB" type="radio" ' + ((oMark.hot == "2") ? "checked":'') + ' name="typeHot" value="2"><label for="chxB"><svg height="40" width="60"><polyline points="0,5 0,5 50,5 50,30 0,30 0,0" style="fill:#99f;stroke:black;stroke-width:1" /><rect width="3" height="39" style="fill:#99f;stroke-width:1;stroke:rgb(0,0,0)" /></svg></label></input>';
 htmlCode += '</div>';
-htmlCode += '<input class="bouton" type="button" onclick="saveMarker(this.form)" value="Ok"/><input class="bouton" type="button" onclick="saveMarker(); return false;" value="Cancel"/></form>';
+htmlCode += '<input class="bouton" type="button" onclick="saveMarker(this.form)" value="Ok"/><input class="bouton" type="button" onclick="saveMarker(false,false); return false;" value="Cancel"/></form>';
 divLayer.innerHTML = htmlCode;
 divLayer.style.visibility="visible";
 //alert(oMark.time);
