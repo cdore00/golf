@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Simple Datepicker Calendar Example</title>
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Style.css -->
+
+        <!-- Datepicker.css -->
+        <link rel="stylesheet" href="misc/datepicker.css?v2">
+
+        <!-- Datepicker.js -->
+        <script src="misc/util.js"></script>
+		<script src="misc/dateP.js?v2"></script>
+    </head>
+    <body>
+        <h1 style="margin:250px auto 30px auto">Simple Datepicker Calendar Example</h1>
+        <input type="text" id="datepicker" onchange="console.log(d.getDate())" autocomplete="off"></input>&#128197;
+
+<!-- CSSScript Demo Page -->
+
+        <!-- Datepicker initialization -->
+        <script>
+            const d = new Datepicker(document.getElementById("datepicker"));
+            d.config({
+
+                //disableddays: d => {return(d.getDay() > 0 && d.getDay() < 6)},
+                //format: d => {return(months_short[d.getMonth()] + " " + d.getDate())}
+				format: d => {return getDateTime(d)}
+            });
+        </script>
+
+    </body>
+</html>

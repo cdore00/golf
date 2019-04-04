@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Language" content="fr"/>
+<meta name="contactcity" content="Quebec"/>
+<meta name="contactprovince" content="Quebec"/>
+<meta name="contactcountry" content="Canada"/>
+<title>Poke window</title>
+<meta name="viewport" content="minimum-scale=1.0, width=device-width, user-scalable=yes" />
+
+<script type="text/javascript"> 
+<!--
+var oWin, fopo, oPokeWind, maxList = 0;
+
+function initPage(){
+fopo = document.getElementById('fPoke');
+fConfig = document.getElementById('fConfig');
+
+oWin = window.opener;
+//alert(oWin);
+var listItem = localStorage.getItem("pokeList")
+if (listItem ){
+	arrExp = JSON.parse(listItem);
+	refreshComboList(fopo.oComboList)
+	selInList(fopo.oComboList)
+}
+
+oConf = JSON.parse(localStorage.getItem("pokeConf"));
+	fopo.sEng.selectedIndex = 0;
+	fConfig.defEng.selectedIndex = 0;
+	fConfig.defList.value = 25;
+	maxList = 25;
+if (oConf){
+	if (oConf.defEng){
+		fopo.sEng.selectedIndex = oConf.defEng;
+		fConfig.defEng.selectedIndex = oConf.defEng;
+	}
+	if (oConf.defList != ""){
+		fConfig.defList.value = oConf.defList;
+		maxList = parseInt(oConf.defList);
+	}
+}
+
+}
+
+function selInList(oLB){
+if (oLB.selectedIndex != -1)
+	fopo.oTextBox.value = oLB.options[oLB.selectedIndex].innerHTML;
+}
+
+function showPoke(){
+oPokeWind = window.open("command.html", "pokeWin", "width=490,height=170,resizable=0,scrollbars=no,status=1");
+}
+
+function rechercher(){
+var exp = fopo.oTextBox.value;
+
+	if (!window.opener){
+		oWin = window.open("", "pokeNewWin", "location=0");
+		//setTimeout(showPoke(), 3000);
+	}
+		
+		//window.open("poke.html", "pokeWin", "status=0");
+	oWin.location = fopo.sEng.options[fopo.sEng.selectedIndex].value + exp;
+
+	var index = arrExp.indexOf(exp);
+	if (index > -1) {
+	  arrExp.splice(index, 1);
+	}
+	arrExp[arrExp.length] = exp;
+	if (arrExp.length > maxList){
+		x=1;
+		arrExp.splice(0, 1);
+	}
+		
+		
+	
+	refreshComboList(fopo.oComboList);
+}
+
+function refreshComboList(oCombo){
+while (oCombo.childNodes.length > 0) {
+    oCombo.removeChild(oCombo.childNodes[0]);
+}
+for(var i = arrExp.length - 1; i >= 0; i--){
+	var newNode = document.createElement("option");
+	newNode.innerHTML = arrExp[i];
+	fopo.oComboList.appendChild(newNode);
+}
+}
+
+function delSel(){
+var exp = fopo.oTextBox.value;
+var index = arrExp.indexOf(exp);
+if (index > -1) {
+  arrExp.splice(index, 1);
+}
+fopo.oTextBox.value = "";
+refreshComboList(fopo.oComboList);
+}
+
+function config(){
+var divConfig = document.getElementById('divConfig');
+var divPoke = document.getElementById('divPoke');
+divConfig.style.display = "inherit";
+divPoke.style.visibility = "hidden";
+return false;
+}
+
+function saveConfig(of){
+oConf = {};
+
+oConf.defList = of.defList.value;
+oConf.defEng = of.defEng.selectedIndex;
+if (of.defList.value != "")
+	maxList =  parseInt(of.defList.value);
+localStorage.setItem("pokeConf", JSON.stringify(oConf));
+cancelConfig();
+}
+
+function cancelConfig(){
+var divConfig = document.getElementById('divConfig');
+var divPoke = document.getElementById('divPoke');
+divConfig.style.display = "none";
+divPoke.style.visibility = "visible";
+return false;
+}
+
+function saveContext(){
+
+//alert(arrExp);
+localStorage.setItem("pokeList", JSON.stringify(arrExp));
+
+}
+
+// -->
+</script> 
+
+<style>
+
+#sEng{
+float: right;
+}
+
+#oTextBox{
+width: 340px;
+position: absolute; 
+top: 1px; 
+left: 1px; 
+z-index: 2;
+border:none;
+}
+
+#oComboList{
+position: absolute;
+top: 0px; 
+left: 0px; 
+z-index: 1; 
+width: 365px;
+}
+
+#oComboBox{
+position: relative;
+}
+
+#butSubmit, #butDel, #butConfig{
+position: relative;
+left: 370px;
+}
+
+#butSubmit{
+top: -5px; 
+}
+
+#butDel{
+height: 16px;
+}
+#butConfig{
+height: 18px;
+}
+
+#divConfig{
+display: none;
+width: 100%;
+height: 100%;
+zindex:10;
+text-align: center;
+/*background: #ccc;*/
+}
+
+.divLabel, .divData{
+display: inline;
+width: 50%;
+}
+
+.divLabel{
+text-align: right;
+}
+
+.divData{
+text-align: left;
+}
+
+</style>
+
+</head>
+
+<body onload="initPage()"  onunload="saveContext()">
+<div>
+
+
+<div id="divConfig">
+<h3>Préférences</h3>
+<form id="fConfig">
+
+<div>
+<div class="divLabel">
+Maximum search items list:
+</div>
+<div class="divData">
+<input type="text" id="defList" maxlength="2" size="2"/>
+</div>
+</div>
+
+<div>
+<div class="divLabel">
+Default search engine:
+</div>
+<div class="divData">
+<select id="defEng">
+<option value="0">Ask</option>
+<option value="1">Baidu</option>
+<option value="2">Bing</option>
+<option value="3">DuckDuckGo</option>
+<option value="4">Google</option>
+<option value="5">Web Crawler</option>
+<option value="6">Yahoo</option>
+<option value="7">Yandex.ru</option>
+</select>
+</div>
+</div>
+</br>
+<input id="butOk" type="submit" onClick="saveConfig(this.form)" value="Ok"/>
+<input id="butCancelt" type="button" onClick="cancelConfig()" value="Annuler"/>
+
+</form>
+
+</div>
+
+
+<div id="divPoke">
+<form id="fPoke">
+<!--
+<input id="Mots" class="inputtext" type="text" size="40" maxlength="100" value=""/>
+<input id="soum" type="button" onClick="rechercher()" value="Search"/>
+<input id="butConfig" type="button" style="background-image:url('reglages.png')"/>
+<input id="butConfig" type="image" onClick="config()" src="reglages.png"/>
+// -->
+<div id="oComboBox">
+<input type="text" id="oTextBox" tabindex="2" />
+<div style="position: absolute;" id="filterDropdownDiv">
+	<select id="oComboList" tabindex="1000" onchange="selInList(this);" >
+	</select>
+	
+</div>
+
+<input id="butSubmit" type="submit" onClick="rechercher(); return false;" value="Search"/>
+
+<input id="butDel" type="image" onClick="delSel(); return false;" src="images/delete.png"/>
+<input id="butConfig" type="image" onClick="config(); return false;" src="images/reglages.png"/>
+
+</div>
+
+
+<select id="sEng" size="8">
+<option value="https://www.ask.com/web?q=">Ask</option>
+<option value="https://www.baidu.com/s?wd=">Baidu</option>
+<option value="https://www4.bing.com/search?q=">Bing</option>
+<option value="https://duckduckgo.com/?q=">DuckDuckGo</option>
+<option value="https://www.google.com/search?q=">Google</option>
+<option value="http://www.webcrawler.com/serp?q=">Web Crawler</option>
+<option value="https://search.yahoo.com/search;?p=">Yahoo</option>
+<option value="https://www.yandex.ru/search/?text=">Yandex.ru</option>
+</select>
+
+
+</form>
+</div>
+
+</div>
+ </body>	 
+ </html>

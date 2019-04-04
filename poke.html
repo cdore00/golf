@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Language" content="fr"/>
+<meta name="contactcity" content="Quebec"/>
+<meta name="contactprovince" content="Quebec"/>
+<meta name="contactcountry" content="Canada"/>
+<title>Poke window</title>
+<meta name="viewport" content="minimum-scale=1.0, width=device-width, user-scalable=yes" />
+
+<script type="text/javascript"> 
+<!--
+var oWin, fopo, oPokeWind;
+var arrExp = [];
+
+function initPoke(){
+fopo = document.getElementById('fPoke');
+oPokeWind = window.open("command.html", "", "width=490,height=170,resizable=no,scrollbars=0, location=0, status=1");
+//alert("ok");
+
+}
+
+
+// -->
+</script> 
+
+<style>
+
+#oTextBox{
+width: 340px;
+position: absolute; 
+top: 1px; 
+left: 1px; 
+z-index: 2;
+border:none;
+}
+
+#oComboList{
+position: absolute;
+top: 0px; 
+left: 0px; 
+z-index: 1; 
+width: 365px;
+}
+
+#oComboBox{
+position: relative;
+/*top: 32px; 
+left: 430px;*/
+}
+
+#butSubmit{
+position: relative;
+left: 370px;
+margin: -5px;
+}
+
+
+
+</style>
+
+</head>
+
+<body onload="initPoke();">
+
+<form id="fPoke">
+
+<div id="oComboBox">
+<input type="text" id="oTextBox" tabindex="2" />
+        <div style="position: absolute;" id="filterDropdownDiv">
+<select id="oComboList" tabindex="1000" onchange="selInList(this);" >
+</select>
+</div>
+<input id="butSubmit" type="button" onClick="rechercher()" value="Search"/>
+</div>
+
+
+
+</form>
+
+ </body>	 
+ </html>

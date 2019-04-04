@@ -1,0 +1,279 @@
+INSTALL
+https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/#install-from-a-package
+
+WORK
+https://www.wanadev.fr/23-tuto-docker-comprendre-docker-partie1/
+
+sudo docker login
+
+sudo docker commit -a cdore_mongo mon_golf mongo_golf:v1
+
+REMOVE IMAGE
+sudo docker rmi -f cc5dfe78e8d4
+
+sudo docker tag mymongo:mongodb cdore00/mymongo
+cdore@ubuntu:~$ sudo docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+mymongo             mongodb             df09adaf813d        14 minutes ago      359MB
+cdore00/mymongo     latest              df09adaf813d        14 minutes ago      359MB
+
+sudo docker push cdore00/mymongo
+
+LIST CONTAINERS
+docker ps -l
+docker ps -a
+
+REMOVE CONTAINER
+sudo docker rm -f 085d52e6764c
+
+
+docker run --tty --interactive debian:7
+sudo docker run --tty --interactive -p 8080 --workdir /home/servDB --entrypoint "bash" --name="t_node" mynode:start_node
+sudo docker run -p 192.168.2.188:8080:8080 --name="serv" servdb:v1
+32771
+
+sudo docker create --tty --interactive --name="mongo_con" mymongo:mongodb 
+sudo docker create --tty --interactive --workdir /home/servDB --name="start_node" mynode:nodejs
+
+
+sudo docker stop mon_golf
+mon_golf
+cdore@ubuntu:~$ sudo docker ps -l
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS                      PORTS               NAMES
+77e35d04fe0e        debian:latest       "bash"              4 minutes ago       Exited (0) 13 seconds ago                       mon_golf
+cdore@ubuntu:~$ sudo docker start --attach mon_golf
+
+
+sudo docker exec -it mon_golf bash
+exit
+
+
+COPY FILE
+sudo docker cp mdump mon_golf:home
+
+CONTAINER IP
+sudo docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' 2cb3b87a0afe
+
+ssh -L 192.168.20.130:8080:172.17.0.3:8080 root@172.17.0.3
+iptables -t nat -A DOCKER -p tcp --dport 8080 -j DNAT --to-destination 172.17.0.3:8080
+iptables -t nat -A OUTPUT -p tcp -d 192.168.20.1 --dport 8080 -j DNAT --to-destination 172.17.0.3:8080
+
+sudo iptables -t nat -L -n
+Chain PREROUTING (policy ACCEPT)
+target     prot opt source               destination         
+DOCKER     all  --  0.0.0.0/0            0.0.0.0/0            ADDRTYPE match dst-type LOCAL
+
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination         
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination         
+DOCKER     all  --  0.0.0.0/0           !127.0.0.0/8          ADDRTYPE match dst-type LOCAL
+
+Chain POSTROUTING (policy ACCEPT)
+target     prot opt source               destination         
+MASQUERADE  all  --  172.17.0.0/16        0.0.0.0/0           
+
+Chain DOCKER (2 references)
+target     prot opt source               destination         
+RETURN     all  --  0.0.0.0/0            0.0.0.0/0    
+
+FLUSH RULES
+sudo iptables -F -t nat
+
+
+sudo ip addr add 192.168.10.11/24 dev docker0
+docker run -p 192.168.10.11:8080:27017 --workdir /home/servDB --entrypoint "npm start" --name="mon_g" mongo:golf
+docker run -p 192.168.10.11:8080:27017 --name="mon_g" mongo:golf
+
+LISTEN PORTS
+sudo netstat -tulpn
+
+CLEAN IMAGES ? stop CONTAINER
+#!/usr/bin/env bash
+set -euo pipefail
+
+for c in $(docker ps -a -f status=exited -f status=created -f status=dead --format="{{.ID}}"); do
+    docker rm $c
+done
+for img in $(docker images -f dangling=true --format="{{.ID}}"); do
+    docker rmi $img
+done
+
+UBUNTU IMAGES REPOSITORY
+/var/lib/docker/image/aufs/imagedb/content/sha256
+
+systemctl restart docker
+
+How PULL
+https://blog.openshift.com/remotely-push-pull-container-images-openshift/
+
+
+sudo cat /home/cdore/.docker/config.json
+	"auths": {
+		"https://index.docker.io/v1/": {
+			"auth": "Y2RvcmUwMDo5MjUwNDU="
+		}
+	}
+
+    openshift.io/image.dockerRepositoryCheck: '2017-07-14T22:07:27Z'
+	
+	    openshift.io/image.dockerRepositoryCheck: '2017-07-27T03:46:57Z'
+    openshift.io/image.insecureRepository: 'true'
+  creationTimestamp: '2017-07-14T22:07:27Z'
+  
+INSTALL DOCKER Fedora 26
+sudo dnf install docker docker-latest
+
+sudo nmap -sT -O localhost
+
+sudo ip addr add 192.168.10.11/24 dev docker0
+Fedora server essential iptables to see docker to docker IP
+sudo iptables -I INPUT 4 -i docker0 -j ACCEPT
+
+sudo qemu-img convert -f vmdk "fed26.vmdk" -O raw fed26.raw
+
+ sudo qemu-img convert -O vmdk turnkey-core.raw fedServ.vmdk
+
+dd if=turnkey-core.raw of=pd.iso
+
+MAKE SSL CERTIFICATE
+sudo mkdir /etc/nginx/ssl
+cd /etc/nginx/ssl
+
+sudo dnf install certbot
+sudo certbot certonly --webroot -w /var/www/example -d cdore.ddns.net
+sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+
+ONE LINE
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt
+
+FEDORA FIREWALL
+firewall-cmd --zone=public --permanent --add-port=25565/tcp
+
+firewall-cmd --permanent --add-service=https
+firewall-cmd --reload
+sudo firewall-cmd --list-services
+		dhcpv6-client http ssh https
+http://www.firewalld.org/documentation/man-pages/firewall-cmd.html
+
+
+LET'S ENCRYPT
+Installing Certbot
+https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-16-04
+
+DISK USAGE
+df -h --total
+
+find / -type f -name "Dockerfile"
+
+CHANGE TIMEZONE
+With ntp.service
+cat /etc/timezone
+US/Eastern
+America/New_York
+dpkg-reconfigure tzdata
+timedatectl status
+
+docker login -u cdore00 -e cdore00@yahoo.ca -p eADQdn_Wl47pgF909jrXHtWmD-JfypzVPWk7QjCSltA 172.30.208.107:5000
+
+UBUNTU CLEAN DISK
+http://www.omgubuntu.co.uk/2016/08/5-ways-free-up-space-on-ubuntu
+sudo apt-get autoremove --purge
+sudo apt-get autoremove
+IMPORTANT
+#docker volume prune -f  not working
+docker volume rm $(docker volume ls -qf dangling=true)
+docker volume ls -qf dangling=true | xargs -r docker volume rm
+
+UBUNTU Kill process
+ps -A
+kill pid
+kill -9 {pid}
+
+gdb -p <PID>
+> kill
+Kill the program being debugged? (y or n) y
+> quit
+
+SSH
+ssh-keygen -f "/home/cdore/.ssh/known_hosts" -R 45.77.155.164
+ssh root@45.77.155.164
+scp -r mdump root@45.77.155.164:/home
+
+
+PUSH IMAGE TO OPENSHIFT
+oc login https://api.starter-us-east-1.openshift.com:443
+oc login https://api.starter-us-east-1.openshift.com  // Not required at all
+oc new-app cdore00/mongo_golf:v3R
+
+PULL IMAGE FROM OPENSHIFT
+docker pull registry.access.redhat.com/rhscl/mongodb-32-rhel7
+
+oc delete all --selector app=nodegolf
+oc create -f nodegolfTR2.yaml
+oc new-app -e MONGODB_ADMIN_PASSWORD= -e MONGODB_USER=cdore -e MONGODB_PASSWORD= -e MONGODB_DATABASE=golf cdore00/mon_golf34
+export PATH=/home/bin:$PATH
+https://api.starter-us-east-1.openshift.com:443
+
+OPENSHIFT LOGIN
+oc whoami -t
+sudo docker login -u cdore00@yahoo.ca -p HNu5Cn9LlQH2jR6RhzzWMClgGzDNLVWWGzd7IHbYTBI https://registry.starter-us-east-1.openshift.com
+sudo docker push registry.starter-us-east-1.openshift.com/cdore00/nodegolf
+
+sudo docker pull registry.starter-us-east-1.openshift.com/openshift/nodejs:6
+
+
+OPENSHIFT Looking at the logs from the container before it went into the failed state:
+# oc logs -p hello-openshift-1-gn4x4
+# Copy file
+/home/bin# /home/bin/oc cp /home/bin/dumpdb mongolf34-5-6kkmz:/tmp/dumpdb
+wget "https://github.com/openshift/origin/releases/download/v3.9.0/openshift-origin-client-tools-v3.9.0-191fece-linux-64bit.tar.gz"
+tar -xvzf openshift-origin-client-tools-v3.9.0-191fece-linux-64bit.tar.gz
+
+
+SECURITY ACCES
+chmod a=rwx -R .
+sudo su
+root@ubuntu:/home/cdore#
+
+CREATE YAML
+oc new-app -e MONGODB_ADMIN_PASSWORD= cdore00/nodegolf -o yaml > nodegolf.yaml
+vi nodegolf.yaml
+oc create -f nodegolf.yaml
+
+SSH KEY
+mkdir ~/.ssh
+chmod 700 ~/.ssh
+ssh-keygen -t rsa
+or
+ssh-keygen -t rsa -b 4096
+ssh-copy-id root@45.77.155.164
+ssh root@45.77.155.164
+
+
+Piix4_SMBus: 000:00:07.3: Host SMBus controller bus not enabled
+nano /etc/modprobe.d/blacklist.conf
+ADD AT END
+blacklist i2c-piix4
+
+UBUNTU CONFIG
+
+root@vultr:/home# ls
+bin  cdore  certweb.log  default.conf  golf  ius  ius2  lou  mdump  nginx.conf
+root@vultr:/home# cd bin
+root@vultr:/home/bin# ls
+cpdb  oc
+
+\Users\cdore\AppData\Local\Programs\Python\Python36-32
+
+IMPORT IMAGE STREAM
+/home/bin/oc login https://api.starter-us-east-1.openshift.com --token=9eMkw1Fb3xilH5K3tq
+/home/bin/oc whoami -t 
+docker login -u admin -p 9eMkw1Fb3xilH5K3tq registry.starter-us-east-1.openshift.com
+docker tag cdore00/mon_golf34:v3 registry.starter-us-east-1.openshift.com/cd-serv/mon_golf34:v1
+docker push registry.starter-us-east-1.openshift.com/cd-serv/mon_golf34:v1
+
+
+sudo rm -f /var/log/nginx/*
+sudo nginx -s reload

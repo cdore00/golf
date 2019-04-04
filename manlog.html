@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
+<meta name="format-detection" content="telephone=no" />
+
+<link rel="shortcut icon" type="image/x-icon" href="images/golf.png">
+<link rel="shortcut icon" type="image/x-icon" href="images/golf.png?">
+<title>Golfs du Qu&eacute;bec</title>
+<meta content="Golf GPS, Qu&eacute;bec, Canada, Golf du Qu&eacute;bec, Clubs de golf au Qu&eacute;bec, Qu&eacute;bec golf" name="keywords" />
+<meta content="R&eacute;pertoire des clubs de golf du Qu&eacute;bec. GPS golf." name="description" />
+<link href="misc/init.css" rel="stylesheet" media="screen" type="text/css" />
+<link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
+<link href="misc/datepicker.css" rel="stylesheet">
+
+<script type="text/javascript" src="misc/util.js"></script>
+<script src="misc/dateP.js"></script>
+<script type="text/javascript" language="Javascript">
+<!--
+
+var userId = null, user_id = null, user_mail = null, user_name = null;
+
+function initPage(){
+var formPref = document.getElementById('formPref');
+if (GetCookie("userRole") != "ADM")
+	document.location.href = "index.html";
+else{
+	window.oMenu = new menuObject(document.getElementById('butMenu'));
+	formPref.style.visibility="visible";
+}
+
+userId = GetCookie("userID");
+window.oTip = new messTipObject();
+setFontSize();
+
+getInfo("getLogState?", showState);
+
+}
+
+function showState(res){
+var lastArch = document.getElementById('lastArch');
+
+lastArch.innerHTML = res.mess;
+
+}
+
+function saved(res){
+if (res && res.mess)
+	window.oTip.show('<text class="fontGreen">' + res.mess + '</text>', false, false, 300, -4);
+else
+	window.oTip.show('<text class="fontGreen">Saved</text>', false, false, 300, -4);
+}
+
+function showMenu(){
+	window.oMenu.show();
+}
+
+function showOptions(menuOpt){
+var divOptions = document.getElementById('divOptions');
+
+if (divOptions.style.height != "0px" && divOptions.style.height != ""){
+	divOptions.style.height = "0px";
+	menuOpt.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;" + langLbl["mopti"];
+	localStorage.setItem('optLogOpen', 'false');
+}else{
+	menuOpt.innerHTML = "&#10004;&nbsp;" + langLbl["mopti"];
+	localStorage.setItem('optLogOpen', 'true');
+	adjDivOpt(divOptions)
+	}
+}
+
+function adjDivOpt(divOptions){
+var prefReq = document.getElementById('prefReq');
+var adj = prefReq.offsetTop + prefReq.offsetHeight - 32;
+if (divOptions && (divOptions.style.height == "0px" || divOptions.style.height == "")){
+	var fur = navigator.userAgent;
+	divOptions.style.height = adj + "px";	
+}else{
+	var divOptions = document.getElementById('divOptions');
+	if (divOptions && divOptions.style.height != "0px" && divOptions.style.height != "")
+		divOptions.style.height = adj + "px";	
+}
+}
+
+function popDtPicker(oTxtDt){
+if (!window.dtPicker){
+	window.dtPicker = new Datepicker(document.getElementById(oTxtDt));
+	//window.dtPicker.config({format: d => {return getDateTime(d)}});
+}
+window.dtPicker.show(document.getElementById(oTxtDt));
+//window.dtPicker.show();
+}
+
+function archiveLog(){
+
+if (confirm("Load log ?")){
+	getInfo("loadLog", saved);
+	showMenu();
+}
+}
+
+function getLogList(){
+//getGameList
+getInfo("getLogs?a=2", listLog);
+}
+
+function listLog(oLog){
+
+x=1
+}
+
+// -->
+</script>
+
+<style>
+
+
+#butMenu{
+visibility: visible;
+}
+
+#divOptions{
+height: 0px;
+overflow: hidden;
+transition: height 0.4s ease-in-out;
+background: rgb(238, 238, 238);
+}
+
+.formItem{
+display: inline-block;
+}
+
+</style>
+
+</head>
+
+<body onload="initPage();"><a name="haut"></a>
+
+<div id="topbar" class="vert">
+<div id="leftnav"><a title="Formulaire de recherche" href="index.html"><img alt="Formulaire de recherche" height="22" width="25" src="images/home22.png" /></a></div>
+<span>LOG</span>
+<div id="fontAdjust" class="unselectable">
+<div class="divFont" onclick="setFontSize(0.2, this)"><div class="divFontSize">A</div><div class="fontLogo">&#8593;</div></div>
+<div class="divFont" onclick="setFontSize(-0.2, this)"><div class="divFontSize fontSmall">A</div><div class="fontLogo">&#8595;</div></div>
+</div>
+</div>
+<div id="duobutton">
+<a href="#" id="butMenu" title="Menu" onmouseover="showMenu()" onclick="showMenu()"><img id="logomenu" alt="Menu" src="images/menu.png" width="64" height="32"></a>
+
+<a id="lAdmin" href="admin.html" >Manage</a>
+</div>
+
+<div id="menuList">
+<a class="inputButton" href="#" onclick="archiveLog();" title="Archiver les logs.">&nbsp;&nbsp;&nbsp;&nbsp;Archiver</a>
+<a id="menuOpt" class="inputButton" href="#" onclick="showOptions(this);" title="Options de recherche.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mopti">Options</text></a>
+</div>
+
+<div>Last archive: <span id="lastArch"> 2019-04-01</span></div>
+
+<form id="formPref" action="#">
+
+<div id="divOptions" class="prefPart">
+
+	<div>
+		<div class="formItem">
+		<label for="prefDate">From :</label></br>
+			<input id="prefDate" name="prefDate" size="16" type="text" maxlength="16" value="" placeholder="yyyy-mm-dd hh:mm"/> 
+			<a id="calIcon" class="char_icon" href="javascript:popDtPicker('prefDate');">&#128197;</a>
+		</div> 
+		<div class="formItem">		
+		<label for="prefDateEnd">To :</label></br>
+			<input id="prefDateEnd" name="prefDateEnd" size="16" type="text" maxlength="16" value="" placeholder="yyyy-mm-dd hh:mm"/>
+			<a id="calIcon" class="char_icon" href="javascript:popDtPicker('prefDateEnd');">&#128197;</a>
+		</div> 
+	</div>
+	<div>		
+		<div class="formItem">		
+		<label for="prefHost">Host - IP: </label></br>
+			<input id="prefHost" name="prefHost" size="30" type="text" maxlength="255" value=""/> 
+		</div> 
+		<div class="formItem">
+		<label for="prefStat">Status: </label></br>
+		<select id="prefStat" name="prefStat"> 
+			<option value="1" selected="selected">All</option>
+			<option value="2" >Not 200</option>
+		</select>
+		</div> 
+	</div>
+	<div>	
+		<div class="formItem">	
+		<label for="prefReq">Request: </label></br>
+			<input id="prefReq" name="prefReq" size="40" type="text" maxlength="255" value=""/> 
+		</div>
+		<div class="formItem">
+		<a class="itin char_icon" href="#" onclick="getLogList(this.form);" >&#x21bb;</a>
+		</div>
+	</div>
+
+</div>
+
+<div id="p1" name="p1" class="unselectable">
+	<table id="gameList" class="cartePts">
+
+	</table>
+	<div id="divLoad"><img id="imgLoad" alt="Chargement en cours..." height="1em" width="1em" src="images/loading.gif" /></div>
+</div>
+
+<div class="space10">
+&nbsp;<input name="nextGame" class="itin" type="button" onclick="getLogList(-1)" value="_next"/>
+</div>
+
+</form>
+
+
+<div id="bottombar" class="vert">
+</div>
+
+
+<div id="copyright">
+<a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2018</a>
+</div>
+
+<div id="modalDiv"></div>
+
+
+<div id="authLayer" class="winLayer">
+<div id="divLoad"><img id="imgLoad" alt="Chargement en cours..." height="64" width="64" src="images/loading.gif" /></div>
+
+</div>
+
+</body>
+
+</html>
