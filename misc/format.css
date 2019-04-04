@@ -381,7 +381,7 @@ box-shadow: 1px 1px 1px #ccccdd, 2px 2px 2px #aaaaaa inset;
    inset 2px 2px 2px rgba(255,255,255,0.75);
    background-color: #ddd;
    display: inline-block;
-   padding: 2px;
+   /*padding: 2px;*/
    text-decoration: none;}
 
 .itinDetail{visibility:hidden;}

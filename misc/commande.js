@@ -4,6 +4,9 @@ oc login https://api.starter-us-east-1.openshift.com
 oc project cd-serv
 oc status
 
+oc delete all -l app=django-ex
+
+
 https://github.com/cdore00/servDB.git
 
 
@@ -151,15 +154,19 @@ db.createUser({user:"tuser",pwd:"123",roles:["readWrite","dbAdmin"]})
 
 tt=db.club.find({}).sort({nom:1}).skip(10).limit(1).toArray();
 
-mongo --norc -u $MONGODB_USER -p $MONGODB_PASSWORD sampledb
+mongo -u $MONGODB_USER -p $MONGODB_PASSWORD sampledb
 mongodump --host 192.168.2.160 --port 27017 -d golf --out mdump
-mongodump -u $MONGODB_USER -p $MONGODB_PASSWORD -d sampledb --out mdump
+mongodump -u $MONGODB_USER -p $MONGODB_PASSWORD -d sampledb --out /tmp/mdump
 mongorestore -u $MONGODB_USER -p $MONGODB_PASSWORD -d sampledb mdump/golf
 mongorestore -d golf mdump/golf
 
 mongoexport --db=golf --collection=regions --type csv --fieldFile fields.txt --out reg.txt
 mongoimport --db golf --collection parcours --jsonArray --file parcours.json 
 mongo --norc -u $MONGODB_USER -p $MONGODB_PASSWORD sampledb
+cd ~/&&ls -al
+sudo rm .mongorc.js
+bash /home/bin/cpdb
+
 
 COPY DIR
 oc cp mongodb-1-ck6bk:/tmp/bup /data/bup
@@ -343,4 +350,46 @@ rs.slaveOk()
 rs.initiate({"_id" : "rsg","members":[{"_id" : 0, "host":"cdore.ddns.net:6600"} ] })
 sudo docker run -d -p 192.168.10.11:8080:27017 -p 6600:27017 -v /home:/data --name="m_golf" cdore00/mongo_golf:v2 --replSet "rsg" 
 
- 
+PYTHON
+import pymongo
+from pymongo import MongoClient
+client = MongoClient('localhost', 27017)
+data = client.golf
+col = data.regions
+col.count()
+tt = col.find_one({"_id":1})
+tt = col.find({})
+from bson.json_util import dumps
+dumps(tt)
+
+python -m pip install requests
+import pkg_resources
+pkg_resources.get_distribution("pymongo").version
+
+http://api.mongodb.com/python/current/api/pymongo/results.html
+
+
+db.createUser(
+  {
+    user: "cdore",
+    pwd: "925",
+    roles: [
+       { role: "readWrite", db: "resto" }
+    ]
+  }
+)
+
+mongoexport -u=cdore -p=925 --db=resto --collection=news --jsonArray --out news.json
+mongoimport -u=cdore -p=925 --db=traiteur --collection news --jsonArray --file news.json
+
+count group by
+ tt=db.score.aggregate([ {"$match" : {"USER_ID":80}}, {"$group" : {"_id":{"name":"$name","parcours":"$PARCOURS_ID"}, "count":{"$sum":1}}} ])
+tt=coll.aggregate([ {"$match" : {"USER_ID": user, "T18": { "$exists": True, "$nin": [ 0 ] }}}, {"$group" : {"_id":{"name":"$name","parcours":"$PARCOURS_ID"}, "count":{"$sum":1}}} ])
+
+
+db.club.insert({ "_id" : 2, "nom" : "", "url_club" : "", "prive" : false, "depuis" : "", "municipal" : "", "url_ville" : "", "telephone" : "", "telephone2" : "", "telephone3" : "", "adresse" : "", "codepostal2" : "", "region" : 0, "codepostal" : "", "longitude" : "", "latitude" : "", "courses" : [ { "_id" : 3, "CLUB_ID" : 2, "POINTS" : "", "PARCOURS" : "", "DEPUIS" : "", "TROUS" : 18, "NORMALE" : 72, "VERGES" : 6000, "GPS" : false } ]  })
+
+
+db.blocs.insert({ "_id" : 3, "PARCOURS_ID" : 3, "Bloc" : "Normale", "T1" : "", "T2" : "", "T3" : "", "T4" : "", "T5" : "", "T6" : "", "T7" : "", "T8" : "", "T9" : "", "Aller" : "", "T10" : "", "T11" : "", "T12" : "", "T13" : "", "T14" : "", "T15" : "", "T16" : "", "T17" : "", "T18" : "", "Retour" : "", "Total" : "", "Eval" : "", "Slope" : "" })
+
+db.regions.insert({"_id": 19, "Nom": "Europe", "Nom2": "Europe"})

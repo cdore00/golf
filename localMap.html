@@ -12,13 +12,14 @@
 <meta content="R&eacute;pertoire des clubs de golf du Qu&eacute;bec. GPS golf." name="description" />
 <link href="misc/init.css" rel="stylesheet" media="screen" type="text/css" />
 <link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" /> 
-
+<link href="misc/datepicker.css" rel="stylesheet">
     <script type="text/javascript" 
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA15nyiYmWG_0IkG9H5r4Qc8KhZxwRw_xA&sensor=false"> 
     </script> 
-	<script type="text/javascript" src="misc/util.js"></script>
+	<script src="misc/util.js"></script>
 	<!--<script type="text/javascript" src="misc/markerLabel.js"></script> // -->
-	<script type="text/javascript" src="misc/geoLocal.js"></script>
+	<script src="misc/geoLocal.js"></script>
+	<script src="misc/dateP.js"></script>
 	
 <script type="text/javascript"> 
 <!--
@@ -53,7 +54,7 @@ paramDate = getURLdata();
 initialize();
 if (paramDate)
 	var paramList = paramDate.split("$")
-	if (paramList.length > 1)
+	if (paramList && paramList.length > 1)
 		getInfo("getPosition?data=" + paramList[0] + "$" + paramList[1] + "$1", getPosList);
 	else
 		showMarker(true);
@@ -61,7 +62,7 @@ if (paramDate)
 
 function savedPos(res){
 //if (showST)
-	window.oTip.show('<text class="fontGreen">Saved</text>', false, false, 300, -60);
+	window.oTip.show('<text class="fontGreen">Saved</text>', false, false, 300, -40);
 }
 
 
@@ -215,10 +216,18 @@ function setMyPosition(map, lat, lng) {
 	return col;
 	}
 
+	function finfInd(id){
+		for (var i=0; i < markers.length; i++){
+			if (markers[i].id == id){
+				break;}
+		}
+		return i;}
+
 function addMarker(id, t, mLL, ac, hot){
 
-//addMarker(markers.length, loc.time, myLatLng, loc.acc, loc.hot);
-	//if (!hot)
+	function moveP(){
+		path.setAt(finfInd(this.id) , this.getPosition());
+		}
 	var col = getMarkerColor(hot);
     var marker = new google.maps.Marker({
         position: mLL,
@@ -232,17 +241,17 @@ function addMarker(id, t, mLL, ac, hot){
 			fontWeight: "bold",
 		  }
 		});
-		if (savCollList.length == 1){
+		if (savCollList && savCollList.length == 1){
 			marker.id = id;
 			marker.time = t;
-			marker.hot = hot;
+			//marker.hot = hot;
 			marker.addListener('click', function() {
 			  editMark(this);
-			});		
+			});
+			marker.position_changed = moveP;
 		}
 return marker;
 }
-
 
 function setMarkers(map, locations, mmXY) {
 
@@ -296,7 +305,7 @@ if (userId && !showSR && THCall == "POST"){
 	var divLayer = document.getElementById("prefLayer");
 	var valDate = (speedTime.startTime) ?  formatDateTime.date(speedTime.startTime):"";	//2018/10/28
 	var htmlCode = '<text>Start date</text></br>';
-	htmlCode += '<form><input id="prefDate" value="' + valDate +'" placeholder="aaaa/mm/jj"/></br>';
+	htmlCode += '<form><input id="prefDate" value="' + valDate +'" placeholder="aaaa-mm-jj" /><a id="calIcon" href="javascript:popDtPicker(\'prefDate\');">&#128197;</a></br></br>';
 	htmlCode += '<input class="bouton" type="submit" onclick="showMarker(true,this.form)" value="Ok"/><input class="bouton" type="button" onclick="showMarker(false)" value="Cancel"/></form>';
 	divLayer.innerHTML = htmlCode;
 	divLayer.style.visibility="visible";
@@ -305,21 +314,32 @@ if (userId && !showSR && THCall == "POST"){
 }
 }
 
+function popDtPicker(oTxtDt){
+if (!window.dtPicker){
+	window.dtPicker = new Datepicker(document.getElementById(oTxtDt));
+	//window.dtPicker.config({format: d => {return getDateTime(d)}});
+}
+window.dtPicker.show();
+}
+
 function editMark(oMark){
 var divLayer = document.getElementById("prefLayer");
 var htmlCode = '<h2>Édit marker</h2><form action="#">';
-
+var oLoc = savCollList[0].locList[finfInd(oMark.id)];
 //htmlCode += ' <svg height="210" width="400">  <path d="M150 0 L75 200 L225 200 Z" /> </svg> ';
-
-htmlCode += '<div>' + formatDateTime.datetime(oMark.time) + ' <img onclick="saveMarker(false, ' + oMark.id + ')" src="images/delete.png" width="16" height="16"></br>';
+if (!oLoc.hot)
+	oLoc.hot = 0;
+htmlCode += '<div>' + formatDateTime.datetime(oLoc.time) + ' <img onclick="saveMarker(false, ' + oMark.id + ')" src="images/delete.png" width="24" height="24"></br>';
+htmlCode += '<div>Accuracy: ' + oLoc.acc ;
+htmlCode += (oLoc.alt) ? (' Alt.: ' + oLoc.alt + '</div>'):('</div>');
 htmlCode += '<input id="mId" type="hidden" value="' + oMark.id + '" />'
 htmlCode += '<input id="lat" type="hidden" value="' + oMark.position.lat() + '" />'
 htmlCode += '<input id="lng" type="hidden" value="' + oMark.position.lng() + '" />'
-htmlCode += '<input id="time" type="hidden" value="' + oMark.time + '" />'
+htmlCode += '<input id="time" type="hidden" value="' + oLoc.time + '" />'
 htmlCode += '<div>';
-htmlCode += '<input id="chxW" type="radio" ' + ((oMark.hot == "0") ? "checked":'') + ' name="typeHot" value="0"><label for="chxW"><svg height="40" width="60"><polyline points="0,5 0,5 50,5 50,30 0,30 0,0" style="fill:#fff;stroke:black;stroke-width:1" /><rect width="3" height="39" style="fill:#fff;stroke-width:1;stroke:rgb(0,0,0)" /></svg></label></input>';
-htmlCode += '<input id="chxR" type="radio" ' + ((oMark.hot == "1") ? "checked":'') + ' name="typeHot" value="1"><label for="chxR"><svg height="40" width="60"><polyline points="0,5 0,5 50,5 50,30 0,30 0,0" style="fill:#f99;stroke:black;stroke-width:1" /><rect width="3" height="39" style="fill:#f99;stroke-width:1;stroke:rgb(0,0,0)" /></svg></label></input>';
-htmlCode += '<input id="chxB" type="radio" ' + ((oMark.hot == "2") ? "checked":'') + ' name="typeHot" value="2"><label for="chxB"><svg height="40" width="60"><polyline points="0,5 0,5 50,5 50,30 0,30 0,0" style="fill:#99f;stroke:black;stroke-width:1" /><rect width="3" height="39" style="fill:#99f;stroke-width:1;stroke:rgb(0,0,0)" /></svg></label></input>';
+htmlCode += '<input id="chxW" type="radio" ' + ((oLoc.hot == "0") ? "checked":'') + ' name="typeHot" value="0"><label for="chxW"><svg height="40" width="60"><polyline points="0,5 0,5 50,5 50,30 0,30 0,0" style="fill:#fff;stroke:black;stroke-width:1" /><rect width="3" height="39" style="fill:#fff;stroke-width:1;stroke:rgb(0,0,0)" /></svg></label></input>';
+htmlCode += '<input id="chxR" type="radio" ' + ((oLoc.hot == "1") ? "checked":'') + ' name="typeHot" value="1"><label for="chxR"><svg height="40" width="60"><polyline points="0,5 0,5 50,5 50,30 0,30 0,0" style="fill:#f99;stroke:black;stroke-width:1" /><rect width="3" height="39" style="fill:#f99;stroke-width:1;stroke:rgb(0,0,0)" /></svg></label></input>';
+htmlCode += '<input id="chxB" type="radio" ' + ((oLoc.hot == "2") ? "checked":'') + ' name="typeHot" value="2"><label for="chxB"><svg height="40" width="60"><polyline points="0,5 0,5 50,5 50,30 0,30 0,0" style="fill:#99f;stroke:black;stroke-width:1" /><rect width="3" height="39" style="fill:#99f;stroke-width:1;stroke:rgb(0,0,0)" /></svg></label></input>';
 htmlCode += '</div>';
 htmlCode += '<input class="bouton" type="button" onclick="saveMarker(this.form)" value="Ok"/><input class="bouton" type="button" onclick="saveMarker(false,false); return false;" value="Cancel"/></form>';
 divLayer.innerHTML = htmlCode;
@@ -331,22 +351,22 @@ return false;
 function saveMarker(oForm, del){
 var divLayer = document.getElementById("prefLayer");
 var st = savCollList[0].startTime
-	function finfInd(id){
-		for (var i=0; i < markers.length; i++){
-			if (markers[i].id == id){
-				break;}
-		}
-		return i;}
-		
-if (oForm){
-	hotVal = parseInt(oForm.typeHot.value)
-	m = markers[finfInd(oForm.mId.value)];
-	m.hot = hotVal;
-	p = pinSymbol(getMarkerColor(hotVal));
-	ot = {"text": formatDateTime.time(oForm.time.value, true), "color": "#000","fontSize": "16px", "fontWeight": "bold" }
-	m.setIcon(p, {"label": ot})
 
-	var info = userId + "$" + st + "$" + oForm.time.value + "$" + oForm.lat.value + "$" + oForm.lng.value + "$1$" + hotVal + "$" + oForm.time.value;
+if (oForm){
+	var Ind = finfInd(oForm.mId.value);
+	hotVal = parseInt(oForm.typeHot.value);
+	savCollList[0].locList[Ind].hot = hotVal;
+	p = pinSymbol(getMarkerColor(hotVal));
+	ot = {"text": formatDateTime.time(oForm.time.value, true), "color": "#000","fontSize": "16px", "fontWeight": "bold" };
+	markers[Ind].setIcon(p, {"label": ot});
+	var acc = savCollList[0].locList[Ind].acc;
+	if (savCollList[0].locList[Ind].lat != oForm.lat.value){
+		acc = 1;
+		savCollList[0].locList[Ind].acc = acc;
+		markers[Ind].setTitle("Acc:"+acc);
+	}
+		
+	var info = userId + "$" + st + "$" + oForm.time.value + "$" + oForm.lat.value + "$" + oForm.lng.value + "$" + acc + "$" + hotVal + "$" + oForm.time.value;
 	getInfo("setPosition?data=" + info, savedPos);
 }else{
 	if (del !== false){
@@ -355,14 +375,11 @@ if (oForm){
 			var info = userId + "$" + st + "$" + markers[del].time ;
 			getInfo("delPosition?data=" + info, savedPos);	
 			markers[del].setMap(null);
+			path.removeAt(del);
 			d = markers.splice(del,1);
 		}
 	}
-}
-if (oForm || del){
-	clearMarkers(true)
-	setMapOnAll(map)
-}
+ }
 divLayer.style.visibility="hidden";
 return false;
 }
@@ -406,6 +423,7 @@ if (isShow){
 		}
 	}
 }
+	window.dtPicker = null;
 	var divLayer = document.getElementById("prefLayer");
 	divLayer.style.visibility="hidden";
 }
@@ -628,6 +646,11 @@ display: inline-block;
 
 .o_messTipTxt{
 min-width: 7.5em;
+}
+
+#calIcon{
+font-size: 2em;
+text-decoration: none;
 }
 
 </style>

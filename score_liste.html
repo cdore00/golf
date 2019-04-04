@@ -11,12 +11,14 @@
 <link href="misc/init.css" rel="stylesheet" media="screen" type="text/css" />
 <link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
 <link href="misc/golfGPS.css" rel="stylesheet" media="screen" type="text/css" />
+<link href="misc/datepicker.css" rel="stylesheet">
 
 <title>Golfs du Qu&eacute;bec</title>
 <meta content="Golf GPS, Qu&eacute;bec, Canada, Golf du Qu&eacute;bec, Clubs de golf au Qu&eacute;bec, Qu&eacute;bec golf" name="keywords" />
 <meta content="R&eacute;pertoire des clubs de golf du Qu&eacute;bec. GPS golf." name="description" />
 
 <meta name="viewport" content="initial-scale=1.0, user-scalable=no" /> 
+<script src="misc/dateP.js"></script>
 
 <style>
 
@@ -356,7 +358,7 @@ for (var i = 0; i < sortArray.length; i++) {
 	listTot += gt;
 	nbrGame += 1;
 	Tcode += '<td>' + scoreDate + '</td><td>' + courseName + '</td><td>' + gt + '</td>';
-	Tcode += '<td class="tdEdit"><img onclick="delGame(this.parentNode.parentNode.childNodes,\'' + scoreID + '\')" height="16" width="16"  src="images/delete.png" /></td></tr>';
+	Tcode += '<td class="tdEdit"><a href="#" class="char_icon" title="Delete..." onclick="delGame(this.parentNode.parentNode.childNodes,\'' + scoreID + '\')" />&#x26D4;</a></td></tr>';
 	//sortArray[i] = [ scoreID , (scoreData[i].score_date) , courseName , gt ];
 }
 
@@ -531,9 +533,17 @@ if (oRes.ok){
 function resizeImg(fs){
 var refImg = document.getElementById('refImg');
 
-refImg.width = fs * 17;
+//refImg.width = fs * 17;
 adjDivOpt();
 //setTimeout("window.oMenu.resize()", 10);
+}
+
+function popDtPicker(oTxtDt){
+if (!window.dtPicker){
+	window.dtPicker = new Datepicker(document.getElementById(oTxtDt));
+	//window.dtPicker.config({format: d => {return getDateTime(d)}});
+}
+window.dtPicker.show();
 }
 
 // -->
@@ -549,6 +559,12 @@ max-width: 15em;
 #o_messTipTxt{
 /*display: contents;*/
 }
+
+.char_icon{
+font-size: 1.1em;
+font-weight: bold;
+text-decoration: none;
+}
  
 </style>
 
@@ -563,41 +579,18 @@ max-width: 15em;
 <div class="divFont" onclick="setFontSize(-0.2, this)"><div class="divFontSize fontSmall">A</div><div class="fontLogo">&#8595;</div></div>
 </div>
 </div>
-<!--
-<div id="menuList">
-<table><tbody>
 
-<tr><td onclick="location.reload();" title="Actualiser la page.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mrefr">Actualiser</text></td></tr>
-<tr><td onclick="editGame(this);" title="&Eacute;diter la liste.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="medit"></text></td></tr>
-<tr><td id="menuOpt" onclick="showOptions(this);" title="Options de recherche.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mopti">Options</text></td></tr>
-<tr><td onclick="showSubmenu(this, 'inherit');" onmouseover="showSubmenu(this, 'inherit');" onmouseout="showSubmenu(this, 'none');" title="T&eacute;l&eacute;charger un fichier...">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mdown"></text>&nbsp;&#9658;</td></tr>
-<tr><td onclick="telGameList(0);">&nbsp;&nbsp;&nbsp;&nbsp;<text id="_canc">Annuler</text></td></tr>
-</tbody></table>
-</div>
-// -->
 <div id="menuList">
 <a class="inputButton" href="#" onclick="location.reload();" title="Actualiser la page.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mrefr">Actualiser</text></a>
 <a class="inputButton" href="#" onclick="editGame(this);" title="&Eacute;diter la liste.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="medit"></text></a>
 <a id="menuOpt" class="inputButton" href="#" onclick="showOptions(this);" title="Options de recherche.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mopti">Options</text></a>
 <a class="inputButton" href="#" onclick="showSubmenu(this, 'inherit');" onmouseover="showSubmenu(this, 'inherit');" onmouseout="showSubmenu(this, 'none');" title="T&eacute;l&eacute;charger un fichier...">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mdown"></text>&nbsp;&#9658;</a>
 </div>
-<!--
-<div id="submenu1">
-<table><tbody>
-<tr><td onclick="telGameList(1);" onmouseover="showSubmenu(false, 'inherit');" title="T&eacute;l&eacute;charger un fichier csv.">Format csv...</td></tr>
-<tr><td onclick="telGameList(2);" onmouseover="showSubmenu(false, 'inherit');" title="T&eacute;l&eacute;charger un fichier json.">Format json...</td></tr>
-</tbody></table>
-</div>
-// -->
-<div id="submenu1">
-<a class="inputButton" href="#" onclick="telGameList(1);" onmouseover="showSubmenu(false, 'inherit');" title="T&eacute;l&eacute;charger un fichier csv.">Format csv...</a>
-<a class="inputButton" href="#" onclick="telGameList(2);" onmouseover="showSubmenu(false, 'inherit');" title="T&eacute;l&eacute;charger un fichier json.">Format json...</a>
-</div>
 
 <form id="formPref" action="#">
 
 <div id="divOptions" class="prefPart">
-<input id="prefDate" type="text" size="10" placeholder="aaaa/mm/jj"/>
+<input id="prefDate" type="text" size="10" placeholder="aaaa-mm-jj"/><a id="calIcon" class="char_icon" href="javascript:popDtPicker('prefDate');">&#128197;</a>
 <select id="prefTrous" onchange="initCount()">
  <option value="18" selected>18 trous</option>
  <option value="9" >9 trous</option>
@@ -611,7 +604,7 @@ max-width: 15em;
   <option value="100" >100 parties</option>
 </select>
 <input id="prefNb" type"text" size="3" value="10"/>
-<button class="itin" onclick="getGameList(-1);"><img id="refImg" alt="Refresh" width="24" src="images/refresh.png" /></button>
+<a class="itin char_icon" href="#" onclick="getGameList(-1);" >&#x21bb;</a>
 </div>
 </div>
 

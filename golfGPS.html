@@ -67,8 +67,11 @@ var trouNormale = false;
 var scoreOkInds, setScore = null, actPlayer = 0, objScore = null, aScore = [{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}];
 google.maps.visualRefresh = true;
 
-function savedPos(oResp) {
-		window.oTip.show('<text class="fontGreen">Saved</text>', false, false, 300, -20);
+function savedPos(oResp, mess) {
+	if (mess)
+		window.oTip.show('<text class="fontGreen">' + mess + '</text>', false, false, 300, -10);
+	else
+		window.oTip.show('<text class="fontGreen">Saved</text>', false, false, 300, -10);
 	}
 	
 // oTrajet object
@@ -876,9 +879,10 @@ if (confirm("Mark Ball ?")){
 
 function markedBall(res){
 
-if (res.ok)
+if (res.ok){
 	GPStime = res.startTime;
-else
+	savedPos(false, "Saved: " + formatDateTime.datetime());
+}else
 	alert(res.message)
 }
  

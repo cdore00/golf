@@ -1,5 +1,5 @@
 
-var HOSTserv = "https://cdore.ddns.net/pyt/";  // VULTR Ubuntu Server 16.04 docker Python 3.6.4
+var HOSTserv = "http://127.0.0.1:3000/";		//Portable Windows 10 Local host Node JS v6.10.0
 // "http://127.0.0.1:3000/";		//Portable Windows 10 Local host Node JS v6.10.0
 // "http://192.168.2.195:3000/";    //Ubuntu workstation 16.04
 // "http://192.168.2.195:8080/";    //Ubuntu workstation 16.04 docker 1.12.6 Node JS v4.2.3  MongoDB server v3.4.9
@@ -121,6 +121,7 @@ var formatDateTime = {
 		return this.date(milliTime) + " " + this.time(milliTime, true);
 	}
 }
+
 
 function DelCookie(name) {
     document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
@@ -688,13 +689,14 @@ function closeAuthent(){
 
 
 var langLbl = [];
+var langSet;
 function initLang(){
 progressBar = document.getElementById("progressQ");
 if (progressBar)
 	showProgress(0);
 
 var langP = GetCookie("langP");
-var langSet = "EN", lang = "";
+langSet = "EN", lang = "";
 
 if (!langP || langP == "0")
 	lang = window.navigator.userLanguage || window.navigator.language;
