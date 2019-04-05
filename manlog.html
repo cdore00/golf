@@ -73,7 +73,7 @@ if (divOptions.style.height != "0px" && divOptions.style.height != ""){
 
 function adjDivOpt(divOptions){
 var prefReq = document.getElementById('prefReq');
-var adj = prefReq.offsetTop + prefReq.offsetHeight - 32;
+var adj = prefReq.offsetTop + prefReq.offsetHeight - 75;
 if (divOptions && (divOptions.style.height == "0px" || divOptions.style.height == "")){
 	var fur = navigator.userAgent;
 	divOptions.style.height = adj + "px";	
@@ -106,32 +106,77 @@ function getLogList(){
 getInfo("getLogs?a=2", listLog);
 }
 
-function listLog(oLog){
+function sortTable(noCol, colObj){
 
-x=1
 }
 
+function listLog(oLog){
+var logList = document.getElementById('logList');
+sortArray = oLog;
+
+var theadElem = document.createElement("thead");
+var tbodyElem = document.createElement("tbody");
+logList.appendChild(theadElem);
+logList.appendChild(tbodyElem);
+
+var thElem = document.createElement("tr");
+thElem.setAttribute('title', 'Click to sort');
+thElem.innerHTML = '<th onclick="sortTable(0, this)">Time</th><th onclick="sortTable(1, this)">Status</th><th onclick="sortTable(2, this)">IP</th><th >Detail</th>';
+theadElem.appendChild(thElem);
+
+var arrHDP = [];
+var Tcode = "";
+for (var i = 0; i < oLog.length; i++) {
+    var scoreID = oLog[i].date;
+    var time = oLog[i].time;
+    var status = oLog[i].status;
+    var ip = oLog[i].ip;
+    Tcode += '<tr class="norm" ontouchstart="this.className=\'rowOver\'" ontouchend="this.className=\'rowNorm\'" onmouseover="this.className=\'rowOver\'" onmouseout="this.className=\'rowNorm\'" onclick="show_score(\'' + scoreID + '\',' + '\'' + time + '\');">';
+    Tcode += '<td>' + formatDateTime.datetime(time) + '</td><td>' + status + '</td><td>' + ip + '</td>';
+    Tcode += '<td class="logDetail"><div class="divDetail">' + oLog[i].request + '</br>' + oLog[i].referer + '</br>' + oLog[i].user_agent + '</br>' + '</div></td></tr>';
+    //sortArray[i] = [ scoreID , (scoreData[i].score_date) , courseName , gt ];
+}
+
+tbodyElem.innerHTML = Tcode;
+
+}
 // -->
 </script>
 
 <style>
-
-
 #butMenu{
 visibility: visible;
 }
-
 #divOptions{
 height: 0px;
 overflow: hidden;
 transition: height 0.4s ease-in-out;
 background: rgb(238, 238, 238);
 }
-
 .formItem{
 display: inline-block;
 }
 
+.logDetail{
+text-align: left;
+word-wrap: anywhere;
+width: 100%;
+}
+
+.divDetail{
+height: 2.5em;
+overflow: hidden;
+}
+
+#logList{showOptions
+width: 100%;
+display: block;
+}
+
+table.cartePts th, td {
+    border: solid white 1px;
+}
+	
 </style>
 
 </head>
@@ -201,7 +246,7 @@ display: inline-block;
 </div>
 
 <div id="p1" name="p1" class="unselectable">
-	<table id="gameList" class="cartePts">
+	<table id="logList" class="cartePts">
 
 	</table>
 	<div id="divLoad"><img id="imgLoad" alt="Chargement en cours..." height="1em" width="1em" src="images/loading.gif" /></div>
