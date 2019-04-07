@@ -34,7 +34,8 @@ else{
 userId = GetCookie("userID");
 window.oTip = new messTipObject();
 setFontSize();
-
+elemToScroll[0] = document.getElementById('prefLayer');
+window.onscroll = scrollElement;
 getInfo("getLogState?", showState);
 
 }
@@ -131,7 +132,7 @@ for (var i = 0; i < oLog.length; i++) {
     var time = oLog[i].time;
     var status = oLog[i].status;
     var ip = oLog[i].ip;
-    Tcode += '<tr class="norm" ontouchstart="this.className=\'rowOver\'" ontouchend="this.className=\'rowNorm\'" onmouseover="this.className=\'rowOver\'" onmouseout="this.className=\'rowNorm\'" onclick="show_score(\'' + scoreID + '\',' + '\'' + time + '\');">';
+    Tcode += '<tr class="norm" ontouchstart="this.className=\'rowOver\'" ontouchend="this.className=\'rowNorm\'" onmouseover="this.className=\'rowOver\'" onmouseout="this.className=\'rowNorm\'" onclick="showDetail(this);">';
     Tcode += '<td>' + formatDateTime.datetime(time) + '</td><td>' + status + '</td><td>' + ip + '</td>';
     Tcode += '<td class="logDetail"><div class="divDetail">' + oLog[i].request + '</br>' + oLog[i].referer + '</br>' + oLog[i].user_agent + '</br>' + '</div></td></tr>';
     //sortArray[i] = [ scoreID , (scoreData[i].score_date) , courseName , gt ];
@@ -140,6 +141,23 @@ for (var i = 0; i < oLog.length; i++) {
 tbodyElem.innerHTML = Tcode;
 
 }
+
+function showDetail(oTR, toClose){
+var prefLayer = document.getElementById('prefLayer');
+if (toClose){
+    prefLayer.style.visibility = "hidden";
+    return false;
+}
+var htmlCode = '<table class="cartePts"><th>Time</th><th>Status</th><th>IP</th>';
+htmlCode +=  '<tr><td>' + oTR.childNodes[0].innerHTML + '</td><td>' + oTR.childNodes[1].innerHTML + '</td><td>' + oTR.childNodes[2].innerHTML + '</td></tr></table>';
+htmlCode += '<div class="logDetail">' + oTR.childNodes[3].childNodes[0].innerHTML + '</div>';
+htmlCode += '<button class="bouton" onclick="showDetail(false, true)">Close</button>';
+prefLayer.innerHTML = htmlCode;
+prefLayer.style.visibility = "visible";
+
+return false;
+}
+
 // -->
 </script>
 
@@ -173,10 +191,16 @@ width: 100%;
 display: block;
 }
 
-table.cartePts th, td {
+table.cartePts th,td{
     border: solid white 1px;
+
+    text-align: left;
 }
-	
+
+table.cartePts{
+    margin: 0 auto;
+}
+
 </style>
 
 </head>
@@ -267,8 +291,8 @@ table.cartePts th, td {
 <a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2018</a>
 </div>
 
+<div id="prefLayer"></div>
 <div id="modalDiv"></div>
-
 
 <div id="authLayer" class="winLayer">
 <div id="divLoad"><img id="imgLoad" alt="Chargement en cours..." height="64" width="64" src="images/loading.gif" /></div>

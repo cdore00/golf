@@ -87,6 +87,18 @@ else
 	return decodeURI(urlInfo.substring(urlInfo.indexOf("data=") + 5));
 }
 
+var elemToScroll = [];
+function scrollElement(){
+var topValue;
+if (document.documentElement.scrollTop)
+    topValue = document.documentElement.scrollTop;
+else
+    topValue = document.body.scrollTop;
+for (i = 0; i < elemToScroll.length; i++)
+    elemToScroll[0].style.top = topValue + 'px';
+}
+
+
 //var dt =  new Intl.DateTimeFormat("fr-CA", { year: "numeric", month: "2-digit", day: "numeric", hour: "2-digit", minute: "2-digit"});
 function getDateTime(dateTime){
 	var intlDateTime ;

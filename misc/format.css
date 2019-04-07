@@ -345,7 +345,7 @@ top: 7px;
 }
 
 table.cartePts{background-color: #ccc;border: buttonhighlight 2px outset;}
-table.cartePts th,td{font-weight: bold;background-color: inherit;width: 1em;text-align:right;}
+table.cartePts th,td{font-weight: bold;background-color: inherit;text-align:right;}
 table.cartePts th{background-color: #999;text-align:center}
 .entete{background-color: #999;text-align:center}
 .titre{font-weight:bold;text-align:left}
