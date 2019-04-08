@@ -102,9 +102,30 @@ if (confirm("Load log ?")){
 }
 }
 
-function getLogList(){
+function getLogList(oF){
 //getGameList
-getInfo("getLogs?a=2", listLog);
+
+var validPd = "", validPde = "";
+
+if (oF.prefDate.value)
+	validPd = formatDateTime.datetimeToMilli(oF.prefDate.value)
+if (oF.prefDateEnd.value)
+	validPde = formatDateTime.datetimeToMilli(oF.prefDateEnd.value)
+
+if (!validPd && validPd != ""){
+	mess = "Invalid date time: " + oF.prefDate.value ;
+	saved({mess});
+	oF.prefDate.focus();
+	oF.prefDate.select();
+	}else if (!validPde && validPde != ""){
+	mess = "Invalid date time: " + oF.prefDateEnd.value ;
+	saved({mess});
+	oF.prefDateEnd.focus();
+	oF.prefDateEnd.select();
+	}else{
+		var param = "?prefDate=" + validPd + "&prefDateEnd=" + validPde + "&prefHost=" + oF.prefHost.value + "&prefStat=" + oF.prefStat.value + "&prefReq=" + oF.prefReq.value;
+		getInfo("getLogs" + param, listLog);	
+	}
 }
 
 function sortTable(noCol, colObj){
@@ -113,7 +134,8 @@ function sortTable(noCol, colObj){
 
 function listLog(oLog){
 var logList = document.getElementById('logList');
-sortArray = oLog;
+//sortArray = oLog;
+logList.innerHTML = "";
 
 var theadElem = document.createElement("thead");
 var tbodyElem = document.createElement("tbody");
@@ -252,8 +274,8 @@ table.cartePts{
 		<div class="formItem">
 		<label for="prefStat">Status: </label></br>
 		<select id="prefStat" name="prefStat"> 
-			<option value="1" selected="selected">All</option>
-			<option value="2" >Not 200</option>
+			<option value="0" selected="selected">All</option>
+			<option value="1" >Not 200</option>
 		</select>
 		</div> 
 	</div>
@@ -262,9 +284,9 @@ table.cartePts{
 		<label for="prefReq">Request: </label></br>
 			<input id="prefReq" name="prefReq" size="40" type="text" maxlength="255" value=""/> 
 		</div>
-		<div class="formItem">
-		<a class="itin char_icon" href="#" onclick="getLogList(this.form);" >&#x21bb;</a>
-		</div>
+		<button class="formItem" onclick="getLogList(this.form);">
+		<a class="itin char_icon" href="#" >&#x21bb;</a>
+		</button>
 	</div>
 
 </div>

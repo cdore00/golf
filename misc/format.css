@@ -344,6 +344,12 @@ position: relative;
 top: 7px;
 }
 
+.char_icon{
+font-size: 1.1em;
+font-weight: bold;
+text-decoration: none;
+}
+
 table.cartePts{background-color: #ccc;border: buttonhighlight 2px outset;}
 table.cartePts th,td{font-weight: bold;background-color: inherit;text-align:right;}
 table.cartePts th{background-color: #999;text-align:center}
