@@ -537,6 +537,7 @@ overflow: hidden;
 
 #divLoad{
 text-align: center;
+display: none;
 }
 
 #prefLayer, #identLayer, #authLayer{

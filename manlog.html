@@ -20,9 +20,17 @@
 <script type="text/javascript" language="Javascript">
 <!--
 
+var fopo, arrExp = [], maxList = 50, editIp = false;
 var userId = null, user_id = null, user_mail = null, user_name = null;
 
 function initPage(){
+fopo = document.getElementById('fHost');
+var listItem = localStorage.getItem("ipList")
+if (listItem ){
+	arrExp = JSON.parse(listItem);
+	refreshComboList(fopo.oComboList)
+	selInList(fopo.oComboList)
+}
 var formPref = document.getElementById('formPref');
 if (GetCookie("userRole") != "ADM")
 	document.location.href = "index.html";
@@ -37,14 +45,17 @@ setFontSize();
 elemToScroll[0] = document.getElementById('prefLayer');
 window.onscroll = scrollElement;
 getInfo("getLogState?", showState);
-
+showOptions(document.getElementById('menuOpt'))
 }
 
 function showState(res){
 var lastArch = document.getElementById('lastArch');
+var formPref = document.getElementById('formPref');
 
 lastArch.innerHTML = res.mess;
 
+if (formPref.prefDate.value == "" && res.last != 0)
+	formPref.prefDate.value = formatDateTime.datetime(Math.round(res.last*1000)-3600000)
 }
 
 function saved(res){
@@ -95,17 +106,27 @@ window.dtPicker.show(document.getElementById(oTxtDt));
 }
 
 function archiveLog(){
-
+var divLoad = document.getElementById('divLoad');
 if (confirm("Load log ?")){
+	divLoad.style.display = "inherit";
 	getInfo("loadLog", saved);
-	showMenu();
+	//showMenu();
+	setTimeout("location.reload();", 4000);
 }
 }
 
 function getLogList(oF){
 //getGameList
-
+var divLoad = document.getElementById('divLoad');
 var validPd = "", validPde = "";
+
+var notIp = (oF.prefNotIp.checked) ? 1:0;
+
+if (arrExp.length > 0){
+	var ipExc = arrExp[0][0];
+	for(var i = 1; i < arrExp.length; i++)
+		ipExc += "$" + arrExp[i][0]
+}
 
 if (oF.prefDate.value)
 	validPd = formatDateTime.datetimeToMilli(oF.prefDate.value)
@@ -123,7 +144,9 @@ if (!validPd && validPd != ""){
 	oF.prefDateEnd.focus();
 	oF.prefDateEnd.select();
 	}else{
-		var param = "?prefDate=" + validPd + "&prefDateEnd=" + validPde + "&prefHost=" + oF.prefHost.value + "&prefStat=" + oF.prefStat.value + "&prefReq=" + oF.prefReq.value;
+		divLoad.style.display = "inherit";
+		//var param = "?prefDate=" + validPd + "&prefDateEnd=" + validPde + "&prefNotIp=" + notIp + "&prefHost=" + oF.prefHost.value + "&prefStat=" + oF.prefStat.value + "&prefReq=" + oF.prefReq.value;
+		var param = "?prefDate=" + validPd + "&prefDateEnd=" + validPde + "&prefNotIp=" + notIp + ((notIp ?  "&exList=" + ipExc:"")) + "&prefHost=" + oF.prefHost.value + "&prefStat=" + oF.prefStat.value + "&prefReq=" + oF.prefReq.value;
 		getInfo("getLogs" + param, listLog);	
 	}
 }
@@ -132,11 +155,20 @@ function sortTable(noCol, colObj){
 
 }
 
-function listLog(oLog){
+function listLog(data){
 var logList = document.getElementById('logList');
+var divLoad = document.getElementById('divLoad');
 //sortArray = oLog;
-logList.innerHTML = "";
 
+oLog = data.logList;
+
+logList.innerHTML = "";
+if (data.cnt > data.max)
+	logList.innerHTML = data.max + "/" + data.cnt + " refine for all"
+else
+	logList.innerHTML = data.cnt + " logs items";
+	
+divLoad.style.display = "none";
 var theadElem = document.createElement("thead");
 var tbodyElem = document.createElement("tbody");
 logList.appendChild(theadElem);
@@ -159,7 +191,7 @@ for (var i = 0; i < oLog.length; i++) {
     Tcode += '<td class="logDetail"><div class="divDetail">' + oLog[i].request + '</br>' + oLog[i].referer + '</br>' + oLog[i].user_agent + '</br>' + '</div></td></tr>';
     //sortArray[i] = [ scoreID , (scoreData[i].score_date) , courseName , gt ];
 }
-
+//alert(i);
 tbodyElem.innerHTML = Tcode;
 
 }
@@ -170,6 +202,8 @@ if (toClose){
     prefLayer.style.visibility = "hidden";
     return false;
 }
+if (editIp)
+	return false;
 var htmlCode = '<table class="cartePts"><th>Time</th><th>Status</th><th>IP</th>';
 htmlCode +=  '<tr><td>' + oTR.childNodes[0].innerHTML + '</td><td>' + oTR.childNodes[1].innerHTML + '</td><td>' + oTR.childNodes[2].innerHTML + '</td></tr></table>';
 htmlCode += '<div class="logDetail">' + oTR.childNodes[3].childNodes[0].innerHTML + '</div>';
@@ -178,6 +212,88 @@ prefLayer.innerHTML = htmlCode;
 prefLayer.style.visibility = "visible";
 
 return false;
+}
+
+
+function selInList(oLB){
+if (oLB.selectedIndex != -1){
+	fopo.oTextBox.value = arrExp[oLB.selectedIndex][0];
+	fopo.oTextDesc.value = arrExp[oLB.selectedIndex][1];
+}
+}
+
+function addHost(){
+var exp = fopo.oTextBox.value;
+var desc = fopo.oTextDesc.value;
+
+	var index = getIPindex(exp);
+	if (index > -1) {
+	  arrExp.splice(index, 1);
+	  arrExp.unshift([exp, desc]);
+	}else{
+	  arrExp[arrExp.length] = [exp, desc];
+	}
+	
+	if (arrExp.length > maxList - 1)
+		alert("Limit " + maxList + " reached.");
+	if (arrExp.length > maxList){
+		arrExp.splice(0, 1);
+	}
+		
+	refreshComboList(fopo.oComboList);
+}
+
+function refreshComboList(oCombo){
+while (oCombo.childNodes.length > 0) {
+    oCombo.removeChild(oCombo.childNodes[0]);
+}
+//for(var i = arrExp.length - 1; i >= 0; i--){
+for(var i = 0; i < arrExp.length; i++){
+	var newNode = document.createElement("option");
+	newNode.innerHTML = arrExp[i][0] + " - " + arrExp[i][1];
+	fopo.oComboList.appendChild(newNode);
+}
+}
+
+function getIPindex(x){
+var index = -1;
+for (var i = 0; i < arrExp.length; i++){
+	if (arrExp[i][0] == x)
+		var index = i;
+}
+return index;
+}
+
+function delSel(){
+var index = getIPindex(fopo.oTextBox.value)
+if (index > -1) {
+  arrExp.splice(index, 1);
+}
+fopo.oTextBox.value = "";
+fopo.oTextDesc.value = "";
+refreshComboList(fopo.oComboList);
+}
+
+function showIpList(){
+var prefLayer = document.getElementById('prefLayer');
+var oComboBox = document.getElementById('oComboBox');
+prefLayer.innerHTML = "";
+prefLayer.appendChild(oComboBox);
+editIp = true;
+prefLayer.style.visibility = "visible";
+oComboBox.style.visibility = "visible";
+}
+
+function saveContext(saveData){
+var eBod = document.getElementsByTagName('body')[0];
+var oComboBox = document.getElementById('oComboBox');
+//alert(arrExp);
+oComboBox.style.visibility = "hidden";
+if (saveData)
+	localStorage.setItem("ipList", JSON.stringify(arrExp));
+editIp = false;
+showDetail(false, true);
+eBod.appendChild(oComboBox);
 }
 
 // -->
@@ -195,6 +311,7 @@ background: rgb(238, 238, 238);
 }
 .formItem{
 display: inline-block;
+    border: none;
 }
 
 .logDetail{
@@ -223,6 +340,26 @@ table.cartePts{
     margin: 0 auto;
 }
 
+#oTextBox, #oTextDesc{
+width: 155px; 
+z-index: 2;
+border:none;
+width: 10em;
+}
+#oComboList{
+z-index: 1; 
+width: 11em;
+}
+#oComboBox{
+position: relative;
+visibility: hidden;
+text-align: left;
+display: inline-block;
+}
+#closeCombo{
+    margin-left: 5em;
+}
+
 </style>
 
 </head>
@@ -248,7 +385,7 @@ table.cartePts{
 <a id="menuOpt" class="inputButton" href="#" onclick="showOptions(this);" title="Options de recherche.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mopti">Options</text></a>
 </div>
 
-<div>Last archive: <span id="lastArch"> 2019-04-01</span></div>
+<div>Last archive: <span id="lastArch"></span></div>
 
 <form id="formPref" action="#">
 
@@ -268,9 +405,14 @@ table.cartePts{
 	</div>
 	<div>		
 		<div class="formItem">		
-		<label for="prefHost">Host - IP: </label></br>
-			<input id="prefHost" name="prefHost" size="30" type="text" maxlength="255" value=""/> 
+		<label for="prefNotIp">Exclus</label></br>
+			<input id="prefNotIp" name="prefNotIp" type="checkbox" >
+			<a class="itin"  href="#" onclick="showIpList();">...</a>
 		</div> 
+		<div class="formItem">		
+		<label for="prefHost">Host - IP: </label></br>
+			<input id="prefHost" name="prefHost" size="25" type="text" maxlength="15" value=""/> 
+		</div>		
 		<div class="formItem">
 		<label for="prefStat">Status: </label></br>
 		<select id="prefStat" name="prefStat"> 
@@ -282,7 +424,7 @@ table.cartePts{
 	<div>	
 		<div class="formItem">	
 		<label for="prefReq">Request: </label></br>
-			<input id="prefReq" name="prefReq" size="40" type="text" maxlength="255" value=""/> 
+			<input id="prefReq" name="prefReq" size="40" type="text" maxlength="200" value=""/> 
 		</div>
 		<button class="formItem" onclick="getLogList(this.form);">
 		<a class="itin char_icon" href="#" >&#x21bb;</a>
@@ -295,11 +437,7 @@ table.cartePts{
 	<table id="logList" class="cartePts">
 
 	</table>
-	<div id="divLoad"><img id="imgLoad" alt="Chargement en cours..." height="1em" width="1em" src="images/loading.gif" /></div>
-</div>
-
-<div class="space10">
-&nbsp;<input name="nextGame" class="itin" type="button" onclick="getLogList(-1)" value="_next"/>
+	<div id="divLoad"><img id="imgLoad" alt="Chargement en cours..." src="images/loading.gif" /></div>
 </div>
 
 </form>
@@ -318,8 +456,28 @@ table.cartePts{
 
 <div id="authLayer" class="winLayer">
 <div id="divLoad"><img id="imgLoad" alt="Chargement en cours..." height="64" width="64" src="images/loading.gif" /></div>
-
 </div>
+
+<div id="oComboBox">
+<h3>IP Exclusions</h3>
+<form id="fHost" action="#">
+<input type="text" id="oTextBox" tabindex="2" />
+<button class="formItem" onClick="addHost();">
+<a class="itin char_icon" href="#">&#9989;</a>
+</button>
+<button class="formItem" onClick="delSel();">
+<a class="itin char_icon" href="#">&#9940;</a>
+</button>
+</br><input type="text" id="oTextDesc" tabindex="3" /></br>
+<div  id="divComboList">
+	<select id="oComboList" size="5" tabindex="1000" onchange="selInList(this);" >
+	</select>
+</div>
+
+<input id="okPref" class="bouton" type="submit" onClick="saveContext(true); return false;" value="_okok" /><input id="annulePref" class="bouton" type="button" onClick="saveContext(); return false;" value="_canc" />
+</form>
+</div>
+
 
 </body>
 

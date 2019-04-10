@@ -127,7 +127,7 @@ var formatDateTime = {
 	},
 	date : function(milliTime) {
 		var dt = this.getDateTime(milliTime);
-		return dt.getFullYear() + "/" + ((dt.getMonth()+1)+"").padStart(2, '0') + "/" + (dt.getDate()+"").padStart(2, '0');
+		return dt.getFullYear() + "-" + ((dt.getMonth()+1)+"").padStart(2, '0') + "-" + (dt.getDate()+"").padStart(2, '0');
 	},
 	datetime : function(milliTime) {
 		return this.date(milliTime) + " " + this.time(milliTime, true);
