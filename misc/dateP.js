@@ -23,6 +23,7 @@ class Datepicker {
     constructor(host, s) {
         const t = this;
         t.host = host;
+		t.hostDate = null;
         t.frame = document.createElement("div");
         t.frame.id = "datepicker-frame";
         t.frame.className = "noselect";
@@ -159,7 +160,8 @@ class Datepicker {
                             };
                         } else td.className = "disabled";
                         td.className += day.toDateString() == new Date().toDateString() ? " today" : "";
-    
+						td.className += day.toDateString() == t.hostDate ? " choice" : "";
+						
                         index++;
                     }
                 }
@@ -234,8 +236,11 @@ class Datepicker {
 
         t.show = function (oTxt) {
 			document.addEventListener("click", checkClick);
-			if (oTxt)
+			if (oTxt){
 				t.host = oTxt;
+				var tt = formatDateTime.datetimeToMilli(oTxt.value) + 86400000;
+				t.hostDate = new Date(tt).toDateString();
+			}
 			show(true);
 		}
         

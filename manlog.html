@@ -351,6 +351,11 @@ oComboBox.style.visibility = "visible";
 if (oipstack){
 	fopo.oTextBox.value = oipstack.ip;
 	fopo.oTextDesc.value = ((oipstack.country_name!= null) ? oipstack.country_name:"") + ((oipstack.region_name!= null) ? "-" + oipstack.region_name:"") + ((oipstack.city!= null) ? "-" + oipstack.city:"") + ((oipstack.latitude!= null) ? "\n" + oipstack.latitude + ", " + oipstack.longitude:"");
+	if (oipstack.country_code!= null){
+		var imgLoc = document.getElementById('imgLoc');
+		imgLoc.src = "https://flags.fmcdn.net/data/flags/h40/" + oipstack.country_code.toLowerCase() + ".png";
+		imgLoc.style.visibility = "visible";
+	}
 }
 }
 
@@ -448,6 +453,12 @@ display: inline-block;
     margin-left: 5em;
 }
 
+#imgLoc{
+width: 60px;
+height: 40px;
+visibility: hidden;
+}
+
 </style>
 
 </head>
@@ -499,7 +510,7 @@ display: inline-block;
 			<option value="1" >Not in</option>
 			<option value="2" >In</option>
 		</select>
-			<a class="itin"  href="#" onclick="showIpList();">...</a>
+			<a class="char_icon"  href="#" onclick="showIpList();">&#128196;</a>
 		</div> 
 		<div class="formItem">		
 		<label for="prefHost">Host - IP: </label></br>
@@ -519,7 +530,7 @@ display: inline-block;
 			<input id="prefReq" name="prefReq" size="40" type="text" maxlength="200" value=""/> 
 		</div>
 		<button id="butGetLog" class="formItem" onclick="getLogList(this.form);">
-		<a class="itin char_icon" href="#" >&#x21bb;</a>
+		<a class="itin char_icon" href="#" >&#11118;</a>
 		</button>
 	</div>
 
@@ -529,7 +540,7 @@ display: inline-block;
 	<table id="logList" class="cartePts">
 
 	</table>
-	<div id="divLoad"><i class="w3-xxxlarge material-icons w3-spin">&#x21bb;</i></div>
+	<div id="divLoad"><i class="w3-xxxlarge material-icons w3-spin">&#11118;</i></div>
 	<!--   <img id="imgLoad" alt="Chargement en cours..." src="images/loading.gif" />  // -->
 </div>
 
@@ -541,7 +552,7 @@ display: inline-block;
 
 
 <div id="copyright">
-<a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2018</a>
+<a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2019</a>
 </div>
 
 <div id="prefLayer"></div>
@@ -557,7 +568,7 @@ display: inline-block;
 <button class="formItem" onClick="delSel();">
 <a class="itin char_icon" href="#">&#9940;</a>
 </button>
-</br><textarea rows = "4" cols = "30" id="oTextDesc" tabindex="3" ></textarea></br>
+</br><textarea rows = "4" cols = "30" id="oTextDesc" tabindex="3" ></textarea><img id="imgLoc" alt="Flag country" src=""></br>
 <div  id="divComboList">
 	<select id="oComboList" size="5" tabindex="1000" onchange="selInList(this);" >
 	</select>
