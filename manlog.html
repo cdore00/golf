@@ -20,8 +20,11 @@
 <script type="text/javascript" language="Javascript">
 <!--
 
-var fopo, arrExp = [], maxList = 50, editIp = false;
+var fopo, arrExp = [], maxList = 500, editIp = false, headList = "";
 var userId = null, user_id = null, user_mail = null, user_name = null;
+var sortColl = -1;  // Row number to sort
+var sortOrder = 1;  // Sort ascending = 1 descending = -1
+var sortArray = [];
 
 function initPage(){
 fopo = document.getElementById('fHost');
@@ -84,8 +87,8 @@ if (divOptions.style.height != "0px" && divOptions.style.height != ""){
 }
 
 function adjDivOpt(divOptions){
-var prefReq = document.getElementById('prefReq');
-var adj = prefReq.offsetTop + prefReq.offsetHeight - 75;
+var butGetLog = document.getElementById('butGetLog');
+var adj = butGetLog.offsetTop + butGetLog.offsetHeight - 75;
 if (divOptions && (divOptions.style.height == "0px" || divOptions.style.height == "")){
 	var fur = navigator.userAgent;
 	divOptions.style.height = adj + "px";	
@@ -120,7 +123,7 @@ function getLogList(oF){
 var divLoad = document.getElementById('divLoad');
 var validPd = "", validPde = "";
 
-var notIp = (oF.prefNotIp.checked) ? 1:0;
+var notIp = eval(oF.prefNotIp.value);
 
 if (arrExp.length > 0){
 	var ipExc = arrExp[0][0];
@@ -151,9 +154,93 @@ if (!validPd && validPd != ""){
 	}
 }
 
-function sortTable(noCol, colObj){
 
+function sortAsc(a, b) {
+    if (a[sortColl] === b[sortColl]) {
+        return 0;
+    }
+    else {
+        return (a[sortColl] < b[sortColl]) ? -1 : 1;
+    }
 }
+
+function sortDes(a, b) {
+    if (a[sortColl] === b[sortColl]) {
+        return 0;
+    }
+    else {
+        return (a[sortColl] < b[sortColl]) ? 1 : -1;
+    }
+}
+
+function sortTable(noCol, colObj){
+var logList = document.getElementById('logList');
+var sortTitle, sortCar;
+var listTot = 0, nbrGame = 0;
+
+var gl = logList.childNodes.length
+for (var i = 0; i < gl; i++){
+	logList.childNodes[0].parentNode.removeChild(logList.childNodes[0]);
+}
+logList.innerHTML = headList;
+
+if (sortColl == noCol){
+	if (colObj)
+		sortOrder *= -1; 
+}else
+	if (noCol == 0)
+		sortOrder = -1;
+	else
+		sortOrder = 1;
+
+sortColl = noCol;
+if (sortOrder == 1){
+	sortArray.sort(sortAsc);
+	sortCar = "&#9650;";
+}else{
+	sortArray.sort(sortDes);
+	sortCar = "&#9660;";
+	}
+	
+var theadElem = document.createElement("thead");
+var tbodyElem = document.createElement("tbody");
+logList.appendChild(theadElem);
+logList.appendChild(tbodyElem);
+
+var thElem = document.createElement("tr");
+thElem.setAttribute('title', 'Click to sort');
+thElem.innerHTML = '<th onclick="sortTable(0, this)">Time</th><th onclick="sortTable(1, this)">Status</th><th onclick="sortTable(2, this)">IP</th><th onclick="sortTable(3, this)">Detail</th>';
+theadElem.appendChild(thElem);
+
+
+var Tcode = "";
+for (var i = 0; i < sortArray.length; i++) {
+    var time = sortArray[i][0];
+    var status = sortArray[i][1];
+    var ip = sortArray[i][2];
+    Tcode += '<tr class="norm" ontouchstart="this.className=\'rowOver\'" ontouchend="this.className=\'rowNorm\'" onmouseover="this.className=\'rowOver\'" onmouseout="this.className=\'rowNorm\'" onclick="showDetail(this);">';
+    Tcode += '<td>' + formatDateTime.datetime(time) + '</td><td>' + status + '</td><td>' + ip + '</td>';
+    Tcode += '<td class="logDetail"><div class="divDetail">' + sortArray[i][3] + '</br>' + sortArray[i][4] + '</br>' + sortArray[i][5] + '</br>' + '</div></td></tr>';
+}
+
+tbodyElem.innerHTML = Tcode;
+
+	switch(noCol) {
+		case 0:
+			sortTitle = "Time";
+			break;
+		case 1:
+			sortTitle = "Status";
+			break;
+		case 2:
+			sortTitle = "IP";
+			break;
+		case 3:
+			sortTitle = "Detail";
+			break;	} 
+	thElem.childNodes[noCol].innerHTML = sortTitle + '<span class="sortInd">' + sortCar + '</span>';	
+}
+
 
 function listLog(data){
 var logList = document.getElementById('logList');
@@ -164,36 +251,16 @@ oLog = data.logList;
 
 logList.innerHTML = "";
 if (data.cnt > data.max)
-	logList.innerHTML = data.max + "/" + data.cnt + " refine for all"
+	headList = data.max + "/" + data.cnt + " refine for all"
 else
-	logList.innerHTML = data.cnt + " logs items";
-	
-divLoad.style.display = "none";
-var theadElem = document.createElement("thead");
-var tbodyElem = document.createElement("tbody");
-logList.appendChild(theadElem);
-logList.appendChild(tbodyElem);
+	headList = data.cnt + " logs items";
 
-var thElem = document.createElement("tr");
-thElem.setAttribute('title', 'Click to sort');
-thElem.innerHTML = '<th onclick="sortTable(0, this)">Time</th><th onclick="sortTable(1, this)">Status</th><th onclick="sortTable(2, this)">IP</th><th >Detail</th>';
-theadElem.appendChild(thElem);
-
-var arrHDP = [];
-var Tcode = "";
+sortArray = [];
 for (var i = 0; i < oLog.length; i++) {
-    var scoreID = oLog[i].date;
-    var time = oLog[i].time;
-    var status = oLog[i].status;
-    var ip = oLog[i].ip;
-    Tcode += '<tr class="norm" ontouchstart="this.className=\'rowOver\'" ontouchend="this.className=\'rowNorm\'" onmouseover="this.className=\'rowOver\'" onmouseout="this.className=\'rowNorm\'" onclick="showDetail(this);">';
-    Tcode += '<td>' + formatDateTime.datetime(time) + '</td><td>' + status + '</td><td>' + ip + '</td>';
-    Tcode += '<td class="logDetail"><div class="divDetail">' + oLog[i].request + '</br>' + oLog[i].referer + '</br>' + oLog[i].user_agent + '</br>' + '</div></td></tr>';
-    //sortArray[i] = [ scoreID , (scoreData[i].score_date) , courseName , gt ];
+	sortArray[i] = [ oLog[i].time , oLog[i].status , oLog[i].ip, oLog[i].request, oLog[i].referer, oLog[i].user_agent, oLog[i].date, oLog[i]._id ];
 }
-//alert(i);
-tbodyElem.innerHTML = Tcode;
-
+divLoad.style.display = "none";
+sortTable(0);
 }
 
 function showDetail(oTR, toClose){
@@ -204,8 +271,8 @@ if (toClose){
 }
 if (editIp)
 	return false;
-var htmlCode = '<table class="cartePts"><th>Time</th><th>Status</th><th>IP</th>';
-htmlCode +=  '<tr><td>' + oTR.childNodes[0].innerHTML + '</td><td>' + oTR.childNodes[1].innerHTML + '</td><td>' + oTR.childNodes[2].innerHTML + '</td></tr></table>';
+var htmlCode = '<table class="cartePts"><tr><th>Time</th><th>Status</th><th>IP</th><th></th></tr>';
+htmlCode +=  '<tr><td>' + oTR.childNodes[0].innerHTML + '</td><td>' + oTR.childNodes[1].innerHTML + '</td><td>' + oTR.childNodes[2].innerHTML + '</td><td onclick="getIPloc(\'' + oTR.childNodes[2].innerHTML + '\')"><a alt="Show ip location" class="char_icon">&#9989;</a></td></tr></table>';
 htmlCode += '<div class="logDetail">' + oTR.childNodes[3].childNodes[0].innerHTML + '</div>';
 htmlCode += '<button class="bouton" onclick="showDetail(false, true)">Close</button>';
 prefLayer.innerHTML = htmlCode;
@@ -213,7 +280,6 @@ prefLayer.style.visibility = "visible";
 
 return false;
 }
-
 
 function selInList(oLB){
 if (oLB.selectedIndex != -1){
@@ -274,7 +340,7 @@ fopo.oTextDesc.value = "";
 refreshComboList(fopo.oComboList);
 }
 
-function showIpList(){
+function showIpList(oipstack){
 var prefLayer = document.getElementById('prefLayer');
 var oComboBox = document.getElementById('oComboBox');
 prefLayer.innerHTML = "";
@@ -282,6 +348,10 @@ prefLayer.appendChild(oComboBox);
 editIp = true;
 prefLayer.style.visibility = "visible";
 oComboBox.style.visibility = "visible";
+if (oipstack){
+	fopo.oTextBox.value = oipstack.ip;
+	fopo.oTextDesc.value = ((oipstack.country_name!= null) ? oipstack.country_name:"") + ((oipstack.region_name!= null) ? "-" + oipstack.region_name:"") + ((oipstack.city!= null) ? "-" + oipstack.city:"") + ((oipstack.latitude!= null) ? "\n" + oipstack.latitude + ", " + oipstack.longitude:"");
+}
 }
 
 function saveContext(saveData){
@@ -294,6 +364,26 @@ if (saveData)
 editIp = false;
 showDetail(false, true);
 eBod.appendChild(oComboBox);
+}
+
+function getIPloc(ip){
+
+getInfo("getLocation?ip=" + ip, showIpList);
+//showIpList
+return
+
+var key = "34aab071ddd6df722a40aab13400a403";
+var xhr=new XMLHttpRequest();
+//ip = "198.108.66.96";
+	xhr.onloadend = function() {
+	var text = xhr.responseText;
+
+	var data=JSON.parse(text);
+	showIpList(data);
+	};
+	
+xhr.open("GET", "http://api.ipstack.com/" + ip + "?access_key=" + key ,true);
+xhr.send();
 }
 
 // -->
@@ -341,11 +431,9 @@ table.cartePts{
 }
 
 #oTextBox, #oTextDesc{
-width: 155px; 
-z-index: 2;
-border:none;
 width: 10em;
 }
+
 #oComboList{
 z-index: 1; 
 width: 11em;
@@ -405,13 +493,17 @@ display: inline-block;
 	</div>
 	<div>		
 		<div class="formItem">		
-		<label for="prefNotIp">Exclus</label></br>
-			<input id="prefNotIp" name="prefNotIp" type="checkbox" >
+		<label for="prefNotIp">List</label></br>
+		<select id="prefNotIp" name="prefNotIp"> 
+			<option value="0" selected="selected"></option>
+			<option value="1" >Not in</option>
+			<option value="2" >In</option>
+		</select>
 			<a class="itin"  href="#" onclick="showIpList();">...</a>
 		</div> 
 		<div class="formItem">		
 		<label for="prefHost">Host - IP: </label></br>
-			<input id="prefHost" name="prefHost" size="25" type="text" maxlength="15" value=""/> 
+			<input id="prefHost" name="prefHost" size="18" type="text" maxlength="15" value=""/> 
 		</div>		
 		<div class="formItem">
 		<label for="prefStat">Status: </label></br>
@@ -426,7 +518,7 @@ display: inline-block;
 		<label for="prefReq">Request: </label></br>
 			<input id="prefReq" name="prefReq" size="40" type="text" maxlength="200" value=""/> 
 		</div>
-		<button class="formItem" onclick="getLogList(this.form);">
+		<button id="butGetLog" class="formItem" onclick="getLogList(this.form);">
 		<a class="itin char_icon" href="#" >&#x21bb;</a>
 		</button>
 	</div>
@@ -437,7 +529,8 @@ display: inline-block;
 	<table id="logList" class="cartePts">
 
 	</table>
-	<div id="divLoad"><img id="imgLoad" alt="Chargement en cours..." src="images/loading.gif" /></div>
+	<div id="divLoad"><i class="w3-xxxlarge material-icons w3-spin">&#x21bb;</i></div>
+	<!--   <img id="imgLoad" alt="Chargement en cours..." src="images/loading.gif" />  // -->
 </div>
 
 </form>
@@ -454,10 +547,6 @@ display: inline-block;
 <div id="prefLayer"></div>
 <div id="modalDiv"></div>
 
-<div id="authLayer" class="winLayer">
-<div id="divLoad"><img id="imgLoad" alt="Chargement en cours..." height="64" width="64" src="images/loading.gif" /></div>
-</div>
-
 <div id="oComboBox">
 <h3>IP Exclusions</h3>
 <form id="fHost" action="#">
@@ -468,7 +557,7 @@ display: inline-block;
 <button class="formItem" onClick="delSel();">
 <a class="itin char_icon" href="#">&#9940;</a>
 </button>
-</br><input type="text" id="oTextDesc" tabindex="3" /></br>
+</br><textarea rows = "4" cols = "30" id="oTextDesc" tabindex="3" ></textarea></br>
 <div  id="divComboList">
 	<select id="oComboList" size="5" tabindex="1000" onchange="selInList(this);" >
 	</select>
