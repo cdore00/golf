@@ -31,8 +31,8 @@ fopo = document.getElementById('fHost');
 var listItem = localStorage.getItem("ipList")
 if (listItem ){
 	arrExp = JSON.parse(listItem);
-	refreshComboList(fopo.oComboList)
-	selInList(fopo.oComboList)
+	refreshComboList(fopo.oComboList);
+	//selInList(fopo.oComboList)
 }
 var formPref = document.getElementById('formPref');
 if (GetCookie("userRole") != "ADM")
@@ -283,15 +283,21 @@ return false;
 
 function selInList(oLB){
 if (oLB.selectedIndex != -1){
+	document.getElementById('imgLoc').style.display = "none";
 	fopo.oTextBox.value = arrExp[oLB.selectedIndex][0];
 	fopo.oTextDesc.value = arrExp[oLB.selectedIndex][1];
+	if (arrExp[oLB.selectedIndex][1].substring(0, 1) == '"'){
+		x = "[" + arrExp[oLB.selectedIndex][1] + "]";
+		rc = JSON.parse(x)[2];
+		showFlagCountry(rc);
+	}
 }
 }
 
 function addHost(){
 var exp = fopo.oTextBox.value;
 var desc = fopo.oTextDesc.value;
-
+if (exp){
 	var index = getIPindex(exp);
 	if (index > -1) {
 	  arrExp.splice(index, 1);
@@ -305,8 +311,8 @@ var desc = fopo.oTextDesc.value;
 	if (arrExp.length > maxList){
 		arrExp.splice(0, 1);
 	}
-		
 	refreshComboList(fopo.oComboList);
+}
 }
 
 function refreshComboList(oCombo){
@@ -338,6 +344,8 @@ if (index > -1) {
 fopo.oTextBox.value = "";
 fopo.oTextDesc.value = "";
 refreshComboList(fopo.oComboList);
+//x = '["' + arrExp[oLB.selectedIndex][1] + '"]'
+
 }
 
 function showIpList(oipstack){
@@ -349,14 +357,19 @@ editIp = true;
 prefLayer.style.visibility = "visible";
 oComboBox.style.visibility = "visible";
 if (oipstack){
-	fopo.oTextBox.value = oipstack.ip;
-	fopo.oTextDesc.value = ((oipstack.country_name!= null) ? oipstack.country_name:"") + ((oipstack.region_name!= null) ? "-" + oipstack.region_name:"") + ((oipstack.city!= null) ? "-" + oipstack.city:"") + ((oipstack.latitude!= null) ? "\n" + oipstack.latitude + ", " + oipstack.longitude:"");
+	fopo.oTextBox.value = oipstack.ip;	
 	if (oipstack.country_code!= null){
-		var imgLoc = document.getElementById('imgLoc');
-		imgLoc.src = "https://flags.fmcdn.net/data/flags/h40/" + oipstack.country_code.toLowerCase() + ".png";
-		imgLoc.style.visibility = "visible";
-	}
+		showFlagCountry(oipstack.country_code.toLowerCase());
+		fopo.oTextDesc.value = '"' + ((oipstack.country_name!= null) ? oipstack.country_name:"") + ((oipstack.region_name!= null) ? "-" + oipstack.region_name:"") + ((oipstack.city!= null) ? "-" + oipstack.city:"") + '","' + ((oipstack.latitude!= null) ? oipstack.latitude + ", " + oipstack.longitude:"") + '","' + oipstack.country_code.toLowerCase() + '"';
+	}else
+		fopo.oTextDesc.value = '';
 }
+}
+
+function showFlagCountry(cr){
+	var imgLoc = document.getElementById('imgLoc');
+	imgLoc.src = "https://flags.fmcdn.net/data/flags/h40/" + cr + ".png";
+	imgLoc.style.display = "inline";
 }
 
 function saveContext(saveData){
@@ -454,9 +467,9 @@ display: inline-block;
 }
 
 #imgLoc{
-width: 60px;
+width: 80px;
 height: 40px;
-visibility: hidden;
+display: none;
 }
 
 </style>
@@ -559,7 +572,7 @@ visibility: hidden;
 <div id="modalDiv"></div>
 
 <div id="oComboBox">
-<h3>IP Exclusions</h3>
+<h3>IP List</h3>
 <form id="fHost" action="#">
 <input type="text" id="oTextBox" tabindex="2" />
 <button class="formItem" onClick="addHost();">

@@ -268,6 +268,17 @@ showProgress(1);
 
 // -->
 </script>
+
+<style>
+
+.rIcon{
+position: relative;
+float: right;
+margin-right: 0.4em;
+}
+
+</style>
+
 </head>
 
 <body onload="initPage()" onunload="majFav()"><a name="haut"></a>
@@ -288,7 +299,7 @@ showProgress(1);
 <a id="mapLink" target="_blank" href="ClubMap.html?data=" onclick="majFav();"><text id="mmaps"></text></a></div>
 
 <div id="menuList">
-<a class="inputButton" href="#"; onclick="editClub(true);" title="&Eacute;diter la fiche du club.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="medit"></text>&#x1F4DD;</a>
+<a class="inputButton" href="#"; onclick="editClub(true);" title="&Eacute;diter la fiche du club.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="medit"></text><span class="rIcon" >&#x1F4DD;</span></a>
 <a class="inputButton" href="#"; onclick="editClub(false);" title="Ajouter un club de golf.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="majou"></text></a>
 </div>
 
