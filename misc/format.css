@@ -105,13 +105,13 @@ progress::-webkit-progress-bar { background: #fff; }
 #bottombar.vert{background-color:#00bb00;filter:progid:DXImageTransform.Microsoft.gradient(startcolorstr='#00bb00',endcolorstr='#00bb00')}
 
 #leftnav,#leftbutton{position:absolute;font-size:15px;left:10px}
-#leftnav a,#leftbutton a,#rightbutton a,#rightbuttonItem a{display:block;color:#fff;text-decoration:none}
+#leftnav a,#leftbutton a,#rightbutton a,#rightbuttonItem a{display:block;color:#ccc;text-decoration:none}
 #logoHome{display: inline-block;float: left;width:32px;left:11px;top:7px;height:34px}
 #leftnav{position:relative;float:left;top:7px}
 #rightnav, #rightnav2{position:absolute;font-size:0px;right:10px;top:7px;background:transparent;border:0px;cursor:pointer}
 #rightnav2{top:0px}
-#rightbutton{position:relative;float:right;top:-5px;right:15px}
-#leftbutton{margin-top:-5px;left:15px; visibility:hidden}
+#rightbutton{position:relative;float:right;top:-0.35em;right:15px; font-size: 35px;}
+#leftbutton{margin-top:-0.35em;left:15px; visibility:hidden; font-size: 35px;}
 #rightbuttonItem{position:relative;clear:both;float:right;top:16px;right:5px;font-size:12px;font-weight:bold;text-align:left}
 #message, #messageErreur {position:relative;display:block;width:85%;left:10px;color:#222222;font-weight:bold;padding-bottom:5px}
 #messageErreur{color:#FF3333;text-decoration:blink}
@@ -341,14 +341,26 @@ position: relative;
 
 #favIcon{
 position: relative;
-top: 7px;
+font-size: 1.4em;
+}
+
+#favIcon a{
+color: #ccc !important;
+}
+
+#favIcon a:hover{
+color:#d33 !important;
 }
 
 .char_icon{
+font-min-size: 20px;
+font-max-size: 40px;
 font-size: 1.1em;
 font-weight: bold;
 text-decoration: none;
 cursor: pointer;
+text-shadow: 2px 2px #999;
+
 }
 
 table.cartePts{background-color: #ccc;border: buttonhighlight 2px outset;}

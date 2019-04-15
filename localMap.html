@@ -317,9 +317,8 @@ if (userId && !showSR && THCall == "POST"){
 function popDtPicker(oTxtDt){
 if (!window.dtPicker){
 	window.dtPicker = new Datepicker(document.getElementById(oTxtDt));
-	//window.dtPicker.config({format: d => {return getDateTime(d)}});
 }
-window.dtPicker.show();
+window.dtPicker.show(document.getElementById(oTxtDt));
 }
 
 function editMark(oMark){

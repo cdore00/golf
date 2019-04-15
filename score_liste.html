@@ -5,17 +5,15 @@
 <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type" />
 <meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
 <meta name="format-detection" content="telephone=no" />
-
 <link rel="shortcut icon" type="image/x-icon" href="images/golf.png">
 <link rel="shortcut icon" type="image/x-icon" href="images/golf.png?">
-<link href="misc/init.css" rel="stylesheet" media="screen" type="text/css" />
 <link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
 <link href="misc/golfGPS.css" rel="stylesheet" media="screen" type="text/css" />
 <link href="misc/datepicker.css" rel="stylesheet">
 
 <title>Golfs du Qu&eacute;bec</title>
-<meta content="Golf GPS, Qu&eacute;bec, Canada, Golf du Qu&eacute;bec, Clubs de golf au Qu&eacute;bec, Qu&eacute;bec golf" name="keywords" />
-<meta content="R&eacute;pertoire des clubs de golf du Qu&eacute;bec. GPS golf." name="description" />
+<meta content="Golf, Québec, Canada, Golf du Québec, Clubs de golf au Québec, Québec golf" name="keywords" />
+<meta content="Répertoire des clubs de golf du Québec." name="description" />
 
 <meta name="viewport" content="initial-scale=1.0, user-scalable=no" /> 
 <script src="misc/dateP.js"></script>
@@ -54,12 +52,12 @@ width: 1% !important;
 <!--
 
 var editMode = false;
-//var menuOn = false;
+var menuOn = false;
 
 if (isTouchDevice){
 	document.getElementById('p1').addEventListener('touchstart', function(event) {
 	event.preventDefault();
-	//closeMenu();
+	closeMenu();
 	}, false);
 	document.getElementById('p1').addEventListener('touchend', function(event) {
 	event.preventDefault();
@@ -96,14 +94,14 @@ formPref.prefNb.value = "";
 
 var p1 = document.getElementById('p1');
 p1.addEventListener("mouseover", function() {
-    //closeMenu();
+    closeMenu();
 }); 
 
 setFontSize();
 userId = GetCookie("userID");
 
 var data = getURLdata();
-window.oMenu = new menuObject(document.getElementById('butMenu'));
+
 initCount();
 
 if (eval(localStorage.getItem('optOpen')))
@@ -212,7 +210,7 @@ if (!tel || tel == 99){
 		alert("No data");
 		return;
 	}
-	var param = ("getGameList?user=" + userId + "&parc=" + parcNo + "&skip=" + skip + "&limit=" + limit + "&is18=" + nbrTrous  + "&date=" + date + "&tele=" + tel + "&rand=" + Date.now());
+	var param = ("getGameList?user=" + userId + "&parc=" + parcNo + "&skip=" + skip + "&limit=" + limit + "&is18=" + nbrTrous  + "&date=" + date + "&tele=" + tel);
 	document.location.href = HOSTserv + param;
 	stopLoad();
 	}
@@ -434,22 +432,52 @@ var prefNb = document.getElementById('prefNb');
 prefNb.value = oNbr.value;
 }
 
+function optGameList(objOpt){
+var menuList = document.getElementById('menuList');
+
+menuList.style.left = objOpt.offsetLeft + "px";
+menuList.style.width = menuList.childNodes[1].offsetWidth + "px";
+
+if (menuList.style.height != "0px"){
+	closeMenu();
+}else{
+	menuList.style.height = "150px";
+	}
+}
+
 function showMenu(){
-	window.oMenu.show();
+var menuList = document.getElementById('menuList');
+
+if (menuList.style.height != "0px"){
+	menuList.style.height = "0px";
+}else{
+	var adj = menuList.childNodes[1].offsetHeight;
+	menuList.style.height = (adj * .75) + "pt";
+	}
+menuOn = true;
 }
 
 function showSubmenu(objOpt, state){
 var submenu = document.getElementById('submenu1');
 
 if (objOpt){
-	submenu.style.left = (objOpt.offsetWidth * .91) + "px";
-	submenu.style.top = (objOpt.offsetTop + 35) + "px";
+	submenu.style.left = objOpt.offsetWidth + "px";
+	submenu.style.top = (objOpt.offsetTop + 32) + "px";
 }
+
 submenu.style.display = state;
+
 }
 
 function closeMenu(){
-	window.oMenu.close();
+if (menuOn){
+	var menuList = document.getElementById('menuList');
+	var submenu = document.getElementById('submenu1');
+
+	submenu.style.display = "none";
+	menuList.style.height = "0px";
+	menuOn = false;
+}
 }
 
 function showOptions(menuOpt){
@@ -531,19 +559,14 @@ if (oRes.ok){
 }
 
 function resizeImg(fs){
-var refImg = document.getElementById('refImg');
-
-//refImg.width = fs * 17;
 adjDivOpt();
-//setTimeout("window.oMenu.resize()", 10);
 }
 
 function popDtPicker(oTxtDt){
 if (!window.dtPicker){
 	window.dtPicker = new Datepicker(document.getElementById(oTxtDt));
-	//window.dtPicker.config({format: d => {return getDateTime(d)}});
 }
-window.dtPicker.show();
+window.dtPicker.show(document.getElementById(oTxtDt));
 }
 
 // -->
@@ -575,16 +598,27 @@ max-width: 15em;
 </div>
 
 <div id="menuList">
-<a class="inputButton" href="#" onclick="location.reload();" title="Actualiser la page.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mrefr">Actualiser</text></a>
-<a class="inputButton" href="#" onclick="editGame(this);" title="&Eacute;diter la liste.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="medit"></text></a>
-<a id="menuOpt" class="inputButton" href="#" onclick="showOptions(this);" title="Options de recherche.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mopti">Options</text></a>
-<a class="inputButton" href="#" onclick="showSubmenu(this, 'inherit');" onmouseover="showSubmenu(this, 'inherit');" onmouseout="showSubmenu(this, 'none');" title="T&eacute;l&eacute;charger un fichier...">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mdown"></text>&nbsp;&#9658;</a>
+<table><tbody>
+
+<tr><td onclick="location.reload();" title="Actualiser la page.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mrefr">Actualiser</text></td></tr>
+<tr><td onclick="editGame(this);" title="&Eacute;diter la liste.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="medit"></text></td></tr>
+<tr><td id="menuOpt" onclick="showOptions(this);" title="Options de recherche.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mopti">Options</text></td></tr>
+<tr><td onclick="showSubmenu(this, 'inherit');" onmouseover="showSubmenu(this, 'inherit');" onmouseout="showSubmenu(this, 'none');" title="T&eacute;l&eacute;charger un fichier...">&nbsp;&nbsp;&nbsp;&nbsp;<text id="mdown"></text>&nbsp;&#9658;</td></tr>
+<tr><td onclick="telGameList(0);">&nbsp;&nbsp;&nbsp;&nbsp;<text id="_canc">Annuler</text></td></tr>
+</tbody></table>
+</div>
+
+<div id="submenu1">
+<table><tbody>
+<tr><td onclick="telGameList(1);" onmouseover="showSubmenu(false, 'inherit');" title="T&eacute;l&eacute;charger un fichier csv.">Format csv...</td></tr>
+<tr><td onclick="telGameList(2);" onmouseover="showSubmenu(false, 'inherit');" title="T&eacute;l&eacute;charger un fichier json.">Format json...</td></tr>
+</tbody></table>
 </div>
 
 <form id="formPref" action="#">
 
 <div id="divOptions" class="prefPart">
-<input id="prefDate" type="text" size="10" placeholder="aaaa-mm-jj"/><a id="calIcon" class="char_icon" href="javascript:popDtPicker('prefDate');">&#128197;</a>
+<input id="prefDate" type="text" size="10" placeholder="aaaa/mm/jj"/><a id="calIcon" class="char_icon" href="javascript:popDtPicker('prefDate');">&#128197;</a>
 <select id="prefTrous" onchange="initCount()">
  <option value="18" selected>18 trous</option>
  <option value="9" >9 trous</option>
@@ -598,7 +632,7 @@ max-width: 15em;
   <option value="100" >100 parties</option>
 </select>
 <input id="prefNb" type"text" size="3" value="10"/>
-<a class="itin char_icon" href="#" onclick="getGameList(-1);" >&#x21bb;</a>
+<a class="itin char_icon" href="#" onclick="getGameList(-1);" >&#11118;</a>
 </div>
 </div>
 
@@ -606,7 +640,7 @@ max-width: 15em;
 	<table id="gameList" class="cartePts">
 
 	</table>
-	<div id="divLoad"><img id="imgLoad" alt="Chargement en cours..." height="1em" width="1em" src="images/loading.gif" /></div>
+	<div id="divLoad"><i class="w3-xxxlarge material-icons w3-spin">&#11118;</i></div>
 </div>
 
 <div class="space10">
@@ -615,7 +649,7 @@ max-width: 15em;
 
 </form>
 <div id="copyright">
-<a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2019</a>
+<a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2018</a>
 </div>
 
 <div id="modalDiv"></div>

@@ -6,6 +6,7 @@ sudo apt-get install git
 # Install source for server and services
 echo " ********** Copy from git ********** "
 cd /home
+sudo mkdir /home/log
 git clone https://github.com/cdore00/golf
 git clone https://github.com/cdore00/lou
 

@@ -25,6 +25,7 @@ var userId = null, user_id = null, user_mail = null, user_name = null;
 var sortColl = -1;  // Row number to sort
 var sortOrder = 1;  // Sort ascending = 1 descending = -1
 var sortArray = [];
+var locColl = { "coord": [] };
 
 function initPage(){
 fopo = document.getElementById('fHost');
@@ -124,6 +125,11 @@ var divLoad = document.getElementById('divLoad');
 var validPd = "", validPde = "";
 
 var notIp = eval(oF.prefNotIp.value);
+if (!notIp && !oF.prefDate.value && !oF.prefDateEnd.value && !eval(oF.prefStat.value) && !oF.prefReq.value){
+	mess = "At least one filter is required.";
+	saved({mess});
+	return;
+}	
 
 if (arrExp.length > 0){
 	var ipExc = arrExp[0][0];
@@ -283,7 +289,7 @@ return false;
 
 function selInList(oLB){
 if (oLB.selectedIndex != -1){
-	document.getElementById('imgLoc').style.display = "none";
+	document.getElementById('divLoc').style.display = "none";
 	fopo.oTextBox.value = arrExp[oLB.selectedIndex][0];
 	fopo.oTextDesc.value = arrExp[oLB.selectedIndex][1];
 	if (arrExp[oLB.selectedIndex][1].substring(0, 1) == '"'){
@@ -367,9 +373,10 @@ if (oipstack){
 }
 
 function showFlagCountry(cr){
+	var divLoc = document.getElementById('divLoc');
 	var imgLoc = document.getElementById('imgLoc');
 	imgLoc.src = "https://flags.fmcdn.net/data/flags/h40/" + cr + ".png";
-	imgLoc.style.display = "inline";
+	divLoc.style.display = "inline-block";
 }
 
 function saveContext(saveData){
@@ -404,6 +411,14 @@ xhr.open("GET", "http://api.ipstack.com/" + ip + "?access_key=" + key ,true);
 xhr.send();
 }
 
+function showCountry(info){
+x = "[" + info + "]";
+ll = JSON.parse("[" + info + "]")[1].split(',');
+locColl.coord[0] = { acc: 0, lat: eval(ll[0]), lng: eval(ll[1]) };
+var localWindow = window.open('localMap.html', 'localMap');
+localWindow.document.close();
+}
+
 // -->
 </script>
 
@@ -433,7 +448,7 @@ height: 2.5em;
 overflow: hidden;
 }
 
-#logList{showOptions
+#logList{
 width: 100%;
 display: block;
 }
@@ -463,13 +478,22 @@ text-align: left;
 display: inline-block;
 }
 #closeCombo{
-    margin-left: 5em;
+  margin-left: 5em;
 }
 
 #imgLoc{
 width: 80px;
 height: 40px;
+display: inline;
+}
+
+#divLoc{
+width: 80px;
 display: none;
+}
+
+#divLoc a{
+margin: 23px;
 }
 
 </style>
@@ -576,12 +600,12 @@ display: none;
 <form id="fHost" action="#">
 <input type="text" id="oTextBox" tabindex="2" />
 <button class="formItem" onClick="addHost();">
-<a class="itin char_icon" href="#">&#9989;</a>
+<a class="char_icon" href="#">&#9989;</a>
 </button>
 <button class="formItem" onClick="delSel();">
-<a class="itin char_icon" href="#">&#9940;</a>
+<a class="char_icon" href="#">&#9940;</a>
 </button>
-</br><textarea rows = "4" cols = "30" id="oTextDesc" tabindex="3" ></textarea><img id="imgLoc" alt="Flag country" src=""></br>
+</br><textarea rows = "4" cols = "30" id="oTextDesc" tabindex="3" ></textarea><div id="divLoc"><a class="char_icon" href="#" onclick="showCountry(fopo.oTextDesc.value)">&#x1f30e;</a></br><img id="imgLoc" alt="Flag country" src=""></div></br>
 <div  id="divComboList">
 	<select id="oComboList" size="5" tabindex="1000" onchange="selInList(this);" >
 	</select>
