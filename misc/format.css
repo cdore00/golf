@@ -11,7 +11,7 @@ font-family:helvetica,sans-serif;
 height: 100%; 
 margin: 0; 
 padding: 0;
-font-size:0.9em;
+font-size:1em;
 background:#FFF;-webkit-touch-callout:none;
 background: rgb(238, 238, 238);
 }
@@ -111,7 +111,7 @@ progress::-webkit-progress-bar { background: #fff; }
 #rightnav, #rightnav2{position:absolute;font-size:0px;right:10px;top:7px;background:transparent;border:0px;cursor:pointer}
 #rightnav2{top:0px}
 #rightbutton{position:relative;float:right;top:-0.35em;right:15px; font-size: 35px;}
-#leftbutton{margin-top:-0.35em;left:15px; visibility:hidden; font-size: 35px;}
+#leftbutton{margin-top:-0.3em;left:15px; visibility:hidden; font-size: 30px;}
 #rightbuttonItem{position:relative;clear:both;float:right;top:16px;right:5px;font-size:12px;font-weight:bold;text-align:left}
 #message, #messageErreur {position:relative;display:block;width:85%;left:10px;color:#222222;font-weight:bold;padding-bottom:5px}
 #messageErreur{color:#FF3333;text-decoration:blink}

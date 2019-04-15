@@ -426,7 +426,7 @@ navigator.geolocation.clearWatch(watchId);
 		{
 		donn = donn + "\nCoord " + i + ": " + locColl.coord[i].lat + ", " + locColl.coord[i].lng + ", Prec: " + locColl.coord[i].acc;
 		}
-			alert(locColl.coord.length + "\nResult:" + resultLocalisation + donn);
+			//alert(locColl.coord.length + "\nResult:" + resultLocalisation + donn);
 	}
 }
 
@@ -705,6 +705,7 @@ geocoder = new google.maps.Geocoder();
     position: absolute;
     width: 98%;
 	margin-top: 75px;
+	display: inherit;
 }
 
 #identLayer{
@@ -892,7 +893,7 @@ display: none;
 </div>
 
 <div id="authLayer" class="winLayer">
-<div id="divLoad"><img id="imgLoad" alt="Chargement en cours..." height="64" width="64" src="images/loading.gif" /></div>
+<div id="divLoad"><i class="w3-xxxlarge material-icons w3-spin">&#11118;</i></div>
 </div>
 <!--<div id="tooltip"></div>  // -->
 <div id="tooltip"><div id="tooltipFleche"></div><div id="tooltipMid"><a href="javascript:showLocal();"><p id="tooltipText"></p></a></div></div>
