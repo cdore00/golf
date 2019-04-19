@@ -106,7 +106,7 @@ initCount();
 
 if (eval(localStorage.getItem('optOpen')))
 	showOptions(document.getElementById('menuOpt'));
-
+window.oTip = new messTipObject();
 }
 
 function initCount(){
@@ -152,6 +152,11 @@ if (!date)
 	date = 0;
 
 nbrTrous = parseInt(formPref.prefTrous.value);
+if (formPref.prefNb.value != "" && !parseInt(formPref.prefNb.value)){
+	window.oTip.show(langLbl["I0008"], false, false, 300, -35);
+	stopLoad();
+	return;
+}
 limit = parseInt(formPref.prefNb.value);
 if (!limit)
 	limit = parseInt(formPref.prefNbr.value);
@@ -364,7 +369,7 @@ if (i == 20)
 	var hdp = "Hand.: " + calcHDP(arrHDP);
 else
 	var hdp = "";
-var rmoy =  (Math.round(listTot/limit*10) /10 )
+var rmoy =  (Math.round(listTot/i*10) /10 )
 if (!rmoy)
 	rmoy = 0;
 Tcode += '<tr><td><strong>' + hdp + '</strong></td><td><strong>' + nbrGame + '&nbsp;parties</strong></td><td><strong>Moy.: ' + rmoy + '</strong></td><td class="tdEdit"></td></tr>';
@@ -631,7 +636,7 @@ max-width: 15em;
  <option value="50" >50 parties</option>
   <option value="100" >100 parties</option>
 </select>
-<input id="prefNb" type"text" size="3" value="10"/>
+<input id="prefNb" type="text" size="3" maxlength="3" placeholder="999"/>
 <a class="itin char_icon" href="#" onclick="getGameList(-1);" >&#11118;</a>
 </div>
 </div>

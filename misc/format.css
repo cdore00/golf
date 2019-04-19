@@ -268,7 +268,7 @@ box-shadow: 1px 1px 7px 2px rgba(0,0,0,0.5);
     background-color: #bbb;
     color: #222;
     font-weight: bold;
-    cursor: pointer float: inherit;
+    cursor: pointer !important;
     min-width: 6em;
 }
 
@@ -723,12 +723,10 @@ width:40px;
 }
 
 #onglets{
-
     list-style-type : none;
     padding-bottom : 25px; /* à modifier suivant la taille de la police ET de la hauteur de l'onglet dans #onglets li */
     padding-left : 10px;
 }
-
 
 #onglets li{
     float : left;

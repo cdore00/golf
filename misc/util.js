@@ -784,6 +784,7 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["M0010"] = "Supprimer cette partie?";
 		langLbl["M0011"] = "Suppression en cours...";
 		langLbl["M0012"] = "Rafraîchir la liste...";
+		
 		langLbl["I0001"] = "&nbsp;&#224; moins de ";
 		langLbl["I0002"] = "&nbsp;kilom&#232;tres du code postal &#171;&nbsp;";
 		langLbl["I0003"] = "&nbsp;dans la r&eacute;gion &#171;";
@@ -793,6 +794,7 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["I0005"] = "&nbsp;ou le nom de la ville du club ";
 		langLbl["I0006"] = "&nbsp;le nom de la ville du club ";
 		langLbl["I0007"] = " nom du club de golf";
+		langLbl["I0008"] = "Le nombre de parties doit &ecirc;tre une valeur num&eacute;rique.";
 
 		langLbl["fgame"] = "Terminer la partie";
 		langLbl["rgame"] = "Supprimer la partie";
@@ -836,7 +838,7 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["S0059"] = "Mote de passe actuel incorrect.";
 		langLbl["S0060"] = "Vous devez vous authentifier pour terminer la partie.";
 		langLbl["S0061"] = "Vous devez vous authentifier pour supprimer la partie.";
-		langLbl["S0062"] = "Vous devez être authentifié administrateur pour sauvegarder.";
+		langLbl["S0062"] = "Vous devez être authentifié administrateur pour cette action.";
 		
 		langLbl["Bleu"] = "Bleu";
 		langLbl["Hdcp"] = "Hdcp";
@@ -905,7 +907,8 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["M0009"] = "La dirección de correo electrónico es inválida.";
 		langLbl["M0010"] = "¿Eliminar el puntaje de este juego?";
 		langLbl["M0011"] = "Eliminando en progreso...";
-		langLbl["M0012"] = "Actualizar la lista...";		
+		langLbl["M0012"] = "Actualizar la lista...";	
+		
 		langLbl["I0001"] = "&nbsp;a menos de ";
 		langLbl["I0002"] = "&nbsp;kil&oacute;metros del c&oacute;digo postal&nbsp;&#171;&nbsp;";
 		langLbl["I0003"] = "&nbsp;en la regi&oacute;n &#171;";
@@ -915,7 +918,8 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["I0005"] = "&nbsp;o en el nombre de la ciudad del club ";
 		langLbl["I0006"] = "&nbsp;el nombre de la ciudad del club ";
 		langLbl["I0007"] = " nombre del club de golf";
-
+		langLbl["I0008"] = "El n&uacute;mero de juegos debe ser un valor num&eacute;rico.";
+		
 		langLbl["fgame"] = "Termina el juego";
 		langLbl["rgame"] = "Eliminar el juego";
 		langLbl["scard"] = "Tarjeta";
@@ -957,7 +961,7 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["S0059"] = "Contraseña actual incorrecta.";
 		langLbl["S0060"] = "Debes autenticarte para completar el juego.";
 		langLbl["S0061"] = "Debes autenticarte para eliminar el juego.";
-		langLbl["S0062"] = "Debe ser administrador autenticado para guardar.";
+		langLbl["S0062"] = "Debe ser administrador autenticado para esta acción.";
 		
 		langLbl["Bleu"] = "Azul";
 		langLbl["Hdcp"] = "Hdcp";
@@ -1027,6 +1031,7 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["M0010"] = "Remove this game's score?";
 		langLbl["M0011"] = "Removing in progress...";
 		langLbl["M0012"] = "Refreshing the list...";
+		
 		langLbl["I0001"] = "&nbsp;within ";
 		langLbl["I0002"] = "&nbsp;kilometers of the postal code &#171;&nbsp;";		
 		langLbl["I0003"] = "&nbsp;in the region &#171;";
@@ -1036,6 +1041,7 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["I0005"] = "&nbsp;or the name of the city of the club ";
 		langLbl["I0006"] = "&nbsp;the name of the city of the club ";
 		langLbl["I0007"] = " name of the golf club";
+		langLbl["I0008"] = "The number of games must be a numeric value.";
 		
 		langLbl["fgame"] = "Finish the game";
 		langLbl["rgame"] = "Remove the game";
@@ -1078,7 +1084,7 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["S0059"] = "Incorrect current password.";
 		langLbl["S0060"] = "You must authenticate to complete the game.";
 		langLbl["S0061"] = "You must authenticate to remove the game.";
-		langLbl["S0062"] = "You must be authenticated administrator to save.";
+		langLbl["S0062"] = "You must be authenticated administrator for this action.";
 		
 		langLbl["Bleu"] = "Blue";
 		langLbl["Hdcp"] = "Hdcp";

@@ -243,10 +243,12 @@ function piquetObject(UIid, map, holeMark, posMarker){
 	  });	
 
 	this.resize = function (fStop){
-		//console.log("window.oPicket.resizeImg "); 
+		var adj = 0;
+		if (this.UIcontrol.baseURI.indexOf('golfGPS') != -1)		
+			adj = 4;
 		pos = getOffset(this.UIcontrol);	
 		this.UIpiquetDist.style.left = (pos.left - this.UIcontrol.offsetWidth*.35) + "px";
-		this.UIpiquetDist.style.top = (pos.top + this.UIcontrol.offsetHeight + 4) + "px";
+		this.UIpiquetDist.style.top = (pos.top + this.UIcontrol.offsetHeight + adj) + "px";
 		if (!fStop)
 			setTimeout("window.oPicket.resize(true);", 50);
 	}

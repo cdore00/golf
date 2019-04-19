@@ -40,7 +40,10 @@ getInfo("getUser?word=" + word, initListUser);
 }
 
 function initListUser(oList){
-// Add manage S0062 error not auth
+if (oList.ok && oList.ok == 0){
+	alert(langLbl[oList.message]);
+	return false;
+}
 var pageZone = document.getElementById('pageZone');
 remChilds(pageZone);
 for (var i = 0; i < oList.length; i++){
