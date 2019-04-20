@@ -42,11 +42,12 @@ if (favChange)
 else
 	favChange = true;
 
-if (objImg.className.indexOf("redColor") !=  -1)
-	objImg.classList.remove("redColor");
+if (objImg.src.indexOf("Off") !=  -1)
+	objImg.src = favOn.src;
 else
-	objImg.classList.add("redColor");
+	objImg.src = favOff.src;
 }
+
 
 function majFav(nextURL){
 var action;
@@ -55,7 +56,7 @@ var imgStat = document.getElementById('favIcon');
 goURL = nextURL;
 
 if (favChange){
-	if (imgStat.className.indexOf("redColor") ==  -1)
+	if (imgStat.src.indexOf("Off") !=  -1)
 		action=0;  //deleteAction
 	else
 		action=1;  //addAction
@@ -67,6 +68,7 @@ if (favChange){
 }else
 if (nextURL)
 	changeURL();
+	
 }
 
 function changeURL(oRep){
@@ -128,9 +130,9 @@ if (oClubParc[0].prive)
 	cInfo += '&nbsp;(Priv&eacute;)&nbsp;';
 if (userId){
 	if (oClubParc[0].isFavorite){
-		cInfo += '<a id="favIcon" class="char_icon redColor" onclick="changeFav(this)" alt="Favoris" />&#x2764;</a>';
+		cInfo += '<img id="favIcon" onclick="changeFav(this)" alt="Favoris" width="30" height="30" src="images/favoris.png" />&nbsp;';
 	}else{
-		cInfo += '<a id="favIcon" class="char_icon" onclick="changeFav(this)" alt="Favoris" />&#x2764;</a>';
+		cInfo += '<img id="favIcon" onclick="changeFav(this)" alt="Favoris" width="30" height="30" src="images/favorisOff.png" />&nbsp;';
 	}
 }
 var myPos = localStorage.getItem('myPos');
@@ -266,21 +268,6 @@ showProgress(1);
 
 // -->
 </script>
-
-<style>
-
-.rIcon{
-position: relative;
-float: right;
-margin-right: 0.4em;
-}
-
-.redColor{
-color: #f33 !important;
-}
-
-</style>
-
 </head>
 
 <body onload="initPage()" onunload="majFav()"><a name="haut"></a>
@@ -301,7 +288,7 @@ color: #f33 !important;
 <a id="mapLink" target="_blank" href="ClubMap.html?data=" onclick="majFav();"><text id="mmaps"></text></a></div>
 
 <div id="menuList">
-<a class="inputButton" href="#"; onclick="editClub(true);" title="&Eacute;diter la fiche du club.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="medit"></text><span class="rIcon" >&#x1F4DD;</span></a>
+<a class="inputButton" href="#"; onclick="editClub(true);" title="&Eacute;diter la fiche du club.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="medit"></text></a>
 <a class="inputButton" href="#"; onclick="editClub(false);" title="Ajouter un club de golf.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="majou"></text></a>
 </div>
 
@@ -324,7 +311,7 @@ color: #f33 !important;
 </div>
 
 <div id="copyright">
-<a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2019</a>
+<a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2018</a>
 </div>
 
 
