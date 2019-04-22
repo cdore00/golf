@@ -203,6 +203,7 @@ scp -r mdump root@45.77.155.164:/home
 
 INSTALL oc
 wget https://github.com/openshift/origin/releases/download/v1.5.1/openshift-origin-client-tools-v1.5.1-7b451fc-linux-64bit.tar.gz
+tar -xvzf openshift-origin-client-tools-v1.5.1-7b451fc-linux-64bit.tar.gz
 PUSH IMAGE TO OPENSHIFT
 oc login https://api.starter-us-east-1.openshift.com:443
 oc login https://api.starter-us-east-1.openshift.com  // Not required at all
