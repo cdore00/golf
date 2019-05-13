@@ -1,14 +1,12 @@
 
-var HOSTserv = "https://cdore.ddns.net/pyt/";  // VULTR Ubuntu Server 16.04 docker Python 3.6.4
+var HOSTserv = "https://pyt-golf-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Python 3.6.3 
 // "http://127.0.0.1:3000/";		//Portable Windows 10 Local host Node JS v6.10.0
 // "http://192.168.2.195:3000/";    //Ubuntu workstation 16.04
 // "http://192.168.2.195:8080/";    //Ubuntu workstation 16.04 docker 1.12.6 Node JS v4.2.3  MongoDB server v3.4.9
 // "http://192.168.2.190:8080/";    //Fedora workstation 26 Mongo 3.2.16 docker 1.13.1 Node JS v4.2.3 MongoDB server v3.4.6
-// "https://nodegolf-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Openshift mon_golf34  GET GET
-//// "https://nodegolf-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Openshift default docker Node Js -v 6.11.3
 // "https://cdore.ddns.net/node/";  // VULTR Ubuntu Server 16.04 docker Node Js -v 6.11.3
 // "https://cdore.ddns.net/pyt/";  // VULTR Ubuntu Server 16.04 docker Python 3.6.4
-// "https://pytgolfapp-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Python 3.6.3 
+// "https://pyt-golf-cd-serv.1d35.starter-us-east-1.openshiftapps.com/";  // Python 3.6.3 
 
 var progressBar, langSet;
 var THCall = "POST";

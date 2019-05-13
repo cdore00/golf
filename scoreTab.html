@@ -291,6 +291,13 @@ function setMarkers(map, locations, mmXY) {
 			scale: 1.5,
 	   };
 	}
+	
+	function getMarkerColor(hot){
+		col = (hot) ? "#f99":"#fff";
+		if (hot == 2)
+			col = "#99f";
+	return col;
+	}
 
 if (locations.length == 0)
 	return;
@@ -306,7 +313,7 @@ if (locations.length == 0)
   for (var i = 0; i < locations.length; i++) {
     var loc = locations[i];
     var myLatLng = new google.maps.LatLng(loc.lat, loc.lng);
-	var col = (loc.hot) ? "#f99":"#fff";
+	var col = getMarkerColor(loc.hot);
     var marker = new google.maps.Marker({
         position: myLatLng,
 		clickable: false,
