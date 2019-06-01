@@ -939,3 +939,13 @@ text-align: left;
 }
 
 }
+
+@media screen and (max-width: 320px)
+{
+#logoHome, #leftbutton {
+    margin-left: 20px;	
+}
+#fontAdjust, #rightbutton {
+    margin-right: 20px;
+}
+}
