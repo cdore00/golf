@@ -942,10 +942,10 @@ text-align: left;
 
 @media screen and (max-width: 427px)
 {
-#logoHome, #leftbutton {
-    margin-left: 20px;	
+#logoHome, #leftbutton, #leftnav {
+    margin-left: 40px;	
 }
 #fontAdjust, #rightbutton {
-    margin-right: 20px;
+    margin-right: 40px;
 }
 }
