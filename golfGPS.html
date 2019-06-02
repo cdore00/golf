@@ -252,6 +252,8 @@ var distance = calculDistance( posMarker.getPosition(), holeMarker.getPosition()
 		oLoc.lng=position.coords.longitude;
 		oLoc.acc=position.coords.accuracy;
 		oLoc.time=position.timestamp;	
+		var myLatLng = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+		localStorage.setItem("lastGolfPos", JSON.stringify(myLatLng));
 		var info = userId + "$" + GPStime + "$" + oLoc.time + "$" + oLoc.lat + "$" + oLoc.lng + "$" + oLoc.acc + "$2";
 		getInfo("setBallPosition?data=" + info, markedBall);
 	}

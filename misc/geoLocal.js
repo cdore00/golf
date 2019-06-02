@@ -329,6 +329,11 @@ function piquetObject(UIid, map, holeMark, posMarker){
 		this.holeMarker.position_changed = this.stopHoleDrag;
 		this.piquetMarker.position_changed = this.stopPiquetDrag;
 		this.open = true;
+		if (chx == 0){ // Distance since last registred position
+			lastPos = localStorage.getItem("lastGolfPos");
+			if (lastPos)
+				this.traceLine(window.oPicket.posMarker.getPosition(), JSON.parse(lastPos));
+		}
 		}
 	this.traceLine = function (piquetLatLng, holeLatLng){
 		if (!this.path)
