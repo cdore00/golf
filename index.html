@@ -699,6 +699,20 @@ geocoder = new google.maps.Geocoder();
   });
 }
 
+function sayKeyWord(){
+//alert("ok");
+const recognition = new window.webkitSpeechRecognition();
+
+recognition.onresult = (event) => {
+  var searhText = document.getElementById('Mots');
+  const speechToText = event.results[0][0].transcript;
+  searhText.value = speechToText;
+  //alert(speechToText);
+}
+
+recognition.start();
+}
+
 // -->
 </script>
 
@@ -712,6 +726,16 @@ geocoder = new google.maps.Geocoder();
 
 #identLayer{
 display: none;
+}
+
+#inputtextmot{
+position: relative;
+}
+#microphone{
+position: absolute;
+right:0px;
+bottom: 0px;
+text-decoration: none;
 }
 
 </style>
@@ -751,7 +775,9 @@ display: none;
 			  <div class="mlinediv">
 				<div class="divChxChamp"><input id="checkNom" type="checkbox" checked value="Nom"><label for="checkNom">&nbsp;<text id="clubn">Nom du club</text></label>&nbsp;&nbsp;<input id="checkVille" type="checkbox" checked value="Ville"><label for="checkVille">&nbsp;<text id="clubc">Ville</text></label></div>
 			    
-			    <div id="inputtextmot"><input id="Mots" class="inputtext" type="text" size="16" maxlength="50" value=""/></div>
+			    <div id="inputtextmot"><input id="Mots" class="inputtext" type="text" size="16" maxlength="50" value=""/>
+				<a id="microphone" href="javascript:sayKeyWord();">&#x1f3a4;</a>
+				</div>
 			  </div>
 			  </div>
 			  
