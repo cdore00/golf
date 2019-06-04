@@ -3,6 +3,7 @@
 <head>
 <meta content="yes" name="apple-mobile-web-app-capable" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="content-language" content="es">
 <meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
 <meta name="format-detection" content="telephone=no" />
 
@@ -701,16 +702,19 @@ geocoder = new google.maps.Geocoder();
 
 function sayKeyWord(){
 //alert("ok");
-const recognition = new window.webkitSpeechRecognition();
-
-recognition.onresult = (event) => {
-  var searhText = document.getElementById('Mots');
-  const speechToText = event.results[0][0].transcript;
-  searhText.value = speechToText;
-  //alert(speechToText);
+//document.querySelector('meta[http-equiv="content-language"]').content
+//recognition.lang = 'en-US';
+if ('webkitSpeechRecognition' in window){
+	const recognition = new window.webkitSpeechRecognition();
+	recognition.lang = document.querySelector('meta[http-equiv="content-language"]').content;
+	recognition.onresult = (event) => {
+	  var searhText = document.getElementById('Mots');
+	  const speechToText = event.results[0][0].transcript;
+	  searhText.value = speechToText;
+	  //alert(speechToText);
+	}
+	recognition.start();
 }
-
-recognition.start();
 }
 
 // -->

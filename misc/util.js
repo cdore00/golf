@@ -722,18 +722,22 @@ if (progressBar)
 	showProgress(0);
 
 var langP = GetCookie("langP");
-langSet = "EN", lang = "";
+langSet = "en", lang = "";
 
 if (!langP || langP == "0")
 	lang = window.navigator.userLanguage || window.navigator.language;
 
-if ((langP && langP == "2") || lang.toUpperCase().indexOf("FR") != -1)
-	langSet = "FR";
-if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
-	langSet = "ES";
+if ((langP && langP == "2") || lang.indexOf("fr") != -1)
+	langSet = "fr";
+if ((langP && langP == "3") || lang.indexOf("es") != -1)
+	langSet = "es";
+
+//<meta http-equiv="content-language" content="es">
+if (document.querySelector('meta[http-equiv="content-language"]'))
+	document.querySelector('meta[http-equiv="content-language"]').setAttribute("content", langSet);
 
 	switch (langSet) {
-	  case "FR":
+	  case "fr":
 		langLbl["title"] = "Golfs du Qu&eacute;bec";
 		langLbl["motcl"] = "Mot cl&eacute;";
 		langLbl["clubn"] = "Nom club";
@@ -857,7 +861,7 @@ if ((langP && langP == "3") || lang.toUpperCase().indexOf("ES") != -1)
 		langLbl["goout"] = "Aller";
 		langLbl["goin"] = "Retour";
 			break;
-	  case "ES":
+	  case "es":
 		langLbl["title"] = "Golfs de Quebec";
 		langLbl["motcl"] = "Palabra clave";
 		langLbl["clubn"] = "Nombre del club";
