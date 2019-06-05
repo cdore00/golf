@@ -275,9 +275,10 @@ function holePosChange(){
 }
 
 function localiser(){
+flashLoc(true);
 if (watchLoc == 0){
 	clearGeo();
-	getLocalisationErr();  //utils.js
+	getLocalisationErr();  //geoLocal.js
   }else
 	getLocalisation();
 if (watchId == 0)
@@ -296,9 +297,8 @@ if ('speechSynthesis' in window)
 function onLocSuccess(position) {
 var myLatLng = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
 var precision = Math.round(position.coords.accuracy * 3.28084);
-var boutonLoc = document.getElementById('boutonLoc');
 posMarker.setPosition(myLatLng);
-boutonLoc.className='itin';
+flashLoc();
 if (watchLoc == 2)
 	locTimer = setTimeout("getLocalisation();", 1000);
 if (userId)
@@ -363,8 +363,15 @@ var sh = posMarker.getIcon();
 posMarker.setIcon(sh);
 }
 
-function goTract(chx){
+function flashLoc(flash){
 var boutonLoc = document.getElementById('boutonLoc');
+if (flash)
+	boutonLoc.className='itinS';
+else
+	boutonLoc.className='itin';
+}
+
+function goTract(chx){
 var locForm = document.getElementById('locForm');
 var imgLoc = document.getElementById('imgLoc');
 var image = new google.maps.MarkerImage(iciOn.src);
@@ -372,7 +379,7 @@ watchLoc = chx;
 if (watchLoc == 3 )
 	initVoice();
 posMarker.setIcon(image);
-boutonLoc.className='itinS';
+
 //locForm.style.visibility="hidden";
 if (window.oMenu)
 	window.oMenu.close();
@@ -951,6 +958,7 @@ visibility: hidden;
 // -->
 <div id="menuList">
 <a class="inputButton" href="#"; onclick="goTract(0)">&nbsp;<text id="mWatc"></text></a>
+<a class="inputButton" href="#"; onclick="goTract(2)">&nbsp;<text id="mFoll"></text></a>
 <a class="inputButton" id="chxParler" href="#"; onclick="goTract(3)">&nbsp;<text id="mSpea"></text></a>
 <a class="inputButton" id="chxTrajet" href="#"; onclick="showTrajet()">&nbsp;<text id="direc"></text></a>
 </div>

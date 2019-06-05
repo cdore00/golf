@@ -4,8 +4,8 @@ function getLocalisationErr(){
 	if (navigator.geolocation) {
 
 			//var options = { enableHighAccuracy:true, maximumAge:10000, timeout:10000, frequency: 2000 };
-			var options = { enableHighAccuracy:true, maximumAge:500, timeout:10000, frequency: 20};
-
+			//var options = { enableHighAccuracy:true, maximumAge:500, timeout:10000, frequency: 20};
+			var options = { enableHighAccuracy:true, maximumAge:10000, timeout:10000};
 		watchId = navigator.geolocation.watchPosition(onLocSuccess, onLocAffError, options);
 		//watchId = navigator.geolocation.watchPosition(onLocSuccess);
 	}						
@@ -30,10 +30,16 @@ function onLocAffError(error) {
 	            alert("Position non disponible");
 	        break;
 	        case error.TIMEOUT:
-	            alert("Délai dépassé");
+	            alert("D&eacute;lai dépassé");
+				if (localiser){
+					setTimeout("localiser();", 2000);	
+				if (flashLoc)
+					flashLoc();
+				}
 	        break;
 			}
-			setResult(error.code);
+			if (setResult)
+				setResult(error.code);
 			//alert("Erreur:"+ error.code)
 }
 
