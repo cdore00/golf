@@ -528,6 +528,12 @@ function checkCookie(){
     return (cookieEnabled)?true:false;
 }
 
+function checkFocus(){
+
+console.log("focus=" + document.hidden);
+}
+ 
+
 function initPage(){
 
 setFontSize();
@@ -547,6 +553,9 @@ getInfo("getRegions?", listRegions);
 //alert("W=" + window.screen.width + " H=" + window.screen.height);
 
 document.critere.Rechercher.focus();
+
+window.addEventListener("focus", checkFocus);
+
 }
 
 function getFav(){
