@@ -260,8 +260,9 @@ var distance = calculDistance( posMarker.getPosition(), holeMarker.getPosition()
 //console.log("Pos=" + position);
 
 	holeDist.innerHTML = distance + '<p id="accu">' + precision + '&apos;</p>';
-	
+	holeDist.style.fontSize = "1.05em";
 
+	
 	if (piquetMarker.getVisible())
 		traceLine(piquetMarker.getPosition());
 		
@@ -924,8 +925,21 @@ if (res.ok){
 visibility: hidden;
 }
 
+  @keyframes chcol {       
+    from { color: #f00; }    
+    to { color: #fff;} 
+  }
+  
+@keyframes crescendo {
+  0%   {transform: scale(.8);}
+  100% {transform: scale(1.5);}
+}
 
- 
+#holeDist {
+transition-property: font-size;
+transition-duration: 0.5s;
+}
+
 </style>
 
 </head>
@@ -1088,6 +1102,9 @@ visibility: hidden;
 <!--
 //alert("ok22");
 holeDist = document.getElementById("holeDist");
+  holeDist.addEventListener('transitionend', function() {
+	holeDist.style.fontSize = "1em";
+  });
 if ('speechSynthesis' in window) {
  var elementP  =  document.getElementById('chxParler');
     elementP.addEventListener('click', function () {
