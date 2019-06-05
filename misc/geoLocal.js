@@ -30,7 +30,7 @@ function onLocAffError(error) {
 	            alert("Position non disponible");
 	        break;
 	        case error.TIMEOUT:
-	            alert("D&eacute;lai dépassé");
+	            //alert("Delai dépassé");
 				if (localiser){
 					setTimeout("localiser();", 2000);	
 				if (flashLoc)
