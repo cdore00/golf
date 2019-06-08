@@ -124,8 +124,6 @@ filter:progid:DXImageTransform.Microsoft.gradient(startcolorstr='#d9d9d9',endcol
 background: -ms-linear-gradient(top, #4f4f4f 0%, #888888 100%);
 background:-webkit-gradient(linear,0% 0,0% 100%,from(#d9d9d9),color-stop(3%,#d9d9d9),color-stop(97%,#666),to(#666));
 background:-moz-linear-gradient(top,#ddd,#666);text-align:center;
--moz-user-select: none;
--webkit-user-select: none;
 }
 #duobutton a:first-child{border:0px solid #fff;}
 
@@ -951,4 +949,5 @@ text-align: left;
 #fontAdjust, #rightbutton {
     margin-right: 40px;
 }
+#duobutton{font-size: 0;}
 }
