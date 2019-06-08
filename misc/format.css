@@ -167,6 +167,11 @@ transition: width 0.4s, height 0.4s, transform 2s, ease-in-out;
 z-index: 2001;
 }
 
+#logomenu{
+width:64px;
+height:32px;
+}
+
 #submenu1{
 display: none;
 height: auto;
@@ -949,5 +954,16 @@ text-align: left;
 #fontAdjust, #rightbutton {
     margin-right: 40px;
 }
-#duobutton{font-size: 12pt;}
+#duobutton{
+min-height: 52px;
+height:52px;
 }
+#duobutton a{height:50px;display:inline-block;line-height:50px;}
+#logomenu{
+height:50px;
+}
+#fontAdjust {
+    display: none;
+}
+}
+
