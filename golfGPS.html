@@ -683,7 +683,6 @@ if (Math.abs(laDistance - actDist) > 15){
 }
 
 function checkFocus(){
-
 console.log("focus=" + document.hidden);
 if (document.hidden)
 	localiser();
@@ -715,7 +714,7 @@ if (userId){
 	remChilds(false,document.getElementById('chxTrajet'));
 }
 window.oMenu = new menuObject(document.getElementById('boutonLoc'), true);
-window.addEventListener("focus", checkFocus);
+//window.addEventListener("focus", checkFocus);
 }
 
 function showCourse(oGps){
@@ -1104,6 +1103,7 @@ transition-duration: 0.5s;
 holeDist = document.getElementById("holeDist");
   holeDist.addEventListener('transitionend', function() {
 	holeDist.style.fontSize = "1em";
+	return false;
   });
 if ('speechSynthesis' in window) {
  var elementP  =  document.getElementById('chxParler');

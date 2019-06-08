@@ -942,7 +942,7 @@ text-align: left;
 
 @media screen and (max-width: 427px)
 {
-#logoHome, #leftbutton, #leftnav {
+#logoHome, #leftbutton, #leftnav, #butMenu {
     margin-left: 40px;	
 }
 #fontAdjust, #rightbutton {
