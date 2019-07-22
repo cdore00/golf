@@ -544,6 +544,10 @@ if (data == "clear"){
 	localStorage.removeItem('myPos');
 }
 //console.log("initPage");
+if ('webkitSpeechRecognition' in window){
+	var micro = document.getElementById('microphone');
+	micro.style.display = "inherit";
+}
 
 identified();
 
@@ -750,6 +754,7 @@ position: absolute;
 right:0px;
 bottom: 0px;
 text-decoration: none;
+display: none;
 }
 
 </style>
