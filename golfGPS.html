@@ -957,9 +957,11 @@ transition-duration: 0.5s;
 </div>
 // -->
 <div id="mapZoom" class="unselectable">
+<button class="boutonZoom" title="Score" onclick="showScoreFrame(false); return false;">&#x1f4dd;</button>
 <button class="boutonZoom" title="Zoom in" onclick="zoomMap(1); return false;">+</button>
 <button class="boutonZoom" title="Zoom out" onclick="zoomMap(-1); return false;">-</button>
 </div>
+
 
 <div id="blocForm">
 
@@ -970,7 +972,7 @@ transition-duration: 0.5s;
 <div id="changeScore" class="unselectable" onmousedown="PositionFlag=1;" onmouseup="PositionFlag=0;once=0;">
 <img onclick="showScoreFrame(false)" alt="R&eacute;glages" src="images/reglages.png" />
 <a id="showPlay" href="#" onclick="showPlayer(this)">&nbsp;&#9644;</a>
-<div id="myScore" onclick="showScoreFrame(false)" ></div></div>
+<div id="myScore" ></div></div>
 
 <!--
 
