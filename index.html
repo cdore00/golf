@@ -481,11 +481,12 @@ tooltip.fadeOut = function () {
 	setTimeout("fadeOutTolltip('tooltip');", 500);
 }
 tooltip.hide = function () {
-    if(this._tooltipElement.style){
-        this._tooltipElement.style.visibility ="hidden";
-    }else{
-        this._tooltipElement.visibility = "hidden";
-    }
+	if(this._tooltipElement){
+		if(this._tooltipElement.style){
+			this._tooltipElement.style.visibility ="hidden";
+		}else{
+			this._tooltipElement.visibility = "hidden";
+    }}
 }
 tooltip.moveTo = function (xL,yL) {
     if(this._tooltipElement.style){
@@ -515,10 +516,12 @@ if (resultLocalisation == -1 ){
 	tooltip.show();
 	setTimeout("tooltip.fadeOut()", 500);}
 }
+
 function showLocal(){
 var localWindow = window.open('localMap.html', 'localMap');
 localWindow.document.close();
 }
+
 function checkCookie(){
     var cookieEnabled=(navigator.cookieEnabled)? true : false;   
     if (typeof navigator.cookieEnabled=="undefined" && !cookieEnabled){ 
@@ -526,11 +529,6 @@ function checkCookie(){
         cookieEnabled=(document.cookie.indexOf("testcookie")!=-1)? true : false;
     }
     return (cookieEnabled)?true:false;
-}
-
-function checkFocus(){
-
-console.log("focus=" + document.hidden);
 }
  
 
@@ -559,6 +557,11 @@ getInfo("getRegions?", listRegions);
 document.critere.Rechercher.focus();
 
 //window.addEventListener("focus", checkFocus);
+
+window.addEventListener("focus", function(event) 
+{ 
+  console.log("focus=" + document.hidden);
+}, false);
 
 }
 

@@ -31,19 +31,19 @@ class Datepicker {
         t.table = document.createElement("table");
         t.frame.append(t.table);
  
-		if (langSet == "EN"){
+		if (langSet == "en"){
 			weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 			weekdays_short = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 			months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 			months_short = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
 		}
-		if (langSet == "FR"){
+		if (langSet == "fr"){
 			weekdays = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
 			weekdays_short = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 			months = ["Janvier", "F&eacute;vrier", "Mars", "Avril", "Mai", "Juin", "Jullet", "Ao&ucirc;t", "Septembre", "Octobre", "Novembre", "D&eacute;cembre"];
 			months_short = ["Jan", "F&eacute;v", "Mar", "Avr", "Mai", "Juin", "Jul", "Ao&ucirc;t", "Sep", "Oct", "Nov", "Dec"];
 		}
-		if (langSet == "ES"){
+		if (langSet == "es"){
 			weekdays = ["Lunes", "Martes", "Mi&eacute;rcoles", "Jueves", "Viernes", "S&aacute;bado", "Domingo"];
 			weekdays_short = ["Lun", "Mar", "Mi&eacute;", "Jue", "Vie", "S&aacute;b", "Dom"];
 			months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];

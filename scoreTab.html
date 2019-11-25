@@ -826,6 +826,17 @@ if (elemLi.children.length == 0){
 }
 }
 
+function closeWin(){
+
+if (window.history.state && window.history.state.ref == "golfGPS"){
+	window.history.back();
+	document.location.reload();
+}else{
+	window.close(); 
+}
+
+}
+
 // -->
 </script> 
 
@@ -833,7 +844,7 @@ if (elemLi.children.length == 0){
 <body onload="initPage()">
 <div id="duobutton">
 <a href="#"  id="butMenu" title="Menu" onclick="showMenu()"><img id="logomenu" alt="Menu" height="32" width="64" src="images/menu.png" /></a>
-<a href="#"  onclick="window.close(); return false;"><text id="close"></text></a>
+<a href="#"  onclick="closeWin()"><text id="close"></text></a>
 <div id="fontAdjust" class="unselectable">
 <div class="divFont" onclick="setFontSize(0.2, this)"><div class="divFontSize">A</div><div class="fontLogo">&#8593;</div></div>
 <div class="divFont" onclick="setFontSize(-0.2, this)"><div class="divFontSize fontSmall">A</div><div class="fontLogo">&#8595;</div></div>

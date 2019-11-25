@@ -288,7 +288,6 @@ if (watchId == 0)
 }
 
 function clearGeo(){
-//alert(watchId);
 clearTimeout(locTimer);
 navigator.geolocation.clearWatch(watchId);
 lastDist = 1;
@@ -402,14 +401,16 @@ if (!(nScore===false))
 var hPar = eval("trouNormale.T" + sTrou);
 scoreHole.innerHTML = "Trou " + sTrou + " par " + hPar;
 
+layerScore.style.display = "inherit";
 //console.log("showScoreFrame actPlayer=" + actPlayer);
 setHoleScore(hPar, userScore(actPlayer));
 
 if (initialCall){	
 	initialCall = false;
 	scoreOkInds[actPlayer].classList.add("selOkInd");
+	alert("close");
 	}
-layerScore.style.visibility="visible";
+
 }
 
 function setHoleScore(hPar, sInfo){
@@ -488,7 +489,8 @@ function moveTouch(event) {
 
 function closeScore(){
 var layerScore = document.getElementById('showScore');
-layerScore.style.visibility="hidden";
+//layerScore.style.visibility="hidden";
+layerScore.style.display = "none";
 sTrou = null;
 }
 
@@ -541,12 +543,12 @@ var laN = 0, ts = 0;
 if (initial)
 		scoreOkInds[0].style.display = "inline-block";
 		
-if (gData[0] && gData[0].bloc){
+ if (gData[0] && gData[0].bloc){
 	document.getElementById(gData[0].bloc).click();
 	document.getElementById("blocScore").className = gData[0].bloc;
-}
+ }
 
-if (gData[0] && gData.length > 0){
+ if (gData[0] && gData.length > 0){
 	var oth = gData[0].others;
 	//if (initial){
 		//scoreOkInds[0].style.display = "inline-block";
@@ -586,19 +588,20 @@ if (gData[0] && gData.length > 0){
 			}
 		}
 	}
-	
-	function playScore(aS, laN){
-		aS.score = aS.tot - laN;
-		if (aS.score == 0){
-			aS.diff = "&nbsp;E";
-		}else{
-			if (aS.score > 0)
-				aS.diff = "&nbsp;+" + (aS.tot - laN);
-			else
-				aS.diff = "&nbsp;" + (aS.tot - laN);
-		}
-		return aS.tot + aS.diff + '</br>';
-	}
+	if (initialCall)
+		alert(initialCall);
+			function playScore(aS, laN){
+				aS.score = aS.tot - laN;
+				if (aS.score == 0){
+					aS.diff = "&nbsp;E";
+				}else{
+					if (aS.score > 0)
+						aS.diff = "&nbsp;+" + (aS.tot - laN);
+					else
+						aS.diff = "&nbsp;" + (aS.tot - laN);
+				}
+				return aS.tot + aS.diff + '</br>';
+			}
 	var actScore = playScore(arrScore[0], laN);
 			if (oth && oth.length > 0){
 				for (var j = 0; j < oth.length ; j++){
@@ -610,24 +613,20 @@ if (gData[0] && gData.length > 0){
 	if (oth && oth.length > 0){
 		var tmpS = JSON.parse(JSON.stringify(oth));
 		curScore.push.apply(curScore, tmpS);
+	}	
+ }
+	if (calltabScore){
+		calltabScore = false;
+		var stateObj = { ref: "golfGPS" };
+		window.history.pushState(stateObj, "golfScore", 'scoreTab.html?data=' + currentGameID + "$" + clubName);
+		document.location.reload();
+		//window.open('scoreTab.html?data=' + currentGameID + "$" + clubName);
 	}
-		
-}
-if (calltabScore){
-	calltabScore = false;
-	calltableauScore();
-}
 }
 
 function tableauScore(){
 	calltabScore = true;
 	saveScore();
-}
-
-function calltableauScore(){
-var localWindow = window.open('scoreTab.html?data=' + currentGameID + "$" + clubName);
-localWindow.document.close();
-//closeScore();
 }
 
 function detectLong(idName){
@@ -880,7 +879,6 @@ var myP = posMarker.getPosition();
 locColl = {coord:[{'lat': myP.lat() , 'lng': myP.lng(), 'acc':0 }]};
 var dt = Date.now();
 dt = formatDateTime.date(dt);
-//alert(dt)
 dt = Date.parse(dt);
 var localWindow = window.open('localMap.html?data=' + dt, 'localMap');
 localWindow.document.close();
@@ -910,6 +908,8 @@ if (res.ok){
 
 #prefOptions, #identOptions {
     font-size: inherit;
+	line-height: 1em;
+	padding: 0;
 	}
 
 .bouton {
@@ -957,7 +957,9 @@ transition-duration: 0.5s;
 </div>
 // -->
 <div id="mapZoom" class="unselectable">
+<!--
 <button class="boutonZoom" title="Score" onclick="showScoreFrame(false); return false;">&#x1f4dd;</button>
+// -->
 <button class="boutonZoom" title="Zoom in" onclick="zoomMap(1); return false;">+</button>
 <button class="boutonZoom" title="Zoom out" onclick="zoomMap(-1); return false;">-</button>
 </div>
@@ -1006,7 +1008,7 @@ transition-duration: 0.5s;
 </div>
 </div>
 
-<div  id="map_canvas"></div >
+
 
 <div id="showScore">
 
@@ -1099,9 +1101,11 @@ transition-duration: 0.5s;
 </form>
 </div>
 
+<div  id="map_canvas"></div >
+
 <script type="text/javascript" language="Javascript">
 <!--
-//alert("ok22");
+
 holeDist = document.getElementById("holeDist");
   holeDist.addEventListener('transitionend', function() {
 	holeDist.style.fontSize = "1em";
