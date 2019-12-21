@@ -63,7 +63,8 @@ var message = document.getElementById('message');
 var regionLabel = "";
 if (localStorage)
 	regionLabel = localStorage.getItem("regionContext");
-
+//
+mess = localStorage.getItem("message");
 if (oResult.posList){
 	var result = oResult.clubList;
 	localStorage.setItem('posList', oResult.posList.lat + "," + oResult.posList.lng + "," + oResult.posList.dist);
@@ -71,9 +72,18 @@ if (oResult.posList){
 		lng = oResult.posList.lng;
 		km  = oResult.posList.dist;
 }else{
-	var result = oResult;
+	if (typeof oResult.ph == "boolean"){
+		if (oResult.ph)
+			mess = mess.replace("phonetic", langLbl["Iphon"]);
+		else
+			mess = mess.replace("phonetic", "");
+		var result = oResult.data;
+	}else{
+		mess = mess.replace("phonetic", "");
+		var result = oResult;
+	}	
 }
-message.innerHTML = result.length + localStorage.getItem("message");
+message.innerHTML = result.length + mess;
 
 var cntItem = 0;
 var idList = "";

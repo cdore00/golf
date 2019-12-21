@@ -106,7 +106,6 @@ progress::-webkit-progress-bar { background: #fff; }
 
 #leftnav,#leftbutton{position:absolute;font-size:15px;left:10px}
 #leftnav a,#leftbutton a,#rightbutton a,#rightbuttonItem a{display:block;color:#ccc;text-decoration:none}
-#logoHome{display: inline-block;float: left;width:32px;left:11px;top:7px;height:34px}
 #leftnav{position:relative;float:left;top:7px}
 #rightnav, #rightnav2{position:absolute;font-size:0px;right:10px;top:7px;background:transparent;border:0px;cursor:pointer}
 #rightnav2{top:0px}
@@ -948,7 +947,7 @@ text-align: left;
 
 @media screen and (max-width: 427px)
 {
-#logoHome, #leftbutton, #leftnav, #butMenu {
+#leftbutton, #leftnav, #butMenu {
     margin-left: 40px;	
 }
 #fontAdjust, #rightbutton {
