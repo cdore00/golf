@@ -584,6 +584,7 @@ if (!favGolfList){
 }
 authLayer.style.visibility="visible";
 }
+
 function listFav(clubList){
 var favGolfList = document.getElementById('favGolfList');
 var divLoad = document.getElementById('divLoad');
@@ -622,6 +623,7 @@ if (localStorage.getItem("cpContext"))
 if (localStorage.getItem('cpDist'))
 	formCrit.kiloM.selectedIndex = localStorage.getItem('cpDist');
 }
+
 function clearContext(){
 	localStorage.removeItem('idList');
 	localStorage.removeItem('motsCleContext');
@@ -633,6 +635,7 @@ function clearContext(){
 	localStorage.removeItem('cpDist');
 	//localStorage.removeItem('myPos');
 }
+
 function rechercheClub(){
 var formCrit = document.getElementById('critere');
 var url = window.location.href
@@ -694,6 +697,7 @@ if (formCrit.codePostal.value != ""){
 	URLresult = URLresult.substr(0,URLresult.length-1);
 	document.location.href = URLresult;
 }
+
 function codeAddress(postCode, distance, URLresult) {
 if (distance == 0){
 	alert(langLbl["M0007"]);
@@ -859,7 +863,7 @@ display: none;
 </div>
 
 <div id="copyright">
-<a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2019</a>
+<a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2020</a>
 </div>
 
 <div id="modalDiv"></div>
