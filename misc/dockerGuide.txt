@@ -6,7 +6,7 @@ https://www.wanadev.fr/23-tuto-docker-comprendre-docker-partie1/
 
 sudo docker login
 
-sudo docker commit -a cdore_mongo mon_golf mongo_golf:v1
+sudo docker commit servDB2 pyt_golf:v4
 
 REMOVE IMAGE
 sudo docker rmi -f cc5dfe78e8d4

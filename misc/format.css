@@ -344,6 +344,21 @@ position: relative;
 #copyright{color:#aba;font-size: 0.8em;position:relative;top:0px;text-align:center; font-weight:bold; width: 100%;font-variant: small-caps;}
 #copyright a{color:#aba;text-decoration:none}
 
+
+.favOff, .favOn{
+cursor: pointer; 
+stroke-width: 0px; 
+vertical-align: bottom;
+}
+
+.favOff{
+fill: rgb(200, 200, 200) !important;
+}
+.favOn{
+fill: rgb(255, 211, 51) !important;
+}
+
+/*
 #favIcon{
 position: relative;
 font-size: 1.4em;
@@ -356,6 +371,7 @@ color: #ccc !important;
 #favIcon a:hover{
 color:#d33 !important;
 }
+*/
 
 .char_icon{
 font-min-size: 20px;
@@ -365,7 +381,6 @@ font-weight: bold;
 text-decoration: none;
 cursor: pointer;
 text-shadow: 2px 2px #999;
-
 }
 
 table.cartePts{background-color: #ccc;border: buttonhighlight 2px outset;}
