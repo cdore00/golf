@@ -130,9 +130,6 @@ var selParc = document.getElementById('selParc');
 closeMenu();
 divLoad.style.top = ( divLoad.parentElement.offsetHeight + divLoad.parentElement.offsetTop - 100 ) + "px";
 divLoad.style.display = "inherit";
-var sh = document.styleSheets[0];
-var Wait_on="* {cursor: wait !important}";
-sh.insertRule(Wait_on, 0);
 
 if (selParc && selParc.selectedIndex != parcIndex){
 	if (selParc.selectedIndex == 0){
@@ -418,8 +415,6 @@ var divLoad = document.getElementById('divLoad');
 divLoad.style.display = "none";
 divLoad.style.position = "absolute";
 divLoad.style.marginLeft  = "45%";
-var sh = document.styleSheets[0];
-sh.deleteRule(0);
 }
 
 function calcHDP(arrHDP){

@@ -60,10 +60,15 @@ var callMap = document.getElementById('callMap');
 var pageZone = document.getElementById('pageZone');
 var message = document.getElementById('message');
 
-var regionLabel = "";
-if (localStorage)
-	regionLabel = localStorage.getItem("regionContext");
-//
+	function getRegion(Rlist, Rid){
+		for (var r = Rlist.length-1; r > 0; r--) {
+			if (Rlist[r]._id == Rid){
+				return Rlist[r].Nom;
+				break;
+			}
+		}
+	}
+
 mess = localStorage.getItem("message");
 if (oResult.posList){
 	var result = oResult.clubList;
@@ -116,18 +121,11 @@ for (var i = 0; i < result.length; i++) {
 	
 	cntItem += 1;
 	var nextClass = "itemdetail";
-	/*if (cntItem > 4){
-		nextClass = "itemdetail90";
-		var divElem = document.createElement("div");
-		divElem.setAttribute('id', 'rightNavItem');  //rightbuttonItem
-		divElem.innerHTML = '<a class="char_icon" href="#haut" alt="Haut de page">&#9650;</a>';
-		liElem.appendChild(divElem);
-		cntItem = 0;
-	}*/
+
 	var spanElem = document.createElement("span");
 	spanElem.setAttribute('class', nextClass);
-	if (regionLabel) 
-		spanElem.innerHTML = result[i].adresse + ", " + result[i].municipal + ", " + regionLabel;
+	if (oResult.regions) 
+		spanElem.innerHTML = result[i].adresse + ", " + result[i].municipal + ", " + getRegion(oResult.regions, result[i].region);
 	else
 		spanElem.innerHTML = result[i].adresse + ", " + result[i].municipal;
 	if (cntItem > 4){
