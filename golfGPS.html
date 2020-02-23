@@ -43,7 +43,7 @@ var userId = null, courseID = null, currentGameID = null, calltabScore = false, 
 var map, posMarker, holeMarker, piquetMarker, holeDist, polyLine;
 var locTimer = null, watchId = null;
 var watchLoc = 0, PositionFlag = 0, ballToMark = 0, GPStime = 0;
-var trou = 1, sTrou = null;
+var trou = 1, sTrou = null, distUnit = 1;
 var curScore = [];
 var blocID = 0;
 var clicListener;
@@ -235,12 +235,13 @@ blocForm.style.visibility="visible";
 function calcPosDist(position, myLatLng, precision){
 var distance = calculDistance( posMarker.getPosition(), holeMarker.getPosition()) + '';
 //alert(watchLoc);
-	var d = distance
+	var d = (distance * distUnit);
 	if ( d > 1760){
 	  d = d / 1760;
 	  d = Math.round(d * 100) / 100;
-	  distance = d + 'M';
+	  distance = d + ( (distUnit == 1) ? 'M':'K');
 	}else{
+		distance = Math.round(d) + ( (distUnit == 1) ? '':'m');
 		//map.setCenter(myLatLng);
 		//oTrajet.savePos(position, myLatLng, d);
 	}
@@ -340,7 +341,10 @@ layerHoles.style.visibility="hidden";
 if (!keepPosition)
 	map.setCenter(trouCoord[noTrou-1]);
 holeMarker.setPosition(trouCoord[noTrou-1]);
-holePar.innerHTML = trouPar[blocID][noTrou];
+var distPar = trouPar[blocID][noTrou];
+if (distUnit != 1)
+	distPar = Math.round(distPar*distUnit);
+holePar.innerHTML = distPar;
 holePlay.innerHTML = noTrou;
 trou = noTrou;
 //holeMarker.position_changed = holePosChange;
@@ -899,6 +903,27 @@ if (res.ok){
 }else
 	alert(res.message)
 }
+
+function selUnit(oUnit, unit){
+var mUnit = oUnit.parentNode;
+for (var i= 0; i < mUnit.childNodes.length ; i++){
+	if (mUnit.childNodes[i].className == "inputButton"){
+		if (mUnit.childNodes[i].innerHTML.indexOf(";") == 6)
+			mUnit.childNodes[i].innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;" + mUnit.childNodes[i].innerHTML.substring(7);
+		if (mUnit.childNodes[i] == oUnit)
+			mUnit.childNodes[i].innerHTML = "&#10004;&nbsp;" + mUnit.childNodes[i].innerHTML.substring(24);
+		//alert(mUnit.childNodes[i].innerHTML);
+	}
+distUnit = unit;
+afficheTrou(trou);
+}
+//alert(oUnit);
+mUnit.style.display = "none";
+}
+
+function showSelUnit(){
+document.getElementById('chxUnit').style.display = "";
+}
  
 // -->
 </script> 
@@ -938,6 +963,16 @@ transition-property: font-size;
 transition-duration: 0.5s;
 }
 
+.menuList{
+position: absolute;
+background: #ccc;
+color: black !important;
+overflow: hidden;
+z-index: 1010;
+/*display: none;*/
+height: auto;
+}
+
 </style>
 
 </head>
@@ -968,7 +1003,7 @@ transition-duration: 0.5s;
 
 </div>
 
-<div id="holeDist" class="unselectable" onmousedown="PositionFlag=1;" onmouseup="PositionFlag=0;once=0;"></div>
+<div id="holeDist" class="unselectable" onmousedown="PositionFlag=1;" onmouseup="PositionFlag=0;once=0;" ondblclick="showSelUnit()"></div>
 
 <div id="changeScore" class="unselectable" onmousedown="PositionFlag=1;" onmouseup="PositionFlag=0;once=0;">
 <img onclick="showScoreFrame(false)" alt="R&eacute;glages" src="images/reglages.png" />
@@ -986,6 +1021,11 @@ transition-duration: 0.5s;
 <a class="inputButton" href="#"; onclick="goTract(2)">&nbsp;<text id="mFoll"></text></a>
 <a class="inputButton" id="chxParler" href="#"; onclick="goTract(3)">&nbsp;<text id="mSpea"></text></a>
 <a class="inputButton" id="chxTrajet" href="#"; onclick="showTrajet()">&nbsp;<text id="direc"></text></a>
+</div>
+
+<div id="chxUnit" class="menuList">
+<a id="optMeter" class="inputButton" onclick="selUnit(this,1)" href="#">&#10004;&nbsp;Yards</a>
+<a id="optYard" class="inputButton" onclick="selUnit(this,0.9144)" href="#">&nbsp;&nbsp;&nbsp;&nbsp;Meters</a>
 </div>
 
 <div id="listeTrous">
