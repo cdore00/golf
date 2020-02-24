@@ -237,7 +237,10 @@ var distance = calculDistance( posMarker.getPosition(), holeMarker.getPosition()
 //alert(watchLoc);
 	var d = (distance * distUnit);
 	if ( d > 1760){
-	  d = d / 1760;
+	  if (distUnit == 1)
+		d = d / 1760;	// Miles
+	  else
+		d = d / 1000;	// Kilometer
 	  d = Math.round(d * 100) / 100;
 	  distance = d + ( (distUnit == 1) ? 'M':'K');
 	}else{
