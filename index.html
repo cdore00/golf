@@ -752,10 +752,15 @@ if ('webkitSpeechRecognition' in window){
 display: none;
 }
 
-#inputtextmot{
-position: relative;
-display: inherit;
+
+#Mots{
+width: 10em;
 }
+
+#codePostal{
+max-width: 5em;
+}
+
 #microphone{
 position: absolute;
 right:0px;
@@ -799,9 +804,9 @@ display: none;
 			  <div class="formrow1" >
 			  <div id="divMot"><label for="Mots"><text id="motcl">Mot cl&eacute; </text></label></div>
 			  <div class="mlinediv">
-				<div class="divChxChamp"><input id="checkNom" type="checkbox" checked value="Nom"><label for="checkNom">&nbsp;<text id="clubn">Nom du club</text></label>&nbsp;&nbsp;<input id="checkVille" type="checkbox" checked value="Ville"><label for="checkVille">&nbsp;<text id="clubc">Ville</text></label></div>
+				<div class="divChxChamp"><input id="checkNom" type="checkbox" checked value="Nom"><label for="checkNom">&nbsp;<text id="clubn">Club</text></label>&nbsp;&nbsp;<input id="checkVille" type="checkbox" checked value="Ville"><label for="checkVille">&nbsp;<text id="clubc">Ville</text></label></div>
 			    
-			    <div id="inputtextmot"><input id="Mots" class="inputtext" type="text" size="16" maxlength="50" value=""/>
+			    <div id="inputtextmot"><input id="Mots" class="inputtext" type="text" size="" maxlength="50" value=""/>
 				<a id="microphone" href="javascript:sayKeyWord();">&#x1f3a4;</a>
 				</div>
 			  </div>
@@ -819,10 +824,9 @@ display: none;
 				<div class="mlinediv">
 				  <div class="divChxChamp">&nbsp;&nbsp;<label for="codePostal"><text id="postal">Code postal</text></label></div>
 			    <div class="olinediv">
-			    <div id="inputtextcod">
-			    <input id="codePostal" class="inputtext" placeholder="A9A 9A9" type="text" size="6" maxlength="8" value=""/>
-				</div>
-				</div>
+
+			    <input id="codePostal" class="inputtext" placeholder="A9A 9A9" type="text" size="" maxlength="" value=""/>
+
 			    <div id="inputselectdis">
 				<SELECT id="kiloM" class="inputselect inpSelSW">
 					<OPTION value="0">? km</OPTION>
@@ -832,7 +836,9 @@ display: none;
 			        <OPTION value="100">100 km</OPTION>
 			        <OPTION value="200">200 km</OPTION>
 			        </SELECT>
+				</div>				
 				</div>
+
 				</div>
 				
 			</div>

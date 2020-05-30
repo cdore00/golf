@@ -371,10 +371,10 @@ http://api.mongodb.com/python/current/api/pymongo/results.html
 
 db.createUser(
   {
-    user: "cdore",
-    pwd: "925",
+    user: "username",
+    pwd: "pass",
     roles: [
-       { role: "readWrite", db: "resto" }
+       { role: "readWrite", db: "dbname" }
     ]
   }
 )

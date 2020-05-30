@@ -31,15 +31,15 @@
     <script type="text/javascript"> 
 	<!--
 //Touch move
-var diff_x, diff_y, move_x, move_y, once = 0;
+var newPos, diff_x, diff_y, move_x, move_y, once = 0;
 
-var locColl; // For showTrajet
+var locColl, recPosEnabled = false; // For showTrajet
 	
 window.addEventListener('DOMActivate', function() {
     setTimeout(scrollTo, 0, 0, 1);
 }, true);
 var initialCall = true;
-var userId = null, courseID = null, currentGameID = null, calltabScore = false, clubName = "";
+var userId = null, courseID = null, currentGameID = null, clubName = "";
 var map, posMarker, holeMarker, piquetMarker, holeDist, polyLine;
 var locTimer = null, watchId = null;
 var watchLoc = 0, PositionFlag = 0, ballToMark = 0, GPStime = 0;
@@ -92,7 +92,7 @@ var oTrajet = {
 		}
 
 		if (startLoc || accTime - this.lastSaveTime > this.saveFreq){
-			if (true || position.coords.accuracy < 12){
+			if (true || position.coords.accuracy < 60){
 				var dist = 0;
 				if (this.lastPos)
 					dist = calculDistance( this.lastPos, mapsLatLng);
@@ -246,7 +246,8 @@ var distance = calculDistance( posMarker.getPosition(), holeMarker.getPosition()
 	}else{
 		distance = Math.round(d) + ( (distUnit == 1) ? '':'m');
 		//map.setCenter(myLatLng);
-		//oTrajet.savePos(position, myLatLng, d);
+		if (recPosEnabled == 2)
+			oTrajet.savePos(position, myLatLng, d);
 	}
 //oTrajet.savePos(position, myLatLng);	// To delete
 	if (ballToMark){
@@ -306,7 +307,7 @@ posMarker.setPosition(myLatLng);
 flashLoc();
 if (watchLoc == 2)
 	locTimer = setTimeout("getLocalisation();", 1000);
-if (userId)
+//if (userId)
 	calcPosDist(position, myLatLng, precision);
 }
 
@@ -380,7 +381,6 @@ else
 }
 
 function goTract(chx){
-var locForm = document.getElementById('locForm');
 var imgLoc = document.getElementById('imgLoc');
 var image = new google.maps.MarkerImage(iciOn.src);
 watchLoc = chx;
@@ -388,7 +388,6 @@ if (watchLoc == 3 )
 	initVoice();
 posMarker.setIcon(image);
 
-//locForm.style.visibility="hidden";
 if (window.oMenu)
 	window.oMenu.close();
 imgLoc.src=iciOn.src;
@@ -480,27 +479,32 @@ var offSetX = 0;
 var offSetY = 0;
 function startTouch(event) {
 	var touch = event.targetTouches[0];
-	offSetX = touch.pageX-this.offsetLeft;
-	offSetY = touch.pageY-this.offsetTop;
+	offSetX = touch.pageX-this.offsetLeft;  //-(this.offsetWidth/2);
+	offSetY = touch.pageY-this.offsetTop;  //-(this.offsetHeight/2);
 	this.addEventListener('touchmove', moveTouch, false);
+	//this.addEventListener("touchend", moveMap(this), false);
+	//event.preventDefault();
+	//savedPos(false, touch.pageX + "   oLeft = " + this.offsetLeft + "  oWidth/2 = " + this.offsetWidth/2);
 }
 
 function moveTouch(event) {
-    var touch = event.targetTouches[0];
+    //var touch = event.targetTouches[0];
     // Place element where the finger is
-    this.style.left = touch.pageX-this.parentElement.offsetLeft-offSetX + 'px';
-    this.style.top = touch.pageY-this.parentElement.offsetTop-offSetY + 'px';
+	var tc = event.touches[0];
+	this.style.left = (tc.clientX - offSetX) + 'px';
+    this.style.top = (tc.clientY - offSetY) + 'px';
+//moveMap(this);
     event.preventDefault();
 }
 
 function closeScore(){
 var layerScore = document.getElementById('showScore');
-//layerScore.style.visibility="hidden";
 layerScore.style.display = "none";
+window.scrollTo(0, 0);
 sTrou = null;
 }
 
-function saveScore(){
+function saveScore(notClose){
 var holeBlocName = document.getElementById('holeBloc').className;
 var score = setScore.nbrCoups.value;
 var putt = setScore.nbrPutts.value;
@@ -511,11 +515,13 @@ var strData = userId + "$" + courseID + "$" + sTrou + "$" + score + "$" + putt +
 	// + ((objScore.others) ? ("$" + JSON.stringify(objScore.others)):"");
 	
 getInfo("updateGame?data=" + strData, initScore);
-if (trou == sTrou)
+if (trou == sTrou && !notClose)
 	trouSuivant(1);
 
 initialCall = true;
-closeScore();
+
+if (!notClose)
+	closeScore();
 }
 
 function saveUserHole(os, t, p, l){
@@ -541,6 +547,7 @@ if (oSc.innerHTML == "&nbsp;▬"){
 
 function initScore(gData, initial){
 var myScore = document.getElementById('myScore');
+var tabScore = document.getElementById('tabScore');
 var arrScore = [];
 arrScore[0] = {};
 arrScore[0].tot = 0;
@@ -595,6 +602,7 @@ if (initial)
 		}
 	}
 	if (initialCall)
+		tabScore.href = 'scoreTab.html?data=' + currentGameID + "$" + clubName;
 		//alert(initialCall);
 			function playScore(aS, laN){
 				aS.score = aS.tot - laN;
@@ -621,18 +629,10 @@ if (initial)
 		curScore.push.apply(curScore, tmpS);
 	}	
  }
-	if (calltabScore){
-		calltabScore = false;
-		var stateObj = { ref: "golfGPS" };
-		window.history.pushState(stateObj, "golfScore", 'scoreTab.html?data=' + currentGameID + "$" + clubName);
-		document.location.reload();
-		//window.open('scoreTab.html?data=' + currentGameID + "$" + clubName);
-	}
 }
 
 function tableauScore(){
-	calltabScore = true;
-	saveScore();
+	saveScore(true);
 }
 
 function detectLong(idName){
@@ -701,6 +701,7 @@ var changeScore = document.getElementById('changeScore');
 var holeDist = document.getElementById('holeDist');
 holeDist.addEventListener('touchstart', startTouch, false);  // Drag and drop for mobil
 changeScore.addEventListener('touchstart', startTouch, false);  // Drag and drop for mobil
+document.getElementById('moveMapBut').addEventListener('touchstart', startTouch, false);  // Drag and drop for mobil
 userId = GetCookie("userID");
 setLanguage();
 
@@ -715,7 +716,9 @@ getInfo("getGolfGPS?data=" + courseID, showCourse);
 if (userId){
 	changeScore.style.visibility = "visible";
 	window.oTip = new messTipObject();
+	recPosEnabled = 1;
 }else{
+	document.getElementById('optTrack').style.display = "none";
 	remChilds(false,document.getElementById('chxTrajet'));
 }
 window.oMenu = new menuObject(document.getElementById('boutonLoc'), true);
@@ -731,6 +734,7 @@ var holeList = document.getElementById('holeList');
 for (var i= 0; i < oGps.length; i++){
 	trouCoord[i] = new google.maps.LatLng(oGps[i].latitude, oGps[i].longitude);
 }
+
 var nt = 19;
 if(bloc[0].T14 == null || bloc[0].T14 == 0)
 	nt = 10;
@@ -892,9 +896,9 @@ window.oMenu.close();
 }
 
 function markBall(){
-closeScore();
 if (confirm("Mark Ball ?")){
 	ballToMark = 1;
+	closeScore();
 }
 }
 
@@ -909,14 +913,25 @@ if (res.ok){
 
 function selUnit(oUnit, unit){
 var mUnit = oUnit.parentNode;
-for (var i= 0; i < mUnit.childNodes.length ; i++){
-	if (mUnit.childNodes[i].className == "inputButton"){
-		if (mUnit.childNodes[i].innerHTML.indexOf(";") == 6)
-			mUnit.childNodes[i].innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;" + mUnit.childNodes[i].innerHTML.substring(7);
-		if (mUnit.childNodes[i] == oUnit)
-			mUnit.childNodes[i].innerHTML = "&#10004;&nbsp;" + mUnit.childNodes[i].innerHTML.substring(24);
-		//alert(mUnit.childNodes[i].innerHTML);
-	}
+if (unit == 0){	//Select/Unselect position record
+	if (recPosEnabled && recPosEnabled == 1){
+		recPosEnabled = 2;
+		savedPos(false, "Position recording enabled");
+		document.getElementById('optTrack').innerHTML = "&#10004;&nbsp;" + "Record position";
+	}else if (recPosEnabled){
+		recPosEnabled = 1;
+		savedPos(false, "Position recording disabled");
+		document.getElementById('optTrack').innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;" + "Record position";
+	}	
+}else  // Choose Meter or Yard
+	for (var i= 0; i < mUnit.childNodes.length ; i++){
+		if (mUnit.childNodes[i].className == "inputButton"){
+			if (mUnit.childNodes[i].innerHTML.indexOf(";") == 6)
+				mUnit.childNodes[i].innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;" + mUnit.childNodes[i].innerHTML.substring(7);
+			if (mUnit.childNodes[i] == oUnit)
+				mUnit.childNodes[i].innerHTML = "&#10004;&nbsp;" + mUnit.childNodes[i].innerHTML.substring(24);
+			//alert(mUnit.childNodes[i].innerHTML);
+		}
 distUnit = unit;
 afficheTrou(trou);
 }
@@ -927,7 +942,56 @@ mUnit.style.display = "none";
 function showSelUnit(){
 document.getElementById('chxUnit').style.display = "block";
 }
- 
+
+function callMove(){
+oBut = document.getElementById('moveMapBut');
+if (oBut.style.display == "inherit")
+	oBut.style.display = "none";
+else {
+	centerMoveButton();
+	oBut.style.display = "inherit";
+}
+
+}
+
+function centerMoveButton(){
+document.getElementById('moveMapBut').style.top = ((document.getElementById("map_canvas").offsetHeight / 2)-20) + "px";
+document.getElementById('moveMapBut').style.left = ((document.getElementById("map_canvas").offsetWidth / 2)-20) + "px";
+}
+
+function closeMapMove(){
+document.getElementById('mapMove').style.display = "none";
+}
+
+function moveMap(mBut){
+
+	var per = (mBut.offsetLeft + (mBut.offsetWidth / 2)) / (document.getElementById("map_canvas").offsetWidth);
+	calcMove( per, (mBut.offsetTop + (mBut.offsetHeight / 2)) / (document.getElementById("map_canvas").offsetHeight));
+	centerMoveButton();
+	//savedPos(false, per + "   Left = " + mBut.offsetLeft + "  Width = " + document.getElementById("map_canvas").offsetWidth);
+}
+
+function calcMove(mx, my){
+//newPos = new google.maps.LatLng('‭46.925466‬', '-71.36011');
+// Longitude
+x = map.getBounds().Ua.j;
+var xt = map.getBounds().Ua.j - map.getBounds().Ua.i;
+x = xt * mx;
+var rx = map.getBounds().Ua.j - x;
+
+// Latitude
+y = map.getBounds().Ya.j;
+var yt = map.getBounds().Ya.j - map.getBounds().Ya.i;
+y = yt * my;
+var ry = map.getBounds().Ya.i + y;
+//y = holeMarker.getPosition().lat();
+newPos = new google.maps.LatLng(ry,rx);
+//holeMarker.setPosition(newPos);
+map.setCenter(newPos);
+
+//savedPos(false, "rx = " + rx + "  markLng = " + holeMarker.getPosition().lng() );
+}
+
 // -->
 </script> 
 
@@ -938,14 +1002,15 @@ document.getElementById('chxUnit').style.display = "block";
 	line-height: 1em;
 	padding: 0;
 	}
-
-.bouton {
-    font-size: 0.6em;
-}
  
  a{
  text-decoration:none;
  }
+ 
+.bouton {
+    font-size: 0.6em;
+}
+
  
 #menuGPS{
 visibility: hidden;
@@ -974,6 +1039,33 @@ z-index: 1010;
 display: none;
 height: auto;
 }
+/*
+#mapMove{
+position:fixed;
+display: none;
+top:60px;
+height: 80%;
+width:100%;
+border: solid red 1px;
+text-align: center;
+z-index: 1101;
+-webkit-user-select: none;
+}
+*/
+#moveMapBut{
+position: fixed;
+z-index: 1101;
+display: none;
+}
+
+.boutonZoom {
+    overflow: hidden;
+	max-width: 40px;
+}
+
+.boutonZoom span{
+	margin-left: -7px;
+}
 
 </style>
 
@@ -996,8 +1088,9 @@ height: auto;
 <!--
 <button class="boutonZoom" title="Score" onclick="showScoreFrame(false); return false;">&#x1f4dd;</button>
 // -->
-<button class="boutonZoom" title="Zoom in" onclick="zoomMap(1); return false;">+</button>
-<button class="boutonZoom" title="Zoom out" onclick="zoomMap(-1); return false;">-</button>
+<button class="boutonZoom" title="Zoom in" onclick="zoomMap(1); return false;"><span class="zoomChar">&plus;</span></button>
+<button class="boutonZoom" title="Zoom out" onclick="zoomMap(-1); return false;"><span class="zoomChar">&minus;</span></button>
+<button class="boutonZoom" title="Move map..." onclick="callMove(); return false;"><span class="zoomChar">&#8283;</span></button>
 </div>
 
 
@@ -1028,6 +1121,7 @@ height: auto;
 <div id="chxUnit" class="menuList">
 <a id="optMeter" class="inputButton" onclick="selUnit(this,1)" href="#">&#10004;&nbsp;Yards</a>
 <a id="optYard" class="inputButton" onclick="selUnit(this,0.9144)" href="#">&nbsp;&nbsp;&nbsp;&nbsp;Meters</a>
+<a id="optTrack" class="inputButton" onclick="selUnit(this,0)" href="#">&nbsp;&nbsp;&nbsp;&nbsp;Record position</a>
 </div>
 
 <div id="listeTrous">
@@ -1049,7 +1143,9 @@ height: auto;
 </div>
 </div>
 
-
+<!--<div id="mapMove">  // -->
+<button id="moveMapBut" class="boutonZoom" title="Move map" onclick="moveMap(this)" ondblclick="closeMapMove()"; return false;"><span class="moveChar">&#8283</span></button>
+<!--</div>// -->
 
 <div id="showScore">
 
@@ -1136,7 +1232,8 @@ height: auto;
 <button id="okPref" class="bouton" type="button" onClick="saveScore(); return false;">&nbsp;<text id="_okok">Ok</text>&nbsp;</button>
 <button id="annulePref" class="bouton" type="button" onClick="closeScore(); return false;">&nbsp;<text id="_canc">Cancel</text>&nbsp;</button>
 </br>
-<button id="tabScore" class="bouton" type="button" onClick="tableauScore(); return false;">&nbsp;<text id="scard">Carte</text>&nbsp;</button>
+<!-- <button id="tabScore" class="bouton" type="button" onClick="tableauScore(); return true;">&nbsp;<text id="scard">Carte</text>&nbsp;</button>   // -->
+<a id="tabScore" class="bouton" href="" target="_blank" onClick="tableauScore(); return true;">&nbsp;&nbsp;&nbsp;&nbsp;<text id="scard">Carte</text>&nbsp;&nbsp;&nbsp;&nbsp;</a>
 <button id="butMarkBall" class="bouton" type="button" onClick="markBall(); return false;">&nbsp;<text id="sball">Set</text>&nbsp;</button>
 </div>
 </form>
@@ -1146,7 +1243,7 @@ height: auto;
 
 <script type="text/javascript" language="Javascript">
 <!--
-
+//'scoreTab.html?data=' + currentGameID + "$" + clubName
 holeDist = document.getElementById("holeDist");
   holeDist.addEventListener('transitionend', function() {
 	holeDist.style.fontSize = "1em";

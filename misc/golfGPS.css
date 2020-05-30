@@ -44,10 +44,9 @@ min-height:1.2em
 }
 
 #holeDist{
-/*font-size:1em;*/
-top:2em;
+top:1.5em;
 visibility:visible;
-left:0.8em;
+left:0.1em;
 z-index: 1004;
 }
 
@@ -186,7 +185,6 @@ text-align:center;
 color: #FF3333;
 background:-moz-linear-gradient(top,#ddd,#ddd);
 }
-
 
 	.itinS{
 		padding-left:5px;padding-right:5px;

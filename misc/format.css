@@ -283,14 +283,14 @@ box-shadow: 1px 1px 7px 2px rgba(0,0,0,0.5);
 #divMot, #divReg, #divCod {position:relative;float:left;clear:both;display:inline;min-width: 33%;
 text-align: right;
 margin-right: 1em;}
-.divChxChamp {position:relative;clear:both;width:100%;display:inline;float:left;right:0px;font-size:0.7em;}
+.divChxChamp {position:relative;clear:both;display:inline;float:left;right:0px;font-size:0.7em;}
 .inputtext {position:relative;display:inline;left:0px;right:0px;font-weight:bold;top:0px;text-align:left; height:25px}
 .inputselect {position:relative;display:inline-block;left:0px;right:0px;font-weight:bold;top:0px;text-align:left;height: 27px;}
 .inpSelSW{width: 4.7em;}
 .mlinediv{display: inline-block;}
-.olinediv{float: left;}
+/*.olinediv{float: left;}*/
 #inputselectreg{margin-top: 0.1em;}
-#inputselectdis{letter-spacing: -0.05em;}
+#inputselectdis{letter-spacing: -0.05em;display: inline;}
 
 .inSelReg{
 	width: 10em;
@@ -714,7 +714,7 @@ z-index: 1001;
 }
 
 #mapZoom{
-position:absolute;
+position:fixed;
 top:110px;
 right: 10px;
 width:40px;
@@ -732,9 +732,11 @@ display: none;
 .boutonZoom{
 background-color:#ccc;
 opacity: 0.66;
-font-size:22pt;
-margin:5px;
+font-size:30px;
+/*margin:5px;*/
 width:40px;
+font-weight:bold;
+text-align: center;
 }
 
 #menu{
