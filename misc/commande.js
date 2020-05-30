@@ -379,8 +379,8 @@ db.createUser(
   }
 )
 
-mongoexport -u=cdore -p=925 --db=resto --collection=news --jsonArray --out news.json
-mongoimport -u=cdore -p=925 --db=traiteur --collection news --jsonArray --file news.json
+mongoexport -u=user -p=pass --db=resto --collection=news --jsonArray --out news.json
+mongoimport -u=user -p=pass --db=traiteur --collection news --jsonArray --file news.json
 
 count group by
  tt=db.score.aggregate([ {"$match" : {"USER_ID":80}}, {"$group" : {"_id":{"name":"$name","parcours":"$PARCOURS_ID"}, "count":{"$sum":1}}} ])
