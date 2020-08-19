@@ -79,6 +79,12 @@ function addTime(){
     });
 };
 
+function addState(){
+    db.recettes.find().forEach(function(doc){
+         db.recettes.update({_id:doc._id}, {$set:{"state": 1 }});
+    });
+};
+
 MongoDB only
 
 var cur =new Array();

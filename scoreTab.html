@@ -632,10 +632,12 @@ for (var i= 1; i < 10; i++){
 }
 if (nt == 19){
 	tdH += '<td>' + po + '</td>';
+	pi = po; 
+	po = 0; 
 	for (var i= 10; i < nt; i++){
 		wLine( eval("gameData.L" + i) );
 	}
-	tdH += '<td>' + pi + '</td>';
+	tdH += '<td>' + po + '</td>';
 }
 tdH += '<td>' + (po + pi) + '</td>';
 trElem.innerHTML = tdH;
