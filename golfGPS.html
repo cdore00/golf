@@ -198,12 +198,12 @@ function setMyPosition(map, lat, lng) {
 
 function setpiquetMarker(map, location) {
   var image = {url:'images/piquet.png',
-  			size: new google.maps.Size(50, 50),
+  			size: new google.maps.Size(3, 16),
 			origin: new google.maps.Point(0,0),
-			anchor: new google.maps.Point(0, 10)};
+			anchor: new google.maps.Point(3, 16)};
   var shape = {
-      coord: [1, 1, 50, 50],
-      type: 'rect'
+     coords: [1, 1, 1, 20, 18, 20, 18, 1],
+    type: "poly"
   };
   piquetMarker = new google.maps.Marker({
     position: location,

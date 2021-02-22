@@ -567,13 +567,13 @@ map.setZoom(mapZoom + p_m);
 
 function setHole(map, location) {
   var image = {url:'images/flag.png',
-			size: new google.maps.Size(40, 40),
+			size: new google.maps.Size(30, 30),
 			origin: new google.maps.Point(0,0),
-			anchor: new google.maps.Point(5, 20)
+			anchor: new google.maps.Point(5, 25)
 			};
   var shape = {
-      coord: [1, 1, 40, 40],
-      type: 'rect'
+     coords: [1, 1, 1, 40, 40, 40, 40, 1],
+    type: "poly",
 };
     holeMarker = new google.maps.Marker({
         position: location,

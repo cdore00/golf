@@ -259,7 +259,7 @@ background: #bbb ;
 color: #ff1822;
  } 
  
- .selScore td,a {
+ .selScore td,a,i {
 color: #33d;
 }
  

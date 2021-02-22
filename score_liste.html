@@ -626,13 +626,14 @@ max-width: 15em;
 <div id="prefNbr">
 <select id="prefNbr" onchange="setNB(this)">
  <option value="5" >5 parties</option>
- <option value="10" selected>10 parties</option>
- <option value="20" >20 parties H</option>
+ <option value="10" >10 parties</option>
+ <option value="20" selected>20 parties H</option>
  <option value="50" >50 parties</option>
   <option value="100" >100 parties</option>
 </select>
 <input id="prefNb" type="text" size="3" maxlength="3" placeholder="999"/>
-<a class="itin char_icon" href="#" onclick="getGameList(-1);" >&#11118;</a>
+<a class="itin char_icon" href="#" onclick="getGameList(-1);" >&#10145;</a>
+<a class="itin char_icon" href="#" onclick="formPref.reset();" >&#128260;</a>
 </div>
 </div>
 
@@ -640,7 +641,7 @@ max-width: 15em;
 	<table id="gameList" class="cartePts">
 
 	</table>
-	<div id="divLoad"><i class="w3-xxxlarge material-icons w3-spin">&#11118;</i></div>
+	<div id="divLoad"><i class="w3-xxxlarge material-icons w3-spin selScore">&#8635;</i></div>
 </div>
 
 <div class="space10">

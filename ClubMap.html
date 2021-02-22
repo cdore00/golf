@@ -181,7 +181,8 @@ function showCourse(oClub){
 		aElem.setAttribute('class', "inputButton");
 		aElem.setAttribute('onmouseover', "showSubmenu(false, 'inherit')");
 		var url = "ClubMap.html?data=" + clubID + "$" + collCcourse[p]._id;
-		aElem.setAttribute('href', url);
+		//aElem.setAttribute('href', url);
+		aElem.setAttribute('href', "javascript:changeURL('" + url + "');");
 		
 		lbl = collCcourse[p].PARCOURS;
 		if (lbl == "")
@@ -235,6 +236,16 @@ if (objOpt){
 }
 submenu.style.display = state;
 }
+
+function changeURL(goURL){
+
+	var localWindow=null;
+	localWindow = window.open(goURL);
+		window.close();
+	localWindow.document.close();
+
+}
+
 
 	// -->
 </script> 

@@ -76,7 +76,8 @@ if (oResult.posList){
 		lat = oResult.posList.lat;
 		lng = oResult.posList.lng;
 		km  = oResult.posList.dist;
-}else{
+}
+//else{
 	if (typeof oResult.ph == "boolean"){
 		if (oResult.ph)
 			mess = mess.replace("phonetic", langLbl["Iphon"]);
@@ -87,7 +88,7 @@ if (oResult.posList){
 		mess = mess.replace("phonetic", "");
 		var result = oResult;
 	}	
-}
+//}
 message.innerHTML = result.length + mess;
 
 var cntItem = 0;
@@ -184,7 +185,7 @@ color:#d33 !important;
 
 </head>
 
-<body onload="initPage();"><a name="haut"></a>
+<body onload="initPage();"><a id="haut"></a>
 
 <div id="topbar" class="vert">
 <div id="leftnav"><a title="Formulaire de recherche" href="index.html"><img alt="Formulaire de recherche" height="22" width="25" src="images/home22.png" /></a></div>

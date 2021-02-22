@@ -30,6 +30,7 @@ var intLat, intLng, intKm, intZoom, winOpen;
 var clubs = new Array();
 var map;
 var directionsDisplay = new google.maps.DirectionsRenderer({});
+
 function calcRoute(mLat, mLng, gLat, gLng, oInfo) {
 var directionsService = new google.maps.DirectionsService();
 directionsDisplay.setMap(null);
@@ -111,7 +112,7 @@ this.zoomRestart = function (lat1, lat2, lng1, lng2) {
 // Fin Class cerclePos
 // Start initialize function
 function initialize(showCenter) { 
-	intZoom = 15 - parseInt(Math.log(intKm/100));
+	intZoom = 15 -  Math.round(Math.log(intKm/100));
 	if (!intZoom)
 		intZoom = 11;
 	var myOptions = { 
@@ -239,10 +240,11 @@ function incrementer(rayon){
 		rayon=rayon-myC.ajout;
 		myC.timeOutPos = setTimeout('incrementer(' + rayon + ')',myC.delai);
 	}else{
-		if (myC.myPosMark.getAnimation() != null) {
+		if (myC.myPosMark && myC.myPosMark.getAnimation() != null) {
 			myC.myPosMark.setAnimation(null);
 			} else {
-			myC.objCercle.setRadius(0);
+			if (myC.objCercle)
+				myC.objCercle.setRadius(0);
 			myC.timeOutPos = setTimeout('incrementer(' + rayon + ')',600);
 		}
 	}

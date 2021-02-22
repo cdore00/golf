@@ -962,7 +962,7 @@ text-align: left;
 
 }
 
-@media screen and (max-width: 427px)
+@media screen and (max-height:427px) and (min-aspect-ratio:1/1){
 {
 #leftbutton, #leftnav, #butMenu {
     margin-left: 40px;	
