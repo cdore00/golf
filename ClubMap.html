@@ -172,7 +172,7 @@ function showCourse(oClub){
 	for (var i = 0; i < nbrTrous; i++) {
 		trouCoord[i] = new google.maps.LatLng(oClub[0].latitude, oClub[0].longitude);
 	}
-	
+	var titre = document.getElementsByTagName("title")[0];
 	var submenu1 = document.getElementById("submenu1");
 	var cntC = 0;
 	for (var p = 0; p < collCcourse.length; p++) {
@@ -185,13 +185,15 @@ function showCourse(oClub){
 		aElem.setAttribute('href', "javascript:changeURL('" + url + "');");
 		
 		lbl = collCcourse[p].PARCOURS;
+
+		var pref = "&nbsp;&nbsp;&nbsp;&nbsp;";
+		if (collCcourse[p]._id == courseID){
+			pref = "&#10004;&nbsp;";
+			titre.innerHTML = clubName + ((lbl != "") ? "&nbsp;:&nbsp;" + lbl : "") + "&nbsp;-&nbsp;" + titre.innerHTML ;
+			}   
 		if (lbl == "")
 			lbl = collCcourse[p].TROUS + " trous, " + collCcourse[p].VERGES + " verges";
-		
-		var pref = "&nbsp;&nbsp;&nbsp;&nbsp;";
-		if (collCcourse[p]._id == courseID)
-			pref = "&#10004;&nbsp;";
-
+			
 		aElem.innerHTML = pref + lbl;
 		submenu1.appendChild(aElem);
 	}

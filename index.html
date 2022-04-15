@@ -762,9 +762,7 @@ max-width: 5em;
 }
 
 #microphone{
-position: absolute;
-right:0px;
-bottom: 0px;
+float: right;
 text-decoration: none;
 display: none;
 }
@@ -806,7 +804,8 @@ display: none;
 			  <div class="mlinediv">
 				<div class="divChxChamp"><input id="checkNom" type="checkbox" checked value="Nom"><label for="checkNom">&nbsp;<text id="clubn">Club</text></label>&nbsp;&nbsp;<input id="checkVille" type="checkbox" checked value="Ville"><label for="checkVille">&nbsp;<text id="clubc">Ville</text></label></div>
 			    
-			    <div id="inputtextmot"><input id="Mots" class="inputtext" type="text" size="" maxlength="50" value=""/>
+			    <div id="inputtextmot">
+				<input id="Mots" class="inputtext" type="text" size="" maxlength="50" value=""/>
 				<a id="microphone" href="javascript:sayKeyWord();">&#x1f3a4;</a>
 				</div>
 			  </div>

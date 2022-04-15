@@ -157,14 +157,53 @@ mongoexport -u 'user84C' -p 'tml6fMOcjEdNdBMq' --db sampledb --collection users 
 mongoexport --host cdore.no-ip.biz:27017 --db golf --collection users --jsonArray --out users.json
 mongoimport -u 'tuser' -p '123' --db tdb --collection users --jsonArray --file tuser.json 
 db.createUser({user:"tuser",pwd:"123",roles:["readWrite","dbAdmin"]}) 
+db.createUser(
+       {
+         user: "MyAdmin",
+         pwd: "MyAdminPassw0rd",
+         roles: [ { role: "userAdminAnyDatabase", db: "admin" } ]
+       }
+     )
 
+     db.createUser(
+       {
+         user: "MyRoot",
+         pwd: "MyRootPassw0rd",
+         roles: [ { role: "root", db: "admin" } ]
+       }
+     )
+
+     db.createUser(
+       {
+         user: "MyUser",
+         pwd: "MyUserPassw0rd",
+         roles: [ { role: "readWrite", db: "mydb" } ]
+       }
+     )
+db.createUser({ user: "MyUser", pwd: "pass",roles: [ { role: "readWrite", db: "mydb" } ]})
+
+    // if done later; reconnect as "MyAdmin" and allow "MyUser" read on authentication database "admin"
+
+     use admin
+     db.grantRolesToUser(
+     "MyUser",
+     [
+       { role: "read", db: "admin" }
+     ]
+     )
+
+db.grantRolesToUser( "MyUser", [{ role: "read", db: "admin" }])
+ 
+List all users
+	 db.getUsers();
+	 
 tt=db.club.find({}).sort({nom:1}).skip(10).limit(1).toArray();
 
 mongo -u $MONGODB_USER -p $MONGODB_PASSWORD sampledb
 mongodump --host 192.168.2.160 --port 27017 -d golf --out mdump
 mongodump -u $MONGODB_USER -p $MONGODB_PASSWORD -d sampledb --out /tmp/mdump
-mongorestore -u $MONGODB_USER -p $MONGODB_PASSWORD -d sampledb mdump/golf
-mongorestore -d golf mdump/golf
+mongorestore -u $MONGODB_USER -p $MONGODB_PASSWORD --authenticationDatabase=admin -d sampledb mdump/golf
+mongorestore -d golf mdump/golf	
 
 mongoexport --db=golf --collection=regions --type csv --fieldFile fields.txt --out reg.txt
 mongoimport --db golf --collection parcours --jsonArray --file parcours.json 
