@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
+<meta name="format-detection" content="telephone=yes" />
+<meta name="format-detection" content="telephone=yes"/> 
+
+<link rel="shortcut icon" type="image/x-icon" href="images/golf.png">
+<link rel="shortcut icon" type="image/x-icon" href="images/golf.png?">
+<title>Golfs du Qu&eacute;bec</title>
+<meta content="Golf GPS, Qu&eacute;bec, Canada, Golf du Qu&eacute;bec, Clubs de golf au Qu&eacute;bec, Qu&eacute;bec golf" name="keywords" />
+<meta content="R&eacute;pertoire des clubs de golf du Qu&eacute;bec. GPS golf." name="description" />
+
+<link href="misc/format.css" rel="stylesheet" media="screen" type="text/css" />
+
+<script type="text/javascript" src="misc/util.js"></script>
+<script type="text/javascript" language="Javascript">
+<!--
+
+var userId;
+var clubID;
+var courseIDdef;
+var clubName;
+var clubCourse;
+var favChange = false;
+var goURL;
+
+
+function changeFav(objImg){
+favChange = true;
+if (objImg.classList.contains("favOn")){
+	objImg.classList.replace("favOn", "favOff");
+}else{
+	objImg.classList.replace("favOff", "favOn");
+}
+}
+
+function majFav(nextURL){
+var action=0;	//deleteAction
+var starStat = document.getElementById('favIcon');
+
+goURL = nextURL;
+
+if (favChange){
+	if (starStat.classList.contains("favOn"))
+		action=1;  //addAction
+		
+	if (nextURL)
+		getInfo("updateFav?data=" + clubID + "$" + userId + "$" + action, changeURL);
+	else
+		getInfo("updateFav?data=" + clubID + "$" + userId + "$" + action);
+}else{
+if (nextURL)
+	changeURL();
+}
+}
+
+function changeURL(oRep){
+document.location.href = goURL;
+}
+
+function initPage(){
+var butMenu = document.getElementById("butMenu");
+if ( GetCookie("userRole") == "ADM")
+	butMenu.style.visibility = "visible";
+	
+var data = getURLdata();
+
+setFontSize();
+window.oMenu = new menuObject(document.getElementById('butMenu'));
+
+clubID = parseInt(data);
+userId = GetCookie("userID");
+
+getInfo("getClubParc?data=" + clubID + "$" + userId, showClub);
+
+}
+
+function showMenu(){
+	window.oMenu.show();
+}
+
+function editClub(currentClub){
+if (currentClub)
+	document.location = "editClub.html?data=" + clubID;
+else
+	document.location = "editClub.html?data=2";
+}
+
+
+function showClub(oClubParc){
+var clubInfo = document.getElementById('clubInfo');
+var clubDetail = document.getElementById('clubDetail');
+var mapLink = document.getElementById('mapLink');
+var CourseList = "";
+var favClass = "favOff";
+
+clubCourse = (oClubParc[0].courses);
+courseIDdef = oClubParc[0].courses[0]._id;
+mapLink.href += clubID + "$" + courseIDdef;
+
+for (var i = 0; i < clubCourse.length; i++) {
+	CourseList += clubCourse[i]._id + "$";
+}
+CourseList = CourseList.substring(0, CourseList.length - 1 );
+getInfo("getBloc?data=" + CourseList, showBlock);
+
+clubName = oClubParc[0].nom;
+var cInfo = 'Club:&nbsp;';
+if (oClubParc[0].url_club)
+	cInfo += '<a target="_blank" href=' + oClubParc[0].url_club + '>' + oClubParc[0].nom + '</a>&nbsp;';
+else
+	cInfo += oClubParc[0].nom + '&nbsp;';
+if (oClubParc[0].prive)
+	cInfo += '&nbsp;(Priv&eacute;)&nbsp;';
+if (userId){
+	if (oClubParc[0].isFavorite)
+		favClass = "favOn";
+
+		//cInfo += '<img id="favIcon" class="favOff" onclick="changeFav(this)" alt="Favoris" width="30" height="30" src="images/favorisOff.png" />&nbsp;';
+	cInfo += '<svg id="favIcon" class="' + favClass + '" onclick="changeFav(this)" width="34" height="34" viewBox="0 0 48 48" ><path d="M35.53 43.496c-.294 0-.587-.074-.852-.22l-10.68-5.946-10.678 5.945c-.607.34-1.35.288-1.907-.132-.553-.414-.81-1.12-.653-1.795l2.685-11.688-9.292-8.565c-.515-.476-.7-1.212-.464-1.874.23-.66.834-1.117 1.534-1.163l12.252-.802 4.905-11.68c.274-.65.913-1.074 1.618-1.074.704 0 1.34.423 1.614 1.075l4.908 11.68 12.25.805c.703.046 1.308.503 1.542 1.165.232.662.05 1.4-.465 1.874l-9.295 8.564 2.688 11.688c.154.673-.103 1.38-.657 1.793-.31.235-.68.35-1.054.35"></path></svg> &nbsp;';
+}
+var myPos = localStorage.getItem('myPos');
+if (myPos){
+	var coord = myPos.split(',');
+
+	cInfo += '&nbsp;&nbsp;<a class="itin" target="_blank" href="ClubTrajet.html?data=' + coord[0] + '$' + coord[1] + '$' +  oClubParc[0].latitude + '$' + oClubParc[0].longitude + '$' + encodeURI(oClubParc[0].nom) +'">' + langLbl["direc"] + '</a>';
+	}
+if (false)
+	cInfo += '&nbsp;<a class="itin" target="_blank" href="ClubTrajet.html?Lat=">' + langLbl["direc"] + '</a>';
+
+clubInfo.innerHTML = cInfo;
+
+var cInfo = oClubParc[0].adresse + ',&nbsp;';
+if (oClubParc[0].url_ville)
+	cInfo += '<a target="_blank" href="' + oClubParc[0].url_ville + '">' + oClubParc[0].municipal + '</a>,&nbsp;';
+else
+	cInfo += oClubParc[0].municipal + ',&nbsp;';
+cInfo += oClubParc[0].codepostal2 + '&nbsp; ';
+if (oClubParc[0].email)
+	cInfo += ' <a href="mailto:' + oClubParc[0].email + '">' + oClubParc[0].email + '</a> ';
+
+if (oClubParc[0].telephone)
+	cInfo += "<a href=\"tel:" + oClubParc[0].telephone.replaceAll("-","") + "\">" + oClubParc[0].telephone + "</a>";
+//cInfo += oClubParc[0].telephone + '&nbsp;';
+if (oClubParc[0].telephone2)
+	cInfo += ", " + "<a href=\"tel:" + oClubParc[0].telephone2.replaceAll("-","") + "\">" + oClubParc[0].telephone2 + "</a>";
+if (oClubParc[0].telephone3)
+	cInfo += ", " + "<a href=\"tel:" + oClubParc[0].telephone3.replaceAll("-","") + "\">" + oClubParc[0].telephone3 + "</a>";
+	
+clubDetail.innerHTML = cInfo;
+
+var pageZone = document.getElementById('pageZone');
+
+	var htmlCode = "<ul>";
+for (var p = 0; p < clubCourse.length; p++) {
+	htmlCode += "<li>";
+	var parcoursName = "";
+	if (clubCourse[p].POINTS == "E")
+		htmlCode += "Ex&eacute;cutif,&nbsp;";
+	if (clubCourse[p].PARCOURS != null && clubCourse[p].PARCOURS != "")
+		htmlCode += clubCourse[p].PARCOURS + "&nbsp;" 
+	
+		htmlCode += clubCourse[p].TROUS + langLbl["holes"];
+	if (clubCourse[p].DEPUIS)	
+		htmlCode += langLbl["since"] + clubCourse[p].DEPUIS ;
+	htmlCode +=  langLbl["ccpar"] + clubCourse[p].NORMALE + ", &nbsp;" + clubCourse[p].VERGES + langLbl["cyard"];
+	if (clubCourse[p].PARCOURS != "")
+		parcoursName += " - " + clubCourse[p].PARCOURS;
+	if (clubCourse[p].GPS)
+		htmlCode += '<a class="itin" target="_blank" href="golfGPS.html?data=' + clubCourse[p]._id + '&' + clubName + parcoursName + '">' + langLbl["bplay"] + '</a>';
+htmlCode += "</li>";
+
+}
+htmlCode += "</ul>";
+	var liElem = document.createElement("li");
+	liElem.setAttribute('class', 'listitem gras');
+	liElem.innerHTML = htmlCode;
+	pageZone.appendChild(liElem);
+
+}
+
+function showBlock(oBlock){
+var bloc = oBlock;
+var nextCourse = 0;
+
+// Course list
+var pageZone = document.getElementById('pageZone');
+if (bloc.length > 0){
+for (var p = 0; p < clubCourse.length; p++) {
+	var htmlCode = "";
+	var courseID = clubCourse[p]._id;
+	//var bloc = oBlock[p];
+	var b = 0;
+	while (bloc[b] && bloc[b].PARCOURS_ID != courseID) {
+		b++;
+	}
+	
+	nextCourse = b;
+	//Bloc list
+	if (bloc[b]){
+		var nbrTrou = clubCourse[p].TROUS;
+
+		var liElem = document.createElement("li");
+		liElem.setAttribute('class', 'listitem gras');
+		var divElem = document.createElement("div");
+		divElem.setAttribute('id', 'p1');
+		divElem.setAttribute('class', 'cartePts');
+
+		var htmlCode = '<table class="cartePts"><tr><td  class="titre" colspan="14"><b>' + langLbl["cours"] + clubCourse[p].PARCOURS + "&nbsp;" + nbrTrou + langLbl["holes"] + '</b></td></tr>';
+		if(nbrTrou == 9)
+			htmlCode += '<tr class="entete"><th>' + langLbl["hole"] + '</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>Total</th></tr>';
+		else
+			htmlCode += '<tr class="entete"><th>' + langLbl["hole"] + '</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>' + langLbl["goout"] + '</th><td></td><td></td><td></td></tr>';
+
+		
+		do{
+			var cName = 'B' + bloc[b].Bloc;
+			htmlCode += '<tr><td class="' + cName + '">' + langLbl[bloc[b].Bloc] + '</td>';
+			for (var i = 1; i < 10; i++) {
+				var x = "bloc[b].T" + i;
+				htmlCode += '<td class="' + cName + '">' + eval(x) + '</td>';
+			}
+			if(nbrTrou == 9)
+				htmlCode += '<td class="' + cName + '">' + ((bloc[b].Aller == null) ? "":bloc[b].Aller) + '</td>';
+			else
+				htmlCode += '<td class="' + cName + '">' + ((bloc[b].Aller == null) ? "":bloc[b].Aller) + '</td><td></td><td></td><td></td>';
+		b += 1;
+		} while ( bloc[b] && bloc[b].PARCOURS_ID == courseID);
+
+		if(nbrTrou == 18){
+			htmlCode += '<tr class="entete"><th>' + langLbl["hole"] + '</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th><th>16</th><th>17</th><th>18</th><th>' + langLbl["goin"] + '</th><th>Total</th><th>Eval.</th><th>Slope</th></tr>';
+			var b = nextCourse;
+			do{
+				var cName = 'B' + bloc[b].Bloc;
+				htmlCode += '<tr><td class="' + cName + '">' + langLbl[bloc[b].Bloc] + '</td>';
+				for (var i = 10; i < 19; i++) {
+					var x = "bloc[b].T" + i;
+					htmlCode += '<td class="' + cName + '">' + eval(x) + '</td>';
+				}
+				htmlCode += '<td class="' + cName + '">' + ((bloc[b].Retour == null) ? "":bloc[b].Retour) + '</td><td class="' + cName + '">' + ((bloc[b].Total == null) ? "":bloc[b].Total) + '</td><td class="' + cName + '">' + bloc[b].Eval + '</td><td class="' + cName + '">' + bloc[b].Slope + '</td>';
+			b += 1;
+			} while ( bloc[b] && bloc[b].PARCOURS_ID == courseID);
+		}
+		nextCourse = b;
+		htmlCode += '</table>';
+		divElem.innerHTML = htmlCode;
+		liElem.appendChild(divElem);
+		pageZone.appendChild(liElem);
+	}
+}
+}
+showProgress(1);
+}
+
+// -->
+</script>
+
+<style>
+
+
+</style>
+
+</head>
+
+<body onload="initPage()" onunload="majFav()"><a name="haut"></a>
+
+<div id="topbar" class="vert">
+<div id="leftnav"><a title="Formulaire de recherche" href="#" onclick="majFav('index.html');"><img alt="Formulaire de recherche" height="22" width="25" src="images/home22.png" /></a></div>
+<div id="chargement" class="">
+<progress id="progressQ" ></progress>
+<div class="charge"><text id="load"></text></div><div class="charge loading"></div></div>
+<div id="fontAdjust" class="unselectable">
+<div class="divFont" onclick="setFontSize(0.2, this)"><div class="divFontSize">A</div><div class="fontLogo">&#8593;</div></div>
+<div class="divFont" onclick="setFontSize(-0.2, this)"><div class="divFontSize fontSmall">A</div><div class="fontLogo">&#8595;</div></div>
+</div>
+</div>
+<div id="duobutton">
+<a href="#" id="butMenu" title="Menu" onmouseover="showMenu()" onclick="showMenu();"><img id="logomenu" alt="Menu" src="images/menu.png" width="64" height="32"></a>
+<a href="#" onclick="majFav('listeResult.html');"><text id="mlist"></text></a>
+<a id="mapLink" target="_blank" href="ClubMap.html?data=" onclick="majFav();"><text id="mmaps"></text></a></div>
+
+<div id="menuList">
+<a class="inputButton" href="#"; onclick="editClub(true);" title="&Eacute;diter la fiche du club.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="medit"></text></a>
+<a class="inputButton" href="#"; onclick="editClub(false);" title="Ajouter un club de golf.">&nbsp;&nbsp;&nbsp;&nbsp;<text id="majou"></text></a>
+</div>
+
+<div id="content">
+
+<ul id="pageZone" class="pageitem">
+			<li class="listitem gras">			
+			<div id="clubInfo" class="itemdesc">
+			</div>
+			<div id="clubDetail" class="itemdetail">
+			</div>
+			</li>
+</ul>
+
+</div>
+
+<div id="bottombar" class="vert">
+	<div id="rightbutton"><a class="char_icon" href="#haut" alt="Haut de page">&#9650;</a></div>
+	<div id="message"></div>
+</div>
+
+<div id="copyright">
+<a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2020</a>
+</div>
+
+
+</body>
+
+</html>

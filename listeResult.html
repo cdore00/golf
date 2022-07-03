@@ -70,6 +70,8 @@ var message = document.getElementById('message');
 	}
 
 mess = localStorage.getItem("message");
+if (!mess)
+	mess = "";
 if (oResult.posList){
 	var result = oResult.clubList;
 	localStorage.setItem('posList', oResult.posList.lat + "," + oResult.posList.lng + "," + oResult.posList.dist);

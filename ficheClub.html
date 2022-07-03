@@ -5,6 +5,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
 <meta name="format-detection" content="telephone=yes" />
+<meta name="format-detection" content="telephone=yes"/> 
 
 <link rel="shortcut icon" type="image/x-icon" href="images/golf.png">
 <link rel="shortcut icon" type="image/x-icon" href="images/golf.png?">
@@ -141,11 +142,13 @@ cInfo += oClubParc[0].codepostal2 + '&nbsp; ';
 if (oClubParc[0].email)
 	cInfo += ' <a href="mailto:' + oClubParc[0].email + '">' + oClubParc[0].email + '</a> ';
 
-cInfo += oClubParc[0].telephone + '&nbsp;';
+if (oClubParc[0].telephone)
+	cInfo += "<a href=\"tel:" + oClubParc[0].telephone.replaceAll("-","") + "\">" + oClubParc[0].telephone + "</a>";
+//cInfo += oClubParc[0].telephone + '&nbsp;';
 if (oClubParc[0].telephone2)
-	cInfo += ", " + oClubParc[0].telephone2;
+	cInfo += ", " + "<a href=\"tel:" + oClubParc[0].telephone2.replaceAll("-","") + "\">" + oClubParc[0].telephone2 + "</a>";
 if (oClubParc[0].telephone3)
-	cInfo += ", " + oClubParc[0].telephone3;
+	cInfo += ", " + "<a href=\"tel:" + oClubParc[0].telephone3.replaceAll("-","") + "\">" + oClubParc[0].telephone3 + "</a>";
 	
 clubDetail.innerHTML = cInfo;
 
@@ -257,6 +260,12 @@ showProgress(1);
 
 <style>
 
+#clubZone{
+background: rgb(238, 238, 238);
+margin: 10px 8px;
+padding: 3px;
+border-radius: 20px;
+}
 
 </style>
 
@@ -285,13 +294,15 @@ showProgress(1);
 </div>
 
 <div id="content">
-
-<ul id="pageZone" class="pageitem">
-			<li class="listitem gras">			
+		<div id="clubZone">
 			<div id="clubInfo" class="itemdesc">
 			</div>
 			<div id="clubDetail" class="itemdetail">
 			</div>
+		</div>	
+<ul id="pageZone" class="pageitem">
+			<li class="listitem gras">			
+
 			</li>
 </ul>
 
