@@ -1,5 +1,5 @@
 
-var HOSTserv = "https://cdore.ddns.net/pyt/";  // VULTR Ubuntu Server 16.04 docker Python 3.6.4
+var HOSTserv = "http://127.0.0.1:3000/";		//Portable Windows 10 Local host Node JS v6.10.0
 // "http://127.0.0.1:3000/";		//Portable Windows 10 Local host Node JS v6.10.0
 // "http://192.168.2.195:3000/";    //Ubuntu workstation 16.04
 // "http://192.168.2.195:8080/";    //Ubuntu workstation 16.04 docker 1.12.6 Node JS v4.2.3  MongoDB server v3.4.9
@@ -837,7 +837,7 @@ if (document.querySelector('meta[http-equiv="content-language"]'))
 		langLbl["S0055"] = "Il n'existe aucun compte avec l'adresse de courriel : %1"; // + email
 		langLbl["S0056"] = "Un compte utilise d&eacute;j&agrave; cette adresse courriel.";
 		langLbl["S0057"] = "Utilisateur inexistant.";
-		langLbl["S0058"] = "Ce compte existe d&eacute;j&agrave;.";
+		langLbl["S0058"] = "Ce compte existe déjà.";
 		langLbl["S0059"] = "Mote de passe actuel incorrect.";
 		langLbl["S0060"] = "Vous devez vous authentifier pour terminer la partie.";
 		langLbl["S0061"] = "Vous devez vous authentifier pour supprimer la partie.";

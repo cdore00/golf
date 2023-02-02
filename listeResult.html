@@ -36,7 +36,7 @@ setFontSize();
 
 if (urlInfo.indexOf("data=") == -1){  // Not a new request
 	var data = localStorage.getItem("idList");
-	var pos = localStorage.getItem("posList");
+	var pos = localStorage.getItem("myPos");
 	if (pos){
 		var pos = pos.split(",");
 		lat = (pos[0]);
@@ -61,7 +61,7 @@ var pageZone = document.getElementById('pageZone');
 var message = document.getElementById('message');
 
 	function getRegion(Rlist, Rid){
-		for (var r = Rlist.length-1; r > 0; r--) {
+		for (var r = Rlist.length-1; r > -1; r--) {
 			if (Rlist[r]._id == Rid){
 				return Rlist[r].Nom;
 				break;

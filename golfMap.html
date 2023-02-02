@@ -274,7 +274,7 @@ winOpen = new google.maps.InfoWindow({
 	});
 for (var i = 0; i < cData.length; i++) {
 	var contentString = '<div id="layerContent"><p><a href="ficheClub.html?data=' + cData[i]._id + '" target="_blank">' + cData[i].nom + '</a>';
-	if (intLat != 'undefined'){
+	if (intLat != 'undefined' && intLat != "null"){
 		contentString += '&nbsp;&nbsp;<a class="itin" href="javascript:showItineraire(' + cData[i].location.coordinates[1] + ', ' + cData[i].location.coordinates[0] + ',\'contentTrajet\')">' + langLbl["direc"] + '</a><div id="contentTrajet" class="itinDetail"></div>'
 	}
 	contentString += '</p><p>' + cData[i].adresse + ',&nbsp;' + cData[i].municipal + '</br>' + cData[i].telephone + '</p></div>';
@@ -288,7 +288,7 @@ for (var i = 0; i < cData.length; i++) {
 	maxY = Math.max(maxY, cData[i].location.coordinates[0]);
 	minY = Math.min(minY, cData[i].location.coordinates[0]);
 }
-if (intLat == 'undefined' || !intLat){
+if (intLat == 'undefined' || !intLat  || intLat == "null"){
 	intLat = ((maxX + minX) / 2) + "";
 	intLng = ((maxY + minY) / 2) + "";
 	intKm = calculDistance(maxX, minX, maxY, minY) / 2; 
