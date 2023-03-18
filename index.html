@@ -624,7 +624,7 @@ if (localStorage.getItem('cpDist'))
 	formCrit.kiloM.selectedIndex = localStorage.getItem('cpDist');
 }
 
-function clearContext(){
+function clearContext(notPos){
 	localStorage.removeItem('idList');
 	localStorage.removeItem('motsCleContext');
 	localStorage.removeItem('checkNom');
@@ -633,7 +633,8 @@ function clearContext(){
 	localStorage.removeItem('cpContext');
 	localStorage.removeItem('message');
 	localStorage.removeItem('cpDist');
-	//localStorage.removeItem('myPos');
+	if (!notPos)
+		localStorage.removeItem('myPos');
 }
 
 function rechercheClub(){
@@ -641,7 +642,7 @@ var formCrit = document.getElementById('critere');
 var url = window.location.href
 var arr = url.split("/");
 var URLresult = "listeResult.html?data=";
-clearContext();
+clearContext(true);
 var mess = "";
 if (formCrit.Mots.value != ""){
 	mess += langLbl["Iou00"] + formCrit.Mots.value + langLbl["I0004"];

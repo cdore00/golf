@@ -36,7 +36,7 @@ setFontSize();
 
 if (urlInfo.indexOf("data=") == -1){  // Not a new request
 	var data = localStorage.getItem("idList");
-	var pos = localStorage.getItem("myPos");
+	var pos = localStorage.getItem("posList");
 	if (pos){
 		var pos = pos.split(",");
 		lat = (pos[0]);

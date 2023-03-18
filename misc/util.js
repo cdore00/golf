@@ -147,6 +147,23 @@ var formatDateTime = {
 	}
 }
 
+function setEsc(funcToExec){
+                
+	function execFunct(){
+	   document.onkeydown = null;
+	   window.removeEventListener("dblclick",execFunct);
+	   funcToExec();
+	}
+                
+window.addEventListener("dblclick",execFunct);
+
+document.onkeydown = function(evt) {
+    evt = evt || window.event;
+    if (evt.keyCode == 27) {
+		execFunct();
+    }
+};
+}
 
 function DelCookie(name) {
     document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';

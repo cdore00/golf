@@ -20,6 +20,7 @@
 
 var userId;
 var clubID;
+var editChange = false;
 var courseIDdef;
 var clubName;
 var clubCourse;
@@ -45,10 +46,29 @@ if (document.images)
  favOff.src="images/favorisOff.png";
 }
 
+function acceptQuit(){
+window.removeEventListener('beforeunload', askQuit);
+}
+
+function askQuit(){
+  // Cancel the event as stated by the standard.
+  event.preventDefault();
+  // Chrome requires returnValue to be set.
+  event.returnValue = '';
+};
+
+
+function confirmQuit(){
+window.addEventListener('beforeunload', askQuit )
+}
 
 function initPage(){
 clubForm = document.getElementById('clubForm');
 var data = getURLdata();
+
+clubForm.addEventListener("input", function () {
+	editorChange();
+});
 
 window.oTip = new messTipObject();
 window.oPick = new listPickerObject();
@@ -333,6 +353,10 @@ if (!oRes.ok && oRes.message){
 		setTimeout(function() {
 			document.location = "editClub.html?data=" + oRes.upserted;
 		}, 3000);
+	editChange = false;
+	var butMenu = document.getElementById('butMenu');
+	butMenu.style.opacity = "0.3";
+	acceptQuit();
 }
 //getBlocList();
 }
@@ -892,6 +916,15 @@ for (var p = 0; p < bloc.length; p++) {
 }
 }
 
+function editorChange(){
+if (!editChange){
+	var butMenu = document.getElementById('butMenu');
+	butMenu.style.opacity = "1";
+	editChange = true;
+	confirmQuit();
+	}
+}
+
 
 // -->
 </script>
@@ -915,6 +948,8 @@ height: auto;
 #butMenu {
     visibility: visible;
 	margin-left: 10px;
+	background: transparent;
+	opacity: 0.3;
 }
 
 .sectionTitle{
@@ -1013,7 +1048,7 @@ line-height: 80%;
 
 </head>
 
-<body onload="initPage()"><a name="haut"></a>
+<body onload="initPage()" onbeforeunload=return acceptQuit();><a name="haut"></a>
 
 <div id="topbar" class="vert">
 <div id="leftnav"><a title="Formulaire de recherche" href="index.html"><img alt="Formulaire de recherche" height="22" width="25" src="images/home22.png" /></a></div>
