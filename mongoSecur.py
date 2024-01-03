@@ -694,7 +694,7 @@ class master_form_find():
             f.close()
 
     def setServerConfFile(self, param = None):
-        #print(str(param))
+        print(str(param))
         initInfo = (self.readConfFile())
         if param["server"] is None:     #Delete server
             #pdb.set_trace()
@@ -719,6 +719,8 @@ class master_form_find():
                     initInfo[param["server"]]["tls"]["keyPass"] = param["keyPass"]                    
                 if 'indAccNoSec' in param:
                     initInfo[param["server"]]["tls"]["indAccNoSec"] = param["indAccNoSec"]  
+                    
+                #tlsCertificateKeyFilePassword
             else:
                 if "tls" in initInfo[param["server"]] :
                     del initInfo[param["server"]]["tls"]
@@ -1789,6 +1791,9 @@ class dbaseObj():
                 uri += "&tlsAllowInvalidHostnames=true"
             if "caFile" in servInfo["tls"]:
                 uri += "&tlsCAFile=" + servInfo["tls"]["caFile"]
+            if "keyPass" in servInfo["tls"]:
+                uri += "&tlsCertificateKeyFilePassword=" + servInfo["tls"]["keyPass"]               
+                #https://www.mongodb.com/docs/manual/reference/program/mongod/#std-option-mongod.--tlsCertificateKeyFilePassword
         else:
             uri += "&tls=false" 
             
@@ -2031,15 +2036,20 @@ class modifyServerDialog(simpledialog.Dialog):
         tk.Label(self.formframe, text= "Key pass : ").grid(row=5, column=0, sticky=E)
         
         self.entry = tk.Entry(self.formframe, textvariable = self.host, width=30)
-        self.entry.grid(row=1, column=1)        
+        self.entry.grid(row=1, column=1)      
+        Hovertip(self.entry," Host name or ip address. ")
         port = tk.Entry(self.formframe, textvariable = self.port, width=10)
-        port.grid(row=2, column=1, sticky=W)        
+        port.grid(row=2, column=1, sticky=W)
+        Hovertip(port," Communication port.\n 27017 = MongoDB default.")
         key = tk.Entry(self.formframe, textvariable = self.keyFile, width=30)
         key.grid(row=3, column=1, sticky=W)
+        Hovertip(key," Certificate key file (public key).")
         ca = tk.Entry(self.formframe, textvariable = self.caFile, width=30)
         ca.grid(row=4, column=1, sticky=W)
+        Hovertip(ca," Certificate authority (CA) (private key).\n Required for self-signed certificate as x509")
         passw = tk.Entry(self.formframe, textvariable = self.keyPass, width=30)
         passw.grid(row=5, column=1, sticky=W)
+        Hovertip(passw," Passphrase to decrypt private key.")
         #port = tk.Entry(self.formframe, textvariable = self.indAccNoSec, width=10)
         #port.grid(row=6, column=1, sticky=W)
         chkInsec = ttk.Checkbutton(
@@ -2049,7 +2059,7 @@ class modifyServerDialog(simpledialog.Dialog):
             onvalue=1,
             offvalue=0)
         chkInsec.grid(row=6, column=1, sticky=tk.W, padx=0, pady=3)
-        Hovertip(chkInsec," This includes tlsAllowInvalidHostnames and tlsAllowInvalidCertificates. ")
+        Hovertip(chkInsec," This includes tlsAllowInvalidHostnames and tlsAllowInvalidCertificates.\n Ex. x509: certificate signed by unknown authority ")
         
         butframe = tk.Frame(self.formframe, padx=10, pady=10)
         butframe.grid(row=8, column=0, columnspan=2) 
