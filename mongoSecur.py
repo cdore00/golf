@@ -86,7 +86,7 @@ id
 ctx
 msg
 """
-LOG_severity = ["", "I", "F", "E", "W"]
+LOG_severity = ["", " I", " F", " E", " W"]
 LOG_component = ["","ACCESS","COMMAND","CONTROL","ELECTION","FTDC","GEO","INDEX","INITSYNC","JOURNAL","NETWORK","QUERY","RECOVERY","REPL","REPL_HB","ROLLBACK","SHARDING","STORAGE","TXN","WRITE","WT","WTBACKUP","WTCHKPT","WTCMPCT","WTEVICT","WTHS","WTRECOV","WTRTS","WTSLVG","WTTIER","WTTS","WTTXN","WTVRFY","WTWRTLOG"]
 
 CONFFILE = "mongoSecur.conf"
@@ -139,7 +139,7 @@ class filterForm():
         self.searchBut = ttk.Button(self.mainBlock, text='Search', command=callBack)
         self.searchBut.grid(column=3, row=1, padx=5)
         Hovertip(self.searchBut,"Search in logs") 
-        ttk.Label(self.mainBlock, textvariable=self.totalCount, font= ('Segoe 10 bold'), width=10).grid(column=4, row=1, padx=3, pady=5, sticky=tk.E)
+        ttk.Label(self.mainBlock, textvariable=self.totalCount, font= ('Segoe 10 bold'), width=12).grid(column=4, row=1, padx=3, pady=5, sticky=tk.E)
         if not nextcallBack is None:
             ttk.Button(self.mainBlock, text='>', width=3, command=nextcallBack).grid(column=5, row=1)  #, padx=1
             
@@ -234,12 +234,12 @@ class filterLogForm(filterForm):
         checkMes.grid(row=0, column=8, sticky=tk.W, padx=0, pady=3) 
         Hovertip(checkMes," Keyword is IN Log output message  ")
         
-        foundLabel = tk.Label(secondBlock, textvariable=self.foundMes, font= ('Segoe 9 bold'), fg="#0000FF", width=12)
+        foundLabel = tk.Label(secondBlock, textvariable=self.foundMes, font= ('Segoe 9 bold'), fg="#0000FF", width=11)
         foundLabel.grid(row=0, column=9, padx=0, pady=3, sticky=tk.EW)
         Hovertip(foundLabel," Click to show search criteria  ")
         foundLabel.bind("<Button-1>", self.getLogCritere)
         
-        #ttk.Button(self.mainBlock, text='Search', command=self.execCallBack).grid(column=3, row=1, padx=5)
+        ttk.Button(self.mainBlock, text='Search', command=self.execCallBack).grid(column=3, row=1, padx=5)
         nextB = ttk.Button(self.mainBlock, text='>', width=3, command=self.execNextcallBack)
         nextB.grid(column=5, row=1)  #, padx=1
         Hovertip(nextB,"Next results")
@@ -247,7 +247,7 @@ class filterLogForm(filterForm):
         
     def execCallBack(self):
         #pdb.set_trace()
-        self.callBack(sRes=self.sRes.get(), sEqu=self.s_Equ, cRes=self.cRes.get(), cEqu=self.c_Equ, chxCtx = self.chxCtx.get(), chxMes = self.chxMes.get(), chxID = self.chxID.get())
+        self.callBack(sRes=self.sRes.get().strip() , sEqu=self.s_Equ, cRes=self.cRes.get(), cEqu=self.c_Equ, chxCtx = self.chxCtx.get(), chxMes = self.chxMes.get(), chxID = self.chxID.get())
 
     def execNextcallBack(self):
         self.nextcallBack(sRes=self.sRes.get(), sEqu=self.s_Equ, cRes=self.cRes.get(), cEqu=self.c_Equ, chxCtx = self.chxCtx.get(), chxMes = self.chxMes.get(), chxID = self.chxID.get())
@@ -336,8 +336,8 @@ class master_form_find():
         self.actServ  = serv
         self.win.title(self.actServ)
         self.win.iconbitmap(APPICON)
-        self.win.geometry("550x500")
-        self.win.minsize(width = 550, height = 500)
+        self.win.geometry("600x500")
+        self.win.minsize(width = 600, height = 500)
         
         self.closeRec()
         slavelist = self.win.slaves()
@@ -376,22 +376,21 @@ class master_form_find():
         
         isConnected = False
 
-        defInfo = self.setDefault()
-        hostName = defInfo["host"] if "host" in defInfo else ""
-        port = defInfo["port"] if "port" in defInfo else ""
+        servInfo = self.setDefault()
+        print(str(servInfo))
         userPassword = userPass
         if userPass is None:
             userPass = self.userPass
 
         self.userPass = userPass
-        isConnected = self.data.connectTo(self.actServ, userPass, hostName=hostName, port=port)
+        isConnected = self.data.connectTo(self.actServ, userPass, servInfo)
         self.win.objMainMess.clearMess() 
         if userPassword:    # New authentication
             if isConnected:
                 self.win.objMainMess.showMess(str(userPass[0]) + " connected on " + self.actServ, "I")
             else:
                 self.win.objMainMess.showMess(str(userPass[0]) + " not connected.")  
-        self.afficherTitre(isConnected)
+        self.afficherTitre(isConnected, servInfo)
         
         # Database form
         dbFrame = tk.Frame(self.win)
@@ -458,11 +457,13 @@ class master_form_find():
         self.gridHostFrame.pack(expand= True, fill=BOTH)        
         #self.getHost()
 
-    def afficherTitre(self, isConnected):
+    def afficherTitre(self, isConnected, servInfo):
+
+        typ = "TLS" if "tls" in servInfo else ""
         if isConnected:
-            self.win.title( self.actServ + " : Connected - " + self.userPass[0])
+            self.win.title( self.actServ + " : " + typ + " Connected - " + self.userPass[0])
         else:
-            self.win.title( self.actServ + " : Not connected.")
+            self.win.title( self.actServ + " : " + typ + " Not connected.")
             
     def on_tab_change(self, event):
         if event.widget.index(event.widget.select()) == 3:
@@ -555,7 +556,10 @@ class master_form_find():
         self.nextLogList(sRes = sRes, sEqu = sEqu, cRes = cRes, cEqu = cEqu, chxCtx = chxCtx, chxMes = chxMes, chxID = chxID)
 
     def nextLogList(self, sRes = None, sEqu = None, cRes = None, cEqu = None, chxCtx = None, chxMes = None, chxID = None):
-
+        if self.logsDataList is None:
+            self.getLogs(sRes = sRes, sEqu = sEqu, cRes = cRes, cEqu = cEqu, chxCtx = chxCtx, chxMes = chxMes, chxID = chxID)
+            return
+            
         self.filterSearch = False
         self.win.objMainMess.clearMess()
         self.logsFilter.affFound()
@@ -630,7 +634,8 @@ class master_form_find():
                 break
 
         stepCnt += index
-        #print( "step = " + str(stepCnt))
+        #pdb.set_trace()
+        #print( "Range = " + str(self.rangeLog) + " step = " + str(stepCnt) + " self.logCnt = " + str(self.logCnt))
         if stepCnt == (self.logCnt - 1):
             index += 1
             stepCnt += 1
@@ -689,22 +694,35 @@ class master_form_find():
             f.close()
 
     def setServerConfFile(self, param = None):
-        #pdb.set_trace()
+        #print(str(param))
         initInfo = (self.readConfFile())
-        if param["server"] is None:
+        if param["server"] is None:     #Delete server
             #pdb.set_trace()
             del initInfo[param["delServ"]]
             if initInfo["init"] == param["delServ"]:
                 del initInfo["init"]
-        else:
+        else:                           #Add new server
             if param["server"] != self.actServ and param["server"] not in initInfo:
                 initInfo[param["server"]] = {}
                 initInfo[param["server"]]["roleKeyword"] = ""
                 initInfo[param["server"]]["userKeyword"] = ""
                 initInfo[param["server"]]["userPass"] = ["", ""]
-        
+                    
             initInfo[param["server"]]["host"] = param["host"]
             initInfo[param["server"]]["port"] = param["port"]
+            if 'keyFile' in param:
+                initInfo[param["server"]]["tls"] = {}
+                initInfo[param["server"]]["tls"]["keyFile"] = param["keyFile"]
+                if 'caFile' in param:
+                    initInfo[param["server"]]["tls"]["caFile"] = param["caFile"]
+                if 'keyPass' in param:
+                    initInfo[param["server"]]["tls"]["keyPass"] = param["keyPass"]                    
+                if 'indAccNoSec' in param:
+                    initInfo[param["server"]]["tls"]["indAccNoSec"] = param["indAccNoSec"]  
+            else:
+                if "tls" in initInfo[param["server"]] :
+                    del initInfo[param["server"]]["tls"]
+                    
         self.writeConfFile(initInfo)
 
         
@@ -1758,24 +1776,38 @@ class dbaseObj():
         self.uri = None
 
     
-    def getURI(self, userPass = None, hostName = "", port = ""):
+    def getURI(self, userPass, servInfo):
         #pdb.set_trace()
+        self.hostName = servInfo["host"] if "host" in servInfo else ""
+        port = servInfo["port"] if "port" in servInfo else ""        
+        
         uri = """mongodb://%s:%s@"""  % (userPass[0], userPass[1])
-        uri += hostName + ":" + port + "/?authSource=admin&ssl=false"
+        uri += self.hostName + ":" + port + "/?authSource=admin"
+        if "tls" in servInfo:
+            uri += "&tls=true&tlsCertificateKeyFile=" + servInfo["tls"]["keyFile"]
+            if "indAccNoSec" in servInfo["tls"]:
+                uri += "&tlsAllowInvalidHostnames=true"
+            if "caFile" in servInfo["tls"]:
+                uri += "&tlsCAFile=" + servInfo["tls"]["caFile"]
+        else:
+            uri += "&tls=false" 
+            
+        #uri = "mongodb://userAdmin:111@192.168.2.239:27017/?authSource=admin&tls=true&tlsAllowInvalidHostnames=true&tlsCAFile=mongodb-ca.crt&tlsCertificateKeyFile=mongodb.pem"
+        #uri = "mongodb://userAdmin:111@192.168.2.239:27017/?authSource=admin&tls=true&tlsCertificateKeyFile=mongodb.pem&tlsAllowInvalidHostnames=true&tlsCAFile=mongodb-ca.crt"
+
         if userPass[0] == "":
-            uri = "mongodb://" + hostName + ":" + port + "/"
-        #if hostName == LOCALSERV:
-        #    uri = "mongodb://" + LOCALSERV + ":27017/"    
+            uri = "mongodb://" + self.hostName + ":" + port + "/"
+   
         return uri
     
-    def connectTo(self, Server = LOCALSERV, userPass = None, hostName = "", port = ""):
+    def connectTo(self, Server = LOCALSERV, userPass = None, servInfo = None):
         #pdb.set_trace()
-
+        
         self.dbase = 'admin'
-        self.uri = self.getURI( userPass=userPass, hostName = hostName, port = port)
+        self.uri = self.getURI( userPass, servInfo)
             
         #print(uri)
-        if Server == LOCALSERV or hostName == LOCALSERV:
+        if Server == LOCALSERV or self.hostName == LOCALSERV:
             timeout = 2000
         else:
             timeout = 15000
@@ -1830,13 +1862,11 @@ class showHelpWin(cdc.modalDialogWin):
     def createWidget(self):
         self.pop.minsize(500,400)
    
-        self.htmlFrame = HtmlFrame(self.dframe) #create HTML browser
-        self.htmlFrame.messages_enabled = False
+        self.htmlFrame = HtmlFrame(self.dframe, messages_enabled = False) #create HTML browser
         self.htmlFrame.load_html(mh.htmlHelp) #load a website
         self.htmlFrame.add_css(mh.cssTxt)
         self.htmlFrame.pack(fill="both", expand=True) 
         self.htmlFrame.on_link_click(self.load_new_page)
-        self.htmlFrame.messages_enabled = False
                 
     def load_new_page(self, url, e = None):
         ## Do stuff - insert code here
@@ -1966,6 +1996,10 @@ class modifyServerDialog(simpledialog.Dialog):
         self.server = StringVar()
         self.host = StringVar()
         self.port = StringVar()
+        self.keyFile = StringVar()
+        self.caFile = StringVar()
+        self.keyPass = StringVar()
+        self.indAccNoSec = IntVar()
         self.servToRemove = ""
         
         simpledialog.Dialog.__init__(self, parent)
@@ -1977,19 +2011,48 @@ class modifyServerDialog(simpledialog.Dialog):
             self.host.set(self.servInfo[self.actServ]["host"])
         if "port" in self.servInfo[self.actServ]:
             self.port.set(self.servInfo[self.actServ]["port"])
+        if "tls" in self.servInfo[self.actServ]:
+            self.keyFile.set(self.servInfo[self.actServ]["tls"]["keyFile"])
+            if "caFile" in self.servInfo[self.actServ]["tls"]:
+                self.caFile.set(self.servInfo[self.actServ]["tls"]["caFile"])            
+            if "keyPass" in self.servInfo[self.actServ]["tls"]:
+                self.keyPass.set(self.servInfo[self.actServ]["tls"]["keyPass"])
+            if "indAccNoSec" in self.servInfo[self.actServ]["tls"]:
+                self.indAccNoSec.set(self.servInfo[self.actServ]["tls"]["indAccNoSec"])                
+            
         self.formframe = tk.Frame(master, borderwidth = 1, relief=RIDGE, padx=10, pady=10)
         self.formframe.grid(row=1)
         tk.Label(self.formframe, text="Server :").grid(row=0, column=0, sticky=E)
         tk.Label(self.formframe, text= self.actServ, font=('Calibri 12 bold')).grid(row=0, column=1, sticky=W)
         tk.Label(self.formframe, text= "Host : ").grid(row=1, column=0, sticky=E)
+        tk.Label(self.formframe, text= "Port : ").grid(row=2, column=0, sticky=E)        
+        tk.Label(self.formframe, text= "Key file : ").grid(row=3, column=0, sticky=E)
+        tk.Label(self.formframe, text= "CA file : ").grid(row=4, column=0, sticky=E)
+        tk.Label(self.formframe, text= "Key pass : ").grid(row=5, column=0, sticky=E)
+        
         self.entry = tk.Entry(self.formframe, textvariable = self.host, width=30)
         self.entry.grid(row=1, column=1)        
-        tk.Label(self.formframe, text= "Port : ").grid(row=2, column=0, sticky=E)
         port = tk.Entry(self.formframe, textvariable = self.port, width=10)
         port.grid(row=2, column=1, sticky=W)        
+        key = tk.Entry(self.formframe, textvariable = self.keyFile, width=30)
+        key.grid(row=3, column=1, sticky=W)
+        ca = tk.Entry(self.formframe, textvariable = self.caFile, width=30)
+        ca.grid(row=4, column=1, sticky=W)
+        passw = tk.Entry(self.formframe, textvariable = self.keyPass, width=30)
+        passw.grid(row=5, column=1, sticky=W)
+        #port = tk.Entry(self.formframe, textvariable = self.indAccNoSec, width=10)
+        #port.grid(row=6, column=1, sticky=W)
+        chkInsec = ttk.Checkbutton(
+            self.formframe,
+            text="tls Insecure",
+            variable=self.indAccNoSec,
+            onvalue=1,
+            offvalue=0)
+        chkInsec.grid(row=6, column=1, sticky=tk.W, padx=0, pady=3)
+        Hovertip(chkInsec," This includes tlsAllowInvalidHostnames and tlsAllowInvalidCertificates. ")
         
         butframe = tk.Frame(self.formframe, padx=10, pady=10)
-        butframe.grid(row=3, column=0, columnspan=2) 
+        butframe.grid(row=8, column=0, columnspan=2) 
         buttonC = ttk.Button(butframe, text="Add server", command=self.addServer, width=15)
         buttonC.grid(row=0, column=0, pady=5, padx=5) 
         buttonC = ttk.Button(butframe, text="Remove server", command=self.removeServer, width=15)
@@ -1997,13 +2060,12 @@ class modifyServerDialog(simpledialog.Dialog):
 
 
     def addServer(self):
-        serv = tk.Entry(self.formframe, textvariable = self.server, width=10)
+        serv = tk.Entry(self.formframe, textvariable = self.server, width=30)
         serv.grid(row=0, column=1, sticky=W)
         self.port.set("27017")
 
     def removeServer(self):
         answer = askyesno(title='Remove',
-
             message='Remove server : ' + self.actServ)
         if answer:
             self.servToRemove = self.actServ
@@ -2019,6 +2081,14 @@ class modifyServerDialog(simpledialog.Dialog):
     def apply(self):
         # Cette méthode est appelée lorsque le bouton "OK" est cliqué
         resObj = {"server": self.actServ, "host": self.host.get(), "port": self.port.get()}
+        if self.keyFile.get():
+            resObj["keyFile"] = self.keyFile.get()
+        if self.caFile.get():
+            resObj["caFile"] = self.caFile.get()
+        if self.keyPass.get():
+            resObj["keyPass"] = self.keyPass.get()
+        if self.indAccNoSec.get():
+            resObj["indAccNoSec"] = self.indAccNoSec.get()            
         if self.servToRemove != "":
             resObj["delServ"] = self.servToRemove
         self.result = resObj
@@ -2026,7 +2096,6 @@ class modifyServerDialog(simpledialog.Dialog):
 def create_main_window():
 
     win = tk.Tk()
-    win.minsize(480,300)
     #win.resizable(0, 0)
 
     l = int(win.winfo_screenwidth() / 2)
