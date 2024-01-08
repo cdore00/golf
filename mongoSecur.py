@@ -11,11 +11,66 @@
 #https://www.mongodb.com/docs/v3.4/tutorial/enable-authentication/
 #/etc/mongod.conf     #/data/db
 #..\python mongoSecur.py
+#openssl key
+#cd  /etc/ssl
+#sudo openssl req -newkey rsa:2048 -new -x509 -days 3650 -nodes -out mongodb-cert.crt -keyout mongodb-certcd.key
+#sudo cat mongodb-certcd.key mongodb-cert.crt > mongodb.pem
+#https://pymongo.readthedocs.io/en/stable/examples/tls.html#ocsp
+#https://www.mongodb.com/docs/v7.0/tutorial/configure-x509-client-authentication/    *********à lire
+#https://www.mongodb.com/docs/manual/core/security-x.509/
+#https://dyma.fr/mongodb?campaignId=12643958796&device=c&utm_source=google&gad_source=2&gclid=EAIaIQobChMI2Njy3JLHgwMVYDfUAR1q6A_6EAAYASAAEgJHP_D_BwE
+"""
+ÉTAPE 1
+https://dev.to/ozgurozvaris/x509-certificate-authentication-tlsssl-connection-to-mongodb-1-2hik
+Certificate Authority (CA)
+openssl genrsa -out ca.key 2048
+openssl req -x509 -new -nodes -key ca.key -days 3650 -subj '/CN=MyCA/OU=cd/O=cdore/L=Quebec/ST=QC/C=CA' -out ca.crt
 
+Generating the server x.509 Certificate files. Run commands below
+openssl req -newkey rsa:2048 -days 3650 -nodes -subj '/CN=localhost/OU=cd/O=cdore/L=Quebec/ST=QC/C=CA' -out server.csr -keyout server.key
+openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 3650 -extfile <(echo -e "keyUsage = digitalSignature, keyEncipherment\nextendedKeyUsage = serverAuth")
+cat server.key server.crt > server.pem
+
+Generating the client x.509 Certificate files. Run commands below
+openssl req -newkey rsa:2048 -days 3650 -nodes -subj '/CN=x509user/OU=cd/O=cdore/L=Quebec/ST=QC/C=CA' -out client.csr -keyout client.key
+openssl x509 -req -in client.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out client.crt -days 3650 -extfile <(echo -e "keyUsage = digitalSignature, keyEncipherment\nextendedKeyUsage = clientAuth")
+cat client.key client.crt > client.pem
+
+CREATE USER
+openssl x509 -in /home/cdore/CRT/server.pem -inform PEM -subject -nameopt RFC2253
+
+https://www.mongodb.com/docs/v7.0/tutorial/enable-authentication/
+https://www.mongodb.com/docs/manual/core/security-x.509/
+https://www.mongodb.com/docs/manual/tutorial/configure-x509-client-authentication/#prerequisites
+https://www.mongodb.com/docs/manual/tutorial/configure-x509-member-authentication/
+https://www.mongodb.com/docs/drivers/go/current/fundamentals/auth/#std-label-golang-x509
+https://www.mongodb.com/docs/manual/core/security-x.509/#std-label-client-x509-certificates-requirements
+
+ÉTAPE 2
+
+  tls:
+     mode: allowTLS
+     certificateKeyFile: /home/cdore/CRT/server.pem
+     CAFile: /home/cdore/CRT/ca.crt
+
+
+openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 3650 -extfile <(echo -e "keyUsage = digitalSignature, keyEncipherment\nextendedKeyUsage = clientAuth, serverAuth") -extensions v3_req -extfile <(
+cat << EOF
+[ v3_req ]
+subjectAltName = @alt_names
+
+[ alt_names ]
+DNS.1 = 192.168.2.239
+DNS.2 = cdore.servehttp.com
+EOF
+)
+
+"""
 import pdb
 #; pdb.set_trace()
 # unt [line]
 import sys, os, io, re, csv, platform, urllib.parse
+from urllib.parse import urlparse, parse_qs
 import json
 import time 
 import datetime
@@ -32,6 +87,7 @@ from tkinter import messagebox, TclError, ttk
 from tkinter.messagebox import askyesno
 from tkinter.scrolledtext import ScrolledText
 from tkinter import simpledialog
+from tkinter import filedialog
 from idlelib.tooltip import Hovertip
 #import tksvg
 import pyperclip as cp
@@ -321,7 +377,8 @@ class master_form_find():
         self.rolesDataList = None
         self.rolesNamesList = None
         self.logsDataList = None
-        
+        print("sleep 1")
+        time.sleep(1)
         self.setApp(self.actServ)
 
     def changeDatabase(self, event = None):
@@ -377,7 +434,7 @@ class master_form_find():
         isConnected = False
 
         servInfo = self.setDefault()
-        print(str(servInfo))
+        #print(str(servInfo))
         userPassword = userPass
         if userPass is None:
             userPass = self.userPass
@@ -458,7 +515,7 @@ class master_form_find():
         #self.getHost()
 
     def afficherTitre(self, isConnected, servInfo):
-
+        #pdb.set_trace()
         typ = "TLS" if "tls" in servInfo else ""
         if isConnected:
             self.win.title( self.actServ + " : " + typ + " Connected - " + self.userPass[0])
@@ -471,7 +528,7 @@ class master_form_find():
             event.widget.unbind("<<NotebookTabChanged>>")
         
     def showHelp(self):
-        print("Help")
+        
         showHelpWin(self.win, "Manage MongoDB security - Help", None, geometry = "800x600", modal = False)
         
     def showURI(self):
@@ -481,10 +538,10 @@ class master_form_find():
         
 
     def getHost(self):
-  
+        self.version = 'MongoDB version: '
         if not self.data.isConnect or self.data.data is None:
             return   
-
+        #pdb.set_trace()
         gridHostFrame = tk.Frame(self.gridHostFrame.interior)
         gridHostFrame.pack(expand= True, side=LEFT, fill=X, padx=10)   
         messFrame = tk.Frame(gridHostFrame)
@@ -493,7 +550,8 @@ class master_form_find():
         
         #self.messframe.winfo_width() 
         try:
-            db = self.data.data        
+            db = self.data.data      
+            self.version += self.data.DBconnect.server_info()["version"]
             res = db.command(({ "hostInfo": 1 }))
         except pymongo.errors.OperationFailure as ex1:
             objMess.showMess(ex1.details.get('errmsg', ''))
@@ -513,7 +571,8 @@ class master_form_find():
         nlines = formatted_data.count('\n')
         text_box = tk.Text(gridHostFrame) #, height= nlines+1
         text_box.pack(expand= True, fill=X)
-        #text_box.grid(row= 0, column=1, sticky="WE")             
+        #text_box.grid(row= 0, column=1, sticky="WE")   
+        formatted_data = self.version + '\n' + formatted_data
         text_box.insert(tk.END, formatted_data)
         text_box.config( state="disabled")
             
@@ -694,39 +753,54 @@ class master_form_find():
             f.close()
 
     def setServerConfFile(self, param = None):
-        print(str(param))
+        #print(str(param))
         initInfo = (self.readConfFile())
-        if param["server"] is None:     #Delete server
+        if param["server"] is None:     # Delete server
             #pdb.set_trace()
             del initInfo[param["delServ"]]
             if initInfo["init"] == param["delServ"]:
                 del initInfo["init"]
-        else:                           #Add new server
-            if param["server"] != self.actServ and param["server"] not in initInfo:
+        else:                           # Modify or Add new server
+            upass = ""
+            actualModified = False
+            if "delServ" in param:      # Modify server name
+                upass = initInfo[(self.actServ)]["userPass"]
+                del initInfo[param["delServ"]]
+                if initInfo["init"] == param["delServ"]:
+                    initInfo["init"] = param["server"]
+                    actualModified = True
+            if param["server"] != self.actServ and param["server"] not in initInfo: # Add new server
                 initInfo[param["server"]] = {}
                 initInfo[param["server"]]["roleKeyword"] = ""
                 initInfo[param["server"]]["userKeyword"] = ""
                 initInfo[param["server"]]["userPass"] = ["", ""]
-                    
+                if upass:               # set userPass for Modify server name
+                    initInfo[param["server"]]["userPass"] = upass
+            else:
+                if initInfo["init"] == param["server"]:
+                    actualModified = True
+
             initInfo[param["server"]]["host"] = param["host"]
             initInfo[param["server"]]["port"] = param["port"]
-            if 'keyFile' in param:
+            if 'caFile' in param:
                 initInfo[param["server"]]["tls"] = {}
-                initInfo[param["server"]]["tls"]["keyFile"] = param["keyFile"]
+                initInfo[param["server"]]["tls"]["caFile"] = param["caFile"]
                 if 'caFile' in param:
-                    initInfo[param["server"]]["tls"]["caFile"] = param["caFile"]
+                    initInfo[param["server"]]["tls"]["keyFile"] = param["keyFile"]
                 if 'keyPass' in param:
                     initInfo[param["server"]]["tls"]["keyPass"] = param["keyPass"]                    
                 if 'indAccNoSec' in param:
                     initInfo[param["server"]]["tls"]["indAccNoSec"] = param["indAccNoSec"]  
-                    
-                #tlsCertificateKeyFilePassword
+                if 'indHostNoVal' in param:
+                    initInfo[param["server"]]["tls"]["indHostNoVal"] = param["indHostNoVal"] 
+                if 'indCertNoVal' in param:
+                    initInfo[param["server"]]["tls"]["indCertNoVal"] = param["indCertNoVal"]                                     
             else:
                 if "tls" in initInfo[param["server"]] :
                     del initInfo[param["server"]]["tls"]
-                    
         self.writeConfFile(initInfo)
-
+        if actualModified:         
+            self.setApp(param["server"])
         
     def setDefault(self, initInfo = None):
         actInfo = {}
@@ -768,7 +842,7 @@ class master_form_find():
         for index, data in enumerate(self.usersDataList):
 
             if (self.Database.get() == "All" or self.Database.get() == data["db"]):
-                #print(data)
+                #print(str(data))
                 if "userId" in data and "credentials" in data :
                     data.pop("userId")
                     data.pop("credentials")
@@ -883,12 +957,15 @@ class master_form_find():
     def login(self):
         initInfo = (self.readConfFile())
         info = initInfo.keys()
-        self.servers = []
+        self.servers, tmpServ = [], []
         for k in info:
             if k != "init":
-                self.servers.append(k)
-        dial = loginDialog(self.win, "Connecter : app - location", self)
-        #dial.showDialog()
+                tmpServ.append(k.upper())
+        tmpServ.sort()
+        for s in tmpServ:
+            self.servers.append(next(x for x in info if x.upper() == s ))
+        loginDialog(self.win, self.win.title(), self)
+
 
     def authentif(self):
         app = cdc.logonWin(self.win)
@@ -1786,13 +1863,19 @@ class dbaseObj():
         uri = """mongodb://%s:%s@"""  % (userPass[0], userPass[1])
         uri += self.hostName + ":" + port + "/?authSource=admin"
         if "tls" in servInfo:
-            uri += "&tls=true&tlsCertificateKeyFile=" + servInfo["tls"]["keyFile"]
-            if "indAccNoSec" in servInfo["tls"]:
-                uri += "&tlsAllowInvalidHostnames=true"
-            if "caFile" in servInfo["tls"]:
-                uri += "&tlsCAFile=" + servInfo["tls"]["caFile"]
+            uri += "&tls=true&tlsCAFile=" + servInfo["tls"]["caFile"]
+            if "keyFile" in servInfo["tls"]:
+                uri += "&tlsCertificateKeyFile=" + servInfo["tls"]["keyFile"]
             if "keyPass" in servInfo["tls"]:
-                uri += "&tlsCertificateKeyFilePassword=" + servInfo["tls"]["keyPass"]               
+                uri += "&tlsCertificateKeyFilePassword=" + servInfo["tls"]["keyPass"]
+            if "indAccNoSec" in servInfo["tls"]:
+                uri += "&tlsInsecure=true"
+            if "indHostNoVal" in servInfo["tls"]:
+                uri += "&tlsAllowInvalidHostnames=true"
+            if "indCertNoVal" in servInfo["tls"]:
+                uri += "&tlsAllowInvalidCertificates=true"               
+
+               
                 #https://www.mongodb.com/docs/manual/reference/program/mongod/#std-option-mongod.--tlsCertificateKeyFilePassword
         else:
             uri += "&tls=false" 
@@ -1838,8 +1921,11 @@ class dbaseObj():
                 self.dbList = dbs
                 self.data = self.DBconnect[self.dbase]
                 self.isConnect = True
+            else:
+                self.dbList = []
         except Exception as ex:
             print(ex)
+            self.dbList = []
             self.isConnect = False
         return self.isConnect
 
@@ -1866,7 +1952,7 @@ class showLogCritere(cdc.modalDialogWin):
 class showHelpWin(cdc.modalDialogWin):
     def createWidget(self):
         self.pop.minsize(500,400)
-   
+        import mongoSecHelp as mh
         self.htmlFrame = HtmlFrame(self.dframe, messages_enabled = False) #create HTML browser
         self.htmlFrame.load_html(mh.htmlHelp) #load a website
         self.htmlFrame.add_css(mh.cssTxt)
@@ -1950,8 +2036,8 @@ class loginDialog(cdc.modalDialogWin):
         self.pop.resizable(0, 0)
         self.actServ = self.mainApp.actServ
         #pdb.set_trace()
-        self.labAct = Label(self.dframe, text="Actuel : " + self.actServ, font=('Calibri 12 bold'), pady=5)
-        self.labAct.grid(row=0, column=0, columnspan=3, sticky=EW)
+        self.labAct = Label(self.dframe, text=self.actServ + " selected", font=('Calibri 12 bold'), borderwidth=3, relief = SUNKEN, pady=5)
+        self.labAct.grid(row=0, column=0, columnspan=3, sticky=EW, pady=5, padx=5)
         
         if len(self.mainApp.servers) == 0:
             self.mainApp.servers.append(LOCALSERV)
@@ -1961,22 +2047,22 @@ class loginDialog(cdc.modalDialogWin):
             globals()["but" + str(ind)].bind("<Double-Button-1>", self.setAppDB) 
         
         lab1 = Label(self.dframe, text=" ", font=('Calibri 1'))
-        lab1.grid(row=5, column=0, columnspan=2)
+        lab1.grid(row=ind+2, column=0, columnspan=2)
 
         self.dframe.columnconfigure(0, weight=1)
         self.dframe.columnconfigure(1, weight=1)
         buttonC = ttk.Button(self.dframe, text="Ok", command=self.setAppDB, width=10)
-        buttonC.grid(row=6, column=0) 
+        buttonC.grid(row=ind+3, column=0) 
         buttonC = ttk.Button(self.dframe, text="Modify", command=self.modifyServ, width=10)
-        buttonC.grid(row=6, column=1)
+        buttonC.grid(row=ind+3, column=1)
         buttonC = ttk.Button(self.dframe, text="Cancel", command=self.close, width=10)
-        buttonC.grid(row=6, column=2)         
+        buttonC.grid(row=ind+3, column=2)         
         lab1 = Label(self.dframe, text=" ", font=('Calibri 1'))
-        lab1.grid(row=7, column=0, columnspan=2)
+        lab1.grid(row=ind+4, column=0, columnspan=2)
 
     def selectAppDB(self, serv):
         self.actServ = serv
-        self.labAct.config(text="Actuel = " + serv)
+        self.labAct.config(text=serv + " selected")
         
     def setAppDB(self, e = None):  
         self.close()
@@ -2001,15 +2087,15 @@ class modifyServerDialog(simpledialog.Dialog):
         self.server = StringVar()
         self.host = StringVar()
         self.port = StringVar()
-        self.keyFile = StringVar()
         self.caFile = StringVar()
+        self.keyFile = StringVar()
         self.keyPass = StringVar()
         self.indAccNoSec = IntVar()
-        self.servToRemove = ""
-        
+        self.indHostNoVal = IntVar()
+        self.indCertNoVal = IntVar()
+        self.servToRemove = ""      
         simpledialog.Dialog.__init__(self, parent)
-
-        
+    
     def body(self, master):
         #pdb.set_trace()
         if "host" in self.servInfo[self.actServ]:
@@ -2017,36 +2103,49 @@ class modifyServerDialog(simpledialog.Dialog):
         if "port" in self.servInfo[self.actServ]:
             self.port.set(self.servInfo[self.actServ]["port"])
         if "tls" in self.servInfo[self.actServ]:
-            self.keyFile.set(self.servInfo[self.actServ]["tls"]["keyFile"])
-            if "caFile" in self.servInfo[self.actServ]["tls"]:
-                self.caFile.set(self.servInfo[self.actServ]["tls"]["caFile"])            
+            self.caFile.set(self.servInfo[self.actServ]["tls"]["caFile"])            
+            if "keyFile" in self.servInfo[self.actServ]["tls"]:
+                self.keyFile.set(self.servInfo[self.actServ]["tls"]["keyFile"])
             if "keyPass" in self.servInfo[self.actServ]["tls"]:
                 self.keyPass.set(self.servInfo[self.actServ]["tls"]["keyPass"])
             if "indAccNoSec" in self.servInfo[self.actServ]["tls"]:
                 self.indAccNoSec.set(self.servInfo[self.actServ]["tls"]["indAccNoSec"])                
-            
+            if "indHostNoVal" in self.servInfo[self.actServ]["tls"]:
+                self.indHostNoVal.set(self.servInfo[self.actServ]["tls"]["indHostNoVal"])
+            if "indCertNoVal" in self.servInfo[self.actServ]["tls"]:
+                self.indCertNoVal.set(self.servInfo[self.actServ]["tls"]["indCertNoVal"])
+                
         self.formframe = tk.Frame(master, borderwidth = 1, relief=RIDGE, padx=10, pady=10)
         self.formframe.grid(row=1)
         tk.Label(self.formframe, text="Server :").grid(row=0, column=0, sticky=E)
-        tk.Label(self.formframe, text= self.actServ, font=('Calibri 12 bold')).grid(row=0, column=1, sticky=W)
+        #tk.Label(self.formframe, text= self.actServ, font=('Calibri 12 bold')).grid(row=0, column=1, sticky=W)
         tk.Label(self.formframe, text= "Host : ").grid(row=1, column=0, sticky=E)
-        tk.Label(self.formframe, text= "Port : ").grid(row=2, column=0, sticky=E)        
-        tk.Label(self.formframe, text= "Key file : ").grid(row=3, column=0, sticky=E)
-        tk.Label(self.formframe, text= "CA file : ").grid(row=4, column=0, sticky=E)
+        tk.Label(self.formframe, text= "Port : ").grid(row=2, column=0, sticky=E)    
+        tk.Label(self.formframe, text= "CA file : ").grid(row=3, column=0, sticky=E)
+        tk.Label(self.formframe, text= "Key file : ").grid(row=4, column=0, sticky=E)
         tk.Label(self.formframe, text= "Key pass : ").grid(row=5, column=0, sticky=E)
         
+        self.server.set(self.actServ)
+        serv = tk.Entry(self.formframe, textvariable = self.server, width=30)
+        serv.grid(row=0, column=1, sticky=W)        
         self.entry = tk.Entry(self.formframe, textvariable = self.host, width=30)
         self.entry.grid(row=1, column=1)      
         Hovertip(self.entry," Host name or ip address. ")
         port = tk.Entry(self.formframe, textvariable = self.port, width=10)
         port.grid(row=2, column=1, sticky=W)
         Hovertip(port," Communication port.\n 27017 = MongoDB default.")
-        key = tk.Entry(self.formframe, textvariable = self.keyFile, width=30)
-        key.grid(row=3, column=1, sticky=W)
-        Hovertip(key," Certificate key file (public key).")
         ca = tk.Entry(self.formframe, textvariable = self.caFile, width=30)
-        ca.grid(row=4, column=1, sticky=W)
-        Hovertip(ca," Certificate authority (CA) (private key).\n Required for self-signed certificate as x509")
+        ca.grid(row=3, column=1, sticky=W)
+        butCA = ttk.Button(self.formframe, text="...", command=self.selFCA, width=3)
+        butCA.grid(row=3, column=2, pady=5, padx=5)         
+        Hovertip(ca," Certificate authority (CA).")
+        
+        key = tk.Entry(self.formframe, textvariable = self.keyFile, width=30)
+        key.grid(row=4, column=1, sticky=W)
+        Hovertip(key," Certificate key file (private key)\n Required for self-signed certificate as x509 auth.")
+        butFK = ttk.Button(self.formframe, text="...", command=self.selFK, width=3)
+        butFK.grid(row=4, column=2, pady=5, padx=5)        
+
         passw = tk.Entry(self.formframe, textvariable = self.keyPass, width=30)
         passw.grid(row=5, column=1, sticky=W)
         Hovertip(passw," Passphrase to decrypt private key.")
@@ -2059,20 +2158,50 @@ class modifyServerDialog(simpledialog.Dialog):
             onvalue=1,
             offvalue=0)
         chkInsec.grid(row=6, column=1, sticky=tk.W, padx=0, pady=3)
-        Hovertip(chkInsec," This includes tlsAllowInvalidHostnames and tlsAllowInvalidCertificates.\n Ex. x509: certificate signed by unknown authority ")
-        
+        Hovertip(chkInsec," This includes tlsAllowInvalidHostnames and tlsAllowInvalidCertificates.\n Ex. x509: certificate signed by unknown authority. ")
+        chkInsec = ttk.Checkbutton(
+            self.formframe,
+            text="tlsAllowInvalidHostnames",
+            variable=self.indHostNoVal,
+            onvalue=1,
+            offvalue=0)
+        chkInsec.grid(row=7, column=1, sticky=tk.W, padx=0, pady=3)
+        Hovertip(chkInsec," Disable the validation of the hostnames in the certificate presented by the mongod/mongos instance. ")
+        chkInsec = ttk.Checkbutton(
+            self.formframe,
+            text="tlsAllowInvalidCertificates",
+            variable=self.indCertNoVal,
+            onvalue=1,
+            offvalue=0)
+        chkInsec.grid(row=8, column=1, sticky=tk.W, padx=0, pady=3)
+        Hovertip(chkInsec," Disable the validation of the server certificates. ")        
         butframe = tk.Frame(self.formframe, padx=10, pady=10)
-        butframe.grid(row=8, column=0, columnspan=2) 
+        butframe.grid(row=9, column=0, columnspan=3) 
         buttonC = ttk.Button(butframe, text="Add server", command=self.addServer, width=15)
         buttonC.grid(row=0, column=0, pady=5, padx=5) 
         buttonC = ttk.Button(butframe, text="Remove server", command=self.removeServer, width=15)
         buttonC.grid(row=0, column=1, pady=5, padx=5) 
 
-
+    def selFK(self):
+        file_path = filedialog.askopenfilename( title="Select Certificat key file")
+        if file_path:
+            self.keyFile.set(file_path)
+    def selFCA(self):
+        file_path = filedialog.askopenfilename( title="Select Certificat authority file")
+        if file_path:
+            self.caFile.set(file_path)
+        
     def addServer(self):
-        serv = tk.Entry(self.formframe, textvariable = self.server, width=30)
-        serv.grid(row=0, column=1, sticky=W)
+
+        self.server.set("")
+        self.host.set("")
         self.port.set("27017")
+        self.keyFile.set("")
+        self.caFile.set("")
+        self.keyPass.set("")
+        self.indAccNoSec.set(0) 
+        self.indHostNoVal.set(0) 
+        self.indCertNoVal.set(0) 
 
     def removeServer(self):
         answer = askyesno(title='Remove',
@@ -2084,6 +2213,13 @@ class modifyServerDialog(simpledialog.Dialog):
             self.destroy()
     
     def validate(self):
+        if self.indAccNoSec.get() and (self.indHostNoVal.get() or self.indCertNoVal.get()):
+            messagebox.showinfo(
+                    title="Options selection",
+                    message="Options tlsInsecure and tlsAllowInvalidHostnames cannot be specified simultaneously.")
+            return False        
+        if self.server.get() != self.actServ:
+            self.servToRemove = self.actServ
         if self.server.get() != "":
             self.actServ = self.server.get()
         return True
@@ -2091,14 +2227,18 @@ class modifyServerDialog(simpledialog.Dialog):
     def apply(self):
         # Cette méthode est appelée lorsque le bouton "OK" est cliqué
         resObj = {"server": self.actServ, "host": self.host.get(), "port": self.port.get()}
+        if self.caFile.get():
+            resObj["caFile"] = self.caFile.get()        
         if self.keyFile.get():
             resObj["keyFile"] = self.keyFile.get()
-        if self.caFile.get():
-            resObj["caFile"] = self.caFile.get()
         if self.keyPass.get():
             resObj["keyPass"] = self.keyPass.get()
         if self.indAccNoSec.get():
-            resObj["indAccNoSec"] = self.indAccNoSec.get()            
+            resObj["indAccNoSec"] = self.indAccNoSec.get()
+        if self.indHostNoVal.get():
+            resObj["indHostNoVal"] = self.indHostNoVal.get()   
+        if self.indCertNoVal.get():
+            resObj["indCertNoVal"] = self.indCertNoVal.get()               
         if self.servToRemove != "":
             resObj["delServ"] = self.servToRemove
         self.result = resObj
