@@ -8,6 +8,9 @@ sudo docker login
 
 sudo docker commit servDB2 pyt_golf:v4
 
+delete command history
+history -c && history -w
+
 REMOVE IMAGE
 sudo docker rmi -f cc5dfe78e8d4
 

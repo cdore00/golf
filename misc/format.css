@@ -730,13 +730,15 @@ display: none;
 }
 
 .boutonZoom{
-background-color:#ccc;
-opacity: 0.66;
-font-size:30px;
-/*margin:5px;*/
-width:40px;
-font-weight:bold;
+background-color: white;
+opacity: 0.8;
+font-size: 2rem;
+width: 40px;
+font-weight: bold;
+border-radius: 5px;
+padding: 0% 25%;
 text-align: center;
+margin-right: 10px;
 }
 
 #menu{

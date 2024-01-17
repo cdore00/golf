@@ -1,4 +1,5 @@
 https://github.com/openshift/nodejs-ex.git
+https://www.mongodb.com/download-center/community/releases
 
 oc login https://api.starter-us-east-1.openshift.com
 oc project cd-serv
@@ -22,6 +23,9 @@ mongoUser=user84C               _USER
 mongoAdmin=fFw6j3APyvUrhfaQ   MONGODB_ADMIN_PASSWORD
 
 mongodb://user84C:tml6fMOcjEdNdBMq@172.30.54.12:27017/sampledb
+
+sudo apt install mongo-tools
+
 
 
 select max value
@@ -156,6 +160,11 @@ mongo -u admin -p $MONGODB_ADMIN_PASSWORD admin
 mongoexport -u 'user84C' -p 'tml6fMOcjEdNdBMq' --db sampledb --collection users --jsonArray --out tuser.json
 mongoexport --host cdore.no-ip.biz:27017 --db golf --collection users --jsonArray --out users.json
 mongoimport -u 'tuser' -p '123' --db tdb --collection users --jsonArray --file tuser.json 
+
+
+
+db.changeUserPassword("accountUser", passwordPrompt())
+
 db.createUser({user:"tuser",pwd:"123",roles:["readWrite","dbAdmin"]}) 
 db.createUser(
        {
@@ -302,6 +311,8 @@ usermod username -a -G wheel
 MongoDB Installation Fedora
 https://developer.fedoraproject.org/tech/database/mongodb/about.html
 
+UBUNTU version
+lsb_release -a
 
 VULTR SERVER
 Docker
@@ -395,6 +406,22 @@ rs.slaveOk()
 rs.initiate({"_id" : "rsg","members":[{"_id" : 0, "host":"cdore.ddns.net:6600"} ] })
 sudo docker run -d -p 192.168.10.11:8080:27017 -p 6600:27017 -v /home:/data --name="m_golf" cdore00/mongo_golf:v2 --replSet "rsg" 
 
+
+UNINSTALL MONGOBD
+sudo apt-get autoremove --purge mongodb
+dpkg -l | grep mongo
+sudo apt purge mongo*
+
+Loaded: loaded (/lib/systemd/system/mongod.service; disabled; vendor preset: enabled)
+     Active: failed (Result: exit-code)
+MongoNetworkError: connect ECONNREFUSED 127.0.0.1:27017
+Solution:
+sudo chown -R mongodb:mongodb /var/lib/mongodb
+sudo chown mongodb:mongodb /tmp/mongodb-27017.sock
+
+
+
+
 PYTHON
 import pymongo
 from pymongo import MongoClient
@@ -414,6 +441,9 @@ pkg_resources.get_distribution("pymongo").version
 http://api.mongodb.com/python/current/api/pymongo/results.html
 
 
+
+mongosh -u admin -p pass --authenticationDatabase=admin test
+
 db.createUser(
   {
     user: "username",
@@ -423,6 +453,80 @@ db.createUser(
     ]
   }
 )
+
+db.dropUser("userName")
+
+
+db.createRole(
+   {
+     role: "manResto", 
+     privileges: [
+       { resource: { db: "resto", collection: "" }, actions: [
+        'changeStream',
+        'collStats',
+        'compactStructuredEncryptionData',
+        'convertToCapped',
+        'createCollection',
+        'createIndex',
+        'dbHash',
+        'dbStats',
+        'dropCollection',
+        'dropIndex',
+        'find',
+        'insert',
+        'killCursors',
+        'listCollections',
+        'listIndexes',
+        'planCacheRead',
+        'remove',
+        'renameCollectionSameDB',
+        'update'
+      ]
+ }
+     ],
+     roles: []
+   }
+)
+
+
+db.revokeRolesFromUser(
+    "cdore",
+    [
+      { role: "readWrite", db: "resto" }
+    ]
+)
+
+db.grantRolesToUser(
+    "cdore",
+    [
+      { role: "manResto", db: "resto" }
+    ]
+)
+
+db.revokePrivilegesFromRole('manResto', [{resource: {db:"resto", collection : ""}, actions: ["dropDatabase"]}])
+db.grantPrivilegesToRole(
+    "makebup",
+    [
+        { resource: {db:"", collection : ""}, actions: [  'find', 'listCollections', 'listIndexes'  ] }
+    ]
+)
+
+db.getRole( "read", { showPrivileges: true } )
+
+View All User-Defined Roles for a Database
+db.runCommand(
+    {
+      rolesInfo: 1,
+      showPrivileges: true
+    }
+)
+
+db.grantRolesToUser( "cdore", [ "DBuser" ] )
+
+db.dropRole("manDB")
+
+[{'_id': 'admin.DBuser', 'role': 'DBuser', 'db': 'admin', 'privileges': [{'resource': {'db': '', 'collection': ''}, 'actions': ['createCollection', 'createIndex', 'dropIndex', 'find', 'insert', 'killCursors', 'remove', 'update']}], 'roles': []}, 
+{'_id': 'admin.makebup', 'role': 'makebup', 'db': 'admin', 'privileges': [{'resource': {'db': '', 'collection': ''}, 'actions': ['find', 'listCollections', 'listIndexes']}], 'roles': []}]
 
 mongoexport -u=user -p=pass --db=resto --collection=news --jsonArray --out news.json
 mongoimport -u=user -p=pass --db=traiteur --collection news --jsonArray --file news.json
@@ -438,3 +542,58 @@ db.club.insert({ "_id" : 2, "nom" : "", "url_club" : "", "prive" : false, "depui
 db.blocs.insert({ "_id" : 3, "PARCOURS_ID" : 3, "Bloc" : "Normale", "T1" : "", "T2" : "", "T3" : "", "T4" : "", "T5" : "", "T6" : "", "T7" : "", "T8" : "", "T9" : "", "Aller" : "", "T10" : "", "T11" : "", "T12" : "", "T13" : "", "T14" : "", "T15" : "", "T16" : "", "T17" : "", "T18" : "", "Retour" : "", "Total" : "", "Eval" : "", "Slope" : "" })
 
 db.regions.insert({"_id": 19, "Nom": "Europe", "Nom2": "Europe"})
+
+Current user
+db.runCommand({connectionStatus : 1})
+
+db.getSiblingDB("$external").runCommand( { createUser: "CN=x509user,OU=myOrgUnit,O=myOrg,L=Quebec,ST=QC,C=CA", roles: [ { role: 'readWrite', db: 'test' }, { role: 'userAdminAnyDatabase', db: 'admin' }], writeConcern: { w: "majority", wtimeout: 5000 } } )
+
+
+MongoDb Container user/roles
+
+admin> db.getUsers()
+{
+  users: [
+    {
+      _id: 'admin.CDadmin',
+      userId: new UUID("5a2d3180-b898-4c88-9358-0f249c678a3e"),
+      user: 'CDadmin',
+      db: 'admin',
+      roles: [ { role: 'root', db: 'admin' } ],
+      mechanisms: [ 'SCRAM-SHA-1', 'SCRAM-SHA-256' ]
+    },
+    {
+      _id: 'admin.bupUser',
+      userId: new UUID("cae8d1e3-949c-41af-a3d7-57927bb772cd"),
+      user: 'bupUser',
+      db: 'admin',
+      roles: [ { role: 'makebup', db: 'admin' } ],
+      mechanisms: [ 'SCRAM-SHA-1', 'SCRAM-SHA-256' ]
+    }
+  ],
+  ok: 1
+}
+
+golf> db.getUsers()
+{
+  users: [
+    {
+      _id: 'golf.cdGolf',
+      userId: new UUID("88827e91-e966-4c62-bea5-bc0f6d7407ef"),
+      user: 'cdGolf',
+      db: 'golf',
+      roles: [ { role: 'manGolf', db: 'golf' } ],
+      mechanisms: [ 'SCRAM-SHA-1', 'SCRAM-SHA-256' ]
+    },
+    {
+      _id: 'golf.cdore',
+      userId: new UUID("d3fccdfb-5258-4d71-87e1-576548f72e29"),
+      user: 'cdore',
+      db: 'golf',
+      roles: [ { role: 'manGolf', db: 'golf' } ],
+      mechanisms: [ 'SCRAM-SHA-1', 'SCRAM-SHA-256' ]
+    }
+  ],
+  ok: 1
+}
+

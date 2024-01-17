@@ -373,36 +373,30 @@ function criteres(){
 function showLocalisation(){
 var oDivLocalisation, oDivLocaliser, oDivLocalise;
 oDivLocalisation = document.getElementById('localisation');
-oDivLocaliser = document.getElementById('localiser');
 oDivLocalise = document.getElementById('localise');
-//console.log("showLocalisation" + resultLocalisation);
 if ( LocT == 0 ){
-		oDivLocaliser.style.visibility="hidden";
 		oDivLocalise.style.visibility="hidden";
 		oDivLocalisation.style.visibility="hidden";
 		document.critere.Prox.value = "N";
 		resultLocalisation = 0;
 } else {
 	if (resultLocalisation == -1 ){  //&& !criteres() 
-		oDivLocaliser.style.visibility="hidden";
 		oDivLocalise.style.visibility="hidden";
 		oDivLocalisation.style.visibility="visible";
 		document.critere.Prox.value = "O";
 	} else {
 		oDivLocalise.style.visibility="hidden";
-		oDivLocalisation.style.visibility="hidden";
-		oDivLocaliser.style.visibility="visible";		
+		oDivLocalisation.style.visibility="hidden";	
 		document.critere.Prox.value = "N";
 	}
 	}
 }
 
 function localiser(){
-var oDivlocaliser = document.getElementById('localiser');
 var oDivLocalise = document.getElementById('localise');
+var oDivLocalisation = document.getElementById('localisation');
 var oBody = document.getElementById('content');
-//console.log("localiser");
-oDivlocaliser.style.visibility="hidden";
+oDivLocalisation.style.visibility="hidden";
 oDivLocalise.style.visibility="visible";
 oBody.style.cursor="wait";
 	locTimer = setTimeout("clearGeo(false);", LocT);
@@ -412,8 +406,6 @@ oBody.style.cursor="wait";
 function clearGeo(interrupt){
 var oBody = document.getElementById('content');
 var localisation = document.getElementById('localisation');
-var localiser = document.getElementById('localiser');
-//console.log("clearGeo");
 oBody.style.cursor="default";
 clearTimeout(locTimer);
 navigator.geolocation.clearWatch(watchId);
@@ -618,6 +610,10 @@ if (localStorage.getItem("motsCleContext"))
 	formCrit.Mots.value = localStorage.getItem("motsCleContext");
 if (localStorage.getItem("regionIdContext"))
 	formCrit.IdRegion.selectedIndex = localStorage.getItem("regionIdContext");
+if (localStorage.getItem("checkNom"))
+	formCrit.checkNom.checked = eval(localStorage.getItem("checkNom"));
+if (localStorage.getItem('checkVille'))
+	formCrit.checkVille.checked = eval(localStorage.getItem('checkVille'));
 if (localStorage.getItem("cpContext"))
 	formCrit.codePostal.value = localStorage.getItem("cpContext");
 if (localStorage.getItem('cpDist'))
@@ -673,6 +669,9 @@ if (formCrit.IdRegion.value != 0){
 	mess += langLbl["I0003"] + formCrit.IdRegion.options[formCrit.IdRegion.selectedIndex].innerHTML + "&#187;" + langLbl["I00ET"] ;
 	URLresult += formCrit.IdRegion.value + "&";
 }
+
+localStorage.setItem('checkNom', formCrit.checkNom.checked);
+localStorage.setItem('checkVille', formCrit.checkVille.checked);
 	
 if (formCrit.codePostal.value != ""){
 	if (formCrit.Mots.value == "" && formCrit.IdRegion.value == 0 && formCrit.kiloM.value == 0){
@@ -721,22 +720,59 @@ geocoder = new google.maps.Geocoder();
   });
 }
 
-function sayKeyWord(){
-//alert("ok");
-//document.querySelector('meta[http-equiv="content-language"]').content
+function sayKeyWord(oMic){
 //recognition.lang = 'en-US';
+var recognizing = false;
+var recognized = false;
+var start_timestamp = 0;
+if (!window.oTip)
+	window.oTip = new messTipObject();
 if ('webkitSpeechRecognition' in window){
-	const recognition = new window.webkitSpeechRecognition();
-	recognition.lang = document.querySelector('meta[http-equiv="content-language"]').content;
-	recognition.onresult = (event) => {
+	if (!window.recognition)
+		window.recognition = new window.webkitSpeechRecognition();
+    //window.recognition.continuous = true;
+	window.recognition.lang = document.querySelector('meta[http-equiv="content-language"]').content;
+   window.recognition.onstart = function() {
+		start_timestamp = event.timeStamp;
+		recognizing = true;
+      window.oTip.show(langLbl["Ireco"], oMic, true, 700, 5);
+    };
+	
+   window.recognition.onerror = function(event) {
+      if (event.error == 'no-speech') {
+        ignore_onend = true;
+      }
+      if (event.error == 'not-allowed') {
+        ignore_onend = true;
+      }
+    };
+
+    window.recognition.onend = function() {
+      recognizing = false;i
+	  if (!recognized)
+		window.oTip.show(langLbl["InoWo"], oMic, true, 200, 5);
+    };	
+	
+	window.recognition.onresult = (event) => {
 	  var searhText = document.getElementById('Mots');
 	  const speechToText = event.results[0][0].transcript;
 	  searhText.value = speechToText;
+		recognized = true;	  
+		//console.log(event.timeStamp - start_timestamp);
+		if (event.timeStamp - start_timestamp > 5000)
+			window.recognition.stop();
 	  //alert(speechToText);
+	};
+	if (recognizing){
+		window.recognition.stop();
+		return;
 	}
-	recognition.start();
+	window.recognition.start();
+	
 }
 }
+
+
 
 // -->
 </script>
@@ -808,7 +844,7 @@ display: none;
 			    
 			    <div id="inputtextmot">
 				<input id="Mots" class="inputtext" type="text" size="" maxlength="50" value=""/>
-				<a id="microphone" href="javascript:sayKeyWord();">&#x1f3a4;</a>
+				<a id="microphone" href="#" onclick="sayKeyWord(this)">&#x1f3a4;</a>
 				</div>
 			  </div>
 			  </div>
@@ -845,16 +881,18 @@ display: none;
 			</div>
 		</div>
 		    <div class="formrow1">
-				<div id="locDiv">
-				<span id="localisation"  class="unselectable" onmouseover="tooltip.show();" title="Localisation actuelle">
-					<text id="locat">Localisation</text>&nbsp;&nbsp;<img id="iciLogo" alt="localisation"  height="14" width="14" src="images/ici.png" />
+				<div id="locDiv"  ondblclick="localiser()">
+				<span id="localisation"  class="unselectable">
+					<text id="locat">Localisation</text>&nbsp;&nbsp;<img id="iciLogo" alt="localisation"  height="14" width="14" src="images/ici.png"  title="Localisation actuelle" onmouseover="tooltip.show();"/>
 				</span>
+				<!--
 				<span id="localiser"   class="unselectable">
-					<a id="hrefLocaliser" href="javascript:localiser();"><text id="local">Localiser</text> &#63;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+					<text id="local">Localiser</text>
 				</span>
+				// -->
 				<span id="localise" class="unselectable" onClick="clearGeo(true);">
 					<text id="loca.">Localise</text>...&nbsp;&nbsp;&nbsp;&nbsp;
-					<img alt="localise" style="margin-left: -10px;" height="16" width="16" src="images/localise.gif" />
+					<img alt="localise" style="margin-left: -0px;" height="16" width="16" src="images/localise.gif"/>
 				</span>
 				</div>
 				<button class="bouton" id="Rechercher" type="submit" onclick="rechercheClub()" value="Rechercher" /><text id="searc">Rechercher</text>&#x1F50D;</button>

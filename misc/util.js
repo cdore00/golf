@@ -1,5 +1,5 @@
 
-var HOSTserv = "https://cdore.ddns.net/pyt/";  // VULTR Ubuntu Server 16.04 docker Python 3.6.4
+var HOSTserv = "http://127.0.0.1:3000/";		//Portable Windows 10 Local host Node JS v6.10.0
 // "http://127.0.0.1:3000/";		//Portable Windows 10 Local host Node JS v6.10.0
 // "http://192.168.2.195:3000/";    //Ubuntu workstation 16.04
 // "http://192.168.2.195:8080/";    //Ubuntu workstation 16.04 docker 1.12.6 Node JS v4.2.3  MongoDB server v3.4.9
@@ -814,6 +814,8 @@ if (document.querySelector('meta[http-equiv="content-language"]'))
 		langLbl["I0006"] = "&nbsp;le nom de la ville du club ";
 		langLbl["I0007"] = " nom du club de golf";
 		langLbl["I0008"] = "Le nombre de parties doit &ecirc;tre une valeur num&eacute;rique.";
+		langLbl["Ireco"] = "Écoute...";
+		langLbl["InoWo"] = "Aucun mot!";
 
 		langLbl["fgame"] = "Terminer la partie";
 		langLbl["rgame"] = "Supprimer la partie";
@@ -877,6 +879,7 @@ if (document.querySelector('meta[http-equiv="content-language"]'))
 		langLbl["hole"] = "Trou";
 		langLbl["goout"] = "Aller";
 		langLbl["goin"] = "Retour";
+		
 			break;
 	  case "es":
 		langLbl["title"] = "Golfs de Quebec";
@@ -939,6 +942,8 @@ if (document.querySelector('meta[http-equiv="content-language"]'))
 		langLbl["I0006"] = "&nbsp;el nombre de la ciudad del club ";
 		langLbl["I0007"] = " nombre del club de golf";
 		langLbl["I0008"] = "El n&uacute;mero de juegos debe ser un valor num&eacute;rico.";
+		langLbl["Ireco"] = "Escuchar...";
+		langLbl["InoWo"] = "Sin palabras!";
 		
 		langLbl["fgame"] = "Termina el juego";
 		langLbl["rgame"] = "Eliminar el juego";
@@ -1063,6 +1068,8 @@ if (document.querySelector('meta[http-equiv="content-language"]'))
 		langLbl["I0006"] = "&nbsp;the name of the city of the club ";
 		langLbl["I0007"] = " name of the golf club";
 		langLbl["I0008"] = "The number of games must be a numeric value.";
+		langLbl["Ireco"] = "Hear...";
+		langLbl["InoWo"] = "No word!";
 		
 		langLbl["fgame"] = "Finish the game";
 		langLbl["rgame"] = "Remove the game";

@@ -113,7 +113,7 @@ this.zoomRestart = function (lat1, lat2, lng1, lng2) {
 // Start initialize function
 function initialize(showCenter) { 
 	intZoom = 15 -  Math.round(Math.log(intKm/100));
-	if (!intZoom)
+	if (!intZoom || intZoom == Infinity)
 		intZoom = 11;
 	var myOptions = { 
 	  center: new google.maps.LatLng(intLat, intLng), 

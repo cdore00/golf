@@ -482,18 +482,13 @@ function startTouch(event) {
 	offSetX = touch.pageX-this.offsetLeft;  //-(this.offsetWidth/2);
 	offSetY = touch.pageY-this.offsetTop;  //-(this.offsetHeight/2);
 	this.addEventListener('touchmove', moveTouch, false);
-	//this.addEventListener("touchend", moveMap(this), false);
-	//event.preventDefault();
-	//savedPos(false, touch.pageX + "   oLeft = " + this.offsetLeft + "  oWidth/2 = " + this.offsetWidth/2);
+
 }
 
 function moveTouch(event) {
-    //var touch = event.targetTouches[0];
-    // Place element where the finger is
 	var tc = event.touches[0];
 	this.style.left = (tc.clientX - offSetX) + 'px';
     this.style.top = (tc.clientY - offSetY) + 'px';
-//moveMap(this);
     event.preventDefault();
 }
 
@@ -701,7 +696,7 @@ var changeScore = document.getElementById('changeScore');
 var holeDist = document.getElementById('holeDist');
 holeDist.addEventListener('touchstart', startTouch, false);  // Drag and drop for mobil
 changeScore.addEventListener('touchstart', startTouch, false);  // Drag and drop for mobil
-document.getElementById('moveMapBut').addEventListener('touchstart', startTouch, false);  // Drag and drop for mobil
+//document.getElementById('moveMapBut').addEventListener('touchstart', startTouch, false);  // Drag and drop for mobil
 userId = GetCookie("userID");
 setLanguage();
 
@@ -943,34 +938,6 @@ function showSelUnit(){
 document.getElementById('chxUnit').style.display = "block";
 }
 
-function callMove(){
-oBut = document.getElementById('moveMapBut');
-if (oBut.style.display == "inherit")
-	oBut.style.display = "none";
-else {
-	centerMoveButton();
-	oBut.style.display = "inherit";
-}
-
-}
-
-function centerMoveButton(){
-document.getElementById('moveMapBut').style.top = ((document.getElementById("map_canvas").offsetHeight / 2)-20) + "px";
-document.getElementById('moveMapBut').style.left = ((document.getElementById("map_canvas").offsetWidth / 2)-20) + "px";
-}
-
-function closeMapMove(){
-document.getElementById('mapMove').style.display = "none";
-}
-
-function moveMap(mBut){
-
-	var per = (mBut.offsetLeft + (mBut.offsetWidth / 2)) / (document.getElementById("map_canvas").offsetWidth);
-	calcMove( per, (mBut.offsetTop + (mBut.offsetHeight / 2)) / (document.getElementById("map_canvas").offsetHeight));
-	centerMoveButton();
-	//savedPos(false, per + "   Left = " + mBut.offsetLeft + "  Width = " + document.getElementById("map_canvas").offsetWidth);
-}
-
 function calcMove(mx, my){
 //newPos = new google.maps.LatLng('‭46.925466‬', '-71.36011');
 // Longitude
@@ -1039,24 +1006,6 @@ z-index: 1010;
 display: none;
 height: auto;
 }
-/*
-#mapMove{
-position:fixed;
-display: none;
-top:60px;
-height: 80%;
-width:100%;
-border: solid red 1px;
-text-align: center;
-z-index: 1101;
--webkit-user-select: none;
-}
-*/
-#moveMapBut{
-position: fixed;
-z-index: 1101;
-display: none;
-}
 
 .boutonZoom {
     overflow: hidden;
@@ -1080,17 +1029,11 @@ display: none;
 <div id="hole" onclick="showBlocs(this);" ><div id="holePar"></div><div id="holeBloc" ></div></div>
 <button id="boutonPiquet" class="itin" title="Placer un piquet" onclick="window.oPicket.getPiquet(this); return false;"><img id="imgPiquet" height="18" width="3" src="images/piquet.png" /></button>
 <button id="boutonLoc" class="itin" title="Localiser" onclick="getLoc(this); return false;"><img id="imgLoc" height="18" width="18" alt="Localiser" src="images/ici.png" /></button>
-<!--
-<div id="boutonTaille"><button type="button" id="rightnav" title="Taille de police" onclick="changeTaille()"><img id="imgTaille" alt="Taille de police" height="20" width="45" src="images/taille.png" /></button></div>
-</div>
-// -->
+
 <div id="mapZoom" class="unselectable">
-<!--
-<button class="boutonZoom" title="Score" onclick="showScoreFrame(false); return false;">&#x1f4dd;</button>
-// -->
+
 <button class="boutonZoom" title="Zoom in" onclick="zoomMap(1); return false;"><span class="zoomChar">&plus;</span></button>
 <button class="boutonZoom" title="Zoom out" onclick="zoomMap(-1); return false;"><span class="zoomChar">&minus;</span></button>
-<button class="boutonZoom" title="Move map..." onclick="callMove(); return false;"><span class="zoomChar">&#8283;</span></button>
 </div>
 
 
@@ -1142,10 +1085,6 @@ display: none;
 </table>
 </div>
 </div>
-
-<!--<div id="mapMove">  // -->
-<button id="moveMapBut" class="boutonZoom" title="Move map" onclick="moveMap(this)" ondblclick="closeMapMove()"; return false;"><span class="moveChar">&#8283</span></button>
-<!--</div>// -->
 
 <div id="showScore">
 
