@@ -89,6 +89,10 @@ sudo ip addr add 192.168.10.11/24 dev docker0
 docker run -p 192.168.10.11:8080:27017 --workdir /home/servDB --entrypoint "npm start" --name="mon_g" mongo:golf
 docker run -p 192.168.10.11:8080:27017 --name="mon_g" mongo:golf
 
+docker.com
+jonasal/nginx-certbot
+
+
 LISTEN PORTS
 sudo netstat -tulpn
 
@@ -179,6 +183,9 @@ dpkg-reconfigure tzdata
 timedatectl status
 
 docker login -u cdore00 -e cdore00@yahoo.ca -p eADQdn_Wl47pgF909jrXHtWmD-JfypzVPWk7QjCSltA 172.30.208.107:5000
+#Docker login status
+cat ~/.docker/config.json
+
 
 UBUNTU CLEAN DISK
 http://www.omgubuntu.co.uk/2016/08/5-ways-free-up-space-on-ubuntu
@@ -203,6 +210,9 @@ SSH
 ssh-keygen -f "/home/cdore/.ssh/known_hosts" -R 45.77.155.164
 ssh root@45.77.155.164
 scp -r mdump root@45.77.155.164:/home
+
+sudo systemctl restart docker.socket docker.service
+
 
 INSTALL oc
 wget https://github.com/openshift/origin/releases/download/v1.5.1/openshift-origin-client-tools-v1.5.1-7b451fc-linux-64bit.tar.gz
