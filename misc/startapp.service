@@ -7,7 +7,7 @@ Requires=firewalld.service
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/bin/sh /etc/init/start.sh
+ExecStart=/bin/sh /etc/docker/start.sh
 
 [Install]
 WantedBy=multi-user.target
