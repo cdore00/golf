@@ -8,9 +8,9 @@ FILE=${FILE%.*}_`date +%I:%M:%S`.${FILE#*.}
 sudo touch /home/$FILE
 sudo ip addr add 192.168.10.11/24 dev docker0
 sleep 5
-sudo docker start mon_golf
+sudo docker start monDB
 sleep 20
-sudo docker start servDB2
+sudo docker start servDB
 sudo docker start webServ
 
 exit 0

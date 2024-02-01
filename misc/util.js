@@ -1,5 +1,5 @@
 
-var HOSTserv = "https://cdore.ddns.net/pyt/";		//Portable Windows 10 Local host Node JS v6.10.0
+var HOSTserv = "http://127.0.0.1:3000/";		//Portable Windows 10 Local host Node JS v6.10.0
 // "http://127.0.0.1:3000/";		//Portable Windows 10 Local host Node JS v6.10.0
 // "http://192.168.2.195:3000/";    //Ubuntu workstation 16.04
 // "http://192.168.2.195:8080/";    //Ubuntu workstation 16.04 docker 1.12.6 Node JS v4.2.3  MongoDB server v3.4.9
