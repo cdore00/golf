@@ -10,7 +10,7 @@ sudo ip addr add 192.168.10.11/24 dev docker0
 sleep 5
 sudo docker start monDB
 sleep 10
-sudo docker start servDB
+sudo docker start pytGolf
 sudo docker start webServ
 
 exit 0
