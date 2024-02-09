@@ -11,6 +11,7 @@ sleep 5
 sudo docker start monDB
 sleep 10
 sudo docker start pytGolf
+sudo docker start pytResto
 sudo docker start webServ
 
 exit 0

@@ -1,0 +1,5 @@
+sudo docker run -i --rm --name certbot-renew --network="host" -v /home:/data -v /home/cert:/etc/letsencrypt certbot/certbot renew --webroot --webroot-path=/data --agree-tos --no-eff-email > /home/res.log 2>&1
+cat /home/res.log >> /home/renew.log
+echo "$(cat /home/renew.log) $(date)" > /home/renew.log
+
+exit 0
