@@ -9,7 +9,8 @@ cd /home
 sudo mkdir /home/log
 sudo mkdir /home/cert
 git clone https://github.com/cdore00/golf
-git clone https://github.com/cdore00/lou
+#git clone https://github.com/cdore00/lou
+git clone https://github.com/cdore00/cuisine
 
 # Set HOSTserv web to cdore.ddns.net
 sed -i 's/HOSTserv =/bidon =/g' /home/golf/misc/util.js
@@ -20,35 +21,38 @@ printf '%s\n' 0a 'var HOSTserv = "https://cdore.ddns.net/pyt/";'  . w | ed -s "/
 echo " ********** Install docker images and containers from docker.com ********** "
 sudo ip addr add 192.168.10.11/24 dev docker0
 
-read -p " Cloud Pass :> " cpass
+#read -p " Cloud Pass :> " cpass
 read -p " MongoDB User Name :> " uname
 read -p " User Password:> " upass
+read -p " MongoDB backUp User :> " bname
+read -p " BackUp user Password:> " bpass
+read -p " MongoDB Admin Name :> " aname
 read -p " Admin Password:> " apass
-read -p " Mail Password:> " mpass
+read -p " E-mail Password:> " mpass
 
-sudo docker volume create configdb
-sudo docker volume create datadb
+#sudo docker volume create configdb
+#sudo docker volume create datadb
 
-#sudo docker run -d -p 192.168.10.11:8080:27017 -p 6600:27017 -e MONGODB_ADMIN_PASSWORD=$apass -e MONGODB_USER=$uname -e MONGODB_PASSWORD=$upass -e MONGODB_DATABASE=golf -v /home:/data --name="mon_golf" cdore00/mon_golf34:v3
-#sudo docker run -d -p 192.168.10.11:8080:27017 -p 6600:27017 -e MONGODB_ADMIN_PASSWORD=$apass -e MONGODB_USER=$uname -e MONGODB_PASSWORD=$upass -e MONGODB_DATABASE=golf -v /home:/data --mount source=datadb,target=/data/db --mount source=configdb,target=/data/configdb --name="mon_golf3" cdore00/mon_golf34:v5
-#sudo docker run -d -p 192.168.10.11:8080:27017 -p 6600:27017 --privileged --name monDB -e MONGO_INITDB_ROOT_USERNAME=$uname -e MONGO_INITDB_ROOT_PASSWORD=$apass -v /home:/data cdore00/mon_golf34:v6
-sudo docker run -d -p 192.168.10.11:8080:27017 -p 6600:27017 -e MONGO_INITDB_ROOT_USERNAME=CDadmin -e MONGO_INITDB_ROOT_PASSWORD=925045Cd! -e BUP_USER=bupUser -e BUP_PASS=045 -v /home:/data --privileged --name="mon_golf4" cdore00/mon_golf34:v6
-#docker run -d -p 192.168.10.11:8080:27017 -p 6600:27017 -e BUP_USER=bupUser -e BUP_PASS=045 -e MONGO_INITDB_ROOT_USERNAME=CDadmin -e MONGO_INITDB_ROOT_PASSWORD=925 -v /home:/data --privileged --name="mon_golf5" cdore00/mon_golf34:v61 --config /etc/mongod.conf
 
+#sudo docker run -d -p 192.168.10.11:8080:27017 -p 6600:27017 -e MONGO_INITDB_ROOT_USERNAME=CDadmin -e MONGO_INITDB_ROOT_PASSWORD=925045Cd! -e BUP_USER=bupUser -e BUP_PASS=045 -v /home:/data --privileged --name="mon_golf4" cdore00/mon_golf34:v6
+sudo docker run -d -p 192.168.10.11:8080:27017 -p 6600:27017 -e BUP_USER=$bname -e BUP_PASS=$bpass -e MONGO_INITDB_ROOT_USERNAME=$aname -e MONGO_INITDB_ROOT_PASSWORD=$apass -v /home:/data --privileged --name="monDB" cdore00/mon_golf34:v7 --config /etc/mongod.conf
 
 #sudo docker run -d -p 8081:8080 -e DATABASE_SERVICE_NAME=mongodb -e MONGODB_SERVICE=192.168.10.11 -e MONGODB_PORT=8080 -e PINFO=$mpass  -e MONGODB_ADMIN_PASSWORD=$apass -e MONGODB_USER=$uname -e MONGODB_PASSWORD=$upass -e CPASS=$cpass -e MONGODB_DATABASE=golf -v /home:/data --name="servDB2" cdore00/pyt_golf:v4 python /usr/src/app.py
-sudo docker run -d -p 8081:8080 -e DATABASE_SERVICE_NAME=mongodb -e MONGODB_SERVICE=192.168.10.11 -e MONGODB_PORT=8080 -e PINFO=$mpass  -e MONGODB_ADMIN_PASSWORD=$apass -e MONGODB_USER=$uname -e MONGODB_PASSWORD=$upass -e CPASS=$cpass -e MONGODB_DATABASE=golf -v /home:/data --name="servDB2" cdore00/pyt_golf:v5 python /usr/src/app.py
+sudo docker run -d -p 8081:8080 -e MONGODB_SERVICE=192.168.10.11 -e MONGODB_PORT=8080 -e PINFO=$mpass -e MONGODB_USER=$uname -e MONGODB_PASSWORD=$upass -e MONGODB_CERT=/CRT/client.pem -e MONGODB_CA=/CRT/ca.crt -e MONGODB_DATABASE=golf -v /home:/data --entrypoint "python" --name="pytGolf" cdore00/pyt_golf:v6 "/usr/src/app.py" "tls"
 
-#sudo docker run -p 5550:8080 -e DATABASE_SERVICE_NAME=mongodb -e MONGODB_SERVICE=192.168.10.11 -e MONGODB_PORT=8080 -e PINFO=$mpass  -e MONGODB_ADMIN_PASSWORD=$apass -e MONGODB_USER=$uname -e MONGODB_PASSWORD=$upass -e MONGODB_DATABASE=resto -v /home:/data --name="pytSimp"  cdore00/py_simp bash
-sudo docker run -p 5550:8080 -e DATABASE_SERVICE_NAME=mongodb -e MONGODB_SERVICE=192.168.10.11 -e MONGODB_PORT=8080 -e PINFO=$mpass  -e MONGODB_ADMIN_PASSWORD=$apass -e MONGODB_USER=$uname -e MONGODB_PASSWORD=$upass -e MONGODB_DATABASE=resto -v /home:/data --name="pytSimp"  cdore00/py_simp3 bash
+#sudo docker run -d -p 5550:8080 -e DATABASE_SERVICE_NAME=mongodb -e MONGODB_SERVICE=192.168.10.11 -e MONGODB_PORT=8080 -e PINFO=$mpass -e MONGODB_USER=$uname -e MONGODB_PASSWORD=$upass -e MONGODB_DATABASE=resto -v /home:/data --name="pytResto"  cdore00/py_simp:v4 bash start.sh
+sudo docker run -d -p 5550:8080 -e MONGODB_SERVICE=192.168.10.11 -e MONGODB_PORT=8080 -e PINFO=$mpass -e MONGODB_USER=$uname -e MONGODB_PASSWORD=$upass -e MONGODB_CERT=/CRT/client.pem -e MONGODB_CA=/CRT/ca.crt -e MONGODB_DATABASE=resto -v /home:/data --entrypoint "python" --name="pytResto" cdore00/py_simp:v4 "/usr/src/recappCD.py" "tls"
 
-#sudo docker run -d --network="host" -v /home:/data -v /home/lou:/usr/share/cdore/loupop -v /home/golf:/usr/share/cdore/golf --name="webServ" cdore00/nginx_cd:v8
 #sudo docker run -d --network="host" --env CERTBOT_EMAIL=cdore00@yahoo.ca --mount source=webcert,target=/etc/letsencrypt -v /home:/data -v /home/lou:/usr/share/cdore/loupop -v /home/golf:/usr/share/cdore/golf --name webServ cdore00/nginx_cd:v9 nginx -g "daemon off;"
-sudo docker run -d --network="host" --env CERTBOT_EMAIL=cdore00@yahoo.ca -v /home/cert:/etc/letsencrypt -v /home:/data -v /home/lou:/usr/share/cdore/loupop -v /home/golf:/usr/share/cdore/golf --name webServ cdore00/nginx_cd:v9 nginx -g "daemon off;"
+sudo docker run -d --network="host" -v /home/cert:/etc/letsencrypt -v /home:/data -v /home/cuisine:/usr/share/cdore/loupop -v /home/golf:/usr/share/cdore/golf --name webServ cdore00/nginx_cd:v9 nginx -g "daemon off;"
 
+#CERTBOT
+docker run -it --rm --name certbot-container --network="host" -v /home/cert:/etc/letsencrypt -v /home/golf:/usr/share/cdore/golf certbot/certbot certonly --webroot --webroot-path=/usr/share/cdore/golf --agree-tos     --no-eff-email -d cdore.ddns.net
+docker run -it --rm --name certbot-container --network="host" -v /home/cert:/etc/letsencrypt -v /home/lou:/usr/share/cdore/loupop certbot/certbot certonly --webroot  --webroot-path=/usr/share/cdore/loupop --agree-tos     --no-eff-email -d loupop.ddns.net
+#docker run -it --rm --name certbot-renew --network="host" -v /home:/data -v /home/cert:/etc/letsencrypt certbot/certbot renew
 
 echo " ********** Restore golf database ********** "
-sleep 1
+sleep 3
 if [ -e /home/bup/golf ]
 then
     echo "Golf data"
@@ -61,8 +65,8 @@ then
 fi
 
 echo " ********** Install services ********** "
-sleep 1
-cp /home/golf/misc/start.sh /etc/init/start.sh
+sleep 3
+cp /home/golf/misc/start.sh /etc/docker/start.sh
 cp /home/golf/misc/startapp.service /etc/systemd/system/startapp.service
 
 ## Configure firewall
@@ -79,20 +83,23 @@ ufw --force enable
 systemctl enable startapp.service
 
 sudo echo " ********** Set timezone and set renew Cert ********** "
-sleep 1
+sleep 3
 TIMEZONE="Canada/Eastern"      
 sudo echo $TIMEZONE > /etc/timezone                     
 sudo cp /usr/share/zoneinfo/${TIMEZONE} /etc/localtime   # This sets the time
 
 # Add to crontab // Manual with command: crontab -e
-#30 3 * * * sudo docker exec monDB2 bash /home/mkbup
+sudo cp /home/golf/misc/checkren /home/checkren
 
-line="15 4 * * * sudo docker exec webServ bash /home/checkren"
+#line="15 4 * * * sudo docker exec webServ bash /home/checkren"
+line="15 4 * * 1 bash /home/checkren"
+(crontab -u root -l; echo "$line" ) | crontab -u root -
+line="20 4 * * * sudo docker exec monDB bash /home/mkbup"
 (crontab -u root -l; echo "$line" ) | crontab -u root -
 service cron restart
 
 sudo echo " ********** -------------- Check setup result ----------------"
-sleep 1
+sleep 3
 sudo ufw status
 sudo docker ps -a
 crontab -l
