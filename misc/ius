@@ -15,7 +15,9 @@ sleep 2
 # Log to Docker.com
 echo "---"
 echo "*** Login to Docker ***"
-read -p " Docker.com Password:> " -s pass
+#read -p " MongoDB User Name :> " uname
+#read -p " Docker.com Password:> " -s pass
+read -p " Docker.com Password:> " pass
 sudo docker login -u cdore00 -p $pass "https://index.docker.io/v1/" >/home/rep
 
 if grep -R "Succeeded" "/home/rep"
