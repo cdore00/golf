@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
+<meta name="format-detection" content="telephone=yes" />
+
+<link rel="shortcut icon" type="image/x-icon" href="images/golf.png">
+<link rel="shortcut icon" type="image/x-icon" href="images/golf.png?">
+<title>Golfs du Qu&eacute;bec</title>
+<meta content="Golf GPS, Qu&eacute;bec, Canada, Golf du Qu&eacute;bec, Clubs de golf au Qu&eacute;bec, Qu&eacute;bec golf" name="keywords" />
+<meta content="R&eacute;pertoire des clubs de golf du Qu&eacute;bec. GPS golf." name="description" />
+
+
+<link href="misc/datepicker.css" rel="stylesheet">
+<link href="misc/reserv.css" rel="stylesheet"/>
+
+<script type="text/javascript" src="misc/util.js"></script>
+<script type="text/javascript" src="misc/reserv.js"></script>
+<script type="text/javascript" src="misc/dateP.js"></script>
+
+<script type="text/javascript" language="Javascript">
+<!--
+
+var resID, resTime;
+var editFlag = false;
+var strtLst;
+var depSelect = 1;
+
+
+function initPage(){
+	
+var ui = GetCookie("userID");
+userId = (ui) ? ui:"";
+clubID = getURLdata();
+if (clubID)
+	SetCook("clubID",clubID);
+else
+	clubID = GetCookie("clubID");
+	
+setFontSize();
+showProgress(1)
+
+if (!userId)
+	logIn();
+else{	
+	userName = GetCookie("userName");
+	getUserStarts();
+}
+identified();
+}
+
+
+function getUserStarts(){
+
+var param = "?ci=" + clubID + "&ui=" + userId + "&ds=" + depSelect;
+getInfo("getUserStarts" + param, showUserStarts);	
+}
+
+
+function showUserStarts(odata){
+
+if (odata.error){
+	//alert(odata.mess);
+	afficheMessage(odata.mess);
+}else{
+	afficheMessage();
+	//if (!odata)
+	//	afficheMessage("Vous n'avez aucune réservation.", 'A');
+	clubName = odata.club[0].nom;
+	document.getElementById('pageTitle').innerHTML = clubName;
+	strtLst = odata.data;
+	listStart(strtLst);
+}
+}
+
+function listStart(strtLst){
+resetAll();
+document.getElementById('startingZone').style.display = 'inherit';
+var pageZone = document.getElementById('pageZone');
+
+	function getRes(res){
+		for (const el of res) {
+			if (el.user.$oid == userId){
+				npl = el.players;
+				tim = el.time;
+				break;
+			}
+		}
+		return [npl, tim];
+	}
+
+for (var p = 0; p < strtLst.length; p++) {
+	item = strtLst[p]
+	res = getRes(item.reserv);
+	pl = res[0];
+	tm = res[1];
+	htmlCode = '<span>' + formatDateTime.datetime(item.startTime*1000) + '</span><span>' + (4 - item.players) + '</span><span>' + pl + '</span><span class="playCtrl"><button  class="formItem" title="Éditer" onclick="editRes(\'' + p + '\', ' + pl + ','  + tm + ',' + (4 - item.players) + ')">✎</button><button  class="formItem required" title="Supprimer" onclick="removeRes(\'' + p + '\', ' + pl + ')">✖</button></span>';
+
+	var liElem = document.createElement("li");
+	liElem.setAttribute('class', 'listitem');
+	liElem.innerHTML = htmlCode;
+	pageZone.appendChild(liElem);
+	}
+document.getElementById('message').innerHTML = (p ) + " départ" + ((p > 1) ? "s":"") + " réservé."
+}
+
+function editRes(obj, nbp, tm, dis){
+editFlag = true;
+document.getElementById("formTitle").innerHTML = "Mofifier la réservation";
+chx = strtLst[obj];
+resTime = tm;
+initForm(chx, nbp, true)
+
+for (var r in chx.reserv) {
+	if (chx.reserv[r].user.$oid == userId){
+		pl = chx.reserv[r].playList;
+		for (var i = 1; i < 5; i++){
+			document.getElementById('resplay' + i).style.display = "inherit";
+			document.getElementById('nameplay' + i).style.visibility = 'visible';
+			if (pl[i-1]){
+				document.getElementById('nameplay' + i).value = pl[i-1][0];
+				document.getElementById('nameplay' + i).name = pl[i-1][1];
+				if (i> 1)
+					document.getElementById('nameplay' + i).disabled = false;
+			}else{
+				if ( i > 4-dis  )
+					document.getElementById('nameplay' + i).style.visibility = 'hidden';
+				else
+					document.getElementById('resplay' + i).style.display = "none";
+			}
+		}
+		break;
+	}
+}
+
+
+}
+
+function removeRes(obj, nbp){
+editFlag = false;
+document.getElementById("formTitle").innerHTML = "Supprimer la réservation";
+chx = strtLst[obj];
+initForm(chx, nbp)
+
+for (var r in chx.reserv) {
+	if (chx.reserv[r].user.$oid == userId){
+		pl = chx.reserv[r].playList;
+		for (var i = 1; i < 5; i++){
+			document.getElementById('nameplay' + i).style.visibility = 'visible';
+			if (pl[i-1]){
+				document.getElementById('nameplay' + i).value = pl[i-1][0];
+				document.getElementById('nameplay' + i).name = pl[i-1][1];
+				document.getElementById('resplay' + i).style.display = "inherit";
+				document.getElementById('nameplay' + i).disabled = true;
+			}else
+				document.getElementById('resplay' + i).style.display = "none";
+			
+		}
+		break;
+	}
+}
+
+}
+
+function initForm(chx, nbp, show){
+
+resId = chx._id;
+dt = formatDateTime.datetimecar(chx.startTime*1000 );
+hr = formatDateTime.time(chx.startTime*1000, true );
+document.getElementById('r_parc').innerHTML = clubName;
+document.getElementById('r_date').innerHTML = dt ;
+document.getElementById('r_time').innerHTML = hr;
+document.getElementById('r_play').innerHTML = nbp;
+confStart.nbp.value = nbp;
+document.getElementById('modalDiv').style.height=document.getElementById('backDiv').offsetHeight + "px";
+document.getElementById('modalDiv').style.visibility="visible";
+document.getElementById('identLayer').style.display = 'inherit';
+
+for (var i = 1; i < 5; i++){
+	if (show)
+		document.getElementById('playCtrl'+i).setAttribute('class', 'playCtrl');
+	else
+		document.getElementById('playCtrl'+i).setAttribute('class', 'playCtrl nodisplay');
+
+}
+}
+
+function confirmStart(oResult){
+if (oResult.error){
+	closePref();
+	alert(oResult.mess);
+}else{
+	document.getElementById('r_parc').innerHTML = oResult.club.nom;
+	
+}
+}
+
+function resetAll(){
+remChilds(document.getElementById('pageZone'));
+document.getElementById('startingZone').style.display = 'none';
+document.getElementById('message').innerHTML = "";
+}
+
+function updStart(){
+var param = "?uid=" + userId + "&rid=" + resId.$oid + "&unm=" + userName + "&itm=" + resTime + "&npl=" + confStart["nbp"].value ;
+
+if (editFlag){
+
+	playList = "";
+	playArr = [];
+		for (var i = 1; i < 5; i++){
+			if (confStart['nameplay' + i].value)
+				playArr[playArr.length] = confStart['nameplay' + i].value;
+				//playList += "&P" + i + "=" + confStart['nameplay' + i].value;
+		}
+		for ( x in playArr){
+			playList += "&P" + x + "=" + playArr[x];
+		}
+	param += "&apl=" + playArr.length + playList;
+
+	getInfo("updateStart" + param, updateStartRes);	
+	closePref();	
+	
+}else{
+	getInfo("deleteStart" + param, removeStartRes);		
+}
+closePref();
+}
+
+function updateStartRes(oRes){
+if (oRes.error){
+	//alert(odata.mess);
+	afficheMessage(oRes.mess);
+}else{
+	resetAll();
+	afficheMessage("Enregistré.", 'I');
+	setTimeout(getUserStarts, 1000);
+}
+}
+
+function removeStartRes(oRes){
+if (oRes.error){
+	//alert(odata.mess);
+	afficheMessage(oRes.mess);
+}else{
+	resetAll();
+	afficheMessage("Annulation confirmée.", 'I');
+	setTimeout(getUserStarts, 1000);
+}
+}
+
+function removePlay(inputId){
+document.getElementById(inputId).style.visibility = 'hidden';
+document.getElementById(inputId).value = "";
+}
+
+function addPlay(inputId){
+document.getElementById(inputId).style.visibility = 'visible';
+}
+
+function adjustDep(oSel){
+depSelect = oSel.value;
+getUserStarts();
+}
+
+// -->
+</script>
+
+<style>
+	
+
+form input{
+visibility: inherit;
+}
+
+.nodisplay{
+display: none !important;
+}
+
+.playCtrl{
+  min-width: 0px !important;
+}
+
+.playCtrl button {
+  color: blue;
+  font-size: 1.01em;
+  width: 40px;
+  margin-right: 3px;
+  min-width: 0px !important;
+}
+
+#startFilter {
+  font-size: 1em;
+}
+
+</style>
+
+
+
+</head>
+
+<body onload="initPage()"><a name="haut"></a>
+
+<div id="backDiv">
+
+<div id="topbar" class="vert">
+<div id="leftnav"><a title="Formulaire de recherche" href="index.html" ><img alt="Formulaire de recherche" height="22" width="25" src="images/home22.png" /></a></div>
+<div id="chargement" class="">
+<progress id="progressQ" ></progress>
+<div class="charge"><text id="load"></text></div><div class="charge loading"></div></div>
+<h1 id="pageTitle"></h1>
+<div id="fontAdjust" class="unselectable">
+<div class="divFont" onclick="setFontSize(0.2, this)"><div class="divFontSize">A</div><div class="fontLogo">&#8593;</div></div>
+<div class="divFont" onclick="setFontSize(-0.2, this)"><div class="divFontSize fontSmall">A</div><div class="fontLogo">&#8595;</div></div>
+</div>
+</div>
+
+
+
+	<div id="divmenu">
+		<ul>
+			<li>
+			<span id="username"></span>
+			</li>
+			<li>
+			<a href="reserve.html">Réserver</a>
+			</li>
+			<li>
+			<a href="mystart.html" class="selectedMenu">Mes départs</a>
+			</li>
+
+			<li>
+				<select id="startFilter" class="" onchange="adjustDep(this);">
+					<option value="0">Tous mes départs</option>
+			        <option value="1" selected>Départs à venir</option>
+			    </select>			
+			</li>			
+
+			<li>
+			<a href="edituser.html">Mon compte</a>
+			</li>			
+			<li>
+			<a id="menuConnect" href="javascript:logIn();">Se connecter</a>
+			</li>
+
+		</ul>
+	</div>
+<div id="content">
+
+
+		<div id="messageZone">
+			
+		</div>
+		
+		<div id="startingZone">
+		<ul id="startHead" class="pageitem">
+					<li class="listitem gras">	
+							<form id="selAll" action="#">
+							<span>Date heure</span><span><label for="scales">Disponible</label></span><span>Mes départs</span><span></span>
+							</form>
+					</li>
+		
+		<div id="pageZone">
+		</div>		
+		</ul>
+
+
+		</div>
+</div>
+
+
+
+<div id="bottombar" class="vert">
+	<div id="rightbutton"><a class="char_icon" href="#haut" alt="Haut de page">&#9650;</a></div>
+	<div id="message"></div>
+</div>
+
+<div id="copyright">
+<a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2024</a>
+</div>
+
+
+<div id="modalDiv"></div>
+
+<div id="authLayer" class="winLayer">
+<form id="formAuth" autocomplete="off">
+<div id="identOptions">
+<div class="prefList">
+<h3>&nbsp;Se connecter</h3>
+</div>
+<div class="prefList">
+<label for="nameUser" id="lbl1" class="identLbl"><text id="imail">Identifiant ou courriel</text>:</label><div class="prefVal">
+<input id="nameUser" type="email" autocomplete="on" size="15" maxlength="50">
+</div></div>
+
+<div class="prefList">
+<label for="passwordUser" id="lbl1" class="identLbl"><text id="passw">Mot de passe</text>:</label><div class="prefVal">
+<input id="passwordUser" type="password" size="15" autocorrect="off" autocapitalize="none" autocomplete="off" maxlength="50" onfocus="this.removeAttribute('readonly');">
+</div></div>
+</div>
+
+<div>
+<input id="okPref" class="formbutton" type="submit" onclick="authentif(); return false;" value="Ok"><input id="annulePref" class="formbutton" type="button" onclick="closePref(); return false;" value="Annuler">
+</div>
+</form>
+</div>
+
+<div id="identLayer">
+<h3 id="formTitle" ></h3>
+<form id="confStart" autocomplete="off">
+<p><text id="cours">Parcours:</text><span id="r_parc"></span></p>
+<p><text id="rdate">Date:</text><span id="r_date"></span></p>
+<p><text id="rhour">Heure:</text><span id="r_time"></span></p>
+<p><text id="rplay">Joueurs:</text><span id="r_play"></span></p>
+
+	<div class="formItem">
+		<p id="resplay1"><label for="nameplay1">1:</label>
+		<input id="nameplay1" name="nameplay1" size="25" type="text" maxlength="50" value="" disabled /> <span id="playCtrl1" class="playCtrl"><button  class="formItem" title="Supprimer" onclick="addPlay('nameplay1'); return false;">✚</button><button  class="formItem required" title="Supprimer" onclick="removePlay('nameplay1'); return false;">✖</button></span></p>
+		<p id="resplay2"><label for="nameplay2">2:</label>
+		<input id="nameplay2" name="nameplay2" size="25" type="text" maxlength="50" value="" /> <span id="playCtrl2" class="playCtrl"><button  class="formItem" title="Supprimer" onclick="addPlay('nameplay2'); return false;">✚</button><button  class="formItem required" title="Supprimer" onclick="removePlay('nameplay2'); return false;">✖</button></span></p>
+		<p id="resplay3"><label for="nameplay3">3:</label>
+		<input id="nameplay3" name="nameplay3" size="25" type="text" maxlength="50" value="" /> <span id="playCtrl3" class="playCtrl"><button  class="formItem" title="Supprimer" onclick="addPlay('nameplay3'); return false;">✚</button><button  class="formItem required" title="Supprimer" onclick="removePlay('nameplay3'); return false;">✖</button></span></p>	
+		<p id="resplay4"><label for="nameplay4">4:</label>
+		<input id="nameplay4" name="nameplay4" size="25" type="text" maxlength="50" value="" /> <span id="playCtrl4" class="playCtrl"><button  class="formItem" title="Supprimer" onclick="addPlay('nameplay4'); return false;">✚</button><button  class="formItem required" title="Supprimer" onclick="removePlay('nameplay4'); return false;">✖</button></span></p>		
+	</div>
+
+<div>
+<input id="nbp" type="hidden" value="0">
+<input id="r_id" type="hidden" value="Ok">
+<input id="okPref" class="formbutton" type="submit" onclick="updStart(); return false;" value="Ok"><input id="annulePref" class="formbutton" type="button" onclick="closePref(); return false;" value="Annuler">
+</div>
+</form>
+</div>
+</div>
+
+</body>
+
+
+</html>

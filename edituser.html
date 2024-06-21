@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
+<meta name="format-detection" content="telephone=yes" />
+
+<link rel="shortcut icon" type="image/x-icon" href="images/golf.png">
+<link rel="shortcut icon" type="image/x-icon" href="images/golf.png?">
+<title>Golfs du Qu&eacute;bec</title>
+<meta content="Golf GPS, Qu&eacute;bec, Canada, Golf du Qu&eacute;bec, Clubs de golf au Qu&eacute;bec, Qu&eacute;bec golf" name="keywords" />
+<meta content="R&eacute;pertoire des clubs de golf du Qu&eacute;bec. GPS golf." name="description" />
+
+
+<link href="misc/datepicker.css" rel="stylesheet">
+<link href="misc/reserv.css" rel="stylesheet"/>
+
+<script type="text/javascript" src="misc/util.js"></script>
+<script type="text/javascript" src="misc/reserv.js"></script>
+<script type="text/javascript" src="misc/dateP.js"></script>
+
+<script type="text/javascript" language="Javascript">
+<!--
+
+
+
+function initPage(){
+	
+var ui = GetCookie("userID");
+userId = (ui) ? ui:"";
+clubID = getURLdata();
+if (clubID)
+	SetCook("clubID",clubID);
+else
+	clubID = GetCookie("clubID");
+	
+setFontSize();
+showProgress(1)
+
+if (!userId)
+	logIn();
+else
+	getUser();
+
+identified();
+}
+
+function getUser(){
+
+var param = "?id=" + userId ;
+getInfo("getUser" + param, showUser);	
+}
+
+function showUser(odata){
+
+if (odata){
+
+	afficheMessage();
+
+	document.getElementById('idUser').innerHTML = odata.ident;
+	formIdent['_id'].value = odata._id.$oid;
+	formIdent['nomUser'].value = odata.Nom;
+	formIdent['courUser'].value = odata.courriel;
+	formIdent['telUser'].value = odata.phone;
+
+}
+}
+
+function saveAccount(){
+
+	//document.getElementById('idUser').innerHTML = odata.ident;
+	id = formIdent['_id'].value;
+	nm = formIdent['nomUser'].value;
+	ui = formIdent['courUser'].value;
+	te = formIdent['telUser'].value;
+	pw = formIdent['passUser'].value;
+	np = formIdent['newPassUser'].value;
+	cp = formIdent['confPassUser'].value;
+
+var param = "?ci=" + clubID + "&id=" + id + "&ui=" + ui + "&nm=" + nm + "&te=" + te + "&pw=" + pw + "&np=" + np + "&cp=" + cp ;
+getInfo("saveResUser" + param, saveUserRes);
+	
+}
+
+
+function saveUserRes(odata){
+
+if (odata.error){
+	if (odata.messID)
+		afficheMessage(langLbl[odata.messID]);
+	else
+		afficheMessage(odata.mess);
+}else{
+	if (odata.error == 0)
+		afficheMessage("Enregistré!", "I");
+	else
+		afficheMessage("Une ereur est survenue.");
+}
+//alert(oRes);
+}
+
+
+// -->
+</script>
+
+<style>
+
+
+
+
+</style>
+
+</head>
+
+<body onload="initPage()"><a name="haut"></a>
+<div id="backDiv">
+<div id="topbar" class="vert">
+<div id="leftnav"><a title="Formulaire de recherche" href="index.html" ><img alt="Formulaire de recherche" height="22" width="25" src="images/home22.png" /></a></div>
+<div id="chargement" class="">
+<progress id="progressQ" ></progress>
+<div class="charge"><text id="load"></text></div><div class="charge loading"></div></div>
+<h1 id="pageTitle"><text id="macco">Mon compte</text></h1>
+<div id="fontAdjust" class="unselectable">
+<div class="divFont" onclick="setFontSize(0.2, this)"><div class="divFontSize">A</div><div class="fontLogo">&#8593;</div></div>
+<div class="divFont" onclick="setFontSize(-0.2, this)"><div class="divFontSize fontSmall">A</div><div class="fontLogo">&#8595;</div></div>
+</div>
+</div>
+
+
+	<div id="divmenu">
+		<ul>
+			<li>
+			<span id="username"></span>
+			</li>
+			<li>
+			<a href="reserve.html">Réserver</a>
+			</li>
+			<li>
+			<a href="mystart.html">Mes départs</a>
+			</li>
+			<li>
+			<a href="edituser.html" class="selectedMenu">Mon compte</a>
+			</li>			
+			<li>
+			<a id="menuConnect" href="javascript:logIn();">Se connecter</a>
+			</li>
+		</ul>
+	</div>
+	<div id="content">
+
+		<div id="messageZone">
+			
+		</div>
+		
+		<div id="accountForm">
+
+			<form id="formIdent" >
+			<div id="identOptions">
+			<input id="_id" type="hidden" value=""/>
+
+			<div class="prefList">
+			<label class="identLbl"><text id="iuser">Identifiant</text>:&nbsp;&nbsp;</label><div class="prefVal"><span id="idUser" class="prefVal"></span></div></div>
+			
+			<div class="prefList">
+			<label for="nomUser" class="identLbl"><text id="uname">Nom:</text>:<span class="required">&nbsp;&nbsp;</span></label><div class="prefVal">
+			<input id="nomUser" name="nomUser" type="text" size="25" maxlength="50"/>
+			</div></div>
+
+			<div class="prefList">
+			<label for="courUser" class="identLbl"><text id="email">Courriel</text>:<span class="required" title="Obligatoire">*</span></label><div class="prefVal">
+			<input id="courUser" name="courUser" type="text" autocomplete="on" size="25" maxlength="50"/>
+			</div></div>
+
+			<div class="prefList">
+			<label for="telUser" class="identLbl"><text id="notel">Téléphone:</text>:&nbsp;&nbsp;</label><div class="prefVal">
+			<input id="telUser" type="text" autocomplete="off" size="15" maxlength="12" placeholder="999-999-9999"/>
+			</div></div>
+
+			
+			<div class="prefList">
+			<label for="passUser" class="identLbl"><text id="passw">Mot de passe:</text>:<span class="required" title="Obligatoire">*</span></label><div class="prefVal">
+			<input id="passUser" name="passUser" type="password" autocomplete="off" size="15" maxlength="20"/>
+			</div></div>
+
+			<div class="prefList">
+			<label for="newPassUser" class="identLbl"><text id="npass">Nouveau mot de passe:</text>:&nbsp;&nbsp;</label><div class="prefVal">
+			<input id="newPassUser" name="newPassUser" type="password" autocomplete="off" size="15" maxlength="20"/>
+			</div></div>
+
+			<div class="prefList">
+			<label for="confPassUser" class="identLbl"><text id="cpass">Confirmer mot de passe:</text>:&nbsp;&nbsp;</label><div class="prefVal">
+			<input id="confPassUser" name="confPassUser" type="password" autocomplete="off" size="15" maxlength="20"/>
+			</div></div>
+
+			</div>
+
+			<div>
+			<button  class="formbutton" onclick="saveAccount(); return false;">Enregistrer</button>	
+			<button  class="formbutton" onclick="location.reload(); return false;">Annuler</button>			
+			</div>
+			</form>
+		</div>
+	</div>
+
+
+<div id="bottombar" class="vert">
+	<div id="rightbutton"><a class="char_icon" href="#haut" alt="Haut de page">&#9650;</a></div>
+	<div id="message"></div>
+</div>
+
+<div id="copyright">
+<a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2024</a>
+</div>
+
+
+<div id="modalDiv"></div>
+
+<div id="authLayer" class="winLayer">
+<form id="formAuth" autocomplete="off">
+<div id="identOptions">
+<div class="prefList">
+<h3>&nbsp;Se connecter</h3>
+</div>
+<div class="prefList">
+<label for="nameUser" id="lbl1" class="identLbl"><text id="imail">Identifiant ou courriel</text>:</label><div class="prefVal">
+<input id="nameUser" type="email" autocomplete="on" size="15" maxlength="50">
+</div></div>
+
+<div class="prefList">
+<label for="passwordUser" id="lbl1" class="identLbl"><text id="passw">Mot de passe</text>:</label><div class="prefVal">
+<input id="passwordUser" type="password" size="15" autocorrect="off" autocapitalize="none" autocomplete="off" maxlength="50" onfocus="this.removeAttribute('readonly');">
+</div></div>
+</div>
+
+<div>
+<input id="okPref" class="formbutton" type="submit" onclick="authentif(); return false;" value="Ok"><input id="annulePref" class="formbutton" type="button" onclick="closePref(); return false;" value="Annuler">
+</div>
+</form>
+</div>
+
+
+</body>
+</div>
+</html>

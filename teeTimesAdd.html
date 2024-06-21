@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
+<meta name="format-detection" content="telephone=yes" />
+
+<link rel="shortcut icon" type="image/x-icon" href="images/golf.png">
+<link rel="shortcut icon" type="image/x-icon" href="images/golf.png?">
+<title>Golfs du Qu&eacute;bec</title>
+<meta content="Golf GPS, Qu&eacute;bec, Canada, Golf du Qu&eacute;bec, Clubs de golf au Qu&eacute;bec, Qu&eacute;bec golf" name="keywords" />
+<meta content="R&eacute;pertoire des clubs de golf du Qu&eacute;bec. GPS golf." name="description" />
+
+
+<link href="misc/datepicker.css" rel="stylesheet">
+<link href="misc/reserv.css" rel="stylesheet"/>
+
+<script type="text/javascript" src="misc/util.js"></script>
+<script type="text/javascript" src="misc/reserv.js"></script>
+<script type="text/javascript" src="misc/dateP.js"></script>
+
+<script type="text/javascript" language="Javascript">
+<!--
+
+
+var strtLst;
+
+function initPage(){
+	
+var ui = GetCookie("userID");
+userId = (ui) ? ui:"";
+clubID = getURLdata();
+if (clubID)
+	SetCook("clubID",clubID);
+else
+	clubID = GetCookie("clubID");
+	
+setFontSize();
+showProgress(1)
+
+document.getElementById('identLayer').style.display="none";
+showProgress(1);
+//logIn();
+identified();
+}
+
+
+function submitStart(oForm){
+
+ui = userId;
+ci = clubID
+fd = oForm.fDate.value
+td = oForm.tDate.value
+ft = oForm.fromTime.value
+tt = oForm.toTime.value
+fr = oForm.freq.value
+
+afficheMessage();
+var param = "?ui=" + ui + "&ci=" + ci + "&fd=" + fd + "&td=" + td + "&ft=" + ft + "&tt=" + tt + "&fr=" + fr;
+getInfo("subStartCal" + param, showStartCal);	
+
+//listStart(strtLst);		
+}
+
+function showStartCal(odata){
+
+if (odata.error){
+	//alert(odata.mess);
+	afficheMessage(odata.mess);
+}else{
+	strtLst = odata.data;
+	listStart(strtLst);
+}
+}
+
+function listStart(strtLst){
+resetAll();
+document.getElementById('startingZone').style.display = 'inherit';
+var pageZone = document.getElementById('pageZone');
+
+for (var p = 0; p < strtLst.length; p++) {
+	item = strtLst[p]
+	indCheck = "";
+	if (item.available)
+		indCheck = "checked";
+	htmlCode = '<span>' + formatDateTime.datetime(item.startTime*1000) + '</span><span><input type="checkbox" id="start' + p + '" name="' + p + '" onclick="selectOne(this)"' + indCheck + '/></span><span>0</span>'
+	var liElem = document.createElement("li");
+	liElem.setAttribute('class', 'listitem');
+	liElem.innerHTML = htmlCode;
+	pageZone.appendChild(liElem);
+	}
+	
+document.getElementById('message').innerHTML = (p) + " Tee Times."
+}
+
+function selectAll(obj){
+//alert(obj.checked);
+resetAll();
+for (var p = 0; p < strtLst.length; p++) {
+		strtLst[p].available = obj.checked;
+	}
+listStart(strtLst);
+}
+
+function selectOne(obj){
+strtLst[obj.name].available = obj.checked;
+}
+
+function resetAll(){
+remChilds(document.getElementById('pageZone'));
+document.getElementById('startingZone').style.display = 'none';
+document.getElementById('message').innerHTML = "";
+}
+
+function createStarts(){
+var param = "?data=" + JSON.stringify(strtLst) ;
+getInfo("creStartCal" + param, createStartsRes);	
+}
+
+function createStartsRes(oRes){
+if (oRes.error){
+	//alert(odata.mess);
+	afficheMessage(oRes.mess);
+}else{
+	resetAll();
+	afficheMessage("Tee times created!", 'I');
+}
+
+
+afficheMessage(odata.mess);
+}
+
+
+// -->
+</script>
+
+<style>
+
+</style>
+
+</head>
+
+<body onload="initPage()"><a name="haut"></a>
+<div id="backDiv">
+<div id="topbar" class="vert">
+<div id="leftnav"><a title="Formulaire de recherche" href="index.html" ><img alt="Formulaire de recherche" height="22" width="25" src="images/home22.png" /></a></div>
+<div id="chargement" class="">
+<progress id="progressQ" ></progress>
+<div class="charge"><text id="load"></text></div><div class="charge loading"></div></div>
+<h1 id="pageTitle">Add Tee Times</h1>
+<div id="fontAdjust" class="unselectable">
+<div class="divFont" onclick="setFontSize(0.2, this)"><div class="divFontSize">A</div><div class="fontLogo">&#8593;</div></div>
+<div class="divFont" onclick="setFontSize(-0.2, this)"><div class="divFontSize fontSmall">A</div><div class="fontLogo">&#8595;</div></div>
+</div>
+</div>
+
+
+
+	<div id="divmenu">
+		<ul>
+			<li>
+			<span id="username"></span>
+			</li>	
+			<li>
+			<a href="teeTimesSta.html">Tee Times state</a>
+			</li>			
+			<li>
+			<a href="teeTimesAdd.html" class="selectedMenu">Add Tee Times</a>
+			</li>
+			<li>
+			<a href="reserve.html">Reserve</a>
+			</li>
+			<li>
+			<a href="edituser.html">My account</a>
+			</li>			
+			<li>
+			<a href="javascript:logIn();">Login</a>
+			</li>
+		</ul>
+	</div>
+	
+<div id="content">
+		<div id="critZone">
+			<div id="critInfo" class="itemdesc">
+			
+			<form id="formCrit" action="#">
+				<div class="formItem">
+					<label for="fDate">Date:</label>
+					<input id="fDate" name="fDate" size="10" type="text" maxlength="10" value="" placeholder="yyyy-mm-dd"> 
+					<a id="calIcon" class="char_icon" href="javascript:popDtPicker('fDate');">📅</a>
+					<label for="tDate">End Date:</label>
+					<input id="tDate" name="tDate" size="10" type="text" maxlength="10" value="" placeholder="yyyy-mm-dd"> 
+					<a id="calIcon" class="char_icon" href="javascript:popDtPicker('tDate');">📅</a>
+					<!--<small>Start time</small>// -->
+				</div>			
+			
+				<div class="formItem">
+					<label for="fromTime">From time:</label>
+					<input type="time" id="fromTime" name="fromTime" value="06:00" min="06:00" max="18:00" required />
+
+					<label for="toTime">To time:</label>
+					<input type="time" id="toTime" name="toTime" value="18:00" min="09:00" max="18:00" required />
+				</div>				
+
+				<div class="formItem">
+					<label for="freq">Frequency (second):</label>
+					<input id="freq" name="freq" size="3" type="text" value="600" maxlength="3" value="" placeholder="999"> 
+				</div>	
+				
+				<!--  <button id="butSubmit" class="formItem" onclick="submitStart(this.form);">Submit</button>  // -->
+			
+			<button  class="formbutton" onclick="submitStart(this.form); return false;">Submit</button>
+			<button  class="formbutton" type="reset" onclick="resetAll();"> Reset </button>
+			
+			</form>
+			</div>			
+
+		</div>	
+
+		<div id="messageZone">
+			
+		</div>
+		
+		<div id="startingZone">
+		<ul id="startHead" class="pageitem">
+					<li class="listitem gras">	
+							<form id="selAll" action="#">
+							<span>Start Time</span><span><input type="checkbox" id="scales" name="scales" onclick="selectAll(this)" checked/><label for="scales">Available</label></span><span>Players</span>
+							</form>
+					</li>
+				<div id="pageZone">
+				</div>
+		</ul>
+		<button id="creatStarts" class="formbutton" onclick="createStarts(); return false;">Create Tee Times</button>
+		</div>
+</div>
+
+
+<div id="bottombar" class="vert">
+	<div id="rightbutton"><a class="char_icon" href="#haut" alt="Haut de page">&#9650;</a></div>
+	<div id="message"></div>
+</div>
+
+<div id="copyright">
+<a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2024</a>
+</div>
+
+<div id="modalDiv"></div>
+
+<div id="authLayer" class="winLayer">
+<form id="formAuth" autocomplete="off">
+<div id="identOptions">
+
+<div class="prefList">
+
+<h3>&nbsp;Se connecter:</h3>
+<label for="nameUser" id="lbl1" class="identLbl"><text id="imail">Identifiant ou courriel</text></label><div class="prefVal">
+<input id="nameUser" type="email" autocomplete="on" size="15" maxlength="50">
+</div></div>
+
+<div class="prefList">
+<label for="passwordUser" id="lbl1" class="identLbl"><text id="passw">Mot de passe</text></label><div class="prefVal">
+<input id="passwordUser" type="password" size="15" autocorrect="off" autocapitalize="none" autocomplete="off" maxlength="50" onfocus="this.removeAttribute('readonly');">
+</div></div>
+</div>
+
+<div>
+<input id="okPref" class="formbutton" type="submit" onclick="authentif(); return false;" value="Ok"><input id="annulePref" class="formbutton" type="button" onclick="closePref(); return false;" value="Annuler">
+</div>
+</form>
+</div>
+
+<div id="identLayer"></div>
+
+</div>
+
+
+</body>
+
+</html>

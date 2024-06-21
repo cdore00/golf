@@ -20,7 +20,7 @@
 <script type="text/javascript" src="misc/geoLocal.js"></script>
 <!-- <script type="text/javascript" src="js/config.js"></script> // -->
 
-    <script type="text/javascript" 
+    <script async  
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA15nyiYmWG_0IkG9H5r4Qc8KhZxwRw_xA&sensor=false"> 
     </script> 
 
@@ -544,17 +544,15 @@ identified();
 initPref();
 getInfo("getRegions?", listRegions);
 
-//alert("W=" + window.screen.width + " H=" + window.screen.height);
 
 document.critere.Rechercher.focus();
 
-//window.addEventListener("focus", checkFocus);
-
+/*
 window.addEventListener("focus", function(event) 
 { 
   console.log("focus=" + document.hidden);
 }, false);
-
+*/
 }
 
 function getFav(){

@@ -1,5 +1,5 @@
 
-var HOSTserv = "http://127.0.0.1:3000/";		//Portable Windows 10 Local host Node JS v6.10.0
+var HOSTserv = "https://cdore.ddns.net/pyt/";  // VULTR Ubuntu Server 16.04 docker Python 3.6.4
 // "http://127.0.0.1:3000/";		//Portable Windows 10 Local host Node JS v6.10.0
 // "http://192.168.2.195:3000/";    //Ubuntu workstation 16.04
 // "http://192.168.2.195:8080/";    //Ubuntu workstation 16.04 docker 1.12.6 Node JS v4.2.3  MongoDB server v3.4.9
@@ -47,6 +47,7 @@ if (THCall == "POST" && HOSTserv != "http://127.0.0.1:3000/")
 xhr.send(dat);
 }
 
+/*
 function getInfo2(path, callback){
 var dat = new FormData();
 dat.append('info', path);
@@ -68,6 +69,8 @@ if (THCall == "POST" && HOSTserv != "http://127.0.0.1:3000/")
 xhr.send(dat);
 
 }
+*/
+
 
 function affNoRep(){
 		var eBod = document.getElementsByTagName('body')[0];
@@ -84,6 +87,18 @@ else
 	return decodeURI(urlInfo.substring(urlInfo.indexOf("data=") + 5));
 }
 
+
+var supportStorage = (function() {  // Détecter la disponibilité du localStorage 
+	try {
+		var mod = "test";
+		localStorage.setItem(mod, mod);
+		localStorage.removeItem(mod);
+		return true;
+	} catch (exception) {
+		return false;
+	}
+}());
+
 var elemToScroll = [];
 function scrollElement(){
 var topValue;
@@ -94,6 +109,7 @@ else
 for (i = 0; i < elemToScroll.length; i++)
     elemToScroll[0].style.top = topValue + 'px';
 }
+
 
 
 //var dt =  new Intl.DateTimeFormat("fr-CA", { year: "numeric", month: "2-digit", day: "numeric", hour: "2-digit", minute: "2-digit"});
@@ -112,6 +128,14 @@ function getDateTime(dateTime){
 }
 
 var formatDateTime = {
+	 toTitleCase : function(str) {
+		return str.replace(
+			/\w\S*/g,
+			function(txt) {
+				return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+			}
+		)
+	},
 	getDateTime : function(milliTime){
 			if (milliTime)
 				return new Date(milliTime);
@@ -129,6 +153,24 @@ var formatDateTime = {
 	datetime : function(milliTime) {
 		return this.date(milliTime) + " " + this.time(milliTime, true);
 	},
+	datetimecar : function(milliTime, heure) {
+	var options = {year: 'numeric', month: 'long', day: 'numeric' };
+	var opt_weekday = { weekday: 'long' };
+	var today  = new Date(milliTime);
+	var weekday = this.toTitleCase(today.toLocaleDateString(langSet, opt_weekday));
+	var the_date = weekday + ", " + today.toLocaleDateString(langSet, options);
+	if (heure)
+		the_date = the_date + " " + this.time(milliTime, true);
+	return the_date;
+	},
+	chattime : function(milliTime) {
+	//var options = {year: 'numeric', month: 'long', day: 'numeric' };
+	var opt_weekday = { weekday: 'long' };
+	var today  = new Date(milliTime);
+	var weekday = this.toTitleCase(today.toLocaleDateString(langSet, opt_weekday));
+	//var the_date = weekday.substring(0,3) + ", " + today.toLocaleDateString("fr-FR", options);
+	return weekday.substring(0,3) + ", " + this.time(milliTime, true) ;
+	},	
 	datetimeToMilli : function(datetime) {
 		var res = false;
 		
@@ -198,7 +240,7 @@ while (i < clen){
 function SetCook(name,value){
 	var exp = new Date();
 	exp.setTime (exp.getTime() + (1000*60*60*24*720));
-	document.cookie = name + "="+ escape(value) + "; expires=" + exp.toGMTString() ;
+	document.cookie = name + "="+ escape(value) + "; expires=" + exp.toGMTString() + "; SameSite=None; Secure";
 //alert(name + "="+ value + "; expires=" + exp.toGMTString())
 }
 
@@ -611,18 +653,20 @@ function validEmail(email){
 }
 
 function showProgress(init){
-if (init)
-	progressBar.value = init;
-else
-	progressBar.value += 0.005;
+if (progressBar){	
+	if (init)
+		progressBar.value = init;
+	else
+		progressBar.value += 0.005;
 
-if (progressBar.value <= 0.9){
-	setTimeout("showProgress()", 10);
-	}
-if (progressBar.value >= 1){
-	var chargement = document.getElementById('chargement');
-	chargement.style.display = "none";
-	}
+	if (progressBar.value <= 0.9){
+		setTimeout("showProgress()", 10);
+		}
+	if (progressBar.value >= 1){
+		var chargement = document.getElementById('chargement');
+		chargement.style.display = "none";
+		}
+}
 }
 
 function remChilds(eItem, eItemToRemove){
@@ -652,19 +696,28 @@ if (rep.resp.result){
 	var authLayer = document.getElementById('authLayer');
 	modalDiv.style.visibility="hidden";
 	authLayer.style.visibility="hidden";
-	identLayer.style.display="none";
+	if (identLayer)
+		identLayer.style.display="none";
 	SetCook("userID",rep.resp.user._id + "");
 	SetCook("userName",rep.resp.user.Nom);
 	SetCook("userMail",rep.resp.user.courriel);
 	SetCook("userRole",rep.resp.user.niveau);
 	userId = rep.resp.user._id;
 	userName = rep.resp.user.Nom;
-
+	//if (rep.resp.club && rep.resp.club.nom ){
+		var userClub = rep.resp.club
+		userClub.userId = userId;
+		userClub.userClub = (rep.resp.user.clubID) ? rep.resp.user.clubID:"";
+		localStorage.setItem("userClub", JSON.stringify(userClub));
+	//}
+		
 }else{
 	userId = null;
 	setIdent();
 	DelCookie("userID");
 	DelCookie("userRole");
+	DelCookie("userName");
+	localStorage.removeItem("userClub");
 	alert(langLbl["M0004"]);
 	tryLog++;
 	if (tryLog > 2){
@@ -784,6 +837,9 @@ if (document.querySelector('meta[http-equiv="content-language"]'))
 		langLbl["niden"] = "Cr&eacute;er un compte";
 		langLbl["aiden"] = "Authentification";
 		langLbl["email"] = "Courriel";
+		langLbl["notel"] = "T&eacute;l&eacute;phone";
+		langLbl["iuser"] = "Identifiant";
+		langLbl["imail"] = "Identifiant ou courriel";
 		langLbl["uname"] = "Nom";
 		langLbl["passw"] = "Mot de passe";
 		langLbl["npass"] = "Nouveau mot de passe";
@@ -833,6 +889,9 @@ if (document.querySelector('meta[http-equiv="content-language"]'))
 		langLbl["ccpar"] = ",&nbsp;normale&nbsp;";
 		langLbl["cyard"] = " verges&nbsp;&nbsp;";
 		langLbl["cours"] = "Parcours&nbsp;:&nbsp;";
+		langLbl["rdate"] = "Date&nbsp;:&nbsp;";
+		langLbl["rhour"] = "Heure&nbsp;:&nbsp;";
+		langLbl["rplay"] = "Joueurs&nbsp;:&nbsp;";
 		langLbl["detai"] = "D&eacute;tail";
 		langLbl["modio"] = "Modifier l'origine";
 		langLbl["modid"] = "Modifier la destination";
@@ -912,6 +971,9 @@ if (document.querySelector('meta[http-equiv="content-language"]'))
 		langLbl["updat"] = "Update";
 		langLbl["aiden"] = "Autenticaci&oacute;n";
 		langLbl["email"] = "Correo electr&oacute;nico";
+		langLbl["notel"] = "Tel&eacute;fono";		
+		langLbl["iuser"] = "Identificador";
+		langLbl["imail"] = "Nombre de usuario o correo electr&oacute;nico";
 		langLbl["uname"] = "Nombre";
 		langLbl["passw"] = "Contraseña";
 		langLbl["npass"] = "Nueva contraseña";
@@ -961,6 +1023,9 @@ if (document.querySelector('meta[http-equiv="content-language"]'))
 		langLbl["ccpar"] = ",&nbsp;par&nbsp;";
 		langLbl["cyard"] = " yardas&nbsp;&nbsp;";
 		langLbl["cours"] = "Campo&nbsp;:&nbsp;";
+		langLbl["rdate"] = "Fecha&nbsp;:&nbsp;";
+		langLbl["rhour"] = "Hora&nbsp;:&nbsp;";
+		langLbl["rplay"] = "Jugadores&nbsp;:&nbsp;";
 		langLbl["detai"] = "Detalle";
 		langLbl["modio"] = "Cambio origen";
 		langLbl["modid"] = "Cambiar destino";
@@ -1037,7 +1102,11 @@ if (document.querySelector('meta[http-equiv="content-language"]'))
 		langLbl["updat"] = "Update";
 		langLbl["niden"] = "Create account";
 		langLbl["aiden"] = "Authentication";
+		langLbl["iuser"] = "Username";
+		langLbl["imail"] = "Username or email";		
 		langLbl["email"] = "E-mail";
+		langLbl["notel"] = "Phone number";		
+		langLbl["umail"] = "Username or email";
 		langLbl["uname"] = "Name";
 		langLbl["passw"] = "Password";
 		langLbl["npass"] = "New password";
@@ -1087,6 +1156,9 @@ if (document.querySelector('meta[http-equiv="content-language"]'))
 		langLbl["ccpar"] = ",&nbsp;par&nbsp;";
 		langLbl["cyard"] = " yards&nbsp;&nbsp;";
 		langLbl["cours"] = "Course&nbsp;:&nbsp;";
+		langLbl["rdate"] = "Date&nbsp;:&nbsp;";
+		langLbl["rhour"] = "Time&nbsp;:&nbsp;";
+		langLbl["rplay"] = "Players&nbsp;:&nbsp;";
 		langLbl["detai"] = "Detail";
 		langLbl["modio"] = "Change origin";
 		langLbl["modid"] = "Change destination";

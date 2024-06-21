@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
+<meta name="format-detection" content="telephone=yes" />
+
+<link rel="shortcut icon" type="image/x-icon" href="images/golf.png">
+<link rel="shortcut icon" type="image/x-icon" href="images/golf.png?">
+<title>Golfs du Qu&eacute;bec</title>
+<meta content="Golf GPS, Qu&eacute;bec, Canada, Golf du Qu&eacute;bec, Clubs de golf au Qu&eacute;bec, Qu&eacute;bec golf" name="keywords" />
+<meta content="R&eacute;pertoire des clubs de golf du Qu&eacute;bec. GPS golf." name="description" />
+
+
+<link href="misc/datepicker.css" rel="stylesheet">
+<link href="misc/reserv.css" rel="stylesheet"/>
+
+<script type="text/javascript" src="misc/util.js"></script>
+<script type="text/javascript" src="misc/reserv.js"></script>
+<script type="text/javascript" src="misc/dateP.js"></script>
+
+<script type="text/javascript" language="Javascript">
+<!--
+
+var strtLst;
+var resID;
+
+function initPage(){
+
+var ui = GetCookie("userID");
+userId = (ui) ? ui:"";
+clubID = getURLdata();
+if (clubID)
+	SetCook("clubID",clubID);
+else
+	clubID = GetCookie("clubID");
+	
+setFontSize();
+showProgress(1)
+
+if (!userId)
+	logIn();
+else{
+	userName = GetCookie("userName");
+}
+identified();	
+
+document.getElementById('leftnav').oncontextmenu = function(e) {
+e.preventDefault();
+
+ //alert('right click!');
+ showPopMenu(this);
+}
+
+}
+
+
+function getStartCal(oForm){
+ci = clubID
+dt = oForm.prefDate.value
+ft = oForm.fromTime.value
+pl = oForm.play.value
+
+if (ci && userId){
+	var param = "?ci=" + ci + "&ui=" + userId + "&dt=" + dt + "&ft=" + ft + "&pl=" + pl;
+	getInfo("getStartCal" + param, showStartCal);	
+}else{
+	afficheMessage("Utilisateur non connecté!" )
+}
+//listStart(strtLst);		
+}
+
+function showStartCal(odata){
+
+if (odata.error){
+	//alert(odata.mess);
+	afficheMessage(odata.mess);
+}else{
+	afficheMessage();
+	if (odata.resExist)
+		afficheMessage("Vous avez déjà une réservation : " + odata.resExist, 'A');
+		
+	strtLst = odata.data;
+	listStart(strtLst);
+}
+}
+
+function listStart(strtLst){
+resetAll();
+document.getElementById('startingZone').style.display = 'inherit';
+var pageZone = document.getElementById('pageZone');
+
+for (var p = 0; p < strtLst.length; p++) {
+	item = strtLst[p]
+	indCheck = "";
+	if (item.available)
+		indCheck = "checked";
+	htmlCode = '<span>' + formatDateTime.datetime(item.startTime*1000) + '</span><span><button  class="formItem" onclick="selectOne(\'' + p + '\')"> Sélectionner </button></span><span>' + item.players + '</span>'
+	var liElem = document.createElement("li");
+	liElem.setAttribute('class', 'listitem');
+	liElem.innerHTML = htmlCode;
+	pageZone.appendChild(liElem);
+	}
+document.getElementById('message').innerHTML = (p ) + " départs disponibles."
+}
+
+
+function selectOne(obj){
+chx = strtLst[obj];
+nbp = formCrit[2].value;
+resId = chx._id;
+dt = formatDateTime.datetimecar(chx.startTime*1000 );
+hr = formatDateTime.time(chx.startTime*1000, true );
+document.getElementById('r_parc').innerHTML = "Charbourg";
+document.getElementById('r_date').innerHTML = dt ;
+document.getElementById('r_time').innerHTML = hr;
+document.getElementById('r_play').innerHTML = nbp;
+document.getElementById('modalDiv').style.height=document.getElementById('backDiv').offsetHeight + "px";
+document.getElementById('modalDiv').style.visibility="visible";
+document.getElementById('identLayer').style.display = 'inherit';
+
+var param = "?id=" + resId.$oid + "&cid=" + clubID + "&npl=" + formCrit[2].value;
+getInfo("checkStartAvailable" + param, confirmStart);	
+
+}
+
+function confirmStart(oResult){
+if (oResult.error){
+	closePref();
+	alert(oResult.mess);
+}else{
+	document.getElementById('r_parc').innerHTML = oResult.club.nom;
+	confStart['nameplay1'].value = userName;
+	confStart['nameplay1'].name = userId;
+	nbp = (formCrit[2].value);
+	for (var i = 2; i < 5; i++){
+		document.getElementById('resplay' + i).style.display = (nbp >= i) ? "inherit":"none";
+	}
+}
+
+}
+
+function resetAll(){
+remChilds(document.getElementById('pageZone'));
+document.getElementById('startingZone').style.display = 'none';
+document.getElementById('message').innerHTML = "";
+}
+
+function resStart(){
+var param = "?uid=" + userId + "&rid=" + resId.$oid + "&unm=" + userName + "&npl=" + formCrit[2].value;
+
+nbp = (formCrit[2].value);
+playList = "";
+	for (var i = 1; i < 5; i++){
+		if (i <= nbp)
+			playList += "&P" + i + "=" + confStart['nameplay' + i].value + "$$" + confStart['nameplay' + i].name;;
+			// + "$$" + confStart['nameplay' + i].name;
+	}
+param += playList;
+	
+postData("reservStart" + param, reservStartRes);
+closePref();
+}
+
+function reservStartRes(oRes){
+if (oRes.error){
+	//alert(odata.mess);
+	afficheMessage(oRes.mess);
+}else{
+	resetAll();
+	afficheMessage("Réservation confirmée.", 'I');
+}
+}
+
+async function postData(path, callback){
+var pos = path.indexOf("?");
+if (pos != -1){
+	var serv = path.substring(0,pos);
+	var param = path.substring(pos + 1);
+}else{
+	var serv = path;
+	var param = "";
+}
+var dat = new FormData();
+dat.append('info', param);
+
+  const response = await fetch( HOSTserv + serv , {
+	method: "POST", // *GET, POST, PUT, DELETE, etc.
+    mode: "cors", // no-cors, *cors, same-origin
+    //credentials: "include", // include, *same-origin, omit	
+    /*
+	headers: {
+      "Content-Type": "application/json",
+	  
+    },	
+	*/
+    body: dat, // body data type must match "Content-Type" header
+  });
+  
+  const result = await response.json();
+  if (response.error) {
+    console.error('error ', response.error);
+  }
+  console.log(result);
+  
+	if (callback)
+		callback(result);    
+  
+}
+
+
+function getMenuChx(chx){
+if (chx == 1)
+	document.location = 'teeTimesSta.html';
+
+}
+
+// -->
+</script> 
+
+
+<style>
+
+	
+</style>
+
+</head>
+
+<body onload="initPage();">
+<div id="backDiv">
+<div id="topbar" class="vert">
+<div id="leftnav"><a title="Formulaire de recherche" href="index.html" ><img alt="Formulaire de recherche" height="22" width="25" src="images/home22.png" /></a></div>
+
+<h1 id="pageTitle">Réserver</h1>
+<div id="fontAdjust" class="unselectable">
+<div class="divFont" onclick="setFontSize(0.2, this)"><div class="divFontSize">A</div><div class="fontLogo">&#8593;</div></div>
+<div class="divFont" onclick="setFontSize(-0.2, this)"><div class="divFontSize fontSmall">A</div><div class="fontLogo">&#8595;</div></div>
+</div>
+</div>
+
+
+
+	<div id="divmenu">
+		<ul>
+			<li>
+			<span id="username"></span>
+			</li>
+			<li>
+			<a href="reserve.html" class="selectedMenu">Réserver</a>
+			</li>
+			<li>
+			<a href="mystart.html">Mes départs</a>
+			</li>
+			<li>
+			<a href="edituser.html">Mon compte</a>
+			</li>			
+			<li>
+			<a id="menuConnect" href="javascript:logIn();">Se connecter</a>
+			</li>
+
+		</ul>
+	</div>
+
+<div id="content">
+		<div id="clubZone">
+			<div id="clubInfo" class="itemdesc">
+			
+			<form id="formCrit" action="#">
+				<div class="formItem">
+					<label for="prefDate">Date:</label>
+					<input id="prefDate" name="prefDate" size="10" type="text" maxlength="10" value="" placeholder="yyyy-mm-dd"> 
+					<a id="calIcon" class="char_icon" href="javascript:popDtPicker('prefDate');">📅</a>
+
+					<!--<small>Start time</small>// -->
+				</div>			
+			
+				<div class="formItem">
+					<label for="fromTime">Heure:</label>
+					<input class="timeCtl" type="time" id="fromTime" name="fromTime" value="06:00" min="06:00" max="18:00" required />
+
+				</div>				
+
+				<div class="formItem">
+					<label for="play">Nombre de joueurs:</label>
+					<select name="play" id="pet-select">
+					  <option value="1">1</option>
+					  <option value="2">2</option>
+					  <option value="3">3</option>
+					  <option value="4">4</option>
+					</select>
+				</div>	
+			
+			<button  class="formbutton" onclick="getStartCal(this.form); return false;">Submit</button>
+			<button  class="formbutton" type="reset" onclick="resetAll();"> Reset </button>
+			
+			</form>
+			</div>			
+
+		</div>	
+
+		<div id="messageZone">
+			
+		</div>
+		
+		<div id="startingZone">
+		<ul id="startHead" class="pageitem">
+					<li class="listitem gras">	
+							<form id="selAll" action="#">
+							<span>Start Time</span><span><label for="scales">Available</label></span><span>Players</span>
+							</form>
+					</li>
+		
+		<div id="pageZone">
+		</div>		
+		</ul>
+
+
+		</div>
+</div>
+
+
+<div id="bottombar" class="vert">
+	<div id="rightbutton"><a class="char_icon" href="#haut" alt="Haut de page">&#9650;</a></div>
+	<div id="message"></div>
+</div>
+
+<div id="copyright">
+<a href="mailto:cdore00@yahoo.ca?Subject=Golfs%20du%20Qu&eacute;bec">Copyright &copy; 2005-2024</a>
+</div>
+
+
+<div id="modalDiv"></div>
+
+<div id="authLayer" class="winLayer">
+<form id="formAuth" autocomplete="off">
+<div id="identOptions">
+<div class="prefList">
+<h3>&nbsp;Se connecter</h3>
+</div>
+<div class="prefList">
+<label for="nameUser" id="lbl1" class="identLbl"><text id="imail">Identifiant ou courriel</text>:</label><div class="prefVal">
+<input id="nameUser" type="email" autocomplete="on" size="15" maxlength="50">
+</div></div>
+
+<div class="prefList">
+<label for="passwordUser" id="lbl1" class="identLbl"><text id="passw">Mot de passe</text>:</label><div class="prefVal">
+<input id="passwordUser" type="password" size="15" autocorrect="off" autocapitalize="none" autocomplete="off" maxlength="50" onfocus="this.removeAttribute('readonly');">
+</div></div>
+</div>
+
+<div>
+<input id="okPref" class="formbutton" type="submit" onclick="authentif(); return false;" value="Ok"><input id="annulePref" class="formbutton" type="button" onclick="closePref(); return false;" value="Annuler">
+</div>
+</form>
+</div>
+
+<div id="identLayer">
+<h3>&nbsp;Comfirmer la réservation&nbsp;</h3>
+<form id="confStart" autocomplete="off">
+<p><text id="cours">Parcours:</text><span id="r_parc"></span></p>
+<p><text id="rdate">Date:</text><span id="r_date"></span></p>
+<p><text id="rhour">Heure:</text><span id="r_time"></span></p>
+<p><text id="rplay">Joueurs:</text><span id="r_play"></span></p>
+
+	<div class="formItem">
+		<p id="resplay1"><label for="nameplay1">1:</label>
+		<input id="nameplay1" name="" size="25" type="text" maxlength="50" value="" disabled /> </p>
+		<p id="resplay2"><label for="nameplay2">2:</label>
+		<input id="nameplay2" name="" size="25" type="text" maxlength="50" value="" /> </p>
+		<p id="resplay3"><label for="nameplay3">3:</label>
+		<input id="nameplay3" name="" size="25" type="text" maxlength="50" value="" /> </p>	
+		<p id="resplay4"><label for="nameplay4">4:</label>
+		<input id="nameplay4" name="" size="25" type="text" maxlength="50" value="" /> </p>		
+	</div>
+
+<div>
+<input id="r_id" type="hidden" value="Ok">
+<input id="okPref" class="formbutton" type="submit" onclick="resStart(); return false;" value="Ok"><input id="annulePref" class="formbutton" type="button" onclick="closePref(); return false;" value="Annuler">
+</div>
+</form>
+</div>
+
+</div>
+
+ </body>	 
+ </html>
