@@ -87,7 +87,6 @@ class objPieChart {
 		 js = d.createElement(s); js.id = id;
 		 js.src = "misc/barchart.js";
 		 js.onload = function() {
-                console.log('barChart-sdk loaded successfully.');
                 oPieChart.renderPie();
             };
 		 fjs.parentNode.insertBefore(js, fjs);
@@ -119,7 +118,8 @@ class objPieChart {
 					}
 				],
 			});
-			this.pie.appendTo(this.#container);		
+			this.pie.appendTo(this.#container);
+			this.#chartToRender = false;
 		}
 	}
 
@@ -176,10 +176,7 @@ class objBarChart {
 		 js = d.createElement(s); js.id = id;
 		 js.src = "misc/barchart.js";
 		 js.onload = function() {
-                console.log('barChart-sdk loaded successfully.');
-                if (oBarChart) {
-                    oBarChart.renderChart();
-                }
+				oBarChart.renderChart();
             };
 		 fjs.parentNode.insertBefore(js, fjs);
 		}(document, 'script', 'barChart-sdk')); 
@@ -268,7 +265,7 @@ class objBarChart {
 			},
             primaryXAxis: {
                 valueType: this.#valueType,
-				labelFormat: '{value}' + this.#XlabelFormat,
+				labelFormat: (this.#valueType == "DateTime") ? '':'{value}' + this.#XlabelFormat,
                 title: this.#Xlabel,
             },
             primaryYAxis: {
